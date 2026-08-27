@@ -1208,6 +1208,7 @@ static void OnOpenFail(uint32_t requestId, int32_t reason, const char *brMac)
     }
     ret = ServerDeleteChannelFromList(info.channelId);
     if (ret != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_SVC, "[br_proxy]ServerDeleteChannelFromList failed! ret=%{public}d", ret);
         return;
     }
     ret = ClientIpcBrProxyOpened(info.callingPid, DEFAULT_INVALID_CHANNEL_ID,
