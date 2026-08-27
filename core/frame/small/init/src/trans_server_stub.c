@@ -365,7 +365,6 @@ int32_t ServerCloseChannel(IpcIo *req, IpcIo *reply)
         return SOFTBUS_INVALID_PARAM;
     }
 
-    int32_t ret;
     int32_t channelId = 0;
     int32_t channelType = 0;
     const char *sessionName = NULL;
@@ -374,14 +373,30 @@ int32_t ServerCloseChannel(IpcIo *req, IpcIo *reply)
         TRANS_LOGE(TRANS_CTRL, "failed to read channelId or channelType");
         return SOFTBUS_IPC_ERR;
     }
+    int32_t callingPid = GetCallingPid();
     if (channelType == CHANNEL_TYPE_UNDEFINED) {
         sessionName = (const char*)ReadString(req, &size);
-        if (sessionName == NULL) {
-            TRANS_LOGE(TRANS_CTRL, "ServerCloseChannel sessionName is null");
+        if (sessionName == NULL || size > SESSION_NAME_SIZE_MAX) {
+            TRANS_LOGE(TRANS_CTRL, "ServerCloseChannel sessionName is invalid");
             return SOFTBUS_IPC_ERR;
         }
+        int32_t ret = TransGetAndComparePidBySession(callingPid, sessionName, channelId);
+        if (ret != SOFTBUS_OK) {
+            TRANS_LOGE(TRANS_CTRL, "Pid can not close channel, pid=%{public}d, sessionId=%{public}d, ret=%{public}d",
+                callingPid, channelId, ret);
+            WriteInt32(reply, ret);
+            return ret;
+        }
+    } else {
+        int32_t ret = TransGetAndComparePid(callingPid, channelId, channelType);
+        if (ret != SOFTBUS_OK) {
+            TRANS_LOGE(TRANS_CTRL, "Pid can not close channel, pid=%{public}d, channelId=%{public}d, ret=%{public}d",
+                callingPid, channelId, ret);
+            WriteInt32(reply, ret);
+            return ret;
+        }
     }
-    ret = TransCloseChannel(sessionName, channelId, channelType);
+    int32_t ret = TransCloseChannel(sessionName, channelId, channelType);
 
     WriteInt32(reply, ret);
     return ret;
@@ -403,6 +418,12 @@ int32_t ServerSendSessionMsg(IpcIo *req, IpcIo *reply)
     uint32_t size = 0;
     ReadUint32(req, &size);
     const void *data = (const void *)ReadBuffer(req, size);
+    int32_t callingPid = GetCallingPid();
+    if (TransGetAndComparePid(callingPid, channelId, channelType) != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_CTRL, "pid permission check failed!");
+        WriteInt32(reply, SOFTBUS_PERMISSION_DENIED);
+        return SOFTBUS_PERMISSION_DENIED;
+    }
     int32_t ret = TransSendMsg(channelId, channelType, data, size, msgType);
     WriteInt32(reply, ret);
     return ret;
@@ -420,8 +441,15 @@ int32_t ServerReleaseResources(IpcIo *req, IpcIo *reply)
         TRANS_LOGE(TRANS_CTRL, "failed to read channelId");
         return SOFTBUS_IPC_ERR;
     }
-
-    int32_t ret = TransReleaseUdpResources(channelId);
+    int32_t callingPid = GetCallingPid();
+    int32_t ret = TransGetAndComparePid(callingPid, channelId, CHANNEL_TYPE_UDP);
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_CTRL, "Pid not find, ret = %{public}d", ret);
+        WriteInt32(reply, ret);
+        return ret;
+    }
+    ret = TransReleaseUdpResources(channelId);
+    WriteInt32(reply, ret);
     return ret;
 }
 
@@ -478,8 +506,8 @@ int32_t ServerPrivilegeCloseChannel(IpcIo *req, IpcIo *reply)
         return SOFTBUS_IPC_ERR;
     }
     peerNetworkId = (const char*)ReadString(req, &size);
-    if (peerNetworkId == NULL) {
-        TRANS_LOGE(TRANS_CTRL, "peerNetWorkId is null");
+    if (peerNetworkId == NULL || size > NETWORK_ID_BUF_LEN) {
+        TRANS_LOGE(TRANS_CTRL, "peerNetWorkId is invalid");
         return SOFTBUS_IPC_ERR;
     }
     ret = TransPrivilegeCloseChannel(tokenId, pid, peerNetworkId);
