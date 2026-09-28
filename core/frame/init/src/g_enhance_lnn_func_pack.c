@@ -2066,3 +2066,15 @@ int32_t AuthMetaOpenConnWithOtherOsTypePacked(const AuthConnInfo *info, const ch
     }
     return pfnLnnEnhanceFuncList->authMetaOpenConnWithOtherOsType(info, networkId, requestId, callback);
 }
+
+int32_t LnnGetAllDevicesUdidPacked(bool isCloud, char (**udidList)[UDID_BUF_LEN], uint32_t *count)
+{
+    LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
+    if (pfnLnnEnhanceFuncList == NULL) {
+        return SOFTBUS_NOT_IMPLEMENT;
+    }
+    if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnGetAllDevicesUdid) != SOFTBUS_OK) {
+        return SOFTBUS_NOT_IMPLEMENT;
+    }
+    return pfnLnnEnhanceFuncList->lnnGetAllDevicesUdid(isCloud, udidList, count);
+}

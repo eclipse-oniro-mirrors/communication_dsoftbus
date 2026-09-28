@@ -141,6 +141,7 @@ typedef void (*ClearMetaNodeRequestByPidFunc)(const char *pkgName, int32_t pid);
 typedef bool (*IsSupportMcuFeatureFunc)(void);
 typedef void (*LnnSendDeviceStateToMcuFunc)(void *para);
 typedef int32_t (*LnnInitMcuFunc)(void);
+typedef int32_t (*LnnGetAllDevicesUdidFunc)(bool isCloud, char (**udidList)[UDID_BUF_LEN], uint32_t *count);
 
 /* lnn_cipherkey_manager.h */
 typedef int32_t (*LnnInitCipherKeyManagerFunc)(void);
@@ -496,6 +497,7 @@ typedef struct TagLnnEnhanceFuncList {
     LnnLoadLocalUserInfoFunc lnnLoadLocalUserInfo;
     LnnSaveRemoteUserInfoFunc lnnSaveRemoteUserInfo;
     LnnLoadRemoteUserInfoFunc lnnLoadRemoteUserInfo;
+    LnnGetAllDevicesUdidFunc lnnGetAllDevicesUdid;
     // bus_center
     LnnRegisterPushListenerFunc lnnRegisterPushListener;
     LnnSaveDeviceDataFunc lnnSaveDeviceData;
