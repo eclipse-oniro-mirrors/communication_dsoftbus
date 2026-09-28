@@ -2341,33 +2341,8 @@ void TransBrProxyRemoveObject(int32_t pid)
     }
 }
 
-void UninstallHandler(const char *bundleName, int32_t appIndex, int32_t userId)
+static void DeleteServerByAppIndexAndUserId(int32_t appIndex, int32_t userId)
 {
-    (void)bundleName;
-    if (g_proxyList == NULL) {
-        TRANS_LOGW(TRANS_SVC, "[br_proxy] proxy list not init!");
-        return;
-    }
-    if (SoftBusMutexLock(&(g_proxyList->lock)) != SOFTBUS_OK) {
-        TRANS_LOGE(TRANS_SVC, "[br_proxy] lock failed");
-        return;
-    }
-    BrProxyInfo *nodeInfo = NULL;
-    LIST_FOR_EACH_ENTRY(nodeInfo, &(g_proxyList->list), BrProxyInfo, node) {
-        if (nodeInfo->appIndex != appIndex || nodeInfo->userId != userId) {
-            continue;
-        }
-        if (nodeInfo->channel.close != NULL) {
-            nodeInfo->channel.close(&nodeInfo->channel, true);
-            TRANS_LOGI(TRANS_SVC, "[br_proxy] close channel, uinstall appIndex=%{public}d, userId=%{public}d", appIndex,
-                userId);
-        } else {
-            TRANS_LOGW(
-                TRANS_SVC, "[br_proxy] close func is null, appIndex=%{public}d, userId=%{public}d", appIndex, userId);
-        }
-    }
-    (void)SoftBusMutexUnlock(&(g_proxyList->lock));
-
     if (g_serverList == NULL) {
         TRANS_LOGD(TRANS_SVC, "[br_proxy] not init");
         return;
@@ -2390,6 +2365,44 @@ void UninstallHandler(const char *bundleName, int32_t appIndex, int32_t userId)
             g_serverList->cnt, appIndex, userId);
     }
     (void)SoftBusMutexUnlock(&(g_serverList->lock));
+}
+
+static void DisableProxyByAppIndexAndUserId(int32_t appIndex, int32_t userId)
+{
+    if (g_proxyList == NULL) {
+        TRANS_LOGW(TRANS_SVC, "[br_proxy] proxy list not init!");
+        return;
+    }
+    if (SoftBusMutexLock(&(g_proxyList->lock)) != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_SVC, "[br_proxy] lock failed");
+        return;
+    }
+    BrProxyInfo *nodeInfo = NULL;
+    LIST_FOR_EACH_ENTRY(nodeInfo, &(g_proxyList->list), BrProxyInfo, node) {
+        if (nodeInfo->appIndex != appIndex || nodeInfo->userId != userId) {
+            continue;
+        }
+        if (nodeInfo->channel.close != NULL) {
+            nodeInfo->channel.close(&nodeInfo->channel, true);
+            TRANS_LOGI(TRANS_SVC, "[br_proxy] close channel, uinstall appIndex=%{public}d, userId=%{public}d", appIndex,
+                userId);
+        } else {
+            TRANS_LOGW(
+                TRANS_SVC, "[br_proxy] close func is null, appIndex=%{public}d, userId=%{public}d", appIndex, userId);
+        }
+        nodeInfo->isConnected = IS_DISCONNECTED;
+        nodeInfo->isEnable = false;
+        nodeInfo->isLastConnect = false;
+    }
+    (void)SoftBusMutexUnlock(&(g_proxyList->lock));
+}
+
+void UninstallHandler(const char *bundleName, int32_t appIndex, int32_t userId)
+{
+    (void)bundleName;
+    DisableProxyByAppIndexAndUserId(appIndex, userId);
+    DeleteServerByAppIndexAndUserId(appIndex, userId);
+    TransBrProxyStorageClear(TransBrProxyStorageGetInstance());
 }
 
 int32_t BtPermissionChange(int32_t state, const char *pkgName, int32_t pid)
