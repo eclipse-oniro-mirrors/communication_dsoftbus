@@ -20,6 +20,7 @@
 #include "disc_log.h"
 #include "disc_nstackx_adapter.h"
 #include "securec.h"
+#include "softbus_adapter_mem.h"
 #include "softbus_error_code.h"
 #include "softbus_utils.h"
 
