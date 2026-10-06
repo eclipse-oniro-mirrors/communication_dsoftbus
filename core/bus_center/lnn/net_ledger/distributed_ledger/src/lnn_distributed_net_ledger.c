@@ -721,7 +721,7 @@ static void CheckUserIdCheckSumChange(NodeInfo *oldInfo, const NodeInfo *newInfo
         return;
     }
     if (userIdCheckSum == 0) {
-        LNN_LOGW(LNN_LEDGER, "useridchecksum all zero");
+        LNN_LOGD(LNN_LEDGER, "useridchecksum all zero");
         return;
     }
     bool isChange = false;

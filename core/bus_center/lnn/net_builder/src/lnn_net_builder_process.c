@@ -864,7 +864,7 @@ void NetBuilderMessageHandler(SoftBusMessage *msg)
         LNN_LOGE(LNN_BUILDER, "msg is null in net builder handler");
         return;
     }
-    LNN_LOGI(LNN_BUILDER, "net builder process msg=%{public}d", msg->what);
+    LNN_LOGD(LNN_BUILDER, "net builder process msg=%{public}d", msg->what);
     if (msg->what >= MSG_TYPE_BUILD_MAX) {
         LNN_LOGE(LNN_BUILDER, "invalid msg type");
         return;

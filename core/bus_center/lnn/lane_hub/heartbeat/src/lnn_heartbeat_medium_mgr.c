@@ -1082,7 +1082,7 @@ static void CheckUserIdCheckSumChange(HbRespData *hbResp, NodeInfo *nodeInfo)
         return;
     }
     if (userIdCheckSum == 0) {
-        LNN_LOGW(LNN_HEART_BEAT, "useridchecksum all zero");
+        LNN_LOGD(LNN_HEART_BEAT, "useridchecksum all zero");
         return;
     }
     bool isChange = false;
@@ -1175,7 +1175,7 @@ static bool IsNeedTriggerSparkGroup(const NodeInfo *remoteInfo, LnnHeartbeatRecv
         return false;
     }
     if (QueryControlPlaneNodeValidPacked(remoteInfo->networkId) == SOFTBUS_OK) {
-        LNN_LOGW(LNN_HEART_BEAT, "target node has exit spark group, networkId=%{public}s",
+        LNN_LOGD(LNN_HEART_BEAT, "target node has exit spark group, networkId=%{public}s",
             AnonymizeWrapper(anonyNetworkId));
         AnonymizeFree(anonyNetworkId);
         return false;
@@ -1430,7 +1430,7 @@ static int32_t HbMediumMgrRecvHigherWeight(
     Anonymize(udidHash, &anonyUdid);
     char *anonyMasterUdid = NULL;
     Anonymize(masterUdid, &anonyMasterUdid);
-    LNN_LOGI(LNN_HEART_BEAT, "recv higher weight udidHash=%{public}s, weight=%{public}d, masterUdid=%{public}s",
+    LNN_LOGD(LNN_HEART_BEAT, "recv higher weight udidHash=%{public}s, weight=%{public}d, masterUdid=%{public}s",
         AnonymizeWrapper(anonyUdid), weight, AnonymizeWrapper(anonyMasterUdid));
     AnonymizeFree(anonyUdid);
     AnonymizeFree(anonyMasterUdid);

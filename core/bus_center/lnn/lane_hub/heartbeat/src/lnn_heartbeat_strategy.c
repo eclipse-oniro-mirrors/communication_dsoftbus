@@ -632,7 +632,7 @@ static int32_t OtherHeartbeatSplit(
 static int32_t SendEachSeparately(LnnHeartbeatFsm *hbFsm, LnnProcessSendOnceMsgPara *msgPara, const GearMode *mode,
     LnnHeartbeatType registedHbType, bool isRelayV0)
 {
-    LNN_LOGI(LNN_HEART_BEAT, "hbType=%{public}d, isRelay=%{public}d", registedHbType, msgPara->isRelay);
+    LNN_LOGD(LNN_HEART_BEAT, "hbType=%{public}d, isRelay=%{public}d", registedHbType, msgPara->isRelay);
     bool wakeupFlag = mode != NULL ? mode->wakeupFlag : false;
 
 #ifdef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
@@ -760,7 +760,7 @@ static int32_t ProcessSendOnceStrategy(LnnHeartbeatFsm *hbFsm, LnnProcessSendOnc
     bool isUserSwitch = (strlen(msgPara->callerId) != 0 && strcmp(msgPara->callerId, HB_USER_SWITCH_CALLER_ID) == 0) ?
         true : false;
     if (!isUserSwitch && !isRemoved) {
-        LNN_LOGW(LNN_HEART_BEAT,
+        LNN_LOGD(LNN_HEART_BEAT,
             "HB send once is beginning, hbType=%{public}d, wakeupFlag=%{public}d, isRelay=%{public}d,"
             "isMsdpRange=%{public}d", msgPara->hbType, wakeupFlag, msgPara->isRelay, msgPara->isMsdpRange);
         return SOFTBUS_OK;
