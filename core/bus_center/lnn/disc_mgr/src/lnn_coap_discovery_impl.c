@@ -98,13 +98,7 @@ static void DeviceFound(const DeviceInfo *device, const InnerDeviceInfoAddtions 
     LNN_LOGI(LNN_BUILDER, "DeviceFound devName=%{public}s, devId=%{public}s, devType=%{public}03X, port=%{public}u",
         AnonymizeWrapper(anonyDevName), AnonymizeWrapper(anonyDevId), device->devType, device->addr[0].info.ip.port);
     AnonymizeFree(anonyDevName);
-    if (!AuthIsPotentialTrusted(device, true)) {
-        LNN_LOGW(LNN_BUILDER, "discovery device is not potential trusted, devId=%{public}s, "
-            "accountHash=%{public}02X%{public}02X", AnonymizeWrapper(anonyDevId),
-            device->accountHash[0], device->accountHash[1]);
-        AnonymizeFree(anonyDevId);
-        return;
-    }
+
     AnonymizeFree(anonyDevId);
     if (LnnCheckDiscoveryDeviceInfo(device) != SOFTBUS_OK) {
         LNN_LOGE(LNN_BUILDER, "get invalid device para");

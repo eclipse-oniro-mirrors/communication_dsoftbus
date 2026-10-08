@@ -548,7 +548,9 @@ static void UpdateDpAclSKId(AuthFsm *authFsm)
         IsSupportFeatureByCapaBit(info->nodeInfo.authCapacity, BIT_SUPPORT_USERKEY_NEGO);
     AUTH_LOGI(AUTH_FSM, "judge insert user key aclState=%{public}d, authCapacity=%{public}d, userId=%{public}d",
         info->nodeInfo.aclState, info->nodeInfo.authCapacity, info->nodeInfo.localUserId);
-    if (info->authVersion <= AUTH_VERSION_V2) {
+    if (info->nodeInfo.aclState == ACL_CAN_WRITE_RELATED_APP) {
+        UpdateDpRelatedAppAcl(aclParams.deviceId, aclParams.peerUserId, info->credId);
+    } else if (info->authVersion <= AUTH_VERSION_V2) {
         UpdateDpSameAccount(&aclParams, sessionKey, isNeedUpdateDk, info->nodeInfo.aclState);
     } else {
         UpdateDpSameAccountWithoutUserKey(&aclParams, info->nodeInfo.aclState);

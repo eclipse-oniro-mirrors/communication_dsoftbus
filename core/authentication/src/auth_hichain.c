@@ -23,6 +23,7 @@
 #include "auth_identity_service_adapter.h"
 #include "auth_log.h"
 #include "auth_session_fsm.h"
+#include "cJSON.h"
 #include "bus_center_manager.h"
 #include "device_auth.h"
 #include "lnn_async_callback_utils.h"
@@ -53,6 +54,8 @@
 #define ERRCODE_SHIFT_12BIT        12
 #define ERRCODE_SHIFT_8BIT         8
 #define SHORT_UDID_HASH_LEN        8
+
+#define APP_AUTHTYPE 4
 
 typedef struct {
     char groupId[GROUPID_BUF_LEN];
@@ -150,11 +153,20 @@ static void DfxRecordLnnEndHichainEnd(int64_t authSeq, int32_t reason)
 
 static void OnFinish(int64_t authSeq, int operationCode, const char *returnData)
 {
-    (void)returnData;
     AclWriteState aclState = (operationCode == AUTH_FORM_IDENTICAL_ACCOUNT ? ACL_CAN_WRITE : ACL_NOT_WRITE);
     DfxRecordLnnEndHichainEnd(authSeq, SOFTBUS_OK);
     AUTH_LOGI(AUTH_HICHAIN, "hichain OnFinish: operationCode=%{public}d, authSeq=%{public}" PRId64,
         operationCode, authSeq);
+    if (operationCode == AUTH_FORM_IDENTICAL_ACCOUNT && returnData != NULL) {
+        cJSON *json = cJSON_Parse(returnData);
+        if (json != NULL) {
+            cJSON *authTypeJson = cJSON_GetObjectItem(json, "authType");
+            if (authTypeJson != NULL && cJSON_IsNumber(authTypeJson) && authTypeJson->valueint == APP_AUTHTYPE) {
+                aclState = ACL_CAN_WRITE_RELATED_APP;
+            }
+            cJSON_Delete(json);
+        }
+    }
     (void)AuthSessionHandleAuthFinish(authSeq, aclState);
 }
 

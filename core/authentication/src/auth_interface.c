@@ -728,7 +728,6 @@ bool AuthIsPotentialTrusted(const DeviceInfo *device, bool isOnlyPointToPoint)
         AUTH_LOGI(AUTH_HICHAIN, "device is potential trusted, continue verify progress");
         return true;
     }
-
     return false;
 }
 
