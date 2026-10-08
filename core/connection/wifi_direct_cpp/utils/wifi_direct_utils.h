@@ -69,8 +69,6 @@ public:
     static std::string MacArrayToString(const std::vector<uint8_t> &macArray);
     static std::string MacArrayToString(const uint8_t *mac, int size);
     static std::vector<uint8_t> GetInterfaceMacAddr(const std::string &interface);
-    static std::string GetInterfaceIpv6Addr(const std::string &name);
-
     static std::vector<Ipv4Info> GetLocalIpv4Infos();
 
     static int CompareIgnoreCase(const std::string &left, const std::string &right);

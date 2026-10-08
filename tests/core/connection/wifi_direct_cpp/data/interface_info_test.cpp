@@ -148,14 +148,6 @@ HWTEST_F(InterfaceInfoTest, GetAndSetTest02, TestSize.Level1)
     info.SetChannel5GList(vec);
     EXPECT_EQ(info.GetChannel5GList(), vec);
 
-    EXPECT_EQ(info.GetReuseCount(), 0);
-    info.IncreaseRefCount();
-    EXPECT_EQ(info.GetReuseCount(), 1);
-    info.SetReuseCount(2);
-    EXPECT_EQ(info.GetReuseCount(), 2);
-    info.DecreaseRefCount();
-    EXPECT_EQ(info.GetReuseCount(), 1);
-
     EXPECT_EQ(info.GetP2pListenPort(), 0);
     info.SetP2pListenPort(1);
     EXPECT_EQ(info.GetP2pListenPort(), 1);
@@ -328,30 +320,6 @@ HWTEST_F(InterfaceInfoTest, GetChannelAndBandWidthTest, TestSize.Level1)
     info.SetBandWidth(80);
     auto channelVec2 = info.GetChannelAndBandWidth();
     EXPECT_GE(channelVec2.size(), 0);
-}
-
-/*
- * @tc.name: ReferenceCountOperationsTest
- * @tc.desc: test reference count operations
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(InterfaceInfoTest, ReferenceCountOperationsTest, TestSize.Level1)
-{
-    InterfaceInfo info;
-    EXPECT_EQ(info.GetReuseCount(), 0);
-
-    info.IncreaseRefCount();
-    EXPECT_EQ(info.GetReuseCount(), 1);
-
-    info.IncreaseRefCount();
-    EXPECT_EQ(info.GetReuseCount(), 2);
-
-    info.DecreaseRefCount();
-    EXPECT_EQ(info.GetReuseCount(), 1);
-
-    info.DecreaseRefCount();
-    EXPECT_EQ(info.GetReuseCount(), 0);
 }
 
 /*

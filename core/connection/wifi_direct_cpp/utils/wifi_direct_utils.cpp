@@ -385,28 +385,6 @@ std::vector<uint8_t> WifiDirectUtils::GetInterfaceMacAddr(const std::string &int
     return macArray;
 }
 
-std::string WifiDirectUtils::GetInterfaceIpv6Addr(const std::string &name)
-{
-    struct ifaddrs *allAddr = nullptr;
-    auto ret = getifaddrs(&allAddr);
-    CONN_CHECK_AND_RETURN_RET_LOGE(ret == 0, "", CONN_WIFI_DIRECT,
-        "getifaddrs fail, ret=%{public}d, errno=%{public}d(%{public}s)", ret, errno, strerror(errno));
-
-    for (struct ifaddrs *ifa = allAddr; ifa != nullptr; ifa = ifa->ifa_next) {
-        if (ifa->ifa_addr == nullptr || ifa->ifa_addr->sa_family != AF_INET6 || ifa->ifa_netmask == nullptr ||
-            strcmp(ifa->ifa_name, name.c_str()) != 0) {
-            continue;
-        }
-        char ip[IP_LEN] {};
-        auto *addr = reinterpret_cast<struct sockaddr_in6 *>(ifa->ifa_addr);
-        inet_ntop(AF_INET6, &addr->sin6_addr.s6_addr, ip, sizeof(ip));
-        return ip;
-    }
-
-    freeifaddrs(allAddr);
-    return "";
-}
-
 std::vector<Ipv4Info> WifiDirectUtils::GetLocalIpv4Infos()
 {
     std::vector<Ipv4Info> ipv4Infos;
