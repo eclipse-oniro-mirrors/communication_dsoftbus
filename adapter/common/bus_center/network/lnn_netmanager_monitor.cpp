@@ -125,11 +125,11 @@ int32_t NetInterfaceStateMonitor::OnInterfaceLinkStateChanged(const std::string 
 int32_t NetInterfaceStateMonitor::OnInterfaceAddressUpdated(
     const std::string &addr, const std::string &ifName, int32_t flags, int32_t scope)
 {
-    char *anonyAddr = nullptr;
-    Anonymize(addr.c_str(), &anonyAddr);
-    LNN_LOGI(LNN_BUILDER, "ifName=%{public}s, addr=%{public}s", ifName.c_str(), AnonymizeWrapper(anonyAddr));
-    AnonymizeFree(anonyAddr);
     if (((uint32_t)flags & IFA_F_TENTATIVE) == 0 && addr.find("fe80") != std::string::npos) {
+        char *anonyAddr = nullptr;
+        Anonymize(addr.c_str(), &anonyAddr);
+        LNN_LOGI(LNN_BUILDER, "ifName=%{public}s, addr=%{public}s", ifName.c_str(), AnonymizeWrapper(anonyAddr));
+        AnonymizeFree(anonyAddr);
         LnnNotifyNetlinkStateChangeEvent(SOFTBUS_NETMANAGER_IFNAME_IPV6_UPDATED, ifName.c_str());
         return SOFTBUS_OK;
     }

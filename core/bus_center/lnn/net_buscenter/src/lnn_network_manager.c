@@ -1044,7 +1044,7 @@ bool LnnIsAutoNetWorkingEnabled(void)
         return true;
     }
     bool isConstraint = LnnIsOsAccountConstraint();
-    LNN_LOGI(LNN_BUILDER,
+    LNN_LOGD(LNN_BUILDER,
         "wifi condition state:config=%{public}d, background=%{public}d, nightMode=%{public}d, OOBEEnd=%{public}d, "
         "unlock=%{public}d, init check=%{public}d, DeviceRisk=%{public}d, Constraint=%{public}d",
         isConfigEnabled, g_backgroundState == SOFTBUS_USER_BACKGROUND, g_isNightMode, g_isOOBEEnd, g_isUnLock,

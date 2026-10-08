@@ -1033,7 +1033,7 @@ static bool IsRepeatDeviceId(NodeInfo *info)
         return false;
     }
     if (strcmp(info->deviceInfo.deviceUdid, oldInfo.deviceInfo.deviceUdid) == 0) {
-        LNN_LOGE(LNN_BUILDER, "same device");
+        LNN_LOGD(LNN_BUILDER, "same device");
         return false;
     }
     if (!LnnIsNodeOnline(&oldInfo)) {
@@ -1052,7 +1052,7 @@ static bool IsRepeatDeviceId(NodeInfo *info)
 static bool NeedUpdateRawEnhanceP2p(LnnConnectionFsm *connFsm)
 {
     if (connFsm->connInfo.addr.type != CONNECTION_ADDR_SESSION_WITH_KEY) {
-        LNN_LOGI(LNN_BUILDER, "addr type not session wiht key, skip");
+        LNN_LOGD(LNN_BUILDER, "addr type not session wiht key, skip");
         return false;
     }
     bool needUpdateAuthManager = false;
@@ -1300,11 +1300,10 @@ static int32_t LnnRecoveryBroadcastKey()
             LNN_LOGE(LNN_BUILDER, "set sparkCheck fail");
             break;
         }
-        LNN_LOGI(LNN_BUILDER, "recovery broadcastKey success!");
         ret = SOFTBUS_OK;
     } while (0);
     (void)memset_s(&broadcastKey, sizeof(BroadcastCipherKey), 0, sizeof(BroadcastCipherKey));
-    LNN_LOGI(LNN_BUILDER, "recovery broadcastKey success!");
+    LNN_LOGD(LNN_BUILDER, "recovery broadcastKey success!");
     return ret;
 }
 

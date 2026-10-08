@@ -800,7 +800,7 @@ static void TryAsMasterNodeNextLoop(FsmStateMachine *fsm)
         LNN_LOGE(LNN_HEART_BEAT, "try as master node post msg fail");
         return;
     }
-    LNN_LOGI(LNN_HEART_BEAT, "try as master node in delay time. delayMillis=%{public}" PRIu64 " msec", delayMillis);
+    LNN_LOGD(LNN_HEART_BEAT, "try as master node in delay time. delayMillis=%{public}" PRIu64 " msec", delayMillis);
 }
 
 static int32_t OnTransHbFsmState(FsmStateMachine *fsm, int32_t msgType, void *para)
