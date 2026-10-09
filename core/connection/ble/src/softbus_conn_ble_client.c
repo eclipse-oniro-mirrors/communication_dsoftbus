@@ -441,7 +441,7 @@ static void SearchedMsgHandler(const CommonStatusContext *ctx)
         ret = GattcGetServiceAndRegisterNotification(connection, ctx);
     } while (false);
 
-    if (ret != SOFTBUS_OK) {
+    if (ret != SOFTBUS_OK && !connection->isBasicInfoExchange) {
         g_clientEventListener.onClientFailed(connection->connectionId, ret);
     }
     ConnBleReturnConnection(&connection);
@@ -800,11 +800,12 @@ static void DisconnectedMsgHandler(const CommonStatusContext *ctx)
             break;
         }
         state = connection->state;
+        isBasicInfoExchange = connection->isBasicInfoExchange;
         connection->state = BLE_CONNECTION_STATE_CLOSED;
         (void)SoftBusMutexUnlock(&connection->lock);
     } while (false);
     ConnBleReturnConnection(&connection);
-    if (state < BLE_CONNECTION_STATE_EXCHANGED_BASIC_INFO) {
+    if (state < BLE_CONNECTION_STATE_EXCHANGED_BASIC_INFO && !isBasicInfoExchange) {
         g_clientEventListener.onClientFailed(connectionId, SOFTBUS_CONN_BLE_UNDERLAY_CLIENT_CONNECT_FAIL);
     } else {
         g_clientEventListener.onClientConnectionClosed(connectionId, rc);
