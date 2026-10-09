@@ -440,9 +440,8 @@ static void SearchedMsgHandler(const CommonStatusContext *ctx)
         }
         ret = GattcGetServiceAndRegisterNotification(connection, ctx);
     } while (false);
-    ret = SoftBusMutexLock(&connection->lock);
-    if (ret != SOFTBUS_OK) {
-        CONN_LOGE(CONN_BLE, "lock fail, connId=%{public}u, err=%{public}d", connection->connectionId, ret);
+    if (SoftBusMutexLock(&connection->lock) != SOFTBUS_OK) {
+        CONN_LOGE(CONN_BLE, "lock fail, connId=%{public}u", connection->connectionId);
         ConnBleReturnConnection(&connection);
         return;
     }
