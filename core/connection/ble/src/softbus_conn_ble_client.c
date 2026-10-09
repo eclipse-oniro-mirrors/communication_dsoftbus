@@ -440,8 +440,15 @@ static void SearchedMsgHandler(const CommonStatusContext *ctx)
         }
         ret = GattcGetServiceAndRegisterNotification(connection, ctx);
     } while (false);
-
-    if (ret != SOFTBUS_OK && !connection->isBasicInfoExchange) {
+    ret = SoftBusMutexLock(&connection->lock);
+    if (ret != SOFTBUS_OK) {
+        CONN_LOGE(CONN_BLE, "lock fail, connId=%{public}u, err=%{public}d", connection->connectionId, ret);
+        ConnBleReturnConnection(&connection);
+        return;
+    }
+    bool isBasicInfoExchange = connection->isBasicInfoExchange;
+    (void)SoftBusMutexUnlock(&connection->lock);
+    if (ret != SOFTBUS_OK && !isBasicInfoExchange) {
         g_clientEventListener.onClientFailed(connection->connectionId, ret);
     }
     ConnBleReturnConnection(&connection);
