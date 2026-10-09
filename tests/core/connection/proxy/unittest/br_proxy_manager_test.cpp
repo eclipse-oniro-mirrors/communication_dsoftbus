@@ -533,6 +533,10 @@ HWTEST_F(BrProxyManagerTest, BrProxyManagerTest008, TestSize.Level1)
     EXPECT_CALL(mock, Read).WillRepeatedly(Return(-1));
     EXPECT_CALL(mock, IsPairedDevice).WillRepeatedly(ProxyChannelMock::ActionOfIsPairedDevice);
 
+    ProxyChannelMock::InjectBtStateChanged(0, SOFTBUS_BR_STATE_TURN_OFF);
+    SoftBusSleepMs(500);
+    ResetGlobalVariables();
+
     ConstructProxyChannelRequestInfo();
     ProxyChannelMock::InjectBtStateChanged(0, SOFTBUS_BLE_STATE_TURN_OFF);
     SoftBusSleepMs(1000);
@@ -559,6 +563,10 @@ HWTEST_F(BrProxyManagerTest, BrProxyManagerTest008_1, TestSize.Level1)
     EXPECT_CALL(mock, Connect).WillRepeatedly(Return(-1));
     EXPECT_CALL(mock, Read).WillRepeatedly(Return(-1));
     EXPECT_CALL(mock, IsPairedDevice).WillRepeatedly(ProxyChannelMock::ActionOfIsPairedDevice);
+
+    ProxyChannelMock::InjectBtStateChanged(0, SOFTBUS_BR_STATE_TURN_OFF);
+    SoftBusSleepMs(500);
+    ResetGlobalVariables();
 
     ConstructProxyChannelRequestInfo();
     EXPECT_NE(GetBrProxyChannelManager()->proxyChannelRequestInfo, nullptr);
@@ -1900,7 +1908,17 @@ HWTEST_F(BrProxyManagerTest, BrProxyManagerTest056, TestSize.Level1)
     EXPECT_CALL(mock, Read).WillRepeatedly(ProxyChannelMock::ActionOfRead);
     EXPECT_CALL(mock, IsPairedDevice).WillRepeatedly(Return(true));
 
-    int32_t ret = ConstructParamAndOpenProxyChannel(1, CONNECT_TIMEOUT);
+    ProxyChannelParam openParam = {
+        .brMac = "11:22:33:44:55:66",
+        .requestId = 1,
+        .timeoutMs = CONNECT_TIMEOUT,
+        .uuid = "0000FEEA-0000-1000-8000-00805F9B34FB",
+    };
+    OpenProxyChannelCallback openCallback = {
+        .onOpenFail = TestOnOpenFail,
+        .onOpenSuccess = TestOnOpenSuccess,
+    };
+    int32_t ret = GetProxyChannelManager()->openProxyChannel(&openParam, &openCallback);
     EXPECT_EQ(ret, SOFTBUS_OK);
     SoftBusSleepMs(1000);
     ASSERT_NE(g_channelId, 0);
@@ -1913,7 +1931,13 @@ HWTEST_F(BrProxyManagerTest, BrProxyManagerTest056, TestSize.Level1)
         .onOpenSuccess = TestOnOpenSuccess,
     };
     // refresh closes the existing channel and posts a reconnect with the new callback
-    g_channel->refresh(g_channel, 9999, &callback);
+    ProxyChannelParam refreshParam = {
+        .brMac = "11:22:33:44:55:66",
+        .requestId = 9999,
+        .timeoutMs = CONNECT_TIMEOUT,
+        .uuid = "0000FEEA-0000-1000-8000-00805F9B34FB",
+    };
+    GetProxyChannelManager()->refreshProxyChannel(&refreshParam, &callback);
     SoftBusSleepMs(3000);
     // refresh triggers a close -> disconnect notification, and a reconnect -> new channel
     EXPECT_GE(g_disconnectReason.size(), 1);

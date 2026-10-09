@@ -69,8 +69,6 @@ static FarFieldProxyManagerContext g_farFieldManager = {
     .listener = {0},
 };
 
-static OpenProxyChannelCallback g_refreshCallback = {0};
-
 typedef struct {
     char brMac[BT_MAC_LEN];
     char uuid[UUID_STRING_LEN];
@@ -256,7 +254,6 @@ static void StateMachineEventHandler(int32_t callId, void *arg)
         return;
     }
 
-    OpenProxyChannelCallback eventCallback = event->callback;
     FarFieldDeviceConnection *conn = (FarFieldDeviceConnection *)SoftBusRcGetCommon(
         &g_farFieldManager.connectionList, FarFieldBrMacMatcher, &device);
 
@@ -267,7 +264,6 @@ static void StateMachineEventHandler(int32_t callId, void *arg)
     if (eventType == STATE_EVENT_REFRESH) {
         GetBrProxyChannelManager()->updateDevInfoReqIdUnsafe(device.brMac, eventRequestId);
         conn->channel.requestId = eventRequestId;
-        g_refreshCallback = eventCallback;
     }
 
     char anonymizeAddr[BT_MAC_LEN] = {0};
@@ -275,7 +271,7 @@ static void StateMachineEventHandler(int32_t callId, void *arg)
     CONN_LOGI(CONN_PROXY, "conn=%{public}s, event=%{public}d, reason=%{public}d",
               anonymizeAddr, eventType, eventReason);
 
-    StateMachineProcess(conn, eventType, eventReason);
+    (void)StateMachineProcess(conn, eventType, eventReason);
 
     conn->Dereference((SoftBusRcObject **)&conn);
 }
@@ -319,9 +315,13 @@ static int32_t StateMachineProcess(FarFieldDeviceConnection *conn, StateEvent ev
 
     const StateTransition *trans = FindTransition(currentState, event);
     if (trans == NULL) {
+        if (currentState == P2P_CONNECTING && event == STATE_EVENT_REFRESH) {
+            CONN_LOGI(CONN_PROXY, "refresh during connecting, wait for result, addr=%{public}s", anonymizeAddr);
+            return SOFTBUS_OK;
+        }
         CONN_LOGW(CONN_PROXY, "No valid transition: state=%{public}s (%{public}d), event=%{public}d, addr=%{public}s",
                   handler ? handler->name : "Unknown", currentState, event, anonymizeAddr);
-        return SOFTBUS_ERR;
+        return SOFTBUS_INVALID_PARAM;
     }
 
     return ExecuteStateTransition(conn, currentState, trans->nextState, event, reason);
@@ -360,11 +360,7 @@ static int32_t ConnectedOnEnter(FarFieldDeviceConnection *conn, FarFieldProxySta
     CONN_LOGI(CONN_PROXY, "(from=%{public}s), addr=%{public}s",
               GetStateHandler(prevState)->name, anonymizeAddr);
 
-    if (prevState == P2P_REFRESHING && g_refreshCallback.onOpenSuccess != NULL) {
-        g_refreshCallback.onOpenSuccess(conn->channel.requestId, &conn->channel);
-    } else {
-        NotifyFarFieldConnected(conn);
-    }
+    NotifyFarFieldConnected(conn);
     return SOFTBUS_OK;
 }
 
@@ -412,11 +408,8 @@ static int32_t DisconnectedOnEnter(FarFieldDeviceConnection *conn, FarFieldProxy
     ConvertAnonymizeMacAddress(anonymizeAddr, BT_MAC_LEN, conn->device.brMac, BT_MAC_LEN);
     CONN_LOGI(CONN_PROXY, "from state=%{public}s, addr=%{public}s, reason=%{public}d",
               GetStateHandler(prevState)->name, anonymizeAddr, reason);
-    if (prevState == P2P_CONNECTING) {
+    if (prevState == P2P_CONNECTING || prevState == P2P_REFRESHING) {
         NotifyOpenFail(conn->channel.requestId, reason, conn->device.brMac);
-    }
-    if (prevState == P2P_REFRESHING && g_refreshCallback.onOpenSuccess != NULL) {
-        g_refreshCallback.onOpenFail(conn->channel.requestId, reason, conn->device.brMac);
     }
     return SOFTBUS_OK;
 }
@@ -569,7 +562,6 @@ static int32_t ConstructProxyChannel(FarFieldDeviceConnection *conn, uint32_t re
     }
     conn->channel.send = FarFieldProxySend;
     conn->channel.close = FarFieldProxyClose;
-    conn->channel.refresh = FarFieldProxyRefresh;
     char anonymizeAddr[BT_MAC_LEN] = {0};
     ConvertAnonymizeMacAddress(anonymizeAddr, BT_MAC_LEN, conn->device.brMac, BT_MAC_LEN);
     CONN_LOGI(CONN_PROXY, "ProxyChannel initialized for %{public}s, channelId=%{public}u",
@@ -608,22 +600,24 @@ static int32_t FarFieldProxySend(struct ProxyChannel *channel, const uint8_t *da
     return SOFTBUS_OK;
 }
 
-void FarFieldProxyRefresh(struct ProxyChannel *channel, uint32_t newRequestId,
-    const OpenProxyChannelCallback *callback)
+void FarFieldProxyRefreshChannel(FarFieldProxyParam *param)
 {
-    CONN_CHECK_AND_RETURN_LOGE(channel != NULL, CONN_PROXY, "channel is NULL");
-    CONN_CHECK_AND_RETURN_LOGE(callback != NULL, CONN_PROXY, "callback is NULL");
+    CONN_CHECK_AND_RETURN_LOGE(param != NULL, CONN_PROXY, "param is NULL");
+    char anonymizeAddr[BT_MAC_LEN] = {0};
+    ConvertAnonymizeMacAddress(anonymizeAddr, BT_MAC_LEN, param->device.brMac, BT_MAC_LEN);
     FarFieldDeviceConnection *conn = (FarFieldDeviceConnection *)SoftBusRcGetCommon(
-        &g_farFieldManager.connectionList, FarFieldConnectionMatcherById, &channel->channelId);
-    CONN_CHECK_AND_RETURN_LOGE(conn != NULL, CONN_PROXY,
-        "Connection not found, channelId=%{public}u", channel->channelId);
-    CONN_LOGI(CONN_PROXY, "channelId=%{public}u, newRequestId=%{public}u", channel->channelId, newRequestId);
+        &g_farFieldManager.connectionList, FarFieldBrMacMatcher, param->device.brMac);
+    if (conn == NULL) {
+        CONN_LOGI(CONN_PROXY, "connection not found, open new one, brMac=%{public}s", anonymizeAddr);
+        OpenFarFieldProxyChannel(param);
+        return;
+    }
+    CONN_LOGI(CONN_PROXY, "brMac=%{public}s, requestId=%{public}u", anonymizeAddr, param->requestId);
     StateMachineEvent eventData = {
         .event = STATE_EVENT_REFRESH,
-        .requestId = newRequestId,
-        .callback = *callback,
+        .requestId = param->requestId,
     };
-    SubmitStateMachineEvent(&conn->device, &eventData);
+    (void)SubmitStateMachineEvent(&conn->device, &eventData);
     conn->Dereference((SoftBusRcObject **)&conn);
 }
 
@@ -694,7 +688,7 @@ static void OnP2PStateChanged(const P2PDeviceInfo *device, P2PState state, int32
         .event = event,
         .reason = reason,
     };
-    SubmitStateMachineEvent(device, &eventData);
+    (void)SubmitStateMachineEvent(device, &eventData);
 }
 
 static void OnRemoteEvent(const P2PDeviceInfo *device, RemoteEvent event)
@@ -709,7 +703,7 @@ static void OnRemoteEvent(const P2PDeviceInfo *device, RemoteEvent event)
     CONN_CHECK_AND_RETURN_LOGE(stateEvent != STATE_EVENT_INVALID, CONN_PROXY, "ignore state");
 
     StateMachineEvent eventData = { .event = stateEvent };
-    SubmitStateMachineEvent(device, &eventData);
+    (void)SubmitStateMachineEvent(device, &eventData);
 }
 
 static void OnRecvP2PMsg(const P2PDeviceInfo *device, const uint8_t *msgBody, uint32_t len)
@@ -856,7 +850,7 @@ static void FarFieldConnectTimeoutTask(int32_t callId, void *arg)
     CONN_CHECK_AND_RETURN_LOGE(conn != NULL, CONN_PROXY, "Connection not found for timeout");
     CONN_LOGW(CONN_PROXY, "connect timeout for %{public}s, channelId=%{public}u", anonymizeAddr, conn->channelId);
 
-    StateMachineProcess(conn, STATE_EVENT_TIMEOUT, SOFTBUS_FAR_FIELD_TIMEOUT);
+    (void)StateMachineProcess(conn, STATE_EVENT_TIMEOUT, SOFTBUS_FAR_FIELD_TIMEOUT);
     conn->Dereference((SoftBusRcObject **)&conn);
 }
 

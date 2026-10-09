@@ -172,7 +172,7 @@ static void UnloadFarFieldSo(void)
         return;
     }
     g_adapterContext.refCount--;
-    CONN_LOGI(CONN_PROXY, "so refCount=%{public}d", g_adapterContext.refCount);
+    CONN_LOGD(CONN_PROXY, "so refCount=%{public}d", g_adapterContext.refCount);
     if (g_adapterContext.refCount > 0) {
         return;
     }
@@ -181,7 +181,7 @@ static void UnloadFarFieldSo(void)
         g_adapterContext.deinitProxy = NULL;
         g_adapterContext.isInitialized = false;
     }
-
+    CONN_LOGW(CONN_PROXY, "deinit far field proxy");
     if (g_adapterContext.soHandle != NULL) {
         dlclose(g_adapterContext.soHandle);
         g_adapterContext.soHandle = NULL;
@@ -200,7 +200,7 @@ static int32_t ReferenceSoRefCnt(void)
         return FAR_FIELD_ADAPTER_NOT_INITIALIZED;
     }
     g_adapterContext.refCount++;
-    CONN_LOGI(CONN_PROXY, "so refCount=%{public}d", g_adapterContext.refCount);
+    CONN_LOGD(CONN_PROXY, "so refCount=%{public}d", g_adapterContext.refCount);
     SoftBusMutexUnlock(&g_adapterMutex);
     return SOFTBUS_OK;
 }

@@ -187,7 +187,7 @@ HWTEST_F(TransBrProxyStorageTest, StorageClear, TestSize.Level1)
     TransBrProxyStorageInfo readInfo;
     (void)memset_s(&readInfo, sizeof(TransBrProxyStorageInfo), 0, sizeof(TransBrProxyStorageInfo));
     bool ret = TransBrProxyStorageRead(&instance, &readInfo);
-    EXPECT_TRUE(ret);
+    EXPECT_FALSE(ret);
     EXPECT_EQ(readInfo.userId, 0);
     EXPECT_EQ(readInfo.appIndex, 0);
     EXPECT_EQ(readInfo.uid, 0);

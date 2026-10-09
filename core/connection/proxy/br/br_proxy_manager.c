@@ -14,7 +14,6 @@
  */
 #include "br_proxy_manager.h"
 #include "../proxy_manager.h"
-#include "../far_field/far_field_proxy_manager.h"
 
 #include "securec.h"
 
@@ -103,6 +102,8 @@ static ProxyConnectInfo *GetReconnectDeviceInfoByAddrUnsafe(const char *addr);
 static void AttemptReconnectDevice(char *brAddr);
 static void RemoveProxyChannelByChannelId(uint32_t channelId);
 static ProxyConnectInfo *CopyProxyConnectInfo(ProxyConnectInfo *srcInfo);
+static int32_t CreateProxyConnectInfo(ProxyChannelParam *param, const OpenProxyChannelCallback *callback,
+    ProxyConnectInfo **connectInfo, bool isRealMac, bool isSupportFarField);
 
 static BrProxyListener g_listener = { 0 };
 
@@ -231,28 +232,34 @@ static void ProxyChannelClose(struct ProxyChannel *channel, bool isClearReconnec
     SoftBusSleepMs(WAIT_CLOSE_END_TIME_MS);
 }
 
-static void ProxyChannelRefresh(struct ProxyChannel *channel, uint32_t newRequestId,
+static int32_t BrProxyChannelRefresh(ProxyChannelParam *param, bool isRealMac, bool isSupportFarField,
     const OpenProxyChannelCallback *callback)
 {
-    CONN_CHECK_AND_RETURN_LOGE(channel != NULL, CONN_PROXY, "channel is null");
-    CONN_CHECK_AND_RETURN_LOGE(callback != NULL, CONN_PROXY, "callback is null");
-    FarFieldProxyRefresh(channel, newRequestId, callback);
-    ProxyChannelClose(channel, false);
-    ProxyConnectInfo *connectInfo = (ProxyConnectInfo *)SoftBusCalloc(sizeof(ProxyConnectInfo));
-    CONN_CHECK_AND_RETURN_LOGE(connectInfo != NULL, CONN_PROXY, "calloc connectInfo failed");
-    if (strcpy_s(connectInfo->brHashMac, sizeof(connectInfo->brHashMac), channel->brMac) != EOK) {
-        CONN_LOGE(CONN_PROXY, "cpy brMac failed");
-        SoftBusFree(connectInfo);
-        return;
+    CONN_CHECK_AND_RETURN_RET_LOGE(param != NULL, SOFTBUS_INVALID_PARAM, CONN_PROXY, "param is NULL");
+    CONN_CHECK_AND_RETURN_RET_LOGE(callback != NULL, SOFTBUS_INVALID_PARAM, CONN_PROXY, "callback is NULL");
+    CONN_CHECK_AND_RETURN_RET_LOGE(callback->onOpenSuccess != NULL, SOFTBUS_INVALID_PARAM,
+        CONN_PROXY, "onOpenSuccess is NULL");
+    CONN_CHECK_AND_RETURN_RET_LOGE(callback->onOpenFail != NULL, SOFTBUS_INVALID_PARAM,
+        CONN_PROXY, "onOpenFail is NULL");
+
+    ProxyConnectInfo *connectInfo = NULL;
+    int32_t ret = CreateProxyConnectInfo(param, callback, &connectInfo, isRealMac, isSupportFarField);
+    CONN_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret, CONN_PROXY,
+        "createProxyConnectInfo fail, ret=%{public}d", ret);
+
+    struct ProxyConnection *existing = GetBrProxyChannelManager()->getProxyChannelByAddr(connectInfo->brMac);
+    if (existing != NULL) {
+        ProxyChannelClose(&existing->proxyChannel, false);
+        existing->dereference(existing);
     }
-    connectInfo->result = *callback;
-    connectInfo->requestId = newRequestId;
-    int32_t ret = ConnPostMsgToLooper(&g_proxyChannelAsyncHandler, MSG_RECONNECT_DEVICE,
-        0, 0, connectInfo, 0);
+
+    ret = ConnPostMsgToLooper(&g_proxyChannelAsyncHandler, MSG_RECONNECT_DEVICE, 0, 0, connectInfo, 0);
     if (ret != SOFTBUS_OK) {
         CONN_LOGE(CONN_PROXY, "send msg fail, error=%{public}d", ret);
-        SoftBusFree(connectInfo);
+        DestroyProxyConnectInfo(&connectInfo);
+        return ret;
     }
+    return SOFTBUS_OK;
 }
 
 static struct ProxyConnection *CreateProxyConnection(ProxyConnectInfo *connectInfo)
@@ -266,7 +273,6 @@ static struct ProxyConnection *CreateProxyConnection(ProxyConnectInfo *connectIn
     proxyConnection->socketHandle = BR_INVALID_SOCKET_HANDLE;
     proxyConnection->proxyChannel.send = ProxyChannelSend;
     proxyConnection->proxyChannel.close = ProxyChannelClose;
-    proxyConnection->proxyChannel.refresh = ProxyChannelRefresh;
     proxyConnection->proxyChannel.requestId = connectInfo->requestId;
     int32_t ret = connectInfo->isRealMac ?
         strcpy_s(proxyConnection->proxyChannel.brMac, BT_MAC_MAX_LEN, connectInfo->brMac) :
@@ -1228,21 +1234,6 @@ static void OnProxyBtStateChanged(int listenerId, int state)
     CONN_LOGI(CONN_PROXY, "post bt state change msg, state=%{public}d, ret=%{public}d", state, ret);
 }
 
-static void ReconnectDeviceHandler(ProxyConnectInfo *reconnectInfo)
-{
-    ProxyConnectInfo *connectInfo = GetReconnectDeviceInfoByAddrUnsafe(reconnectInfo->brHashMac);
-    CONN_CHECK_AND_RETURN_LOGE(connectInfo != NULL, CONN_PROXY, "not exist same addr");
-    char anomizeAddress[BT_MAC_LEN] = { 0 };
-    ConvertAnonymizeMacAddress(anomizeAddress, BT_MAC_LEN, connectInfo->brMac, BT_MAC_LEN);
-    CONN_LOGW(CONN_PROXY, "refresh to connect, reqId=%{public}d, brmac=%{public}s",
-              connectInfo->requestId, anomizeAddress);
-
-    connectInfo->result = reconnectInfo->result;
-    connectInfo->requestId = reconnectInfo->requestId;
-    connectInfo->timeoutMs = INNER_RECONNECT_TIMEOUT_MS;
-    OpenProxyChannelHandler(connectInfo);
-}
-
 // Message handler wrapper functions
 static void HandleOpenProxyChannelMsg(SoftBusMessage *msg)
 {
@@ -1314,7 +1305,12 @@ static void HandleReconnectDeviceMsg(SoftBusMessage *msg)
 {
     CONN_CHECK_AND_RETURN_LOGW(msg->obj != NULL, CONN_PROXY, "msg->obj is NULL");
     ProxyConnectInfo *connectInfo = (ProxyConnectInfo *)(msg->obj);
-    ReconnectDeviceHandler(connectInfo);
+    char anomizeAddress[BT_MAC_LEN] = { 0 };
+    ConvertAnonymizeMacAddress(anomizeAddress, BT_MAC_LEN, connectInfo->brMac, BT_MAC_LEN);
+    CONN_LOGW(CONN_PROXY, "refresh to connect, reqId=%{public}d, brmac=%{public}s",
+              connectInfo->requestId, anomizeAddress);
+    connectInfo->timeoutMs = INNER_RECONNECT_TIMEOUT_MS;
+    OpenProxyChannelHandler(connectInfo);
 }
 
 static void HandleAddReconnectDeviceInfoMsg(SoftBusMessage *msg)
@@ -1415,6 +1411,7 @@ static void ClearReconnectDevInfo(struct ProxyChannel *channel)
 
 static BrProxyChannelManager g_proxyChannelManager = {
     .openBrProxyChannel = OpenBrProxyChannel,
+    .refreshBrProxyChannel = BrProxyChannelRefresh,
     .addReconnectDeviceInfo = AddBrReconnectDeviceInfo,
     .registerBrProxyListener = RegisterProxyChannelListener,
 
