@@ -792,7 +792,7 @@ static void DisconnectedMsgHandler(const CommonStatusContext *ctx)
     (void)SoftbusGattcUnRegister(ctx->underlayerHandle);
     int32_t rc = SOFTBUS_OK;
     enum ConnBleConnectionState state = BLE_CONNECTION_STATE_INVALID;
-    bool isBasicInfoExchange = connection->isBasicInfoExchange;
+    bool isBasicInfoExchange = false;
     do {
         int32_t ret = SoftBusMutexLock(&connection->lock);
         if (ret != SOFTBUS_OK) {
@@ -801,6 +801,7 @@ static void DisconnectedMsgHandler(const CommonStatusContext *ctx)
             break;
         }
         state = connection->state;
+        isBasicInfoExchange = connection->isBasicInfoExchange;
         connection->state = BLE_CONNECTION_STATE_CLOSED;
         (void)SoftBusMutexUnlock(&connection->lock);
     } while (false);
