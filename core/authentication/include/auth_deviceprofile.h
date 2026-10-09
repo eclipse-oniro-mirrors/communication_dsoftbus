@@ -100,6 +100,7 @@ void UpdateAssetSessionKeyByAcl(
 bool IsTrustedDeviceFromAccess(const char *peerAccountHash, const char *peerUdid, int32_t peerUserId);
 bool IsExistUkInAclProfile(const char *localUdid, const char *peerUdid);
 int32_t LnnNotifyCommandToDmAuthPassed(const char *peerUdid, int32_t peerUserId, const char *credId);
+void UpdateDpRelatedAppAcl(const char *peerUdid, int32_t peerUserId, const char *credId);
 
 #ifdef __cplusplus
 #if __cplusplus

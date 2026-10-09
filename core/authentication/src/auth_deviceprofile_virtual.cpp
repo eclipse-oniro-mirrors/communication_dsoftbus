@@ -238,5 +238,14 @@ int32_t LnnNotifyCommandToDmAuthPassed(const char *peerUdid, int32_t peerUserId,
     cJSON_free(value);
     return ret;
 }
+
 #endif
+void UpdateDpRelatedAppAcl(const char *peerUdid, int32_t peerUserId, const char *credId)
+{
+    (void)peerUdid;
+    (void)peerUserId;
+    (void)credId;
+}
+
 } // extern "C"
+

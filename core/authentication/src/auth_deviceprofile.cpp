@@ -1535,3 +1535,113 @@ int32_t LnnNotifyCommandToDmAuthPassed(const char *peerUdid, int32_t peerUserId,
     (void)credId;
     return SOFTBUS_NOT_IMPLEMENT;
 }
+
+
+static bool UpdateExistRelatedAppAcl(const std::string &peerUdid, const std::string &localUdid,
+    int32_t localUserId, const std::string &localAccountId, const char *credId)
+{
+    std::vector<OHOS::DistributedDeviceProfile::AccessControlProfile> aclProfiles;
+    int32_t queryRet = DpClient::GetInstance().GetAllAccessControlProfile(aclProfiles);
+    if (queryRet != OHOS::DistributedDeviceProfile::DP_SUCCESS || aclProfiles.empty()) {
+        LNN_LOGI(LNN_STATE, "no existing ACL to update");
+        return false;
+    }
+
+    for (auto &aclProfile : aclProfiles) {
+        if (aclProfile.GetBindType() != static_cast<uint32_t>(
+                OHOS::DistributedDeviceProfile::BindType::POINT_TO_POINT) ||
+            aclProfile.GetTrustDeviceId() != peerUdid) {
+            continue;
+        }
+        if (aclProfile.GetAccesser().GetAccesserUserId() != localUserId ||
+            aclProfile.GetAccesser().GetAccesserTokenId() != 0 ||
+            aclProfile.GetAccessee().GetAccesseeTokenId() != 0) {
+            continue;
+        }
+        std::string existAccesserAccountId = aclProfile.GetAccesser().GetAccesserAccountId();
+        std::string existAccesseeAccountId = aclProfile.GetAccessee().GetAccesseeAccountId();
+        if (existAccesserAccountId != localAccountId || existAccesseeAccountId != "-1") {
+            continue;
+        }
+        aclProfile.SetStatus(static_cast<uint32_t>(OHOS::DistributedDeviceProfile::Status::ACTIVE));
+        if (credId != NULL) {
+            OHOS::DistributedDeviceProfile::Accesser accesser(aclProfile.GetAccesser());
+            accesser.SetAccesserCredentialIdStr(std::string(credId));
+            aclProfile.SetAccesser(accesser);
+            LNN_LOGI(LNN_STATE, "update accesser credentialId=%{public}s", credId);
+        }
+        int32_t ret = DpClient::GetInstance().UpdateAccessControlProfile(aclProfile);
+        return ret == OHOS::DistributedDeviceProfile::DP_SUCCESS;
+    }
+    return false;
+}
+
+
+static void PutRelatedAppAcl(const std::string &peerUdid, const std::string &localUdid,
+    int32_t localUserId, const std::string &localAccountId, const char *credId, int32_t peerUserId)
+{
+    OHOS::DistributedDeviceProfile::AccessControlProfile profile;
+    OHOS::DistributedDeviceProfile::Accesser accesser;
+    OHOS::DistributedDeviceProfile::Accessee accessee;
+
+    accesser.SetAccesserDeviceId(localUdid);
+    accesser.SetAccesserUserId(localUserId);
+    accesser.SetAccesserTokenId(0);
+    accesser.SetAccesserAccountId(localAccountId);
+    if (credId == NULL) {
+        LNN_LOGE(LNN_STATE, "credId is null");
+        return;
+    }
+    accesser.SetAccesserCredentialIdStr(std::string(credId));
+
+    char bundleName[MAX_BUNDLE_NAME_LEN] = { 0 };
+    if (GenerateDsoftbusBundleName(peerUdid.c_str(), localUdid.c_str(), localUserId, bundleName) != SOFTBUS_OK) {
+        LNN_LOGE(LNN_STATE, "generate bundleName fail");
+        return;
+    }
+    accesser.SetAccesserBundleName(std::string(bundleName));
+    accessee.SetAccesseeDeviceId(peerUdid);
+    accessee.SetAccesseeUserId(peerUserId);
+    accessee.SetAccesseeTokenId(0);
+    accessee.SetAccesseeAccountId("-1");
+
+    profile.SetBindType(static_cast<uint32_t>(OHOS::DistributedDeviceProfile::BindType::POINT_TO_POINT));
+    profile.SetDeviceIdType(static_cast<uint32_t>(OHOS::DistributedDeviceProfile::DeviceIdType::UDID));
+    profile.SetStatus(static_cast<uint32_t>(OHOS::DistributedDeviceProfile::Status::ACTIVE));
+    profile.SetAuthenticationType(static_cast<uint32_t>(
+        OHOS::DistributedDeviceProfile::AuthenticationType::PERMANENT));
+    profile.SetBindLevel(static_cast<uint32_t>(OHOS::DistributedDeviceProfile::BindLevel::USER));
+    profile.SetTrustDeviceId(peerUdid);
+    profile.SetAccesser(accesser);
+    profile.SetAccessee(accessee);
+
+    int32_t ret = DpClient::GetInstance().PutAccessControlProfile(profile);
+    if (ret != OHOS::DistributedDeviceProfile::DP_SUCCESS) {
+        LNN_LOGE(LNN_STATE, "PutAccessControlProfile failed, ret=%{public}d", ret);
+        return;
+    }
+    LNN_LOGI(LNN_STATE, "PutAccessControlProfile SUCCESS");
+}
+
+void UpdateDpRelatedAppAcl(const char *peerUdid, int32_t peerUserId, const char *credId)
+{
+    char localUdidBuf[UDID_BUF_LEN] = { 0 };
+    if (LnnGetLocalStrInfo(STRING_KEY_DEV_UDID, localUdidBuf, UDID_BUF_LEN) != SOFTBUS_OK) {
+        LNN_LOGE(LNN_STATE, "get local udid fail");
+        return;
+    }
+    std::string localUdid(localUdidBuf);
+    int32_t localUserId = JudgeDeviceTypeAndGetOsAccountIds();
+
+    OHOS::AccountSA::OhosAccountInfo accountInfo;
+    OHOS::ErrCode accountRet = OHOS::AccountSA::OhosAccountKits::GetInstance().GetOhosAccountInfo(accountInfo);
+    if (accountRet != OHOS::ERR_OK || accountInfo.uid_.empty()) {
+        LNN_LOGE(LNN_STATE, "getOhosAccountInfo fail or uid err, ret=%{public}d", accountRet);
+        return;
+    }
+    std::string localAccountId = accountInfo.uid_;
+    if (UpdateExistRelatedAppAcl(peerUdid, localUdid, localUserId, localAccountId, credId)) {
+        return;
+    }
+    PutRelatedAppAcl(peerUdid, localUdid, localUserId, localAccountId, credId, peerUserId);
+}
