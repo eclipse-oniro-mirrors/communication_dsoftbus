@@ -36,6 +36,7 @@ if (defined(ohos_lite)) {
         "../sdk/taihe:linkEnhance_taihe",
         "../sdk/napi/agent_communication:conversation",
         "../sdk/taihe/agent_communication:conversation_taihe",
+        "../sdk/napi/softbusBase:softbusbase",
       ]
     }
   }
