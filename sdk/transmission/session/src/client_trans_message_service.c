@@ -227,7 +227,7 @@ static int32_t CheckMessageBusinessTypeAndOsType(int32_t sessionId, int32_t chan
         TRANS_MSG, "ClientGetChannelOsTypeBySessionId fail, sessionId=%{public}d", sessionId);
  
     if ((osType == OH_OS_TYPE) && (businessType != BUSINESS_TYPE_MESSAGE) &&
-        (businessType != BUSINESS_TYPE_NOT_CARE) && (channelType == CHANNEL_TYPE_AUTH)) {
+        (businessType != BUSINESS_TYPE_NOT_CARE) && (channelType != CHANNEL_TYPE_AUTH)) {
         TRANS_LOGE(TRANS_MSG, "BusinessType =%{public}d no match, sessionId=%{public}d, osType=%{public}d",
             businessType, sessionId, osType);
         return SOFTBUS_TRANS_BUSINESS_TYPE_NOT_MATCH;
