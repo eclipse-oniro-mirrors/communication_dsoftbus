@@ -102,7 +102,36 @@ HWTEST_F(LnnConversationQueryTest, LNN_GET_TRUSTED_DEVICES_TEST_002, TestSize.Le
     int32_t ret = LnnGetTrustedDevices(&info, nullptr);
     EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
 }
- 
+
+/*
+ * @tc.name: LNN_GET_TRUSTED_DEVICES_TEST_003
+ * @tc.desc: test LnnGetTrustedDevices when no remote devices available
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(LnnConversationQueryTest, LNN_GET_TRUSTED_DEVICES_TEST_003, TestSize.Level1)
+{
+    DeviceNodeInfo *info = nullptr;
+    int32_t nums = 0;
+    int32_t ret = LnnGetTrustedDevices(&info, &nums);
+    EXPECT_NE(SOFTBUS_OK, ret);
+}
+
+/*
+ * @tc.name: LNN_GET_TRUSTED_DEVICES_TEST_004
+ * @tc.desc: test LnnGetTrustedDevices multipe calls should not crash
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(LnnConversationQueryTest, LNN_GET_TRUSTED_DEVICES_TEST_004, TestSize.Level1)
+{
+    for (int32_t i = 0; i < 3; ++i) {
+        DeviceNodeInfo *info = nullptr;
+        int32_t nums = 0;
+        EXPECT_NO_FATAL_FAILURE(LnnGetTrustedDevices(&info, &nums));
+    }
+}
+
 /*
  * @tc.name: LNN_CONVERSATION_REGISTER_LISTENER_TEST_001
  * @tc.desc: test LnnRegisterConversationListener with null info.
@@ -229,5 +258,39 @@ HWTEST_F(LnnConversationQueryTest, ON_RECV_CLOUD_QUERY_INFO_ZERO_LENGTH_TEST, Te
 HWTEST_F(LnnConversationQueryTest, ON_RECV_CLOUD_QUERY_INFO_ALL_NULL_TEST, TestSize.Level1)
 {
     EXPECT_NO_FATAL_FAILURE(OnRecvCloudQueryInfo(nullptr, nullptr, 0));
+}
+
+/*
+ * @tc.name: LNN_GET_TRUSTED_DEVICES_AFTER_INIT_TEST_001
+ * @tc.desc: test LnnGetTrustedDevices filter path with cache fallback.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(LnnConversationQueryTest, LNN_GET_TRUSTED_DEVICES_AFTER_INIT_TEST_001, TestSize.Level1)
+{
+    EXPECT_NO_FATAL_FAILURE(InitConversationQuery());
+    DeviceNodeInfo *info = nullptr;
+    int32_t nums = 0;
+    int32_t ret = LnnGetTrustedDevices(&info, &nums);
+    EXPECT_NE(SOFTBUS_OK, ret);
+    EXPECT_EQ(info, nullptr);
+    EXPECT_NO_FATAL_FAILURE(DeinitConversationQuery());
+}
+
+/*
+ * @tc.name: LNN_GET_TRUSTED_DEVICES_AFTER_INIT_TEST_002
+ * @tc.desc: test LnnGetTrustedDevices called multiple time.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(LnnConversationQueryTest, LNN_GET_TRUSTED_DEVICES_AFTER_INIT_TEST_002, TestSize.Level1)
+{
+    EXPECT_NO_FATAL_FAILURE(InitConversationQuery());
+    for (int32_t i = 0; i < 5; ++i) {
+        DeviceNodeInfo *info = nullptr;
+        int32_t nums = 0;
+        EXPECT_NO_FATAL_FAILURE(LnnGetTrustedDevices(&info, &nums));
+    }
+    EXPECT_NO_FATAL_FAILURE(DeinitConversationQuery());
 }
 } // namespace OHOS

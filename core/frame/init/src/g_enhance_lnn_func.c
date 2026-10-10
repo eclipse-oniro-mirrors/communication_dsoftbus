@@ -299,6 +299,7 @@ void Register6thPartFunc(void *soHandle)
     g_lnnEnhanceFuncList.perceptionSyncCycle = dlsym(soHandle, "PerceptionSyncCycle");
     g_lnnEnhanceFuncList.perceptionEnhanceInit = dlsym(soHandle, "PerceptionEnhanceInit");
     g_lnnEnhanceFuncList.perceptionEnhanceDeinit = dlsym(soHandle, "PerceptionEnhanceDeinit");
+    g_lnnEnhanceFuncList.lnnGetAllDevicesUdid = dlsym(soHandle, "LnnGetAllDevicesUdid");
 }
 
 int32_t LnnRegisterEnhanceFunc(void *soHandle)

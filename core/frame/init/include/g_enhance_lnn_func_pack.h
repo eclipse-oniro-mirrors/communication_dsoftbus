@@ -266,6 +266,7 @@ int32_t PerceptionSyncStatePacked(PerceptionState state);
 int32_t PerceptionSyncCyclePacked(PerceptionType type, uint32_t cycle);
 int32_t PerceptionEnhanceInitPacked(void);
 void PerceptionEnhanceDeinitPacked(void);
+int32_t LnnGetAllDevicesUdidPacked(bool isCloud, char (**udidList)[UDID_BUF_LEN], uint32_t *count);
 
 #ifdef __cplusplus
 }

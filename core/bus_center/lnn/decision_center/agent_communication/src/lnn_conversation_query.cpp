@@ -17,8 +17,10 @@
 
 #include <dlfcn.h>
 #include <future>
+#include <list>
 #include <mutex>
 #include <securec.h>
+#include <string>
 #include <thread>
 
 #include "anonymizer.h"
@@ -202,6 +204,9 @@ typedef struct {
 } AntiReplayEntry;
 static std::vector<AntiReplayEntry> g_antiReplayList;
 static std::mutex g_antiReplayLock;
+
+static std::mutex g_deviceCacheLock;
+static std::list<std::string> g_deviceCache;
 
 static bool IsSameAccount(int64_t accountId)
 {
@@ -1343,6 +1348,82 @@ static bool IsLocalDeviceInfo(const char *udid)
     return false;
 }
 
+static void UpdateDeviceCache(const DeviceNodeInfo *infoArray, int32_t count)
+{
+    std::lock_guard<std::mutex> lock(g_deviceCacheLock);
+    g_deviceCache.clear();
+    int32_t copyCnt = (count > MAX_TRUSTED_DEVICE_NUM) ? MAX_TRUSTED_DEVICE_NUM : count;
+    for (int32_t i = 0; i < copyCnt; ++i) {
+        g_deviceCache.emplace_back(infoArray[i].udid);
+    }
+    LNN_LOGI(LNN_LANE, "update device cache, count=%{public}zu", g_deviceCache.size());
+}
+
+static bool IsDeviceInList(const char *udid, const char (*deviceList)[UDID_BUF_LEN], uint32_t count)
+{
+    for (uint32_t i = 0; i < count; ++i) {
+        if (strcmp(deviceList[i], udid) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static int32_t FilterDevicesByUdid(DeviceNodeInfo *infoArray, int32_t count,
+    const char (*deviceList)[UDID_BUF_LEN], uint32_t deviceCount)
+{
+    int32_t kept = 0;
+    for (int32_t i = 0; i < count; ++i) {
+        if (infoArray[i].nearby) {
+            infoArray[kept++] = infoArray[i];
+            continue;
+        }
+        if (IsDeviceInList(infoArray[i].udid, deviceList, deviceCount)) {
+            infoArray[kept++] = infoArray[i];
+        }
+    }
+    LNN_LOGI(LNN_LANE, "filter device by udid, befor=%{public}d, after=%{public}d", count, kept);
+    return kept;
+}
+
+static bool IsDeviceInCache(const std::string &udid)
+{
+    for (const auto &cached : g_deviceCache) {
+        if (cached == udid) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static int32_t FilterByCache(DeviceNodeInfo *infoArray, int32_t count)
+{
+    std::lock_guard<std::mutex> lock(g_deviceCacheLock);
+    int32_t kept = 0;
+    for (int32_t i = 0; i < count; ++i) {
+        if (infoArray[i].nearby || IsDeviceInCache(infoArray[i].udid)) {
+            infoArray[kept++] = infoArray[i];
+        }
+    }
+    LNN_LOGI(LNN_LANE, "filter device by cache, befor=%{public}d, after=%{public}d", count, kept);
+    return kept;
+}
+
+static int32_t QueryAllDevicesUdidAndFilter(DeviceNodeInfo *infoArray, int32_t count)
+{
+    char (*deviceList)[UDID_BUF_LEN] = nullptr;
+    uint32_t deviceCount = 0;
+    int32_t ret = LnnGetAllDevicesUdidPacked(true, &deviceList, &deviceCount);
+    if (ret != SOFTBUS_OK) {
+        LNN_LOGE(LNN_LANE, "GetAllDevicesUdid failed, ret=%{public}d, use cache", ret);
+        SoftBusFree(deviceList);
+        return FilterByCache(infoArray, count);
+    }
+    int32_t filtered = FilterDevicesByUdid(infoArray, count, deviceList, deviceCount);
+    SoftBusFree(deviceList);
+    return filtered;
+}
+
 static int32_t CollectCloudDevices(NodeInfo *basicInfo, int32_t basicInfoNum,
     DeviceNodeInfo *infoArray, int32_t *index)
 {
@@ -1445,12 +1526,12 @@ int32_t LnnGetTrustedDevices(DeviceNodeInfo **info, int32_t *nums)
         SoftBusFree(infoArray);
         return ret;
     }
-
+    actualCount = QueryAllDevicesUdidAndFilter(infoArray, actualCount);
     if (actualCount > 1) {
         SortInfoArrayByTimestamp(basicInfo, basicInfoNum, infoArray, actualCount);
     }
     actualCount = (actualCount > MAX_TRUSTED_DEVICE_NUM) ? MAX_TRUSTED_DEVICE_NUM : actualCount;
-
+    UpdateDeviceCache(infoArray, actualCount);
     DeviceNodeInfo *actualArray = nullptr;
     ret = ReallocateDeviceInfoArray(infoArray, &actualArray, actualCount);
     SoftBusFree(basicInfo);
