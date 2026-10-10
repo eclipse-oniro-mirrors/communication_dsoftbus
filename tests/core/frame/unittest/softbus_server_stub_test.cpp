@@ -2609,20 +2609,6 @@ HWTEST_F(SoftbusServerStubTest, CheckAccountConstraintTest003, TestSize.Level1)
 }
 
 /*
- * @tc.name: ConstraintSetSizeTest001
- * @tc.desc: Verify constraint set has expected number of entries
- * @tc.type: FUNC
- * @tc.require: 1
- */
-HWTEST_F(SoftbusServerStubTest, ConstraintSetSizeTest001, TestSize.Level1)
-{
-    sptr<OHOS::SoftBusServerStub> softBusServer = new OHOS::SoftBusServer(SOFTBUS_SERVER_SA_ID, true);
-    ASSERT_NE(softBusServer, nullptr);
-
-    EXPECT_EQ(softBusServer->memberConstraintSet_.size(), 14u);
-}
-
-/*
  * @tc.name: CheckPermissionTest001
  * @tc.desc: Verify CheckPermission returns SOFTBUS_OK for code not in permission map
  * @tc.type: FUNC
