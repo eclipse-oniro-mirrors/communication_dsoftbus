@@ -136,9 +136,6 @@ public:
     void SetPhysicalRate(int value);
     int GetPhysicalRate() const;
 
-    void IncreaseRefCount();
-    void DecreaseRefCount();
-
     void SetLocalCustomPort(int32_t value);
     int32_t GetLocalCustomPort() const;
 

@@ -406,22 +406,6 @@ int InterfaceInfo::GetPhysicalRate() const
     return Get(InterfaceInfoKey::PHYSICAL_RATE, 0);
 }
 
-void InterfaceInfo::IncreaseRefCount()
-{
-    int count = Get(InterfaceInfoKey::REUSE_COUNT, 0);
-    count++;
-    Set(InterfaceInfoKey::REUSE_COUNT, count);
-    CONN_LOGI(CONN_WIFI_DIRECT, "reuseCnt = %{public}d", count);
-}
-
-void InterfaceInfo::DecreaseRefCount()
-{
-    int count = Get(InterfaceInfoKey::REUSE_COUNT, 0);
-    --count;
-    Set(InterfaceInfoKey::REUSE_COUNT, count);
-    CONN_LOGI(CONN_WIFI_DIRECT, "reuseCnt = %{public}d", count);
-}
-
 void InterfaceInfo::SetLocalCustomPort(int32_t value)
 {
     Set(InterfaceInfoKey::LOCAL_CUSTOM_PORT, value);
