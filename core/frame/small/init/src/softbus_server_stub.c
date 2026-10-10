@@ -219,6 +219,7 @@ const ServerInvokeCmd g_serverInvokeCmdTbl[] = {
     { SERVER_SET_NODE_KEY_INFO, ServerSetNodeKeyInfo },
     { SERVER_SET_COMMAND, ServerSetCommand },
     { SERVER_REGISTER_COMMAND_CB, ServerRegisterCommandCb },
+    { SERVER_SET_DISPLAY_NAME, ServerSetDisplayName },
 };
 
 static int32_t Invoke(IServerProxy *iProxy, int funcId, void *origin, IpcIo *req, IpcIo *reply)
