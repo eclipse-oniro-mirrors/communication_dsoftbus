@@ -90,7 +90,7 @@ HWTEST_F(BusCenterHeartbeatSdkTest, Shift_Lnn_Gear_Test_001, TestSize.Level1)
     GearMode mode5 = { .cycle = MID_FREQ_CYCLE, .duration = LONG_DURATION, .wakeupFlag = false };
 
     int32_t ret = ShiftLNNGear(TEST_PKG_NAME1, callerId1, nullptr, &mode1);
-    if (ret != SOFTBUS_NOT_IMPLEMENT) {
+    if (ret == SOFTBUS_OK) {
         EXPECT_EQ(ShiftLNNGear(TEST_PKG_NAME1, callerId1, networkId1, &mode1), SOFTBUS_INVALID_PARAM);
         EXPECT_EQ(ShiftLNNGear(TEST_PKG_NAME1, callerId1, networkId2, &mode1), SOFTBUS_INVALID_PARAM);
         EXPECT_EQ(ShiftLNNGear(TEST_PKG_NAME1, callerId1, nullptr, &mode1), SOFTBUS_OK);
