@@ -72,6 +72,8 @@ typedef struct {
 typedef struct {
     int32_t (*openBrProxyChannel)(ProxyChannelParam *param, bool isRealMac, bool isSupportFarField,
         const OpenProxyChannelCallback *callback);
+    int32_t (*refreshBrProxyChannel)(ProxyChannelParam *param, bool isRealMac, bool isSupportFarField,
+        const OpenProxyChannelCallback *callback);
     void (*addReconnectDeviceInfo)(ProxyChannelParam *param, bool isRealMac, bool isSupportFarField);
     int32_t (*registerBrProxyListener)(BrProxyListener *listener);
     //void (*AttemptReconnectDevice)(char *brAddr);

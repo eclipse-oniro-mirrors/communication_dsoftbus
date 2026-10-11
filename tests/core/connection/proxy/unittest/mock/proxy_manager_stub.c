@@ -14,6 +14,7 @@
  */
 
 #include "proxy_manager.h"
+#include "br/br_proxy_manager.h"
 #include "far_field/far_field_proxy_manager.h"
 
 static uint32_t StubGenerateChannelId(void)
@@ -40,7 +41,19 @@ void FarFieldProxyRefresh(struct ProxyChannel *channel, uint32_t newRequestId,
     (void)callback;
 }
 
+static int32_t StubOpenProxyChannel(ProxyChannelParam *param, const OpenProxyChannelCallback *callback)
+{
+    return GetBrProxyChannelManager()->openBrProxyChannel(param, true, false, callback);
+}
+
+static int32_t StubRefreshProxyChannel(ProxyChannelParam *param, const OpenProxyChannelCallback *callback)
+{
+    return GetBrProxyChannelManager()->refreshBrProxyChannel(param, true, false, callback);
+}
+
 static ProxyChannelManager g_stubProxyChannelManager = {
+    .openProxyChannel = StubOpenProxyChannel,
+    .refreshProxyChannel = StubRefreshProxyChannel,
     .generateChannelId = StubGenerateChannelId,
     .clearProxyInfo = StubClearProxyInfo,
 };

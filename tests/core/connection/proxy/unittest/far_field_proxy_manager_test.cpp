@@ -99,6 +99,27 @@ FarFieldProxyParam BuildTestParam(uint32_t requestId = TEST_REQUEST_ID)
     return param;
 }
 
+ProxyChannelParam BuildProxyChannelParam(uint32_t requestId = TEST_REQUEST_ID)
+{
+    ProxyChannelParam param = {};
+    strcpy_s(param.brMac, BT_MAC_MAX_LEN, TEST_BR_MAC);
+    strcpy_s(param.uuid, UUID_STRING_LEN, TEST_UUID);
+    param.requestId = requestId;
+    param.timeoutMs = CONNECT_TIMEOUT;
+    param.isFirstConnect = true;
+    return param;
+}
+
+int32_t OpenProxyChannelViaManager(uint32_t requestId = TEST_REQUEST_ID)
+{
+    ProxyChannelParam param = BuildProxyChannelParam(requestId);
+    OpenProxyChannelCallback callback = {
+        .onOpenFail = TestOnFarFieldOpenFail,
+        .onOpenSuccess = TestOnFarFieldOpenSuccess,
+    };
+    return GetProxyChannelManager()->openProxyChannel(&param, &callback);
+}
+
 P2PDeviceInfo BuildTestDevice()
 {
     P2PDeviceInfo device = {};
@@ -643,15 +664,16 @@ HWTEST_F(FarFieldProxyManagerTest, FarFieldProxyManagerTest020, TestSize.Level1)
 
 /*
  * @tc.name: FarFieldProxyManagerTest021
- * @tc.desc: test FarFieldProxyRefresh with null channel
+ * @tc.desc: test refresh with null param
  * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(FarFieldProxyManagerTest, FarFieldProxyManagerTest021, TestSize.Level1)
 {
     CONN_LOGI(CONN_PROXY, "FarFieldProxyManagerTest021 in");
-    FarFieldProxyParam param = BuildTestParam();
-    int32_t ret = OpenFarFieldProxyChannel(&param);
+    ProxyChannelMock brMock;
+    EXPECT_CALL(brMock, IsPairedDevice).WillRepeatedly(Return(true));
+    int32_t ret = OpenProxyChannelViaManager();
     EXPECT_EQ(ret, SOFTBUS_OK);
     SoftBusSleepMs(FAR_FIELD_SLEEP_MS);
 
@@ -665,8 +687,8 @@ HWTEST_F(FarFieldProxyManagerTest, FarFieldProxyManagerTest021, TestSize.Level1)
         .onOpenFail = TestOnFarFieldOpenFail,
         .onOpenSuccess = TestOnFarFieldOpenSuccess,
     };
-    // null channel is rejected; the live connection must remain usable afterwards
-    g_farFieldChannel->refresh(nullptr, 1, &callback);
+    // null param is rejected; the live connection must remain usable afterwards
+    GetProxyChannelManager()->refreshProxyChannel(nullptr, &callback);
     const uint8_t data[] = {0x01, 0x02, 0x03};
     ret = g_farFieldChannel->send(g_farFieldChannel, data, sizeof(data));
     EXPECT_EQ(ret, SOFTBUS_OK);
@@ -682,8 +704,9 @@ HWTEST_F(FarFieldProxyManagerTest, FarFieldProxyManagerTest021, TestSize.Level1)
 HWTEST_F(FarFieldProxyManagerTest, FarFieldProxyManagerTest022, TestSize.Level1)
 {
     CONN_LOGI(CONN_PROXY, "FarFieldProxyManagerTest022 in");
-    FarFieldProxyParam param = BuildTestParam();
-    int32_t ret = OpenFarFieldProxyChannel(&param);
+    ProxyChannelMock brMock;
+    EXPECT_CALL(brMock, IsPairedDevice).WillRepeatedly(Return(true));
+    int32_t ret = OpenProxyChannelViaManager();
     EXPECT_EQ(ret, SOFTBUS_OK);
     SoftBusSleepMs(FAR_FIELD_SLEEP_MS);
 
@@ -698,7 +721,8 @@ HWTEST_F(FarFieldProxyManagerTest, FarFieldProxyManagerTest022, TestSize.Level1)
         .onOpenFail = TestOnFarFieldOpenFail,
         .onOpenSuccess = TestOnFarFieldOpenSuccess,
     };
-    g_farFieldChannel->refresh(g_farFieldChannel, TEST_REQUEST_ID + 10, &callback);
+    ProxyChannelParam refreshParam = BuildProxyChannelParam(TEST_REQUEST_ID + 10);
+    GetProxyChannelManager()->refreshProxyChannel(&refreshParam, &callback);
     SoftBusSleepMs(FAR_FIELD_SLEEP_MS);
 
     FarFieldAdapterMock::InjectP2PStateChanged(&device, P2P_STATE_CONNECT, 0);
@@ -860,8 +884,9 @@ HWTEST_F(FarFieldProxyManagerTest, FarFieldProxyManagerTest028, TestSize.Level1)
 HWTEST_F(FarFieldProxyManagerTest, FarFieldProxyManagerTest029, TestSize.Level1)
 {
     CONN_LOGI(CONN_PROXY, "FarFieldProxyManagerTest029 in");
-    FarFieldProxyParam param = BuildTestParam();
-    int32_t ret = OpenFarFieldProxyChannel(&param);
+    ProxyChannelMock brMock;
+    EXPECT_CALL(brMock, IsPairedDevice).WillRepeatedly(Return(true));
+    int32_t ret = OpenProxyChannelViaManager();
     EXPECT_EQ(ret, SOFTBUS_OK);
     SoftBusSleepMs(FAR_FIELD_SLEEP_MS);
 
@@ -875,7 +900,8 @@ HWTEST_F(FarFieldProxyManagerTest, FarFieldProxyManagerTest029, TestSize.Level1)
         .onOpenFail = TestOnFarFieldOpenFail,
         .onOpenSuccess = TestOnFarFieldOpenSuccess,
     };
-    g_farFieldChannel->refresh(g_farFieldChannel, TEST_REQUEST_ID + 20, &callback);
+    ProxyChannelParam refreshParam = BuildProxyChannelParam(TEST_REQUEST_ID + 20);
+    GetProxyChannelManager()->refreshProxyChannel(&refreshParam, &callback);
     SoftBusSleepMs(FAR_FIELD_SLEEP_MS * 2);
     ResetFarFieldGlobals();
 
@@ -924,8 +950,9 @@ HWTEST_F(FarFieldProxyManagerTest, FarFieldProxyManagerTest030, TestSize.Level1)
 HWTEST_F(FarFieldProxyManagerTest, FarFieldProxyManagerTest031, TestSize.Level1)
 {
     CONN_LOGI(CONN_PROXY, "FarFieldProxyManagerTest031 in");
-    FarFieldProxyParam param = BuildTestParam();
-    int32_t ret = OpenFarFieldProxyChannel(&param);
+    ProxyChannelMock brMock;
+    EXPECT_CALL(brMock, IsPairedDevice).WillRepeatedly(Return(true));
+    int32_t ret = OpenProxyChannelViaManager();
     EXPECT_EQ(ret, SOFTBUS_OK);
     SoftBusSleepMs(FAR_FIELD_SLEEP_MS);
 
@@ -940,7 +967,8 @@ HWTEST_F(FarFieldProxyManagerTest, FarFieldProxyManagerTest031, TestSize.Level1)
         .onOpenFail = TestOnFarFieldOpenFail,
         .onOpenSuccess = TestOnFarFieldOpenSuccess,
     };
-    g_farFieldChannel->refresh(g_farFieldChannel, TEST_REQUEST_ID + 30, &callback);
+    ProxyChannelParam refreshParam = BuildProxyChannelParam(TEST_REQUEST_ID + 30);
+    GetProxyChannelManager()->refreshProxyChannel(&refreshParam, &callback);
     SoftBusSleepMs(FAR_FIELD_SLEEP_MS * 2);
 
     const uint8_t data[] = {0x01, 0x02, 0x03};
@@ -990,8 +1018,9 @@ HWTEST_F(FarFieldProxyManagerTest, FarFieldProxyManagerTest032, TestSize.Level1)
 HWTEST_F(FarFieldProxyManagerTest, FarFieldProxyManagerTest033, TestSize.Level1)
 {
     CONN_LOGI(CONN_PROXY, "FarFieldProxyManagerTest033 in");
-    FarFieldProxyParam param = BuildTestParam();
-    int32_t ret = OpenFarFieldProxyChannel(&param);
+    ProxyChannelMock brMock;
+    EXPECT_CALL(brMock, IsPairedDevice).WillRepeatedly(Return(true));
+    int32_t ret = OpenProxyChannelViaManager();
     EXPECT_EQ(ret, SOFTBUS_OK);
     SoftBusSleepMs(FAR_FIELD_SLEEP_MS);
 
@@ -1005,7 +1034,8 @@ HWTEST_F(FarFieldProxyManagerTest, FarFieldProxyManagerTest033, TestSize.Level1)
         .onOpenFail = TestOnFarFieldOpenFail,
         .onOpenSuccess = TestOnFarFieldOpenSuccess,
     };
-    g_farFieldChannel->refresh(g_farFieldChannel, TEST_REQUEST_ID + 40, &callback);
+    ProxyChannelParam refreshParam = BuildProxyChannelParam(TEST_REQUEST_ID + 40);
+    GetProxyChannelManager()->refreshProxyChannel(&refreshParam, &callback);
     SoftBusSleepMs(FAR_FIELD_SLEEP_MS * 2);
     ResetFarFieldGlobals();
 

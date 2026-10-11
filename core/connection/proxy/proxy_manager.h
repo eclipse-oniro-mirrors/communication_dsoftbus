@@ -56,7 +56,6 @@ struct ProxyChannel {
     char uuid[UUID_STRING_LEN];
     int32_t (*send)(struct ProxyChannel *channel, const uint8_t *data, uint32_t dataLen);
     void (*close)(struct ProxyChannel *channel, bool isClearReconnectEvent);
-    void (*refresh)(struct ProxyChannel *channel, uint32_t newRequestId, const OpenProxyChannelCallback *callback);
 };
 
 typedef struct {
@@ -70,6 +69,7 @@ typedef struct {
 typedef struct {
     uint32_t (*generateRequestId)(void);
     int32_t (*openProxyChannel)(ProxyChannelParam *param, const OpenProxyChannelCallback *callback);
+    int32_t (*refreshProxyChannel)(ProxyChannelParam *param, const OpenProxyChannelCallback *callback);
     int32_t (*registerProxyChannelListener)(ProxyConnectListener *listener);
 
     // inner

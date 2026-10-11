@@ -1323,11 +1323,16 @@ static int32_t RefreshChannel(ProxyChannelParam *param, bool *isRefresh, uint32_
             nodeInfo->requestId != requestId) {
             continue;
         }
-        if (nodeInfo->isConnected && nodeInfo->channel.refresh != NULL) {
+        if (nodeInfo->isConnected) {
             TRANS_LOGI(TRANS_SVC, "[br_proxy] refresh appIndex=%{public}d, channelId=%{public}d",
                 nodeInfo->appIndex, nodeInfo->channelId);
-            nodeInfo->channel.refresh(&nodeInfo->channel, requestId, &g_channelOpen);
             *isRefresh = true;
+            (void)SoftBusMutexUnlock(&(g_proxyList->lock));
+            ProxyChannelManager *proxyMgr = GetProxyChannelManager();
+            if (proxyMgr == NULL) {
+                return SOFTBUS_INVALID_PARAM;
+            }
+            return proxyMgr->refreshProxyChannel(param, &g_channelOpen);
         }
     }
     (void)SoftBusMutexUnlock(&(g_proxyList->lock));
