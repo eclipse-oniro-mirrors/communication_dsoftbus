@@ -177,6 +177,8 @@ typedef struct {
     int32_t brProxyIsClear;       // BR_PROXY_IS_CLEAR
     int32_t brProxyIsRetry;       // BR_PROXY_IS_RETRY
     int32_t brProxyIsAcl;         // BR_PROXY_IS_ACL
+    int32_t isDirectly;           // FAR_FIELD_IS_DIRECTLY
+    int32_t isSupportFarField;    // FAR_FIELD_IS_SUPPORT
     int32_t connectReason;        // CONNECT_REASON
     int32_t sendCnt;              // SEND_CNT
     int32_t receiveCnt;           // RECEIVE_CNT

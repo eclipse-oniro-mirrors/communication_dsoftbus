@@ -502,7 +502,7 @@ HWTEST_F(ProxyManagerTest, ProxyManagerTest013, TestSize.Level1)
     SoftBusSleepMs(CONNECT_SLEEP_TIME_MS1 * 2);
     EXPECT_NE(g_disconnectReason, 0);
 
-    ClearFarFieldProxy("44:55:66:77:88:99");
+    ClearFarFieldProxy("44:55:66:77:88:99", false);
     SoftBusSleepMs(CONNECT_SLEEP_TIME_MS1);
     CONN_LOGI(CONN_PROXY, "ProxyManagerTest013 out");
 }
@@ -544,7 +544,7 @@ HWTEST_F(ProxyManagerTest, ProxyManagerTest014, TestSize.Level1)
     ProxyChannelMock::InjectBtAclStateChanged(1, &btAddr, SOFTBUS_ACL_STATE_DISCONNECTED, 0);
     SoftBusSleepMs(CONNECT_SLEEP_TIME_MS1 * 2);
     EXPECT_FALSE(g_reconnected);
-    ClearFarFieldProxy("66:77:88:99:AA:BB");
+    ClearFarFieldProxy("66:77:88:99:AA:BB", false);
     SoftBusSleepMs(CONNECT_SLEEP_TIME_MS1);
     CONN_LOGI(CONN_PROXY, "ProxyManagerTest014 out");
 }
@@ -636,7 +636,7 @@ HWTEST_F(ProxyManagerTest, ProxyManagerTest017, TestSize.Level1)
     SoftBusSleepMs(CONNECT_SLEEP_TIME_MS1 * 3);
     EXPECT_TRUE(g_reconnected);
 
-    ClearFarFieldProxy("99:AA:BB:CC:DD:EE");
+    ClearFarFieldProxy("99:AA:BB:CC:DD:EE", false);
     SoftBusSleepMs(CONNECT_SLEEP_TIME_MS1);
     CONN_LOGI(CONN_PROXY, "ProxyManagerTest017 out");
 }
@@ -692,7 +692,7 @@ HWTEST_F(ProxyManagerTest, ProxyManagerTest018, TestSize.Level1)
     }
     EXPECT_TRUE(found);
 
-    ClearFarFieldProxy("AA:BB:CC:DD:EE:FF");
+    ClearFarFieldProxy("AA:BB:CC:DD:EE:FF", false);
     SoftBusSleepMs(CONNECT_SLEEP_TIME_MS1);
     CONN_LOGI(CONN_PROXY, "ProxyManagerTest018 out");
 }
@@ -745,7 +745,7 @@ HWTEST_F(ProxyManagerTest, ProxyManagerTest019, TestSize.Level1)
     SoftBusSleepMs(CONNECT_SLEEP_TIME_MS1 * 2);
     EXPECT_NE(g_openSuccessChannelId, TEST_INVALID_CHANNEL_ID);
 
-    ClearFarFieldProxy("BB:CC:DD:EE:FF:00");
+    ClearFarFieldProxy("BB:CC:DD:EE:FF:00", false);
     SoftBusSleepMs(CONNECT_SLEEP_TIME_MS1);
     CONN_LOGI(CONN_PROXY, "ProxyManagerTest019 out");
 }

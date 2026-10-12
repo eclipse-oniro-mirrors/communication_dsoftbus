@@ -536,7 +536,7 @@ HWTEST_F(FarFieldProxyManagerTest, FarFieldProxyManagerTest015, TestSize.Level1)
     ASSERT_NE(g_farFieldChannel, nullptr);
 
     // null addr is rejected by ClearFarFieldProxy; the live connection must remain usable
-    ClearFarFieldProxy(nullptr);
+    ClearFarFieldProxy(nullptr, false);
     SoftBusSleepMs(FAR_FIELD_SLEEP_MS);
     const uint8_t data[] = {0x01, 0x02, 0x03};
     ret = g_farFieldChannel->send(g_farFieldChannel, data, sizeof(data));
@@ -565,7 +565,7 @@ HWTEST_F(FarFieldProxyManagerTest, FarFieldProxyManagerTest016, TestSize.Level1)
     ASSERT_NE(g_farFieldChannel, nullptr);
 
     // unknown addr does not match any connection; the live connection must remain usable
-    ClearFarFieldProxy("99:88:77:66:55:44");
+    ClearFarFieldProxy("99:88:77:66:55:44", false);
     SoftBusSleepMs(FAR_FIELD_SLEEP_MS);
     const uint8_t data[] = {0x01, 0x02, 0x03};
     ret = g_farFieldChannel->send(g_farFieldChannel, data, sizeof(data));
@@ -592,7 +592,7 @@ HWTEST_F(FarFieldProxyManagerTest, FarFieldProxyManagerTest017, TestSize.Level1)
     SoftBusSleepMs(FAR_FIELD_SLEEP_MS);
     EXPECT_TRUE(g_farFieldOpenSuccess);
 
-    ClearFarFieldProxy(TEST_BR_MAC);
+    ClearFarFieldProxy(TEST_BR_MAC, false);
     SoftBusSleepMs(FAR_FIELD_SLEEP_MS);
     // connection is torn down: subsequent send must fail to find it
     const uint8_t data[] = {0x01, 0x02, 0x03};
@@ -1066,7 +1066,7 @@ HWTEST_F(FarFieldProxyManagerTest, FarFieldProxyManagerTest034, TestSize.Level1)
     EXPECT_FALSE(g_farFieldOpenSuccess);
 
     // connection is in CONNECTING; ClearFarFieldProxy tears it down regardless of state
-    ClearFarFieldProxy(TEST_BR_MAC);
+    ClearFarFieldProxy(TEST_BR_MAC, false);
     SoftBusSleepMs(FAR_FIELD_SLEEP_MS);
     // the stale connecting connection is removed; a fresh open + P2P connect must succeed
     ResetFarFieldGlobals();

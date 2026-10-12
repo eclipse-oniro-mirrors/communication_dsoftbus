@@ -28,9 +28,10 @@ static void StubClearProxyInfo(struct ProxyChannel *channel)
     (void)channel;
 }
 
-void ClearFarFieldProxy(const char *addr)
+void ClearFarFieldProxy(const char *addr, bool isNeedCloseSocket)
 {
     (void)addr;
+    (void)isNeedCloseSocket;
 }
 
 void FarFieldProxyRefresh(struct ProxyChannel *channel, uint32_t newRequestId,

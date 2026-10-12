@@ -39,6 +39,7 @@ if (!support_bluetooth) {
       "$dsoftbus_root_path/core/connection/proxy/br/br_proxy_manager.c",
       "$dsoftbus_root_path/core/connection/proxy/far_field/far_field_proxy_adapter.c",
       "$dsoftbus_root_path/core/connection/proxy/far_field/far_field_proxy_manager.c",
+      "$dsoftbus_root_path/core/connection/proxy/dfx/far_field_proxy_dfx.c",
     ]
   }
 }

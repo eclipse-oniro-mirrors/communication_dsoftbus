@@ -228,7 +228,7 @@ static void ProxyChannelClose(struct ProxyChannel *channel, bool isClearReconnec
     CONN_EVENT(EVENT_SCENE_BR_PROXY, EVENT_STAGE_CONNECT_DISCONNECTED, extra);
     proxyConnection->dereference(proxyConnection);
 #define WAIT_CLOSE_END_TIME_MS 1000
-    // add 10 ms after close, because of the remote device will refresh service after disconnected
+    // add 1s after close, because of the remote device will refresh service after disconnected
     SoftBusSleepMs(WAIT_CLOSE_END_TIME_MS);
 }
 
