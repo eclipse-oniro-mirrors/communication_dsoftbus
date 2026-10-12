@@ -20,7 +20,8 @@
 #include "napi/native_node_api.h"
 
 #define LINK_ENHANCE_DEVICE_NOT_SUPPORT "801"
-#define LINK_ENHANCE_NOT_SUPPORT_DESCRIPTION        "device not support"
+#define LINK_ENHANCE_NOT_SUPPORT_DESCRIPTION \
+    "Capability not supported because the linkEnhance function has been trimmed."
 namespace Communication {
 namespace OHOS::Softbus {
 
