@@ -2946,6 +2946,12 @@ static int32_t ReadPerceptionRequestHeader(MessageParcel &data, const char **pkg
 
 int32_t SoftBusServerStub::StartPerceptionAdvInner(MessageParcel &data, MessageParcel &reply)
 {
+#ifdef SUPPORT_BUNDLENAME
+    if (CheckMDMControl()) {
+        COMM_LOGE(COMM_SVC, "MDM control, not allow");
+        return SOFTBUS_ACCOUNT_CONSTRAINT_ENABLE;
+    }
+#endif
     int32_t permRet = SysHapPermissionVerify(SERVER_START_PERCEPTION_ADV);
     if (permRet != SOFTBUS_OK) {
         COMM_LOGE(COMM_SVC, "permission verification failed");
@@ -2977,6 +2983,12 @@ int32_t SoftBusServerStub::StartPerceptionAdvInner(MessageParcel &data, MessageP
 
 int32_t SoftBusServerStub::SetPerceptionAdvHighFreqInner(MessageParcel &data, MessageParcel &reply)
 {
+#ifdef SUPPORT_BUNDLENAME
+    if (CheckMDMControl()) {
+        COMM_LOGE(COMM_SVC, "MDM control, not allow");
+        return SOFTBUS_ACCOUNT_CONSTRAINT_ENABLE;
+    }
+#endif
     int32_t permRet = SysHapPermissionVerify(SERVER_SET_PERCEPTION_ADV_HIGH_FREQ);
     if (permRet != SOFTBUS_OK) {
         COMM_LOGE(COMM_SVC, "permission verification failed");
@@ -3008,6 +3020,12 @@ int32_t SoftBusServerStub::SetPerceptionAdvHighFreqInner(MessageParcel &data, Me
 
 int32_t SoftBusServerStub::StopPerceptionAdvInner(MessageParcel &data, MessageParcel &reply)
 {
+#ifdef SUPPORT_BUNDLENAME
+    if (CheckMDMControl()) {
+        COMM_LOGE(COMM_SVC, "MDM control, not allow");
+        return SOFTBUS_ACCOUNT_CONSTRAINT_ENABLE;
+    }
+#endif
     int32_t permRet = SysHapPermissionVerify(SERVER_STOP_PERCEPTION_ADV);
     if (permRet != SOFTBUS_OK) {
         COMM_LOGE(COMM_SVC, "permission verification failed");
@@ -3029,6 +3047,12 @@ int32_t SoftBusServerStub::StopPerceptionAdvInner(MessageParcel &data, MessagePa
 
 int32_t SoftBusServerStub::StartPerceptionScanInner(MessageParcel &data, MessageParcel &reply)
 {
+#ifdef SUPPORT_BUNDLENAME
+    if (CheckMDMControl()) {
+        COMM_LOGE(COMM_SVC, "MDM control, not allow");
+        return SOFTBUS_ACCOUNT_CONSTRAINT_ENABLE;
+    }
+#endif
     int32_t permRet = SysHapPermissionVerify(SERVER_START_PERCEPTION_SCAN);
     if (permRet != SOFTBUS_OK) {
         COMM_LOGE(COMM_SVC, "permission verification failed");
@@ -3055,6 +3079,12 @@ int32_t SoftBusServerStub::StartPerceptionScanInner(MessageParcel &data, Message
 
 int32_t SoftBusServerStub::StopPerceptionScanInner(MessageParcel &data, MessageParcel &reply)
 {
+#ifdef SUPPORT_BUNDLENAME
+    if (CheckMDMControl()) {
+        COMM_LOGE(COMM_SVC, "MDM control, not allow");
+        return SOFTBUS_ACCOUNT_CONSTRAINT_ENABLE;
+    }
+#endif
     int32_t permRet = SysHapPermissionVerify(SERVER_STOP_PERCEPTION_SCAN);
     if (permRet != SOFTBUS_OK) {
         COMM_LOGE(COMM_SVC, "permission verification failed");
@@ -3076,6 +3106,12 @@ int32_t SoftBusServerStub::StopPerceptionScanInner(MessageParcel &data, MessageP
 
 int32_t SoftBusServerStub::GetPerceptionDeviceListInner(MessageParcel &data, MessageParcel &reply)
 {
+#ifdef SUPPORT_BUNDLENAME
+    if (CheckMDMControl()) {
+        COMM_LOGE(COMM_SVC, "MDM control, not allow");
+        return SOFTBUS_ACCOUNT_CONSTRAINT_ENABLE;
+    }
+#endif
     int32_t permRet = SysHapPermissionVerify(SERVER_GET_PERCEPTION_DEVICE_LIST);
     if (permRet != SOFTBUS_OK) {
         COMM_LOGE(COMM_SVC, "permission verification failed");
