@@ -287,5 +287,17 @@
     "PROCESS_NAME": [
       "device_manager"
     ]
+  },
+  {
+    "INTERFACE_NAME": "EX_OBJ_CMD_SET_WIFI_DIRECT_EXCLUSIVE",
+    "PROCESS_NAME": [
+      "CollaborationFwk"
+    ]
+  },
+  {
+    "INTERFACE_NAME": "EX_OBJ_CMD_CANCEL_WIFI_DIRECT_EXCLUSIVE",
+    "PROCESS_NAME": [
+      "CollaborationFwk"
+    ]
   }
 ]

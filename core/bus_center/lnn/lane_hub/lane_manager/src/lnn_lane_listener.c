@@ -404,6 +404,11 @@ static void LnnOnWifiDirectDeviceOffline(const char *peerMac, const char *peerIp
     if (laneLinkInfo.type == LANE_HML && IsPowerControlEnabledPacked()) {
         DetectDisableWifiDirectApply();
     }
+    char networkId[NETWORK_ID_BUF_LEN] = {0};
+    if (laneLinkInfo.type == LANE_HML &&
+        LnnGetNetworkIdByUuid(peerUuid, networkId, sizeof(networkId)) == SOFTBUS_OK) {
+        DcWifiDirectExclusiveCancelByDeviceIdPacked(networkId);
+    }
     if (PostLaneStateChangeMessage(LANE_STATE_LINKDOWN, laneLinkInfo.peerUdid, &laneLinkInfo) != SOFTBUS_OK) {
         LNN_LOGE(LNN_LANE, "post laneState linkdown msg fail");
     }
@@ -587,6 +592,11 @@ static void LnnOnWifiDirectDisconnectedForSink(const struct WifiDirectSinkLink *
         }
     }
     DelLaneResourceByLaneId(resourceItem.laneId, true, NULL);
+    char networkId[NETWORK_ID_BUF_LEN] = {0};
+    if (link->linkType == WIFI_DIRECT_LINK_TYPE_HML &&
+        LnnGetNetworkIdByUuid(link->remoteUuid, networkId, sizeof(networkId)) == SOFTBUS_OK) {
+        DcWifiDirectExclusiveCancelByDeviceIdPacked(networkId);
+    }
 }
 
 static void RegisterWifiDirectListener(void)

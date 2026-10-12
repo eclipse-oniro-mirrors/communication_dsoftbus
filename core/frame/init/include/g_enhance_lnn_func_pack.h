@@ -267,6 +267,10 @@ int32_t PerceptionSyncCyclePacked(PerceptionType type, uint32_t cycle);
 int32_t PerceptionEnhanceInitPacked(void);
 void PerceptionEnhanceDeinitPacked(void);
 int32_t LnnGetAllDevicesUdidPacked(bool isCloud, char (**udidList)[UDID_BUF_LEN], uint32_t *count);
+int32_t DcWifiDirectExclusiveCancelByDeviceIdPacked(const char *deviceId);
+int32_t DcWifiDirectExclusiveClearByPidPacked(int32_t pid);
+int32_t DcWifiDirectExclusiveCancelBySessionNamePacked(const char *sessionName);
+bool DcWifiDirectExclusiveIsExclusivePacked(const char *deviceId);
 
 #ifdef __cplusplus
 }

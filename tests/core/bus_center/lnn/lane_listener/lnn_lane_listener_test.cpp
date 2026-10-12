@@ -26,6 +26,7 @@
 #include "lnn_lane_listener.c"
 #include "lnn_lane_listener_deps_mock.h"
 #include "lnn_trans_lane.h"
+#include "g_enhance_lnn_func.h"
 #include "softbus_adapter_mem.h"
 #include "softbus_error_code.h"
 
@@ -44,6 +45,31 @@ constexpr uint64_t LANE_ID_HML = 0x1000000000000002;
 constexpr int32_t CHANNEL_ID = 10;
 constexpr char MAC_TEST[] = "testMac";
 constexpr uint32_t CONNECTION_ID = 10;
+
+static std::string g_canceledDeviceId;
+static int32_t CancelByDeviceIdMock(const char *deviceId)
+{
+    g_canceledDeviceId = (deviceId != nullptr) ? deviceId : "";
+    return SOFTBUS_OK;
+}
+
+class DcExclusiveCancelMockGuard {
+public:
+    explicit DcExclusiveCancelMockGuard(DcWifiDirectExclusiveCancelByDeviceIdFunc mockFunc)
+    {
+        funcList_ = LnnEnhanceFuncListGet();
+        oldFunc_ = funcList_->dcWifiDirectExclusiveCancelByDeviceId;
+        funcList_->dcWifiDirectExclusiveCancelByDeviceId = mockFunc;
+    }
+    ~DcExclusiveCancelMockGuard()
+    {
+        funcList_->dcWifiDirectExclusiveCancelByDeviceId = oldFunc_;
+    }
+
+private:
+    LnnEnhanceFuncList *funcList_;
+    DcWifiDirectExclusiveCancelByDeviceIdFunc oldFunc_;
+};
 
 class LNNLaneListenerTest : public testing::Test {
 public:
@@ -718,6 +744,89 @@ HWTEST_F(LNNLaneListenerTest, WIFI_DIRECT_DISCONNECT_FOR_SINK_001, TestSize.Leve
         .WillRepeatedly(Return(SOFTBUS_INVALID_PARAM));
     EXPECT_NO_FATAL_FAILURE(LnnOnWifiDirectDisconnectedForSink(&link));
     EXPECT_NO_FATAL_FAILURE(LnnOnWifiDirectDisconnectedForSink(&link));
+}
+
+/*
+* @tc.name: WIFI_DIRECT_DEVICE_OFFLINE_EXCLUSIVE_CANCEL_001
+* @tc.desc: LnnOnWifiDirectDeviceOffline HML/P2P link trigger dc exclusive cancel branch
+* @tc.type: FUNC
+* @tc.require:
+*/
+HWTEST_F(LNNLaneListenerTest, WIFI_DIRECT_DEVICE_OFFLINE_EXCLUSIVE_CANCEL_001, TestSize.Level1)
+{
+    NiceMock<LaneDepsInterfaceMock> laneMock;
+    EXPECT_CALL(laneMock, LnnConvertDLidToUdid).WillRepeatedly(Return(SOFTBUS_OK));
+    NiceMock<LaneListenerDepsInterfaceMock> listenerMock;
+    EXPECT_CALL(listenerMock, DetectDisableWifiDirectApply).WillRepeatedly(Return());
+    DcExclusiveCancelMockGuard guard(CancelByDeviceIdMock);
+
+    const char *localIp = "192.168.33.33";
+    // HML link and get networkId ok, call DcWifiDirectExclusiveCancelByDeviceIdPacked.
+    EXPECT_CALL(laneMock, LnnGetNetworkIdByUuid)
+        .WillRepeatedly(DoAll(SetArgPointee<1>('N'), Return(SOFTBUS_OK)));
+    g_canceledDeviceId.clear();
+    EXPECT_NO_FATAL_FAILURE(LnnOnWifiDirectDeviceOffline(MAC_TEST, "172.30.1.1", PEER_UDID, localIp));
+    EXPECT_EQ(g_canceledDeviceId, "N");
+
+    // HML link but get networkId fail, skip the exclusive cancel branch.
+    EXPECT_CALL(laneMock, LnnGetNetworkIdByUuid)
+        .WillRepeatedly(Return(SOFTBUS_LANE_GET_LEDGER_INFO_ERR));
+    g_canceledDeviceId.clear();
+    EXPECT_NO_FATAL_FAILURE(LnnOnWifiDirectDeviceOffline(MAC_TEST, "172.30.1.1", PEER_UDID, localIp));
+    EXPECT_TRUE(g_canceledDeviceId.empty());
+
+    // P2P link, skip the exclusive cancel branch.
+    EXPECT_CALL(laneMock, LnnGetNetworkIdByUuid)
+        .WillRepeatedly(DoAll(SetArgPointee<1>('N'), Return(SOFTBUS_OK)));
+    g_canceledDeviceId.clear();
+    EXPECT_NO_FATAL_FAILURE(LnnOnWifiDirectDeviceOffline(MAC_TEST, PEER_IP_P2P, PEER_UDID, localIp));
+    EXPECT_TRUE(g_canceledDeviceId.empty());
+}
+
+/*
+* @tc.name: WIFI_DIRECT_DISCONNECT_FOR_SINK_EXCLUSIVE_CANCEL_001
+* @tc.desc: LnnOnWifiDirectDisconnectedForSink HML/P2P link trigger dc exclusive cancel branch
+* @tc.type: FUNC
+* @tc.require:
+*/
+HWTEST_F(LNNLaneListenerTest, WIFI_DIRECT_DISCONNECT_FOR_SINK_EXCLUSIVE_CANCEL_001, TestSize.Level1)
+{
+    NiceMock<LaneDepsInterfaceMock> laneMock;
+    EXPECT_CALL(laneMock, LnnConvertDLidToUdid).WillRepeatedly(Return(SOFTBUS_OK));
+    EXPECT_CALL(laneMock, LnnGetRemoteStrInfo).WillRepeatedly(Return(SOFTBUS_OK));
+    NiceMock<LaneListenerDepsInterfaceMock> listenerMock;
+    EXPECT_CALL(listenerMock, FindLaneResourceByLinkType).WillRepeatedly(Return(SOFTBUS_OK));
+    DcExclusiveCancelMockGuard guard(CancelByDeviceIdMock);
+
+    WifiDirectSinkLink hmlLink = {
+        .linkType = WIFI_DIRECT_LINK_TYPE_HML,
+    };
+    EXPECT_EQ(strncpy_s(hmlLink.remoteUuid, UDID_BUF_LEN, PEER_UDID, UDID_BUF_LEN), EOK);
+
+    // HML link and get networkId ok, call DcWifiDirectExclusiveCancelByDeviceIdPacked.
+    EXPECT_CALL(laneMock, LnnGetNetworkIdByUuid)
+        .WillRepeatedly(DoAll(SetArgPointee<1>('N'), Return(SOFTBUS_OK)));
+    g_canceledDeviceId.clear();
+    EXPECT_NO_FATAL_FAILURE(LnnOnWifiDirectDisconnectedForSink(&hmlLink));
+    EXPECT_EQ(g_canceledDeviceId, "N");
+
+    // HML link but get networkId fail, skip the exclusive cancel branch.
+    EXPECT_CALL(laneMock, LnnGetNetworkIdByUuid)
+        .WillRepeatedly(Return(SOFTBUS_LANE_GET_LEDGER_INFO_ERR));
+    g_canceledDeviceId.clear();
+    EXPECT_NO_FATAL_FAILURE(LnnOnWifiDirectDisconnectedForSink(&hmlLink));
+    EXPECT_TRUE(g_canceledDeviceId.empty());
+
+    // P2P link, skip the exclusive cancel branch.
+    WifiDirectSinkLink p2pLink = {
+        .linkType = WIFI_DIRECT_LINK_TYPE_P2P,
+    };
+    EXPECT_EQ(strncpy_s(p2pLink.remoteUuid, UDID_BUF_LEN, PEER_UDID, UDID_BUF_LEN), EOK);
+    EXPECT_CALL(laneMock, LnnGetNetworkIdByUuid)
+        .WillRepeatedly(DoAll(SetArgPointee<1>('N'), Return(SOFTBUS_OK)));
+    g_canceledDeviceId.clear();
+    EXPECT_NO_FATAL_FAILURE(LnnOnWifiDirectDisconnectedForSink(&p2pLink));
+    EXPECT_TRUE(g_canceledDeviceId.empty());
 }
 
 /*
