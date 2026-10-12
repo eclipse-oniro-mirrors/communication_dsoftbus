@@ -401,13 +401,17 @@ static void LnnOnWifiDirectDeviceOffline(const char *peerMac, const char *peerIp
         LNN_LOGE(LNN_STATE, "get lane state notify info fail");
         return;
     }
-    if (laneLinkInfo.type == LANE_HML && IsPowerControlEnabledPacked()) {
-        DetectDisableWifiDirectApply();
-    }
-    char networkId[NETWORK_ID_BUF_LEN] = {0};
-    if (laneLinkInfo.type == LANE_HML &&
-        LnnGetNetworkIdByUuid(peerUuid, networkId, sizeof(networkId)) == SOFTBUS_OK) {
-        DcWifiDirectExclusiveCancelByDeviceIdPacked(networkId);
+    if (laneLinkInfo.type == LANE_HML) {
+        if (IsPowerControlEnabledPacked()) {
+            DetectDisableWifiDirectApply();
+        }
+        char networkId[NETWORK_ID_BUF_LEN] = {0};
+        if (LnnGetNetworkIdByUuid(peerUuid, networkId, sizeof(networkId)) == SOFTBUS_OK) {
+            int32_t ret = DcWifiDirectExclusiveCancelByDeviceIdPacked(networkId);
+            if (ret != SOFTBUS_OK) {
+                LNN_LOGE(LNN_LANE, "dc wifi direct exclusive cancel failed, ret=%{public}d", ret);
+            }
+        }
     }
     if (PostLaneStateChangeMessage(LANE_STATE_LINKDOWN, laneLinkInfo.peerUdid, &laneLinkInfo) != SOFTBUS_OK) {
         LNN_LOGE(LNN_LANE, "post laneState linkdown msg fail");
@@ -571,6 +575,15 @@ static void LnnOnWifiDirectDisconnectedForSink(const struct WifiDirectSinkLink *
     LNN_LOGI(LNN_STATE, "on server link=%{public}d disconnected, uuid=%{public}s",
         link->linkType, AnonymizeWrapper(anonyUuid));
     AnonymizeFree(anonyUuid);
+    if (link->linkType == WIFI_DIRECT_LINK_TYPE_HML) {
+        char networkId[NETWORK_ID_BUF_LEN] = {0};
+        if (LnnGetNetworkIdByUuid(link->remoteUuid, networkId, sizeof(networkId)) == SOFTBUS_OK) {
+            int32_t ret = DcWifiDirectExclusiveCancelByDeviceIdPacked(networkId);
+            if (ret != SOFTBUS_OK) {
+                LNN_LOGE(LNN_LANE, "dc wifi direct exclusive cancel failed, ret=%{public}d", ret);
+            }
+        }
+    }
     char remoteUdid[UDID_BUF_LEN] = {0};
     if (LnnConvertDLidToUdid(link->remoteUuid, CATEGORY_UUID, remoteUdid, UDID_BUF_LEN) != SOFTBUS_OK) {
         LNN_LOGE(LNN_STATE, "get remote udid failed");
@@ -592,11 +605,6 @@ static void LnnOnWifiDirectDisconnectedForSink(const struct WifiDirectSinkLink *
         }
     }
     DelLaneResourceByLaneId(resourceItem.laneId, true, NULL);
-    char networkId[NETWORK_ID_BUF_LEN] = {0};
-    if (link->linkType == WIFI_DIRECT_LINK_TYPE_HML &&
-        LnnGetNetworkIdByUuid(link->remoteUuid, networkId, sizeof(networkId)) == SOFTBUS_OK) {
-        DcWifiDirectExclusiveCancelByDeviceIdPacked(networkId);
-    }
 }
 
 static void RegisterWifiDirectListener(void)
