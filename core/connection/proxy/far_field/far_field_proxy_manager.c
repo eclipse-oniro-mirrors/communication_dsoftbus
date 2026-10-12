@@ -15,6 +15,7 @@
 
 #include "far_field_proxy_manager.h"
 #include "far_field_proxy_adapter.h"
+#include "../dfx/far_field_proxy_dfx.h"
 #include "../proxy_manager.h"
 #include "br/br_proxy_manager.h"
 #include "softbus_rc_object.h"
@@ -371,7 +372,7 @@ static int32_t ConnectedOnExit(FarFieldDeviceConnection *conn, FarFieldProxyStat
     CONN_LOGI(CONN_PROXY, "nextState=%{public}s, addr=%{public}s",
               GetStateHandler(nextState)->name, anonymizeAddr);
 
-    NotifyDisconnected(conn, SOFTBUS_FAR_FIELD_DISCONNECT);
+    NotifyDisconnected(conn, reason);
     return SOFTBUS_OK;
 }
 
@@ -634,7 +635,7 @@ static void FarFieldProxyClose(struct ProxyChannel *channel, bool isClearReconne
     char anonymizeAddr[BT_MAC_LEN] = {0};
     ConvertAnonymizeMacAddress(anonymizeAddr, BT_MAC_LEN, conn->device.brMac, BT_MAC_LEN);
     CONN_LOGI(CONN_PROXY, "Closing far field channel for %{public}s", anonymizeAddr);
-
+    FarFieldDfxRecordClose(conn->channel.requestId, conn->device.brMac, isClearReconnectEvent);
     int32_t ret = FarFieldAdapterCloseP2P(&conn->device, true);
     if (ret != SOFTBUS_OK) {
         CONN_LOGW(CONN_PROXY, "close fail, ret=%{public}d", ret);
@@ -679,6 +680,9 @@ static void OnP2PStateChanged(const P2PDeviceInfo *device, P2PState state, int32
 
     char anonymizeAddr[BT_MAC_LEN] = {0};
     ConvertAnonymizeMacAddress(anonymizeAddr, BT_MAC_LEN, device->brMac, BT_MAC_LEN);
+    if (reason >= 0) {
+        reason = reason + SOFTBUS_FAR_FIELD_PROXY_BASE_ERR;
+    }
     CONN_LOGI(CONN_PROXY, "addr=%{public}s, state=%{public}d, reason=%{public}d",
               anonymizeAddr, state, reason);
     StateEvent event = ConvertP2PStateToEvent(state);
@@ -854,7 +858,7 @@ static void FarFieldConnectTimeoutTask(int32_t callId, void *arg)
     conn->Dereference((SoftBusRcObject **)&conn);
 }
 
-void ClearFarFieldProxy(const char *addr)
+void ClearFarFieldProxy(const char *addr, bool isNeedCloseSocket)
 {
     CONN_CHECK_AND_RETURN_LOGE(addr != NULL, CONN_PROXY, "addr is NULL");
     char anonymizeAddr[BT_MAC_LEN] = {0};
@@ -865,8 +869,9 @@ void ClearFarFieldProxy(const char *addr)
     CONN_CHECK_AND_RETURN_LOGE(conn != NULL, CONN_PROXY,
         "Connection not found, addr=%{public}s", anonymizeAddr);
     CONN_LOGI(CONN_PROXY, "Closing far field channel for %{public}s", anonymizeAddr);
+    FarFieldDfxRemoveRecord(conn->device.brMac);
     if (GetConnectionState(conn) == P2P_CONNECTED) {
-        int32_t ret = FarFieldAdapterCloseP2P(&conn->device, false);
+        int32_t ret = FarFieldAdapterCloseP2P(&conn->device, isNeedCloseSocket);
         if (ret != SOFTBUS_OK) {
             CONN_LOGW(CONN_PROXY, "Failed to close P2P, ret=%{public}d", ret);
         }

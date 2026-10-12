@@ -53,7 +53,7 @@ typedef struct {
 
 int32_t RegisterFarFieldProxyListener(FarFieldProxyListener *listener);
 int32_t OpenFarFieldProxyChannel(FarFieldProxyParam *param);
-void ClearFarFieldProxy(const char *addr);
+void ClearFarFieldProxy(const char *addr, bool isNeedCloseSocket);
 void FarFieldProxyRefreshChannel(FarFieldProxyParam *param);
 int32_t FarFieldProxyManagerInit(void);
 void FarFieldProxyManagerDeinit(void);

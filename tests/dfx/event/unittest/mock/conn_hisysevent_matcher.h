@@ -105,6 +105,8 @@ static int32_t MatchConnEventNameTypeExtraForAddMsg(const HiSysEventParam *param
     MatchConnEventNameTypeExtraInt32Param(params, ++index, extra.brProxyIsClear);
     MatchConnEventNameTypeExtraInt32Param(params, ++index, extra.brProxyIsRetry);
     MatchConnEventNameTypeExtraInt32Param(params, ++index, extra.brProxyIsAcl);
+    MatchConnEventNameTypeExtraInt32Param(params, ++index, extra.isDirectly);
+    MatchConnEventNameTypeExtraInt32Param(params, ++index, extra.isSupportFarField);
     MatchConnEventNameTypeExtraInt32Param(params, ++index, extra.connectReason);
     MatchConnEventNameTypeExtraInt32Param(params, ++index, extra.sendCnt);
     MatchConnEventNameTypeExtraInt32Param(params, ++index, extra.receiveCnt);
