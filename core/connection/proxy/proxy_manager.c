@@ -323,6 +323,17 @@ static void OnProxyChannelDataReceived(struct ProxyChannel *channel, const uint8
 
 static void OnBrProxyDisconnected(struct ProxyChannel *channel, int32_t reason)
 {
+    ProxyChannelInfo *channelInfo = (ProxyChannelInfo *)SoftBusRcGetCommon(
+        &GetProxyChannelManager()->proxyConnectionList, ProxyChannelInfoMacMatcher, channel->brMac);
+    CONN_CHECK_AND_RETURN_LOGE(channelInfo != NULL, CONN_PROXY, "channelInfo is NULL");
+    int32_t ret = channelInfo->Lock((SoftBusRcObject *)channelInfo);
+    if (ret != SOFTBUS_OK) {
+        channelInfo->Dereference((SoftBusRcObject **)&channelInfo);
+        return;
+    }
+    channel->requestId = channelInfo->requestId;
+    channelInfo->Unlock((SoftBusRcObject *)channelInfo);
+    channelInfo->Dereference((SoftBusRcObject **)&channelInfo);
     if (g_listener.onProxyChannelDisconnected != NULL) {
         g_listener.onProxyChannelDisconnected(channel, reason);
     }
@@ -527,6 +538,7 @@ static int32_t ProxyChannelRefresh(ProxyChannelParam *param, const OpenProxyChan
     }
     channelInfo->requestId = param->requestId;
     channelInfo->isDirectly = true;
+    channelInfo->isFirstConnect = param->isFirstConnect;
     bool isSupportFarField = channelInfo->isSupportFarField;
     char realBrMac[BT_MAC_LEN] = {0};
     if (strcpy_s(realBrMac, BT_MAC_LEN, channelInfo->realBrMac) != EOK) {
