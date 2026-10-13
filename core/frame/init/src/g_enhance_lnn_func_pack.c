@@ -2114,15 +2114,3 @@ int32_t DcWifiDirectExclusiveCancelBySessionNamePacked(const char *sessionName)
     }
     return pfnLnnEnhanceFuncList->dcWifiDirectExclusiveCancelBySessionName(sessionName);
 }
-
-bool DcWifiDirectExclusiveIsExclusivePacked(const char *deviceId)
-{
-    LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
-    if (pfnLnnEnhanceFuncList == NULL) {
-        return false;
-    }
-    if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->dcWifiDirectExclusiveIsExclusive) != SOFTBUS_OK) {
-        return false;
-    }
-    return pfnLnnEnhanceFuncList->dcWifiDirectExclusiveIsExclusive(deviceId);
-}

@@ -76,6 +76,8 @@ int32_t TransGetSocketChannelLaneInfoBySession(
 
 int32_t TransGetPidFromSocketChannelInfoBySession(const char *sessionName, int32_t sessionId, int32_t *pid);
 
+int32_t TransGetSessionNameByChannel(int32_t channelId, int32_t channelType, char *sessionName, uint32_t len);
+
 int32_t TransGetConnectTypeByChannelId(int32_t channelId, ConnectType *connectType);
 
 int32_t TransGetTransLaneInfoByLaneHandle(uint32_t laneHandle, TransLaneInfo *laneInfo);

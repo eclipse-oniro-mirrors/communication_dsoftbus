@@ -23,6 +23,20 @@
 
 using namespace testing;
 using namespace testing::ext;
+
+namespace {
+int32_t g_cancelWifiDirectRet = SOFTBUS_OK;
+const char *g_cancelWifiDirectSessionName = nullptr;
+}
+
+extern "C" {
+int32_t DcWifiDirectExclusiveCancelBySessionNamePacked(const char *sessionName)
+{
+    g_cancelWifiDirectSessionName = sessionName;
+    return g_cancelWifiDirectRet;
+}
+}
+
 namespace OHOS {
 #define TEST_SESSION_NAME "com.softbus.transmission.test"
 #define TEST_CONN_IP "192.168.8.1"
@@ -1045,5 +1059,200 @@ HWTEST_F(TransLaneManagerTest, TransSetSocketChannelStateReserveBySession001, Te
     ret = TransSetSocketChannelStateReserveBySession(sessionName, sessionId, CORE_SESSION_STATE_INIT);
     EXPECT_EQ(SOFTBUS_OK, ret);
     TransSocketLaneMgrDeinit();
+}
+
+/**
+ * @tc.name: TransGetSessionNameByChannelTest001
+ * @tc.desc: test TransGetSessionNameByChannel invalid params and no-init case.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransLaneManagerTest, TransGetSessionNameByChannelTest001, TestSize.Level1)
+{
+    char name[SESSION_NAME_SIZE_MAX] = { 0 };
+    int32_t ret = TransGetSessionNameByChannel(INVALID_CHANNEL_ID, CHANNEL_TYPE_UDP, name, SESSION_NAME_SIZE_MAX);
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
+
+    ret = TransGetSessionNameByChannel(1, CHANNEL_TYPE_UDP, nullptr, SESSION_NAME_SIZE_MAX);
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
+
+    ret = TransGetSessionNameByChannel(1, CHANNEL_TYPE_UDP, name, 0);
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
+
+    EXPECT_NO_FATAL_FAILURE(TransSocketLaneMgrDeinit());
+    ret = TransGetSessionNameByChannel(1, CHANNEL_TYPE_UDP, name, SESSION_NAME_SIZE_MAX);
+    EXPECT_EQ(SOFTBUS_NO_INIT, ret);
+}
+
+/**
+ * @tc.name: TransGetSessionNameByChannelTest002
+ * @tc.desc: test TransGetSessionNameByChannel primary match and not-find case.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransLaneManagerTest, TransGetSessionNameByChannelTest002, TestSize.Level1)
+{
+    int32_t ret = TransSocketLaneMgrInit();
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    char sessionName[SESSION_NAME_SIZE_MAX] = "testSessionName";
+    int32_t sessionId = 1;
+    int32_t channelId = 1;
+    int32_t channelType = CHANNEL_TYPE_UDP;
+    char name[SESSION_NAME_SIZE_MAX] = { 0 };
+
+    ret = TransGetSessionNameByChannel(channelId, channelType, name, SESSION_NAME_SIZE_MAX);
+    EXPECT_EQ(SOFTBUS_NOT_FIND, ret);
+
+    ret = TransAddSocketChannelInfoMultipath(
+        sessionName, sessionId, INVALID_CHANNEL_ID, CHANNEL_TYPE_BUTT, CORE_SESSION_STATE_INIT);
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    ret = TransMultipathUpdateChannel(sessionName, sessionId, channelId, channelType);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+
+    ret = TransGetSessionNameByChannel(channelId, channelType, name, SESSION_NAME_SIZE_MAX);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    EXPECT_EQ(0, strcmp(name, sessionName));
+    EXPECT_NO_FATAL_FAILURE(TransSocketLaneMgrDeinit());
+}
+
+/**
+ * @tc.name: TransGetSessionNameByChannelTest003
+ * @tc.desc: test TransGetSessionNameByChannel reserve channel match case.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransLaneManagerTest, TransGetSessionNameByChannelTest003, TestSize.Level1)
+{
+    int32_t ret = TransSocketLaneMgrInit();
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    char sessionName[SESSION_NAME_SIZE_MAX] = "testSessionName";
+    int32_t sessionId = 1;
+    int32_t channelId = 1;
+    int32_t channelType = CHANNEL_TYPE_UDP;
+    char name[SESSION_NAME_SIZE_MAX] = { 0 };
+
+    ret = TransAddSocketChannelInfoMultipath(
+        sessionName, sessionId, INVALID_CHANNEL_ID, CHANNEL_TYPE_BUTT, CORE_SESSION_STATE_INIT);
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    ret = TransMultipathUpdateChannel(sessionName, sessionId, channelId, channelType);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    ret = TransMultipathUpdateChannel(sessionName, sessionId, channelId + 1, channelType);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+
+    ret = TransGetSessionNameByChannel(channelId + 1, channelType, name, SESSION_NAME_SIZE_MAX);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    EXPECT_EQ(0, strcmp(name, sessionName));
+    EXPECT_NO_FATAL_FAILURE(TransSocketLaneMgrDeinit());
+}
+
+/**
+ * @tc.name: TransGetSessionNameByChannelTest004
+ * @tc.desc: test TransGetSessionNameByChannel strcpy fail case.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransLaneManagerTest, TransGetSessionNameByChannelTest004, TestSize.Level1)
+{
+    int32_t ret = TransSocketLaneMgrInit();
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    char sessionName[SESSION_NAME_SIZE_MAX] = "testSessionName";
+    int32_t sessionId = 1;
+    int32_t channelId = 1;
+    int32_t channelType = CHANNEL_TYPE_UDP;
+    char name[1];
+
+    ret = TransAddSocketChannelInfoMultipath(
+        sessionName, sessionId, INVALID_CHANNEL_ID, CHANNEL_TYPE_BUTT, CORE_SESSION_STATE_INIT);
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    ret = TransMultipathUpdateChannel(sessionName, sessionId, channelId, channelType);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+
+    ret = TransGetSessionNameByChannel(channelId, channelType, name, sizeof(name));
+    EXPECT_EQ(SOFTBUS_MEM_ERR, ret);
+    EXPECT_NO_FATAL_FAILURE(TransSocketLaneMgrDeinit());
+}
+
+/**
+ * @tc.name: CancelWifiDirectExclusiveTest001
+ * @tc.desc: test CancelWifiDirectExclusive aborts when channelType is not tcp-direct or udp.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransLaneManagerTest, CancelWifiDirectExclusiveTest001, TestSize.Level1)
+{
+    g_cancelWifiDirectSessionName = nullptr;
+    EXPECT_NO_FATAL_FAILURE(CancelWifiDirectExclusive(TEST_SESSION_NAME, 1, CHANNEL_TYPE_AUTH));
+    EXPECT_EQ(nullptr, g_cancelWifiDirectSessionName);
+
+    EXPECT_NO_FATAL_FAILURE(CancelWifiDirectExclusive(TEST_SESSION_NAME, 1, CHANNEL_TYPE_PROXY));
+    EXPECT_EQ(nullptr, g_cancelWifiDirectSessionName);
+}
+
+/**
+ * @tc.name: CancelWifiDirectExclusiveTest002
+ * @tc.desc: test CancelWifiDirectExclusive aborts when sessionName is null and channel is not found.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransLaneManagerTest, CancelWifiDirectExclusiveTest002, TestSize.Level1)
+{
+    int32_t ret = TransSocketLaneMgrInit();
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    g_cancelWifiDirectSessionName = nullptr;
+
+    EXPECT_NO_FATAL_FAILURE(CancelWifiDirectExclusive(nullptr, 1, CHANNEL_TYPE_UDP));
+    EXPECT_EQ(nullptr, g_cancelWifiDirectSessionName);
+    EXPECT_NO_FATAL_FAILURE(TransSocketLaneMgrDeinit());
+}
+
+/**
+ * @tc.name: CancelWifiDirectExclusiveTest003
+ * @tc.desc: test CancelWifiDirectExclusive with sessionName null and channel found.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransLaneManagerTest, CancelWifiDirectExclusiveTest003, TestSize.Level1)
+{
+    int32_t ret = TransSocketLaneMgrInit();
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    char sessionName[SESSION_NAME_SIZE_MAX] = "testSessionName";
+    int32_t sessionId = 1;
+    int32_t channelId = 1;
+    int32_t channelType = CHANNEL_TYPE_UDP;
+
+    ret = TransAddSocketChannelInfoMultipath(
+        sessionName, sessionId, INVALID_CHANNEL_ID, CHANNEL_TYPE_BUTT, CORE_SESSION_STATE_INIT);
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    ret = TransMultipathUpdateChannel(sessionName, sessionId, channelId, channelType);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    g_cancelWifiDirectSessionName = nullptr;
+
+    EXPECT_NO_FATAL_FAILURE(CancelWifiDirectExclusive(nullptr, channelId, channelType));
+    EXPECT_NE(nullptr, g_cancelWifiDirectSessionName);
+    EXPECT_EQ(0, strcmp(g_cancelWifiDirectSessionName, sessionName));
+    EXPECT_NO_FATAL_FAILURE(TransSocketLaneMgrDeinit());
+}
+
+/**
+ * @tc.name: CancelWifiDirectExclusiveTest004
+ * @tc.desc: test CancelWifiDirectExclusive with non-null sessionName and different packed result.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransLaneManagerTest, CancelWifiDirectExclusiveTest004, TestSize.Level1)
+{
+    g_cancelWifiDirectRet = SOFTBUS_OK;
+    g_cancelWifiDirectSessionName = nullptr;
+    EXPECT_NO_FATAL_FAILURE(CancelWifiDirectExclusive(TEST_SESSION_NAME, 1, CHANNEL_TYPE_TCP_DIRECT));
+    EXPECT_NE(nullptr, g_cancelWifiDirectSessionName);
+    EXPECT_EQ(0, strcmp(g_cancelWifiDirectSessionName, TEST_SESSION_NAME));
+
+    g_cancelWifiDirectRet = SOFTBUS_ERR;
+    EXPECT_NO_FATAL_FAILURE(CancelWifiDirectExclusive(TEST_SESSION_NAME, 1, CHANNEL_TYPE_UDP));
+    EXPECT_NE(nullptr, g_cancelWifiDirectSessionName);
+    EXPECT_EQ(0, strcmp(g_cancelWifiDirectSessionName, TEST_SESSION_NAME));
+
+    g_cancelWifiDirectRet = SOFTBUS_OK;
+    g_cancelWifiDirectSessionName = nullptr;
 }
 } // OHOS

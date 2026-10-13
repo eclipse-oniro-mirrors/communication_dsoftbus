@@ -1264,12 +1264,6 @@ static int32_t DcWifiDirectExclusiveCancelBySessionNameStub(const char *sessionN
     return SOFTBUS_OK;
 }
 
-static bool DcWifiDirectExclusiveIsExclusiveStub(const char *deviceId)
-{
-    (void)deviceId;
-    return true;
-}
-
 /*
  * @tc.name: DcWifiDirectExclusiveCancelByDeviceIdPackedTest001
  * @tc.desc: DcWifiDirectExclusiveCancelByDeviceIdPacked function test
@@ -1325,24 +1319,5 @@ HWTEST_F(SoftbusGEnhanceTest, DcWifiDirectExclusiveCancelBySessionNamePackedTest
     pfnLnnEnhanceFuncList->dcWifiDirectExclusiveCancelBySessionName = DcWifiDirectExclusiveCancelBySessionNameStub;
     ret = DcWifiDirectExclusiveCancelBySessionNamePacked(TEST_PKG_NAME);
     EXPECT_EQ(ret, SOFTBUS_OK);
-}
-
-/*
- * @tc.name: DcWifiDirectExclusiveIsExclusivePackedTest001
- * @tc.desc: DcWifiDirectExclusiveIsExclusivePacked function test
- * @tc.type: FUNC
- * @tc.level: Level1
- * @tc.require:
- */
-HWTEST_F(SoftbusGEnhanceTest, DcWifiDirectExclusiveIsExclusivePackedTest001, TestSize.Level1)
-{
-    LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
-    pfnLnnEnhanceFuncList->dcWifiDirectExclusiveIsExclusive = nullptr;
-    bool ret = DcWifiDirectExclusiveIsExclusivePacked(TEST_NETWORK_ID);
-    EXPECT_FALSE(ret);
-
-    pfnLnnEnhanceFuncList->dcWifiDirectExclusiveIsExclusive = DcWifiDirectExclusiveIsExclusiveStub;
-    ret = DcWifiDirectExclusiveIsExclusivePacked(TEST_NETWORK_ID);
-    EXPECT_TRUE(ret);
 }
 }

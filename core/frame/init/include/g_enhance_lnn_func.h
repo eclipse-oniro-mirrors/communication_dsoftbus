@@ -327,7 +327,6 @@ typedef int32_t (*AuthMetaOpenConnWithOtherOsTypeFunc)(const AuthConnInfo *info,
 typedef int32_t (*DcWifiDirectExclusiveCancelByDeviceIdFunc)(const char *deviceId);
 typedef int32_t (*DcWifiDirectExclusiveClearByPidFunc)(int32_t pid);
 typedef int32_t (*DcWifiDirectExclusiveCancelBySessionNameFunc)(const char *sessionName);
-typedef bool (*DcWifiDirectExclusiveIsExclusiveFunc)(const char *deviceId);
 
 typedef struct TagLnnEnhanceFuncList {
     // time_sync
@@ -598,7 +597,6 @@ typedef struct TagLnnEnhanceFuncList {
     DcWifiDirectExclusiveCancelByDeviceIdFunc dcWifiDirectExclusiveCancelByDeviceId;
     DcWifiDirectExclusiveClearByPidFunc dcWifiDirectExclusiveClearByPid;
     DcWifiDirectExclusiveCancelBySessionNameFunc dcWifiDirectExclusiveCancelBySessionName;
-    DcWifiDirectExclusiveIsExclusiveFunc dcWifiDirectExclusiveIsExclusive;
 } LnnEnhanceFuncList;
 
 LnnEnhanceFuncList *LnnEnhanceFuncListGet(void);

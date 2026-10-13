@@ -306,8 +306,6 @@ void Register6thPartFunc(void *soHandle)
         dlsym(soHandle, "DcWifiDirectExclusiveClearByPid");
     g_lnnEnhanceFuncList.dcWifiDirectExclusiveCancelBySessionName =
         dlsym(soHandle, "DcWifiDirectExclusiveCancelBySessionName");
-    g_lnnEnhanceFuncList.dcWifiDirectExclusiveIsExclusive =
-        dlsym(soHandle, "DcWifiDirectExclusiveIsExclusive");
 }
 
 int32_t LnnRegisterEnhanceFunc(void *soHandle)
