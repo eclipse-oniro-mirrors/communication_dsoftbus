@@ -1245,4 +1245,104 @@ HWTEST_F(SoftbusGEnhanceTest, SoftbusGEnhanceTest038, TestSize.Level1)
     ret = AuthMetaOpenConnWithOtherOsTypePacked(nullptr, nullptr, 0, nullptr);
     EXPECT_EQ(ret, SOFTBUS_NOT_IMPLEMENT);
 }
+
+static int32_t DcWifiDirectExclusiveCancelByDeviceIdStub(const char *deviceId)
+{
+    (void)deviceId;
+    return SOFTBUS_OK;
+}
+
+static int32_t DcWifiDirectExclusiveClearByPidStub(int32_t pid)
+{
+    (void)pid;
+    return SOFTBUS_OK;
+}
+
+static int32_t DcWifiDirectExclusiveCancelBySessionNameStub(const char *sessionName)
+{
+    (void)sessionName;
+    return SOFTBUS_OK;
+}
+
+static bool DcWifiDirectExclusiveIsExclusiveStub(const char *deviceId)
+{
+    (void)deviceId;
+    return true;
+}
+
+/*
+ * @tc.name: DcWifiDirectExclusiveCancelByDeviceIdPackedTest001
+ * @tc.desc: DcWifiDirectExclusiveCancelByDeviceIdPacked function test
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(SoftbusGEnhanceTest, DcWifiDirectExclusiveCancelByDeviceIdPackedTest001, TestSize.Level1)
+{
+    LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
+    pfnLnnEnhanceFuncList->dcWifiDirectExclusiveCancelByDeviceId = nullptr;
+    int32_t ret = DcWifiDirectExclusiveCancelByDeviceIdPacked(TEST_NETWORK_ID);
+    EXPECT_EQ(ret, SOFTBUS_NOT_IMPLEMENT);
+
+    pfnLnnEnhanceFuncList->dcWifiDirectExclusiveCancelByDeviceId = DcWifiDirectExclusiveCancelByDeviceIdStub;
+    ret = DcWifiDirectExclusiveCancelByDeviceIdPacked(TEST_NETWORK_ID);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+}
+
+/*
+ * @tc.name: DcWifiDirectExclusiveClearByPidPackedTest001
+ * @tc.desc: DcWifiDirectExclusiveClearByPidPacked function test
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(SoftbusGEnhanceTest, DcWifiDirectExclusiveClearByPidPackedTest001, TestSize.Level1)
+{
+    LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
+    pfnLnnEnhanceFuncList->dcWifiDirectExclusiveClearByPid = nullptr;
+    int32_t ret = DcWifiDirectExclusiveClearByPidPacked(TEST_PID);
+    EXPECT_EQ(ret, SOFTBUS_NOT_IMPLEMENT);
+
+    pfnLnnEnhanceFuncList->dcWifiDirectExclusiveClearByPid = DcWifiDirectExclusiveClearByPidStub;
+    ret = DcWifiDirectExclusiveClearByPidPacked(TEST_PID);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+}
+
+/*
+ * @tc.name: DcWifiDirectExclusiveCancelBySessionNamePackedTest001
+ * @tc.desc: DcWifiDirectExclusiveCancelBySessionNamePacked function test
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(SoftbusGEnhanceTest, DcWifiDirectExclusiveCancelBySessionNamePackedTest001, TestSize.Level1)
+{
+    LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
+    pfnLnnEnhanceFuncList->dcWifiDirectExclusiveCancelBySessionName = nullptr;
+    int32_t ret = DcWifiDirectExclusiveCancelBySessionNamePacked(TEST_PKG_NAME);
+    EXPECT_EQ(ret, SOFTBUS_NOT_IMPLEMENT);
+
+    pfnLnnEnhanceFuncList->dcWifiDirectExclusiveCancelBySessionName = DcWifiDirectExclusiveCancelBySessionNameStub;
+    ret = DcWifiDirectExclusiveCancelBySessionNamePacked(TEST_PKG_NAME);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+}
+
+/*
+ * @tc.name: DcWifiDirectExclusiveIsExclusivePackedTest001
+ * @tc.desc: DcWifiDirectExclusiveIsExclusivePacked function test
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(SoftbusGEnhanceTest, DcWifiDirectExclusiveIsExclusivePackedTest001, TestSize.Level1)
+{
+    LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
+    pfnLnnEnhanceFuncList->dcWifiDirectExclusiveIsExclusive = nullptr;
+    bool ret = DcWifiDirectExclusiveIsExclusivePacked(TEST_NETWORK_ID);
+    EXPECT_FALSE(ret);
+
+    pfnLnnEnhanceFuncList->dcWifiDirectExclusiveIsExclusive = DcWifiDirectExclusiveIsExclusiveStub;
+    ret = DcWifiDirectExclusiveIsExclusivePacked(TEST_NETWORK_ID);
+    EXPECT_TRUE(ret);
+}
 }

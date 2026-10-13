@@ -46,11 +46,30 @@ constexpr int32_t CHANNEL_ID = 10;
 constexpr char MAC_TEST[] = "testMac";
 constexpr uint32_t CONNECTION_ID = 10;
 
-static std::string g_canceledDeviceId;
+static std::string g_canceledDeviceId = "";
 static int32_t CancelByDeviceIdMock(const char *deviceId)
 {
     g_canceledDeviceId = (deviceId != nullptr) ? deviceId : "";
     return SOFTBUS_OK;
+}
+
+static int32_t CancelByDeviceIdFailMock(const char *deviceId)
+{
+    g_canceledDeviceId = (deviceId != nullptr) ? deviceId : "";
+    return SOFTBUS_INVALID_PARAM;
+}
+
+static bool IsPowerControlEnabledTrueMock(void)
+{
+    return true;
+}
+
+static void CheckGetNetworkIdByUuidMock(LaneDepsInterfaceMock &laneMock)
+{
+    char networkId[NETWORK_ID_BUF_LEN] = {0};
+    if (SOFTBUS_OK != laneMock.LnnGetNetworkIdByUuid(PEER_UDID, networkId, sizeof(networkId))) {
+        GTEST_LOG_(INFO) << "LnnGetNetworkIdByUuid mock return fail";
+    }
 }
 
 class DcExclusiveCancelMockGuard {
@@ -63,12 +82,34 @@ public:
     }
     ~DcExclusiveCancelMockGuard()
     {
-        funcList_->dcWifiDirectExclusiveCancelByDeviceId = oldFunc_;
+        if (funcList_ != nullptr) {
+            funcList_->dcWifiDirectExclusiveCancelByDeviceId = oldFunc_;
+        }
     }
 
 private:
     LnnEnhanceFuncList *funcList_;
     DcWifiDirectExclusiveCancelByDeviceIdFunc oldFunc_;
+};
+
+class PowerControlEnabledMockGuard {
+public:
+    explicit PowerControlEnabledMockGuard(IsPowerControlEnabledFunc mockFunc)
+    {
+        funcList_ = LnnEnhanceFuncListGet();
+        oldFunc_ = funcList_->isPowerControlEnabled;
+        funcList_->isPowerControlEnabled = mockFunc;
+    }
+    ~PowerControlEnabledMockGuard()
+    {
+        if (funcList_ != nullptr) {
+            funcList_->isPowerControlEnabled = oldFunc_;
+        }
+    }
+
+private:
+    LnnEnhanceFuncList *funcList_;
+    IsPowerControlEnabledFunc oldFunc_;
 };
 
 class LNNLaneListenerTest : public testing::Test {
@@ -764,6 +805,7 @@ HWTEST_F(LNNLaneListenerTest, WIFI_DIRECT_DEVICE_OFFLINE_EXCLUSIVE_CANCEL_001, T
     // HML link and get networkId ok, call DcWifiDirectExclusiveCancelByDeviceIdPacked.
     EXPECT_CALL(laneMock, LnnGetNetworkIdByUuid)
         .WillRepeatedly(DoAll(SetArgPointee<1>('N'), Return(SOFTBUS_OK)));
+    CheckGetNetworkIdByUuidMock(laneMock);
     g_canceledDeviceId.clear();
     EXPECT_NO_FATAL_FAILURE(LnnOnWifiDirectDeviceOffline(MAC_TEST, "172.30.1.1", PEER_UDID, localIp));
     EXPECT_EQ(g_canceledDeviceId, "N");
@@ -781,6 +823,13 @@ HWTEST_F(LNNLaneListenerTest, WIFI_DIRECT_DEVICE_OFFLINE_EXCLUSIVE_CANCEL_001, T
     g_canceledDeviceId.clear();
     EXPECT_NO_FATAL_FAILURE(LnnOnWifiDirectDeviceOffline(MAC_TEST, PEER_IP_P2P, PEER_UDID, localIp));
     EXPECT_TRUE(g_canceledDeviceId.empty());
+
+    // HML link with power control enabled and dc exclusive cancel failed -> error log branch.
+    PowerControlEnabledMockGuard powerGuard(IsPowerControlEnabledTrueMock);
+    DcExclusiveCancelMockGuard failGuard(CancelByDeviceIdFailMock);
+    g_canceledDeviceId.clear();
+    EXPECT_NO_FATAL_FAILURE(LnnOnWifiDirectDeviceOffline(MAC_TEST, "172.30.1.1", PEER_UDID, localIp));
+    EXPECT_EQ(g_canceledDeviceId, "N");
 }
 
 /*
@@ -806,6 +855,7 @@ HWTEST_F(LNNLaneListenerTest, WIFI_DIRECT_DISCONNECT_FOR_SINK_EXCLUSIVE_CANCEL_0
     // HML link and get networkId ok, call DcWifiDirectExclusiveCancelByDeviceIdPacked.
     EXPECT_CALL(laneMock, LnnGetNetworkIdByUuid)
         .WillRepeatedly(DoAll(SetArgPointee<1>('N'), Return(SOFTBUS_OK)));
+    CheckGetNetworkIdByUuidMock(laneMock);
     g_canceledDeviceId.clear();
     EXPECT_NO_FATAL_FAILURE(LnnOnWifiDirectDisconnectedForSink(&hmlLink));
     EXPECT_EQ(g_canceledDeviceId, "N");
@@ -827,6 +877,12 @@ HWTEST_F(LNNLaneListenerTest, WIFI_DIRECT_DISCONNECT_FOR_SINK_EXCLUSIVE_CANCEL_0
     g_canceledDeviceId.clear();
     EXPECT_NO_FATAL_FAILURE(LnnOnWifiDirectDisconnectedForSink(&p2pLink));
     EXPECT_TRUE(g_canceledDeviceId.empty());
+
+    // HML link dc exclusive cancel failed -> error log branch.
+    DcExclusiveCancelMockGuard failGuard(CancelByDeviceIdFailMock);
+    g_canceledDeviceId.clear();
+    EXPECT_NO_FATAL_FAILURE(LnnOnWifiDirectDisconnectedForSink(&hmlLink));
+    EXPECT_EQ(g_canceledDeviceId, "N");
 }
 
 /*

@@ -369,6 +369,19 @@ static int32_t GetStateNotifyInfo(const char *peerIp, const char *peerUuid, Lane
     return SOFTBUS_OK;
 }
 
+static void TryCancelWifiDirectExclusive(const char *remoteUuid)
+{
+    char networkId[NETWORK_ID_BUF_LEN] = {0};
+    if (LnnGetNetworkIdByUuid(remoteUuid, networkId, sizeof(networkId)) != SOFTBUS_OK) {
+        LNN_LOGW(LNN_LANE, "get networkId failed, skip exclusive cancel");
+        return;
+    }
+    int32_t ret = DcWifiDirectExclusiveCancelByDeviceIdPacked(networkId);
+    if (ret != SOFTBUS_OK) {
+        LNN_LOGE(LNN_LANE, "dc wifi direct exclusive cancel failed, ret=%{public}d", ret);
+    }
+}
+
 static void LnnOnWifiDirectDeviceOnline(const char *peerMac, const char *peerIp, const char *peerUuid, bool isSource)
 {
     LNN_LOGI(LNN_LANE, "lnn wifidirect up");
@@ -405,13 +418,7 @@ static void LnnOnWifiDirectDeviceOffline(const char *peerMac, const char *peerIp
         if (IsPowerControlEnabledPacked()) {
             DetectDisableWifiDirectApply();
         }
-        char networkId[NETWORK_ID_BUF_LEN] = {0};
-        if (LnnGetNetworkIdByUuid(peerUuid, networkId, sizeof(networkId)) == SOFTBUS_OK) {
-            int32_t ret = DcWifiDirectExclusiveCancelByDeviceIdPacked(networkId);
-            if (ret != SOFTBUS_OK) {
-                LNN_LOGE(LNN_LANE, "dc wifi direct exclusive cancel failed, ret=%{public}d", ret);
-            }
-        }
+        TryCancelWifiDirectExclusive(peerUuid);
     }
     if (PostLaneStateChangeMessage(LANE_STATE_LINKDOWN, laneLinkInfo.peerUdid, &laneLinkInfo) != SOFTBUS_OK) {
         LNN_LOGE(LNN_LANE, "post laneState linkdown msg fail");
@@ -576,13 +583,7 @@ static void LnnOnWifiDirectDisconnectedForSink(const struct WifiDirectSinkLink *
         link->linkType, AnonymizeWrapper(anonyUuid));
     AnonymizeFree(anonyUuid);
     if (link->linkType == WIFI_DIRECT_LINK_TYPE_HML) {
-        char networkId[NETWORK_ID_BUF_LEN] = {0};
-        if (LnnGetNetworkIdByUuid(link->remoteUuid, networkId, sizeof(networkId)) == SOFTBUS_OK) {
-            int32_t ret = DcWifiDirectExclusiveCancelByDeviceIdPacked(networkId);
-            if (ret != SOFTBUS_OK) {
-                LNN_LOGE(LNN_LANE, "dc wifi direct exclusive cancel failed, ret=%{public}d", ret);
-            }
-        }
+        TryCancelWifiDirectExclusive(link->remoteUuid);
     }
     char remoteUdid[UDID_BUF_LEN] = {0};
     if (LnnConvertDLidToUdid(link->remoteUuid, CATEGORY_UUID, remoteUdid, UDID_BUF_LEN) != SOFTBUS_OK) {
