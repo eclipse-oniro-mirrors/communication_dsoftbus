@@ -886,6 +886,41 @@ HWTEST_F(LNNLaneListenerTest, WIFI_DIRECT_DISCONNECT_FOR_SINK_EXCLUSIVE_CANCEL_0
 }
 
 /*
+* @tc.name: WIFI_DIRECT_DISCONNECT_FOR_SINK_EXCLUSIVE_CANCEL_002
+* @tc.desc: LnnOnWifiDirectDisconnectedForSink trigger exclusive cancel before udid convert and resource find
+* @tc.type: FUNC
+* @tc.require:
+*/
+HWTEST_F(LNNLaneListenerTest, WIFI_DIRECT_DISCONNECT_FOR_SINK_EXCLUSIVE_CANCEL_002, TestSize.Level1)
+{
+    NiceMock<LaneDepsInterfaceMock> laneMock;
+    EXPECT_CALL(laneMock, LnnGetRemoteStrInfo).WillRepeatedly(Return(SOFTBUS_OK));
+    NiceMock<LaneListenerDepsInterfaceMock> listenerMock;
+    DcExclusiveCancelMockGuard guard(CancelByDeviceIdMock);
+
+    WifiDirectSinkLink hmlLink = {
+        .linkType = WIFI_DIRECT_LINK_TYPE_HML,
+    };
+    EXPECT_EQ(strncpy_s(hmlLink.remoteUuid, UDID_BUF_LEN, PEER_UDID, UDID_BUF_LEN), EOK);
+    EXPECT_CALL(laneMock, LnnGetNetworkIdByUuid)
+        .WillRepeatedly(DoAll(SetArgPointee<1>('N'), Return(SOFTBUS_OK)));
+
+    // HML link but convert udid fail, exclusive cancel still happens before udid conversion.
+    EXPECT_CALL(laneMock, LnnConvertDLidToUdid).WillRepeatedly(Return(SOFTBUS_LANE_GET_LEDGER_INFO_ERR));
+    g_canceledDeviceId.clear();
+    EXPECT_NO_FATAL_FAILURE(LnnOnWifiDirectDisconnectedForSink(&hmlLink));
+    EXPECT_EQ(g_canceledDeviceId, "N");
+
+    // HML link convert udid ok but find lane resource fail, exclusive cancel already happened.
+    EXPECT_CALL(laneMock, LnnConvertDLidToUdid).WillRepeatedly(Return(SOFTBUS_OK));
+    EXPECT_CALL(listenerMock, FindLaneResourceByLinkType)
+        .WillRepeatedly(Return(SOFTBUS_LANE_GET_LEDGER_INFO_ERR));
+    g_canceledDeviceId.clear();
+    EXPECT_NO_FATAL_FAILURE(LnnOnWifiDirectDisconnectedForSink(&hmlLink));
+    EXPECT_EQ(g_canceledDeviceId, "N");
+}
+
+/*
 * @tc.name: TRY_CLEAR_RES_WITHOUT_UDID_001
 * @tc.desc: TryClearResourceWithoutUdid
 * @tc.type: FUNC

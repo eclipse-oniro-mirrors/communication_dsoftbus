@@ -373,7 +373,10 @@ static void TryCancelWifiDirectExclusive(const char *remoteUuid)
 {
     char networkId[NETWORK_ID_BUF_LEN] = {0};
     if (LnnGetNetworkIdByUuid(remoteUuid, networkId, sizeof(networkId)) != SOFTBUS_OK) {
-        LNN_LOGW(LNN_LANE, "get networkId failed, skip exclusive cancel");
+        char *anonyUuid = NULL;
+        Anonymize(remoteUuid, &anonyUuid);
+        LNN_LOGW(LNN_LANE, "get networkId failed, skip exclusive cancel, uuid=%{public}s", AnonymizeWrapper(anonyUuid));
+        AnonymizeFree(anonyUuid);
         return;
     }
     int32_t ret = DcWifiDirectExclusiveCancelByDeviceIdPacked(networkId);
