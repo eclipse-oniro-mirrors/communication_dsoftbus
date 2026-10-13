@@ -2105,13 +2105,14 @@ int32_t HandleLaneQosChange(const LaneLinkInfo *laneLinkInfo)
         return SOFTBUS_OK;
     }
     char peerNetworkId[NETWORK_ID_BUF_LEN] = {0};
-    if (strcpy_s(peerNetworkId, sizeof(peerNetworkId), laneLinkInfo->networkId) != EOK) {
-        LNN_LOGE(LNN_LANE, "copy networkId fail");
-        return SOFTBUS_STRCPY_ERR;
+    int32_t ret = LnnGetNetworkIdByUdid(laneLinkInfo->peerUdid, peerNetworkId, sizeof(peerNetworkId));
+    if (ret != SOFTBUS_OK) {
+        LNN_LOGE(LNN_LANE, "get networkId by udid fail");
+        return ret;
     }
     ListNode reqInfoList;
     ListInit(&reqInfoList);
-    int32_t ret = GetNodeToNotifyQosEvent(peerNetworkId, &reqInfoList);
+    ret = GetNodeToNotifyQosEvent(peerNetworkId, &reqInfoList);
     if (ret != SOFTBUS_OK) {
         LNN_LOGE(LNN_LANE, "get list fail, ret=%{public}d", ret);
         return ret;
