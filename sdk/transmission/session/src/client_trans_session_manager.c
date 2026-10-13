@@ -3733,6 +3733,10 @@ int32_t GetChannelTypeBySessionId(int32_t sessionId, int32_t channelId, int32_t 
 
 int32_t CheckChannelIsReserveByChannelId(int32_t sessionId, int32_t channelId, int32_t *useType)
 {
+    if (useType == NULL) {
+        TRANS_LOGE(TRANS_SDK, "invalid param");
+        return SOFTBUS_INVALID_PARAM;
+    }
     ChannelUseChooseState chooseType;
     int32_t ret = TransMultipathGetChannelRole(sessionId, channelId, &chooseType);
     if (ret == SOFTBUS_OK) {
