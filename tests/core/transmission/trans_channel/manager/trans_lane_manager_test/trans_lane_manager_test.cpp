@@ -26,7 +26,7 @@ using namespace testing::ext;
 
 namespace {
 int32_t g_cancelWifiDirectRet = SOFTBUS_OK;
-const char *g_cancelWifiDirectSessionName = nullptr;
+const char *g_cancelWifiDirectSessionName = nullptr; // NOLINT
 }
 
 extern "C" {
