@@ -868,7 +868,7 @@ static void RemoveJoinRequestInfoByPkgName(const char *pkgName)
     std::lock_guard<std::mutex> autoLock(g_lock);
     std::vector<JoinLnnRequestInfo *>::iterator iter;
     for (iter = g_joinLNNRequestInfo.begin(); iter != g_joinLNNRequestInfo.end();) {
-        if (strncmp(pkgName, (*iter)->pkgName, strlen(pkgName))) {
+        if (strcmp(pkgName, (*iter)->pkgName)) {
             ++iter;
             continue;
         }
@@ -882,7 +882,7 @@ static void RemoveLeaveRequestInfoByPkgName(const char *pkgName)
     std::lock_guard<std::mutex> autoLock(g_lock);
     std::vector<LeaveLnnRequestInfo *>::iterator iter;
     for (iter = g_leaveLNNRequestInfo.begin(); iter != g_leaveLNNRequestInfo.end();) {
-        if (strncmp(pkgName, (*iter)->pkgName, strlen(pkgName))) {
+        if (strcmp(pkgName, (*iter)->pkgName)) {
             ++iter;
             continue;
         }
@@ -896,7 +896,7 @@ static void RemoveRefreshRequestInfoByPkgName(const char *pkgName)
     std::lock_guard<std::mutex> autoLock(g_lock);
     std::vector<RefreshLnnRequestInfo *>::iterator iter;
     for (iter = g_refreshLnnRequestInfo.begin(); iter != g_refreshLnnRequestInfo.end();) {
-        if (strncmp(pkgName, (*iter)->pkgName, strlen(pkgName)) != 0) {
+        if (strcmp(pkgName, (*iter)->pkgName) != 0) {
             ++iter;
             continue;
         }
@@ -948,7 +948,7 @@ static void RemoveAccountAuthInfoByPkgName(const char *pkgName)
             LNN_LOGE(LNN_EVENT, "iter is nullptr");
             break;
         }
-        if (strncmp(pkgName, (*iter)->pkgName, strlen(pkgName)) != 0) {
+        if (strcmp(pkgName, (*iter)->pkgName) != 0) {
             ++iter;
             continue;
         }
@@ -986,7 +986,7 @@ static void StopTimeSyncReq(const char *pkgName)
             LNN_LOGE(LNN_EVENT, "iter is nullptr");
             break;
         }
-        if (strncmp(pkgName, (*iter)->pkgName, strlen(pkgName)) != 0) {
+        if (strcmp(pkgName, (*iter)->pkgName) != 0) {
             ++iter;
             continue;
         }
