@@ -1081,6 +1081,10 @@ static void DecideLinksWithDevice(const char *networkId, const LaneSelectParam *
 static void DecideLinksWithQosRequire(const LaneSelectParam *request, LaneLinkType *linkList, uint32_t *linksNum)
 {
     DecideOptimalLinks(request, linkList, linksNum);
+    if (request->qosRequire.onlyFirstPriority) {
+        LNN_LOGI(LNN_LANE, "onlyFirstPriority enabled, skip retry links, linksNum=%{public}d", *linksNum);
+        return;
+    }
     DecideRetryLinks(request, linkList, linksNum);
     LNN_LOGI(LNN_LANE, "decide links num=%{public}d", *linksNum);
 }

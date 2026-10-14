@@ -231,6 +231,7 @@ typedef struct {
     bool continuousTask;
     bool reuseBestEffort;
     bool ratePreference;
+    bool onlyFirstPriority;
 } QosInfo;
 
 typedef struct {
