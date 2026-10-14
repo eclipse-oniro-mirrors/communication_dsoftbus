@@ -868,7 +868,7 @@ static void RemoveJoinRequestInfoByPkgName(const char *pkgName)
     std::lock_guard<std::mutex> autoLock(g_lock);
     std::vector<JoinLnnRequestInfo *>::iterator iter;
     for (iter = g_joinLNNRequestInfo.begin(); iter != g_joinLNNRequestInfo.end();) {
-        if (strcmp(pkgName, (*iter)->pkgName)) {
+        if (strncmp(pkgName, (*iter)->pkgName, strlen(pkgName))) {
             ++iter;
             continue;
         }
@@ -882,7 +882,7 @@ static void RemoveLeaveRequestInfoByPkgName(const char *pkgName)
     std::lock_guard<std::mutex> autoLock(g_lock);
     std::vector<LeaveLnnRequestInfo *>::iterator iter;
     for (iter = g_leaveLNNRequestInfo.begin(); iter != g_leaveLNNRequestInfo.end();) {
-        if (strcmp(pkgName, (*iter)->pkgName)) {
+        if (strncmp(pkgName, (*iter)->pkgName, strlen(pkgName))) {
             ++iter;
             continue;
         }
@@ -948,7 +948,7 @@ static void RemoveAccountAuthInfoByPkgName(const char *pkgName)
             LNN_LOGE(LNN_EVENT, "iter is nullptr");
             break;
         }
-        if (strcmp(pkgName, (*iter)->pkgName) != 0) {
+        if (strncmp(pkgName, (*iter)->pkgName, strlen(pkgName)) != 0) {
             ++iter;
             continue;
         }
