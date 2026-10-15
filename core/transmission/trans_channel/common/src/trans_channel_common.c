@@ -541,7 +541,7 @@ int32_t TransCommonCloseChannel(const char *sessionName, int32_t channelId, int3
                 (void)TransLaneMgrDelLane(channelId, channelType, false);
                 break;
             default:
-                TRANS_LOGE(TRANS_CTRL, "Unknow channel type, type=%{public}d", channelType);
+                TRANS_LOGE(TRANS_CTRL, "Unknown channel type, type=%{public}d", channelType);
                 break;
         }
         CancelWifiDirectExclusive(sessionName, channelId, channelType);
