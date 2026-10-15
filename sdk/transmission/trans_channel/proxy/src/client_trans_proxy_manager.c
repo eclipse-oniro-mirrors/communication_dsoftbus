@@ -540,8 +540,12 @@ static int32_t ClientTransProxyBytesNotifySession(int32_t channelId, const DataH
         case TRANS_SESSION_FILE_RESULT_FRAME:
         case TRANS_SESSION_FILE_ACK_REQUEST_SENT:
         case TRANS_SESSION_FILE_ACK_RESPONSE_SENT:
+#ifdef DSOFTBUS_FEATURE_TRANS_PROXY_FILE
+            return g_sessionCb.OnDataReceived(channelId, CHANNEL_TYPE_PROXY, data, len, flags);
+#else
             TRANS_LOGW(TRANS_SDK, "file frame not support, flags=%{public}d", flags);
             return SOFTBUS_FUNC_NOT_SUPPORT;
+#endif
         case TRANS_SESSION_ASYNC_MESSAGE:
             return g_sessionCb.OnDataReceived(channelId, CHANNEL_TYPE_PROXY, data, len, flags);
         default:
