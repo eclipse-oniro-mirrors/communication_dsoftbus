@@ -240,15 +240,9 @@ static int32_t CheckMessageBusinessTypeAndOsType(int32_t sessionId, int32_t chan
         return SOFTBUS_TRANS_BUSINESS_TYPE_NOT_MATCH;
     }
  
-    if (osType != OH_OS_TYPE && businessType == BUSINESS_TYPE_MESSAGE) {
-        ret = CheckSendLenForBooster(len);
-        TRANS_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret,
-            TRANS_MSG, "CheckSendLenForBooster fail, len=%{public}u, sessionId=%{public}d", len, sessionId);
-    } else {
-        ret = CheckSendLen(channelId, channelType, len, BUSINESS_TYPE_MESSAGE);
-        TRANS_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret,
-            TRANS_MSG, "CheckSendLen fail, len=%{public}u, sessionId=%{public}d", len, sessionId);
-    }
+    ret = CheckSendLen(channelId, channelType, len, BUSINESS_TYPE_MESSAGE);
+    TRANS_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret,
+        TRANS_MSG, "CheckSendLen fail, len=%{public}u, sessionId=%{public}d", len, sessionId);
     return SOFTBUS_OK;
 }
 
