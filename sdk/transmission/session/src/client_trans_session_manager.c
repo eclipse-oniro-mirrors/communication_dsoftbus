@@ -45,6 +45,7 @@
 #define CONVERSION_BASE 1000LL
 #define CAST_SESSION "CastPlusSessionName"
 #define D2D_FORK_NUM_MAX 5
+#define GROUP_ID_SIZE_MAX 128
 static void ClientTransSessionTimerProc(void);
 static void ClientTransAsyncSendBytesTimerProc(void);
 
@@ -3824,6 +3825,40 @@ int32_t ClientSetKeyTypeBySocket(int32_t socket, int32_t keyType)
     sessionNode->keyType = keyType;
     UnlockClientSessionServerList();
     TRANS_LOGI(TRANS_SDK, "socketId=%{public}d set keyType=%{public}d", socket, keyType);
+    return SOFTBUS_OK;
+}
+
+int32_t ClientSetGroupIdBySocket(int32_t socket, const char *groupId)
+{
+    if (socket <= 0 || groupId == NULL) {
+        TRANS_LOGE(TRANS_SDK, "invalid param, socket=%{public}d", socket);
+        return SOFTBUS_INVALID_PARAM;
+    }
+    if (strnlen(groupId, GROUP_ID_SIZE_MAX) >= GROUP_ID_SIZE_MAX) {
+        TRANS_LOGE(TRANS_SDK, "invalid groupId, socket=%{public}d", socket);
+        return SOFTBUS_TRANS_SESSION_GROUP_INVALID;
+    }
+    int32_t ret = LockClientSessionServerList();
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_SDK, "lock failed ret=%{public}d", ret);
+        return ret;
+    }
+    ClientSessionServer *serverNode = NULL;
+    SessionInfo *sessionNode = NULL;
+    ret = GetSessionById(socket, &serverNode, &sessionNode);
+    if (ret != SOFTBUS_OK) {
+        UnlockClientSessionServerList();
+        TRANS_LOGE(TRANS_SDK, "session not found, socket=%{public}d ret=%{public}d", socket, ret);
+        return ret;
+    }
+    ret = strcpy_s(sessionNode->info.groupId, GROUP_ID_SIZE_MAX, groupId);
+    if (ret != EOK) {
+        UnlockClientSessionServerList();
+        TRANS_LOGE(TRANS_SDK, "strcpy_s groupId failed, socket=%{public}d ret=%{public}d", socket, ret);
+        return SOFTBUS_MEM_ERR;
+    }
+    UnlockClientSessionServerList();
+    TRANS_LOGI(TRANS_SDK, "socketId=%{public}d set groupId success", socket);
     return SOFTBUS_OK;
 }
 

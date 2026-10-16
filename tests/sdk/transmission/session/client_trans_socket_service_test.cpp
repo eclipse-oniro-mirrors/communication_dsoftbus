@@ -30,6 +30,7 @@
 #define SOCKET_NETWORKID_INVALID_LEN (SOCKET_NETWORKID_MAX_LEN + 1)
 #define DATA_LENS 32
 #define INVALID_VALUE (-1)
+#define TEST_GROUP_ID_SIZE_MAX 128
 
 using namespace testing::ext;
 namespace OHOS {
@@ -1030,5 +1031,45 @@ HWTEST_F(TransClientSocketServiceTest, GetSocketOptKeyTypeInvalidParamTest001, T
     EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
     ret = GetSocketOpt(1, OPT_LEVEL_SOFTBUS, OPT_TYPE_KEY_TYPE, &keyType, nullptr);
     EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+}
+
+/*
+ * @tc.name: SetSocketOptGroupIdInvalidParamTest001
+ * @tc.desc: test SetSocketOpt with OPT_TYPE_GROUP_ID invalid param combinations that
+ *           hit the SOFTBUS_INVALID_PARAM branch (invalid socket, level, null optValue,
+ *           invalid optValueSize)
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(TransClientSocketServiceTest, SetSocketOptGroupIdInvalidParamTest001, TestSize.Level1)
+{
+    char groupId[] = "test_group_id";
+    int32_t groupIdSize = static_cast<int32_t>(strlen(groupId) + 1);
+    int32_t ret = SetSocketOpt(0, OPT_LEVEL_SOFTBUS, OPT_TYPE_GROUP_ID, groupId, groupIdSize);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+    ret = SetSocketOpt(1, OPT_LEVEL_BUTT, OPT_TYPE_GROUP_ID, groupId, groupIdSize);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+    ret = SetSocketOpt(1, OPT_LEVEL_SOFTBUS, OPT_TYPE_GROUP_ID, nullptr, groupIdSize);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+    ret = SetSocketOpt(1, OPT_LEVEL_SOFTBUS, OPT_TYPE_GROUP_ID, groupId, -1);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+}
+
+/*
+ * @tc.name: SetSocketOptGroupIdInvalidGroupTest001
+ * @tc.desc: test SetSocketOpt with OPT_TYPE_GROUP_ID when groupId is too long
+ *           (length >= TEST_GROUP_ID_SIZE_MAX), returns SOFTBUS_TRANS_SESSION_GROUP_INVALID
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(TransClientSocketServiceTest, SetSocketOptGroupIdInvalidGroupTest001, TestSize.Level1)
+{
+    char groupId[TEST_GROUP_ID_SIZE_MAX + 2] = {0};
+    (void)memset_s(groupId, sizeof(groupId), 'G', TEST_GROUP_ID_SIZE_MAX + 1);
+    int32_t groupIdSize = static_cast<int32_t>(TEST_GROUP_ID_SIZE_MAX + 1);
+    int32_t ret = SetSocketOpt(1, OPT_LEVEL_SOFTBUS, OPT_TYPE_GROUP_ID, groupId, groupIdSize);
+    EXPECT_EQ(ret, SOFTBUS_TRANS_SESSION_GROUP_INVALID);
 }
 } // namespace OHOS
