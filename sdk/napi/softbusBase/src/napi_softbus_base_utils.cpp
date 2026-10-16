@@ -54,6 +54,7 @@ int32_t ConvertToJsErrcode(int32_t err)
             return SOFTBUS_BASE_OK;
         case SOFTBUS_PERMISSION_DENIED:
             return SOFTBUS_BASE_PERMISSION_ERR;
+        case SOFTBUS_ACCOUNT_CONSTRAINT_ENABLE:
         case SOFTBUS_FUNC_NOT_SUPPORT:
             return SOFTBUS_BASE_NOT_SUPPORT;
         case SOFTBUS_INVALID_PARAM:
