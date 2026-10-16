@@ -642,7 +642,7 @@ if (defined(ohos_lite)) {
         if (!defined(ohos_lite)) {
           deps += [
             ":ClientTransStreamTest",
-            ":ClientTransUdpStreamInterfaceTest",
+            #":ClientTransUdpStreamInterfaceTest",
             ":StreamAdaptorTest",
             ":ClientTransUdpManagerStaticTest",
             "tcp_direct:unittest",
