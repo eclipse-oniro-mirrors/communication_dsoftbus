@@ -855,7 +855,7 @@ int32_t ReadStringFromBuf(uint8_t *buf, uint32_t bufLen, int32_t *offSet, char *
         COMM_LOGE(COMM_UTILS, "Read data is long than bufLen!");
         return SOFTBUS_TRANS_INVALID_DATA_LENGTH;
     }
-    if (inDataLen > dataLen || dataLen == 0) {
+    if (inDataLen > dataLen) {
         COMM_LOGE(COMM_UTILS, "string data is long than datalen!");
         return SOFTBUS_TRANS_INVALID_DATA_LENGTH;
     }
