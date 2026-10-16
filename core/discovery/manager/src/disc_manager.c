@@ -107,7 +107,7 @@ typedef struct {
     int32_t pid;
 } IdContainer;
 
-#ifdef DSOFTBUS_FEATURE_DISC_COCKPIT_MULTI_USER
+#ifdef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
 #include "bus_center_client_proxy.h"
 
 typedef struct {
@@ -126,7 +126,7 @@ static atomic_bool g_centerScreenOn = true;
 static atomic_bool g_wasAllScreenOff = false;
 static SoftBusMutex g_screenStateLock = {0};
 #define DISC_SCREEN_CENTER 0
-#endif /* DSOFTBUS_FEATURE_DISC_COCKPIT_MULTI_USER */
+#endif /* DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER */
 
 #define DFX_RECORD_DISC_CALL_START(infoNode, packageName, interfaceType)   \
     do {                                                                   \
@@ -891,7 +891,7 @@ static DiscInfo *RemoveInfoFromDiscoveryList(const char *packageName, const int3
 }
 
 
-#ifdef DSOFTBUS_FEATURE_DISC_COCKPIT_MULTI_USER
+#ifdef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
 
 static bool DiscShouldStopForBusinessType(DiscScreenBusinessType businessType, int32_t screenId,
     bool allScreenOff)
@@ -1196,7 +1196,6 @@ void DiscOnScreenStatusChanged(int32_t screenId, bool onScreen)
     atomic_store(&g_wasAllScreenOff, allScreenOff);
 
     (void)SoftBusMutexUnlock(&g_screenStateLock);
-
     if (onScreen) {
         DiscScreenOnRecover(screenId, isFirstScreenOn);
     } else {
@@ -1204,9 +1203,9 @@ void DiscOnScreenStatusChanged(int32_t screenId, bool onScreen)
     }
 }
 
-#endif /* DSOFTBUS_FEATURE_DISC_COCKPIT_MULTI_USER */
+#endif /* DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER */
 
-#ifndef DSOFTBUS_FEATURE_DISC_COCKPIT_MULTI_USER
+#ifndef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
 void DiscOnScreenStatusChanged(int32_t screenId, bool onScreen)
 {
     (void)screenId;
@@ -1232,7 +1231,7 @@ static int32_t InnerPublishService(const char *packageName, DiscInfo *info, cons
             return SOFTBUS_OK;
         }
 
-#ifdef DSOFTBUS_FEATURE_DISC_COCKPIT_MULTI_USER
+#ifdef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
         bool allScreenOff = atomic_load(&g_wasAllScreenOff);
         int32_t screenRetCode = SOFTBUS_OK;
         if (DiscPublishScreenOffCheck(info, type, &screenRetCode, allScreenOff)) {
@@ -1320,7 +1319,7 @@ static int32_t InnerStartDiscovery(const char *packageName, DiscInfo *info, cons
             return SOFTBUS_OK;
         }
 
-#ifdef DSOFTBUS_FEATURE_DISC_COCKPIT_MULTI_USER
+#ifdef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
         bool allScreenOff = atomic_load(&g_wasAllScreenOff);
         int32_t screenRetCode = SOFTBUS_OK;
         if (DiscSubscribeScreenOffCheck(info, type, &screenRetCode, allScreenOff)) {
@@ -1954,7 +1953,7 @@ int32_t DiscMgrInit(void)
         ListInit(&g_capabilityList[i]);
     }
 
-#ifdef DSOFTBUS_FEATURE_DISC_COCKPIT_MULTI_USER
+#ifdef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
     atomic_store(&g_wasAllScreenOff, false);
     atomic_store(&g_centerScreenOn, true);
     if (SoftBusMutexInit(&g_screenStateLock, NULL) != SOFTBUS_OK) {
@@ -1988,7 +1987,7 @@ void DiscMgrDeinit(void)
     DiscUsbDispatcherDeinit();
     DiscNfcDispatcherDeinit();
 
-#ifdef DSOFTBUS_FEATURE_DISC_COCKPIT_MULTI_USER
+#ifdef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
     (void)SoftBusMutexDestroy(&g_screenStateLock);
 #endif
 
