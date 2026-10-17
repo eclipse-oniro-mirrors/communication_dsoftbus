@@ -28,7 +28,7 @@
 #include "lnn_ohos_account.h"
 #include "lnn_ohos_account_adapter.h"
 #include "long_wrapper.h"
-#include "nlohmann/json.hpp"
+#include "softbus_adapter_json.h"
 #include "power_mgr_client.h"
 #include "softbus_error_code.h"
 #include "lnn_init_monitor.h"
@@ -46,7 +46,7 @@ enum MultiScreenId {
 };
 
 struct LnnMultiScreenStateNode {
-    int64_t screenId;
+    int64_t dispalyId;
     SoftBusMultiScreenState state;
 };
 
@@ -57,7 +57,7 @@ static bool UpdateMultiScreenState(int64_t screenId, SoftBusMultiScreenState sta
 {
     std::lock_guard<std::mutex> lock(g_multiScreenLock);
     for (auto &item : g_multiScreenStateList) {
-        if (item.screenId == screenId) {
+        if (item.dispalyId == screenId) {
             if (item.state == state) {
                 return false;
             }
@@ -65,7 +65,7 @@ static bool UpdateMultiScreenState(int64_t screenId, SoftBusMultiScreenState sta
             return true;
         }
     }
-    LnnMultiScreenStateNode node = { .screenId = screenId, .state = state };
+    LnnMultiScreenStateNode node = { .dispalyId = screenId, .state = state };
     g_multiScreenStateList.push_back(node);
     return true;
 }
@@ -91,20 +91,27 @@ static void NotifyMultiScreenStateChanged(int32_t stateType, int64_t screenId, i
 
 static void ParseAllScreenStates(const std::string &allStates)
 {
-    nlohmann::json jsonArray = nlohmann::json::parse(allStates, nullptr, false);
-    if (jsonArray.is_discarded() || !jsonArray.is_array()) {
+    JsonObj *jsonArray = JSON_ParseArray(allStates.c_str(), static_cast<uint32_t>(allStates.length()));
+    if (jsonArray == nullptr) {
         LNN_LOGE(LNN_EVENT, "parse allScreenStates fail or not array");
         return;
     }
-    for (const auto &item : jsonArray) {
-        if (!item.is_object()) {
+    int32_t size = JSON_GetArraySize(jsonArray);
+    for (int32_t i = 0; i < size; i++) {
+        JsonObj *item = JSON_GetArrayItem(jsonArray, i);
+        if (item == nullptr) {
             continue;
         }
-        int64_t screenId = item.value("screenId", (int64_t)-1);
-        int32_t userId = item.value("userId", -1);
-        int32_t stateType = item.value("stateType", -1);
+        int64_t screenId = -1;
+        int32_t userId = -1;
+        int32_t stateType = -1;
+        JSON_GetInt64FromOject(item, "screenId", &screenId);
+        JSON_GetInt32FromOject(item, "userId", &userId);
+        JSON_GetInt32FromOject(item, "stateType", &stateType);
+        JSON_Delete(item);
         NotifyMultiScreenStateChanged(stateType, screenId, userId);
     }
+    JSON_Delete(jsonArray);
 }
 #endif
 
@@ -330,7 +337,7 @@ bool LnnIsAllMultiScreenOff(void)
     for (const auto &item : g_multiScreenStateList) {
         if (item.state != SOFTBUS_MULTI_SCREEN_OFF) {
             allOff = false;
-            LNN_LOGI(LNN_EVENT, "screen not off, screenId=%{public}" PRId64, item.screenId);
+            LNN_LOGI(LNN_EVENT, "screen not off, screenId=%{public}" PRId64, item.dispalyId);
             break;
         }
     }
@@ -342,7 +349,7 @@ SoftBusScreenState LnnQueryCenterScreenStatus(void)
 {
     std::lock_guard<std::mutex> lock(g_multiScreenLock);
     for (const auto &item : g_multiScreenStateList) {
-        if (item.screenId == static_cast<int64_t>(SCREEN_ID_CENTER)) {
+        if (item.dispalyId == static_cast<int64_t>(SCREEN_ID_CENTER)) {
             return (item.state == SOFTBUS_MULTI_SCREEN_ON) ? SOFTBUS_SCREEN_ON : SOFTBUS_SCREEN_OFF;
         }
     }
