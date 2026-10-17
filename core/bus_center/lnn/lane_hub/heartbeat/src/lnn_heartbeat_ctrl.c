@@ -66,13 +66,13 @@ typedef struct {
 } HbConditionState;
 
 static HbConditionState g_hbConditionState;
-static atomic_bool g_enableState = false;
-static atomic_bool g_enableStateMcu = false;
 #ifndef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
 static int64_t g_lastScreenOnTime = 0;
 static int64_t g_lastScreenOffTime = 0;
 static bool g_isScreenOnOnce = false;
 #endif
+static atomic_bool g_enableState = false;
+static atomic_bool g_enableStateMcu = false;
 static atomic_bool g_isCloudSyncEnd = false;
 #ifdef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
 #define HB_INVALID_USER_ID (-1)
@@ -1642,7 +1642,10 @@ void LnnHbOnTrustedRelationReduced(void)
 static int32_t LnnRegisterCommonEvent(void)
 {
     int32_t ret;
-#ifndef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
+#ifdef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
+    ret = LnnRegisterEventHandler(LNN_EVENT_MULTI_SCREEN_STATE_CHANGED, HbMultiScreenStateChangeEventHandler);
+    LNN_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret, LNN_INIT, "regist multi screen state evt handler fail");
+#else
     ret = LnnRegisterEventHandler(LNN_EVENT_SCREEN_STATE_CHANGED, HbScreenStateChangeEventHandler);
     LNN_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret, LNN_INIT, "regist screen state change evt handler fail");
 #endif
@@ -1660,10 +1663,6 @@ static int32_t LnnRegisterCommonEvent(void)
     LNN_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret, LNN_INIT, "regist device risk state evt handler fail");
     ret = LnnRegisterEventHandler(LNN_EVENT_CONSTRAINT_ENABLE, HbConstraintStateChangeHandler);
     LNN_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret, LNN_INIT, "regist constraint state evt handler fail");
-#ifdef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
-    ret = LnnRegisterEventHandler(LNN_EVENT_MULTI_SCREEN_STATE_CHANGED, HbMultiScreenStateChangeEventHandler);
-    LNN_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret, LNN_INIT, "regist multi screen state evt handler fail");
-#endif
     return SOFTBUS_OK;
 }
 
