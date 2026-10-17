@@ -260,6 +260,8 @@ int32_t ClientSetKeyTypeBySocket(int32_t socket, int32_t keyType);
 
 int32_t TransGetKeyTypeBySocketId(int32_t socket, int32_t *keyType);
 
+int32_t ClientSetGroupIdBySocket(int32_t socket, const char *groupId);
+
 void ClientTransOnProfileDeleted(const int64_t *serviceIds, int32_t serviceIdCount);
 
 #ifdef __cplusplus

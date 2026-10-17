@@ -301,6 +301,7 @@ typedef enum {
     OPT_TYPE_NEED_ACK,
     OPT_TYPE_LOGICAL_BANDWIDTH,
     OPT_TYPE_KEY_TYPE,                     /**< @reserved key type used by the current socket. */
+    OPT_TYPE_GROUP_ID,                     /**< Group id used by the current socket. */
     OPT_TYPE_END,
 } OptType;
 

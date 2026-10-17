@@ -15,6 +15,8 @@
 
 #include "client_trans_socket_option.h"
 
+#include <string.h>
+
 #include "client_trans_session_manager.h"
 #include "softbus_def.h"
 #include "softbus_error_code.h"
@@ -116,6 +118,25 @@ static int32_t TransSetKeyType(
     return ClientSetKeyTypeBySocket(socket, keyType);
 }
 
+static int32_t TransSetGroupId(
+    int32_t socket, OptLevel level, OptType optType, void *optValue, int32_t optValueSize)
+{
+    if (socket <= 0 || optValue == NULL || optValueSize <= 0) {
+        TRANS_LOGE(TRANS_SDK, "invalid param, socket=%{public}d", socket);
+        return SOFTBUS_INVALID_PARAM;
+    }
+    if (level != OPT_LEVEL_SOFTBUS) {
+        TRANS_LOGE(TRANS_SDK, "invalid level, socket=%{public}d, level=%{public}d", socket, level);
+        return SOFTBUS_INVALID_PARAM;
+    }
+    const char *groupId = (const char *)optValue;
+    if (strnlen(groupId, GROUP_ID_SIZE_MAX) >= GROUP_ID_SIZE_MAX) {
+        TRANS_LOGE(TRANS_SDK, "invalid groupId, socket=%{public}d", socket);
+        return SOFTBUS_TRANS_SESSION_GROUP_INVALID;
+    }
+    return ClientSetGroupIdBySocket(socket, groupId);
+}
+
 static int32_t TransGetKeyType(
     int32_t socket, OptLevel level, OptType optType, void *optValue, int32_t *optValueSize)
 {
@@ -145,6 +166,7 @@ static SocketOptMap g_socketOptMap[] = {
     { OPT_TYPE_NEED_ACK, NULL, TransSetNeedAck },
     { OPT_TYPE_LOGICAL_BANDWIDTH, TransGetLogicalBandwidth, NULL},
     { OPT_TYPE_KEY_TYPE, TransGetKeyType, TransSetKeyType },
+    { OPT_TYPE_GROUP_ID, NULL, TransSetGroupId },
 };
 
 int32_t GetCommonSocketOpt(int32_t socket, OptLevel level, OptType optType, void *optValue, int32_t *optValueSize)
