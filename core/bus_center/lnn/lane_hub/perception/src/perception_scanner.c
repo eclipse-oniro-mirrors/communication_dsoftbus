@@ -343,7 +343,7 @@ void PerceptionMlpsServicesStateChange(bool isStart)
     }
     *para = atomic_load(&g_scanCtx.listenerId);
     SoftBusLooper *looper = GetLooper(LOOP_TYPE_DEFAULT);
-    int32_t ret = LnnAsyncCallbackDelayHelper(looper, PerceptionSwitchScanToSH, para, 0);
+    int32_t ret = LnnAsyncCallbackDelayHelper(looper, PerceptionSwitchScanToSH, para, PERCEPTION_SCAN_TO_SH_DELAY_MS);
     if (ret != SOFTBUS_OK) {
         LNN_LOGE(LNN_STATE, "perception mlps services state change post fail, ret=%{public}d", ret);
         SoftBusFree(para);
