@@ -234,10 +234,3 @@ if (dsoftbus_feature_trans_proxy_channel) {
   defines += [ "DSOFTBUS_FEATURE_PROXY_CHANNEL" ]
 }
 
-if (dsoftbus_feature_multi_foreground_user) {
-  defines += [ "DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER" ]
-}
-
-if (dsoftbus_feature_disc_cockpit_multi_user) {
-  defines += [ "DSOFTBUS_FEATURE_DISC_COCKPIT_MULTI_USER" ]
-}

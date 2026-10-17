@@ -179,6 +179,26 @@ int32_t LnnHbChannelGetUserId(LnnHeartbeatChannel channel, int32_t *userId)
     return SOFTBUS_OK;
 }
 
+int32_t LnnHbGetChannelByUserId(LnnHeartbeatChannel *channel, int32_t userId)
+{
+    if (userId < 0 || channel == NULL) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    if (SoftBusMutexLock(&g_channelMutex) != SOFTBUS_OK) {
+        return SOFTBUS_LOCK_ERR;
+    }
+    for (int32_t i = 0; i < HB_MAX_CHANNEL_COUNT; i++) {
+        LnnHeartbeatChannel channelTmp = (LnnHeartbeatChannel)i;
+        int32_t channelUserId = g_channel[channelTmp].capability.userId;
+        if (channelUserId == userId) {
+            *channel = channelTmp;
+            break;
+        }
+    }
+    (void)SoftBusMutexUnlock(&g_channelMutex);
+    return SOFTBUS_OK;
+}
+
 bool LnnHbChannelIsSupportRelay(LnnHeartbeatChannel channel)
 {
     if (channel >= HB_MAX_CHANNEL_COUNT) {

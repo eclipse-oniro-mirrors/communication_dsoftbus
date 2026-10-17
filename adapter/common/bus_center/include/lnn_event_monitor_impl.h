@@ -58,6 +58,7 @@ int32_t LnnSubscribeAccountBootEvent(AccountEventHandle handle);
 
 bool LnnQueryLocalScreenStatusOnce(bool notify);
 bool LnnIsAllMultiScreenOff(void);
+SoftBusScreenState LnnQueryCenterScreenStatus(void);
 #ifdef __cplusplus
 }
 #endif

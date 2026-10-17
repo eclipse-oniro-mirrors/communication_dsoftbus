@@ -967,9 +967,9 @@ HWTEST_F(BusCenterEventTest, BusCenterEventTest047, TestSize.Level1)
 HWTEST_F(BusCenterEventTest, BusCenterEventTest048, TestSize.Level1)
 {
     SoftBusMultiScreenState invalidState = (SoftBusMultiScreenState)(SOFTBUS_MULTI_SCREEN_UNKNOWN + 1);
-    EXPECT_NO_FATAL_FAILURE(LnnNotifyMultiScreenStateChangeEvent(invalidState, 0));
-    EXPECT_NO_FATAL_FAILURE(LnnNotifyMultiScreenStateChangeEvent(SOFTBUS_MULTI_SCREEN_UNKNOWN, 0));
-    EXPECT_NO_FATAL_FAILURE(LnnNotifyMultiScreenStateChangeEvent(SOFTBUS_MULTI_SCREEN_ON, 100));
-    EXPECT_NO_FATAL_FAILURE(LnnNotifyMultiScreenStateChangeEvent(SOFTBUS_MULTI_SCREEN_OFF, 200));
+    EXPECT_NO_FATAL_FAILURE(LnnNotifyMultiScreenStateChangeEvent(invalidState, 0, -1));
+    EXPECT_NO_FATAL_FAILURE(LnnNotifyMultiScreenStateChangeEvent(SOFTBUS_MULTI_SCREEN_UNKNOWN, 0, -1));
+    EXPECT_NO_FATAL_FAILURE(LnnNotifyMultiScreenStateChangeEvent(SOFTBUS_MULTI_SCREEN_ON, 100, 100));
+    EXPECT_NO_FATAL_FAILURE(LnnNotifyMultiScreenStateChangeEvent(SOFTBUS_MULTI_SCREEN_OFF, 200, 100));
 }
 }
