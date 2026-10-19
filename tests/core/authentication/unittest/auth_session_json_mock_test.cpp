@@ -1455,6 +1455,17 @@ HWTEST_F(AuthSessionJsonMockTest, QUERY_ALL_CRED_TYPE_PER_PEER_USERID_TEST_001, 
     cJSON_Delete(peerUserIdsJson);
 }
 
+static int32_t FillForegroundAccountIds(int32_t **userIds, uint32_t *userIdsLen)
+{
+    *userIds = reinterpret_cast<int32_t *>(SoftBusCalloc(sizeof(int32_t)));
+    if (*userIds == nullptr) {
+        return SOFTBUS_MEM_ERR;
+    }
+    (*userIds)[0] = TEST_BASIC_USER_ID;
+    *userIdsLen = 1;
+    return SOFTBUS_OK;
+}
+
 /*
  * @tc.name: QUERY_ALL_CRED_TYPE_PER_PEER_USERID_TEST_002
  * @tc.desc: test func QueryAllCredTypePerPeerUserId succ
@@ -1470,26 +1481,14 @@ HWTEST_F(AuthSessionJsonMockTest, QUERY_ALL_CRED_TYPE_PER_PEER_USERID_TEST_002, 
         .isSameAccount = false,
     };
     cJSON *peerUserIdsJson = cJSON_CreateObject();
-    NiceMock<AuthSessionJsonDepsInterfaceMock> mocker;
-    cJSON *ret = nullptr;
     cJSON *tmpJson1 = cJSON_CreateObject();
     char *msg1 = reinterpret_cast<char *>(SoftBusCalloc(1));
-    if (peerUserIdsJson == nullptr || tmpJson1 == nullptr || msg1 == nullptr) {
-        cJSON_Delete(peerUserIdsJson);
-        cJSON_Delete(tmpJson1);
-        SoftBusFree(msg1);
-        FAIL() << "memory allocation failed";
-    }
-    EXPECT_CALL(mocker, GetAllForegroundAccountIds).WillOnce(
-        Invoke([](int32_t **userIds, uint32_t *userIdsLen) {
-            *userIds = reinterpret_cast<int32_t *>(SoftBusCalloc(sizeof(int32_t)));
-            if (*userIds == nullptr) {
-                return SOFTBUS_MEM_ERR;
-            }
-            (*userIds)[0] = TEST_BASIC_USER_ID;
-            *userIdsLen = 1;
-            return SOFTBUS_OK;
-        }));
+    cJSON *ret = nullptr;
+    NiceMock<AuthSessionJsonDepsInterfaceMock> mocker;
+    ASSERT_NE(peerUserIdsJson, nullptr);
+    ASSERT_NE(tmpJson1, nullptr);
+    ASSERT_NE(msg1, nullptr);
+    EXPECT_CALL(mocker, GetAllForegroundAccountIds).WillOnce(Invoke(FillForegroundAccountIds));
     EXPECT_CALL(mocker, cJSON_CreateArray).WillOnce(Return(tmpJson1));
     EXPECT_CALL(mocker, GetArrayItemNum).WillOnce(Return(1));
     EXPECT_CALL(mocker, GetArrayItemFromArray).WillOnce(Return(peerUserIdsJson));
