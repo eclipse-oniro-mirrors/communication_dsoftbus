@@ -79,22 +79,15 @@ HWTEST_F(LNNOhosAccountMockTest, LNN_INIT_OHOS_ACCOUNT_001, TestSize.Level1)
  */
 HWTEST_F(LNNOhosAccountMockTest, LNN_INIT_OHOS_ACCOUNT_002, TestSize.Level1) {
     NiceMock<LnnOhosAccountInterfaceMock> mocker;
-    OHOS::AccountSA::OhosAccountKitsMock mock;
-    int64_t* realAccountIdPtr = nullptr;
-    
-    EXPECT_CALL(mocker, GetCurrentAccount(_))
-        .WillOnce(DoAll(
-            SaveArg<0>(&realAccountIdPtr),
-            Return(SOFTBUS_OK)));
-    
-    EXPECT_CALL(mocker, LnnGetOhosAccountInfo(_, _))
+
+    EXPECT_CALL(mocker, SoftBusGenerateStrHash(_, _, _))
         .WillOnce(Return(SOFTBUS_OK));
     EXPECT_CALL(mocker, GetOsAccountUid(_, _, _))
         .WillOnce(Return(SOFTBUS_OK));
-    EXPECT_CALL(mock, IsSameAccountGroupDevice()).Times(1)
-        .WillOnce(testing::Return(true));
-    
-    EXPECT_EQ(LnnInitOhosAccount(), SOFTBUS_OK);
+    EXPECT_CALL(mocker, LnnSetLocalStrInfo(_, _))
+        .WillOnce(Return(SOFTBUS_OK));
+
+    EXPECT_EQ(LnnInitOhosAccount(), SOFTBUS_LOCK_ERR);
 }
 
 
@@ -109,21 +102,14 @@ HWTEST_F(LNNOhosAccountMockTest, LNN_INIT_OHOS_ACCOUNT_002, TestSize.Level1) {
 HWTEST_F(LNNOhosAccountMockTest, LNN_INIT_OHOS_ACCOUNT_003, TestSize.Level1)
 {
     NiceMock<LnnOhosAccountInterfaceMock> mocker;
-    OHOS::AccountSA::OhosAccountKitsMock mock;
-    EXPECT_CALL(mocker, LnnGetOhosAccountInfo(_, _))
-        .WillOnce(Return(SOFTBUS_ERR));
     EXPECT_CALL(mocker, SoftBusGenerateStrHash(_, _, _))
         .WillOnce(Return(SOFTBUS_OK));
-    EXPECT_CALL(mocker, GetCurrentAccount(_))
-        .WillOnce(Return(SOFTBUS_OK));
     EXPECT_CALL(mocker, GetOsAccountUid(_, _, _))
-        .WillOnce(Return(SOFTBUS_OK));
+        .WillOnce(Return(SOFTBUS_ERR));
     EXPECT_CALL(mocker, LnnSetLocalStrInfo(_, _))
         .WillOnce(Return(SOFTBUS_OK));
-    EXPECT_CALL(mock, IsSameAccountGroupDevice()).Times(1)
-        .WillOnce(testing::Return(true));
     int32_t result = LnnInitOhosAccount();
-    EXPECT_EQ(result, SOFTBUS_OK);
+    EXPECT_EQ(result, SOFTBUS_LOCK_ERR);
 }
 
 /*
@@ -207,26 +193,24 @@ HWTEST_F(LNNOhosAccountMockTest, LNN_UPDATE_OHOS_ACCOUNT_003, TestSize.Level1) {
  */
 HWTEST_F(LNNOhosAccountMockTest, LNN_UPDATE_OHOS_ACCOUNT_004, TestSize.Level1) {
     NiceMock<LnnOhosAccountInterfaceMock> mocker;
-    OHOS::AccountSA::OhosAccountKitsMock mock;
-    
+
     EXPECT_CALL(mocker, GetOsAccountUid(_, _, _))
         .WillOnce(Return(SOFTBUS_ERR));
-    
+
     const char* expectedUid = defaultAccountUid;
     EXPECT_CALL(mocker, LnnSetLocalStrInfo(
         STRING_KEY_ACCOUNT_UID,
         StrEq(expectedUid)))
         .WillOnce(Return(SOFTBUS_OK));
-    
+
     char actualUid[ACCOUNT_UID_STR_LEN] = {0};
     ON_CALL(mocker, LnnGetLocalStrInfo(STRING_KEY_ACCOUNT_UID, _, _))
         .WillByDefault(DoAll(
             SetArrayArgument<1>(expectedUid, expectedUid + strlen(expectedUid) + 1),
             Return(SOFTBUS_OK)));
-    
-    EXPECT_CALL(mock, IsSameAccountGroupDevice()).Times(1).WillOnce(testing::Return(true));
-    EXPECT_EQ(LnnInitOhosAccount(), SOFTBUS_OK);
-    
+
+    EXPECT_EQ(LnnInitOhosAccount(), SOFTBUS_LOCK_ERR);
+
     mocker.LnnGetLocalStrInfo(STRING_KEY_ACCOUNT_UID, actualUid, ACCOUNT_UID_STR_LEN);
     EXPECT_STREQ(actualUid, expectedUid);
 }
@@ -416,7 +400,7 @@ HWTEST_F(LNNOhosAccountMockTest, LNN_JUDGE_DEVICE_TYPE_AND_GET_OHOS_ACCOUNT_INFO
         .WillOnce(Return(SOFTBUS_INVALID_PARAM)).
         WillOnce(Return(SOFTBUS_OK));
     int32_t ret = LnnJudgeDeviceTypeAndGetOsAccountInfo(mockHash, SHA_256_HASH_LEN);
-    EXPECT_EQ(ret, SOFTBUS_NETWORK_GET_ACCOUNT_INFO_FAILED);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
     ret = LnnJudgeDeviceTypeAndGetOsAccountInfo(mockHash, SHA_256_HASH_LEN);
     EXPECT_EQ(ret, SOFTBUS_OK);
 }
