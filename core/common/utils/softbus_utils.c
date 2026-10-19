@@ -855,21 +855,15 @@ int32_t ReadStringFromBuf(uint8_t *buf, uint32_t bufLen, int32_t *offSet, char *
         COMM_LOGE(COMM_UTILS, "Read data is long than bufLen!");
         return SOFTBUS_TRANS_INVALID_DATA_LENGTH;
     }
-    if (inDataLen > dataLen) {
+    if (inDataLen >= dataLen) {
         COMM_LOGE(COMM_UTILS, "string data is long than datalen!");
-        return SOFTBUS_TRANS_INVALID_DATA_LENGTH;
-    }
-    if (inDataLen == dataLen && buf[*offSet + inDataLen - 1] != '\0') {
-        COMM_LOGE(COMM_UTILS, "string data is not terminated!");
         return SOFTBUS_TRANS_INVALID_DATA_LENGTH;
     }
     if (memcpy_s(data, dataLen, buf + *offSet, inDataLen) != EOK) {
         COMM_LOGE(COMM_UTILS, "data copy failed!");
         return SOFTBUS_MEM_ERR;
     }
-    if (inDataLen < dataLen) {
-        data[inDataLen] = '\0';
-    }
+    data[inDataLen] = '\0';
     *offSet += inDataLen;
     return SOFTBUS_OK;
 }
