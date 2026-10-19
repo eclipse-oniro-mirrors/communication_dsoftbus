@@ -20,7 +20,6 @@
 #include "access_control.h"
 #include "bus_center_manager.h"
 #include "g_enhance_auth_func_pack.h"
-#include "g_enhance_lnn_func_pack.h"
 #include "g_enhance_trans_func.h"
 #include "g_enhance_trans_func_pack.h"
 #include "legacy/softbus_hisysevt_transreporter.h"
@@ -479,29 +478,6 @@ static int32_t CancelWaitLaneState(const char *sessionName, int32_t sessionId)
     return SOFTBUS_OK;
 }
 
-static void CancelWifiDirectExclusive(const char *sessionName, int32_t channelId, int32_t channelType)
-{
-    if (channelType != CHANNEL_TYPE_TCP_DIRECT && channelType != CHANNEL_TYPE_UDP) {
-        return;
-    }
-    char name[SESSION_NAME_SIZE_MAX] = { 0 };
-    const char *targetName = sessionName;
-    if (targetName == NULL) {
-        int32_t ret = TransGetSessionNameByChannel(channelId, channelType, name, sizeof(name));
-        if (ret != SOFTBUS_OK) {
-            TRANS_LOGD(TRANS_CTRL,
-                "get session name by channel failed, channelId=%{public}d, channelType=%{public}d, ret=%{public}d",
-                channelId, channelType, ret);
-            return;
-        }
-        targetName = name;
-    }
-    int32_t ret = DcWifiDirectExclusiveCancelBySessionNamePacked(targetName);
-    if (ret != SOFTBUS_OK) {
-        TRANS_LOGW(TRANS_CTRL, "dc wifi direct exclusive cancel failed, ret=%{public}d", ret);
-    }
-}
-
 int32_t TransCommonCloseChannel(const char *sessionName, int32_t channelId, int32_t channelType)
 {
     TRANS_LOGI(TRANS_CTRL, "close channel: channelId=%{public}d, channelType=%{public}d", channelId, channelType);
@@ -541,10 +517,9 @@ int32_t TransCommonCloseChannel(const char *sessionName, int32_t channelId, int3
                 (void)TransLaneMgrDelLane(channelId, channelType, false);
                 break;
             default:
-                TRANS_LOGE(TRANS_CTRL, "Unknown channel type, type=%{public}d", channelType);
+                TRANS_LOGE(TRANS_CTRL, "Unknow channel type, type=%{public}d", channelType);
                 break;
         }
-        CancelWifiDirectExclusive(sessionName, channelId, channelType);
         (void)TransDeleteSocketChannelInfoByChannel(channelId, channelType);
     }
     TransEventExtra extra;
