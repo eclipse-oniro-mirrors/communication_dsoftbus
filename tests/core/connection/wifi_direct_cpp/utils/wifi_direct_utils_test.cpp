@@ -176,7 +176,6 @@ HWTEST_F(WifiDirectUtilsTest, GetLocalPtkTest, TestSize.Level1)
 
     EXPECT_CALL(mock, LnnGetLocalPtkByUuid).WillRepeatedly(Return(SOFTBUS_OK));
     WifiDirectUtils::GetLocalPtk(networkId);
-
 }
 
 /*
