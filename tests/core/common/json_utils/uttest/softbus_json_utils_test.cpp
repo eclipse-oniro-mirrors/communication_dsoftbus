@@ -1118,4 +1118,240 @@ HWTEST_F(SoftbusJsonUtilsTest, GetJsonObjectIntArrayItem006, TestSize.Level1)
     cJSON_Delete(json);
 }
 
+/*
+ * @tc.name: CreateJsonObjectFromString001
+ * @tc.desc: Verify CreateJsonObjectFromString parses a well-formed object string
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusJsonUtilsTest, CreateJsonObjectFromString001, TestSize.Level1)
+{
+    const char *jsonStr = "{\"name\":\"abc\",\"age\":10}";
+    cJSON *json = CreateJsonObjectFromString(jsonStr);
+    ASSERT_NE(nullptr, json);
+    cJSON *name = cJSON_GetObjectItem(json, "name");
+    ASSERT_NE(nullptr, name);
+    EXPECT_STREQ("abc", name->valuestring);
+    cJSON *age = cJSON_GetObjectItem(json, "age");
+    ASSERT_NE(nullptr, age);
+    EXPECT_EQ(10, age->valueint);
+    cJSON_Delete(json);
+}
+
+/*
+ * @tc.name: CreateJsonObjectFromString002
+ * @tc.desc: Verify CreateJsonObjectFromString parses a well-formed array string
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusJsonUtilsTest, CreateJsonObjectFromString002, TestSize.Level1)
+{
+    const char *jsonStr = "[{\"id\":1},{\"id\":2},{\"id\":3}]";
+    cJSON *json = CreateJsonObjectFromString(jsonStr);
+    ASSERT_NE(nullptr, json);
+    EXPECT_TRUE(cJSON_IsArray(json));
+    int num = GetArrayItemNum(json);
+    EXPECT_EQ(3, num);
+    cJSON_Delete(json);
+}
+
+/*
+ * @tc.name: CreateJsonObjectFromString003
+ * @tc.desc: Verify CreateJsonObjectFromString parses empty object and empty array
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusJsonUtilsTest, CreateJsonObjectFromString003, TestSize.Level1)
+{
+    cJSON *emptyObj = CreateJsonObjectFromString("{}");
+    ASSERT_NE(nullptr, emptyObj);
+    EXPECT_TRUE(cJSON_IsObject(emptyObj));
+    cJSON_Delete(emptyObj);
+
+    cJSON *emptyArr = CreateJsonObjectFromString("[]");
+    ASSERT_NE(nullptr, emptyArr);
+    EXPECT_TRUE(cJSON_IsArray(emptyArr));
+    EXPECT_EQ(0, GetArrayItemNum(emptyArr));
+    cJSON_Delete(emptyArr);
+}
+
+/*
+ * @tc.name: CreateJsonObjectFromString004
+ * @tc.desc: Verify CreateJsonObjectFromString returns NULL for null input
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusJsonUtilsTest, CreateJsonObjectFromString004, TestSize.Level1)
+{
+    EXPECT_EQ(nullptr, CreateJsonObjectFromString(nullptr));
+}
+
+/*
+ * @tc.name: CreateJsonObjectFromString005
+ * @tc.desc: Verify CreateJsonObjectFromString returns NULL for malformed input
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusJsonUtilsTest, CreateJsonObjectFromString005, TestSize.Level1)
+{
+    EXPECT_EQ(nullptr, CreateJsonObjectFromString("{invalid}"));
+    EXPECT_EQ(nullptr, CreateJsonObjectFromString(""));
+}
+
+/*
+ * @tc.name: GetArrayItemNum001
+ * @tc.desc: Verify GetArrayItemNum returns correct count for a multi-element array
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusJsonUtilsTest, GetArrayItemNum001, TestSize.Level1)
+{
+    const char *jsonStr = "[{\"v\":10},{\"v\":20},{\"v\":30},{\"v\":40}]";
+    cJSON *arr = CreateJsonObjectFromString(jsonStr);
+    ASSERT_NE(nullptr, arr);
+    EXPECT_EQ(4, GetArrayItemNum(arr));
+    cJSON_Delete(arr);
+}
+
+/*
+ * @tc.name: GetArrayItemNum002
+ * @tc.desc: Verify GetArrayItemNum returns zero for a null pointer
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusJsonUtilsTest, GetArrayItemNum002, TestSize.Level1)
+{
+    EXPECT_EQ(0, GetArrayItemNum(nullptr));
+}
+
+/*
+ * @tc.name: GetArrayItemNum003
+ * @tc.desc: Verify GetArrayItemNum returns zero when the JSON is not an array
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusJsonUtilsTest, GetArrayItemNum003, TestSize.Level1)
+{
+    cJSON *obj = CreateJsonObjectFromString("{\"key\":\"value\"}");
+    ASSERT_NE(nullptr, obj);
+    EXPECT_EQ(0, GetArrayItemNum(obj));
+    cJSON_Delete(obj);
+}
+
+/*
+ * @tc.name: GetArrayItemFromArray001
+ * @tc.desc: Verify GetArrayItemFromArray retrieves the first and last item
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusJsonUtilsTest, GetArrayItemFromArray001, TestSize.Level1)
+{
+    const char *jsonStr = "[{\"id\":100},{\"id\":200},{\"id\":300}]";
+    cJSON *arr = CreateJsonObjectFromString(jsonStr);
+    ASSERT_NE(nullptr, arr);
+    int num = GetArrayItemNum(arr);
+    ASSERT_EQ(3, num);
+
+    cJSON *first = GetArrayItemFromArray(arr, 0);
+    ASSERT_NE(nullptr, first);
+    cJSON *id1 = cJSON_GetObjectItem(first, "id");
+    ASSERT_NE(nullptr, id1);
+    EXPECT_EQ(100, id1->valueint);
+
+    cJSON *last = GetArrayItemFromArray(arr, num - 1);
+    ASSERT_NE(nullptr, last);
+    cJSON *id3 = cJSON_GetObjectItem(last, "id");
+    ASSERT_NE(nullptr, id3);
+    EXPECT_EQ(300, id3->valueint);
+
+    cJSON_Delete(arr);
+}
+
+/*
+ * @tc.name: GetArrayItemFromArray002
+ * @tc.desc: Verify GetArrayItemFromArray returns NULL when index is out of range
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusJsonUtilsTest, GetArrayItemFromArray002, TestSize.Level1)
+{
+    const char *jsonStr = "[{\"id\":1}]";
+    cJSON *arr = CreateJsonObjectFromString(jsonStr);
+    ASSERT_NE(nullptr, arr);
+    ASSERT_EQ(1, GetArrayItemNum(arr));
+    EXPECT_EQ(nullptr, GetArrayItemFromArray(arr, 1));
+    EXPECT_EQ(nullptr, GetArrayItemFromArray(arr, 100));
+    cJSON_Delete(arr);
+}
+
+/*
+ * @tc.name: GetArrayItemFromArray003
+ * @tc.desc: Verify GetArrayItemFromArray returns NULL for a null array pointer
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusJsonUtilsTest, GetArrayItemFromArray003, TestSize.Level1)
+{
+    EXPECT_EQ(nullptr, GetArrayItemFromArray(nullptr, 0));
+}
+
+/*
+ * @tc.name: GetArrayItemFromArray004
+ * @tc.desc: Verify GetArrayItemFromArray can retrieve non-object elements (numbers)
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusJsonUtilsTest, GetArrayItemFromArray004, TestSize.Level1)
+{
+    const char *jsonStr = "[10,20,30]";
+    cJSON *arr = CreateJsonObjectFromString(jsonStr);
+    ASSERT_NE(nullptr, arr);
+    ASSERT_EQ(3, GetArrayItemNum(arr));
+
+    cJSON *item = GetArrayItemFromArray(arr, 0);
+    ASSERT_NE(nullptr, item);
+    EXPECT_EQ(10, item->valueint);
+
+    item = GetArrayItemFromArray(arr, 2);
+    ASSERT_NE(nullptr, item);
+    EXPECT_EQ(30, item->valueint);
+
+    cJSON_Delete(arr);
+}
+
+/*
+ * @tc.name: JsonArrayRoundTripTest001
+ * @tc.desc: Parse a multi-screen state array and read back every field from each item
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusJsonUtilsTest, JsonArrayRoundTripTest001, TestSize.Level1)
+{
+    const char *jsonStr = "[{\"screenId\":0,\"userId\":100,\"stateType\":1},"
+                          "{\"screenId\":4,\"userId\":101,\"stateType\":0}]";
+    cJSON *arr = CreateJsonObjectFromString(jsonStr);
+    ASSERT_NE(nullptr, arr);
+    int num = GetArrayItemNum(arr);
+    EXPECT_EQ(2, num);
+
+    int64_t screenIds[] = {0, 4};
+    int32_t userIds[] = {100, 101};
+    int32_t stateTypes[] = {1, 0};
+
+    for (int i = 0; i < num; ++i) {
+        cJSON *item = GetArrayItemFromArray(arr, i);
+        ASSERT_NE(nullptr, item);
+        int64_t sid = -1;
+        EXPECT_TRUE(GetJsonObjectSignedNumber64Item(item, "screenId", &sid));
+        EXPECT_EQ(screenIds[i], sid);
+        int32_t uid = -1;
+        EXPECT_TRUE(GetJsonObjectSignedNumberItem(item, "userId", &uid));
+        EXPECT_EQ(userIds[i], uid);
+        int32_t st = -1;
+        EXPECT_TRUE(GetJsonObjectSignedNumberItem(item, "stateType", &st));
+        EXPECT_EQ(stateTypes[i], st);
+    }
+    cJSON_Delete(arr);
+}
+
 } // namespace OHOS
