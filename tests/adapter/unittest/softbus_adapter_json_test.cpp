@@ -1463,3 +1463,264 @@ HWTEST_F(AdaptorDsoftbusJsonTest, JsonNullContextExhaustiveTest001, TestSize.Lev
     EXPECT_FALSE(JSON_IsArrayExist(&nullObj, KEY_ARR));
     EXPECT_EQ(nullptr, JSON_PrintUnformatted(&nullObj));
 }
+
+/*
+ * @tc.name: JsonParseArrayTest001
+ * @tc.desc: parse a well-formed array of objects and read back fields from each item
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(AdaptorDsoftbusJsonTest, JsonParseArrayTest001, TestSize.Level1)
+{
+    const char *text = "[{\"id\":1,\"name\":\"a\"},{\"id\":2,\"name\":\"b\"},{\"id\":3,\"name\":\"c\"}]";
+    JsonObj *arr = JSON_ParseArray(text, strlen(text));
+    ASSERT_NE(nullptr, arr);
+    int32_t size = JSON_GetArraySize(arr);
+    EXPECT_EQ(3, size);
+    for (int32_t i = 0; i < size; ++i) {
+        JsonObj *item = JSON_GetArrayItem(arr, i);
+        ASSERT_NE(nullptr, item);
+        int32_t id = 0;
+        EXPECT_TRUE(JSON_GetInt32FromOject(item, "id", &id));
+        EXPECT_EQ(i + 1, id);
+        char name[BUF_SIZE_SMALL] = {0};
+        EXPECT_TRUE(JSON_GetStringFromObject(item, "name", name, sizeof(name)));
+        char expectName[] = {'a' + static_cast<char>(i), '\0'};
+        EXPECT_STREQ(expectName, name);
+        EXPECT_NO_FATAL_FAILURE(JSON_Delete(item));
+    }
+    EXPECT_NO_FATAL_FAILURE(JSON_Delete(arr));
+}
+
+/*
+ * @tc.name: JsonParseArrayTest002
+ * @tc.desc: parse an empty array; size is zero, GetArrayItem returns null
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(AdaptorDsoftbusJsonTest, JsonParseArrayTest002, TestSize.Level1)
+{
+    const char *text = "[]";
+    JsonObj *arr = JSON_ParseArray(text, strlen(text));
+    ASSERT_NE(nullptr, arr);
+    EXPECT_EQ(0, JSON_GetArraySize(arr));
+    EXPECT_EQ(nullptr, JSON_GetArrayItem(arr, 0));
+    EXPECT_NO_FATAL_FAILURE(JSON_Delete(arr));
+}
+
+/*
+ * @tc.name: JsonParseArrayTest003
+ * @tc.desc: parsing a JSON object (not an array) returns null
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(AdaptorDsoftbusJsonTest, JsonParseArrayTest003, TestSize.Level1)
+{
+    const char *text = "{\"key\":\"value\"}";
+    EXPECT_EQ(nullptr, JSON_ParseArray(text, strlen(text)));
+}
+
+/*
+ * @tc.name: JsonParseArrayTest004
+ * @tc.desc: parsing malformed input returns null
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(AdaptorDsoftbusJsonTest, JsonParseArrayTest004, TestSize.Level1)
+{
+    const char *invalid = "[{invalid}]";
+    EXPECT_EQ(nullptr, JSON_ParseArray(invalid, strlen(invalid)));
+}
+
+/*
+ * @tc.name: JsonParseArrayTest005
+ * @tc.desc: parsing a truncated array returns null
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(AdaptorDsoftbusJsonTest, JsonParseArrayTest005, TestSize.Level1)
+{
+    const char *full = "[{\"id\":1},{\"id\":2}]";
+    const uint32_t truncatedLen = 8;
+    EXPECT_EQ(nullptr, JSON_ParseArray(full, truncatedLen));
+}
+
+/*
+ * @tc.name: JsonParseArrayTest006
+ * @tc.desc: parsing a null pointer or zero-length string returns null
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(AdaptorDsoftbusJsonTest, JsonParseArrayTest006, TestSize.Level1)
+{
+    EXPECT_EQ(nullptr, JSON_ParseArray(nullptr, 0));
+    EXPECT_EQ(nullptr, JSON_ParseArray("", 0));
+}
+
+/*
+ * @tc.name: JsonGetArraySizeTest001
+ * @tc.desc: returns the correct count for a multi-element array
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(AdaptorDsoftbusJsonTest, JsonGetArraySizeTest001, TestSize.Level1)
+{
+    const char *text = "[{\"v\":10},{\"v\":20},{\"v\":30},{\"v\":40}]";
+    JsonObj *arr = JSON_ParseArray(text, strlen(text));
+    ASSERT_NE(nullptr, arr);
+    EXPECT_EQ(4, JSON_GetArraySize(arr));
+    EXPECT_NO_FATAL_FAILURE(JSON_Delete(arr));
+}
+
+/*
+ * @tc.name: JsonGetArraySizeTest002
+ * @tc.desc: returns zero for a null pointer
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(AdaptorDsoftbusJsonTest, JsonGetArraySizeTest002, TestSize.Level1)
+{
+    EXPECT_EQ(0, JSON_GetArraySize(nullptr));
+}
+
+/*
+ * @tc.name: JsonGetArraySizeTest003
+ * @tc.desc: returns zero when the parsed JSON is not an array (parsed via JSON_Parse)
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(AdaptorDsoftbusJsonTest, JsonGetArraySizeTest003, TestSize.Level1)
+{
+    const char *text = "{\"key\":\"value\"}";
+    JsonObj *obj = JSON_Parse(text, strlen(text));
+    ASSERT_NE(nullptr, obj);
+    EXPECT_EQ(0, JSON_GetArraySize(obj));
+    EXPECT_NO_FATAL_FAILURE(JSON_Delete(obj));
+}
+
+/*
+ * @tc.name: JsonGetArrayItemTest001
+ * @tc.desc: retrieve the first and last item from a multi-element array
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(AdaptorDsoftbusJsonTest, JsonGetArrayItemTest001, TestSize.Level1)
+{
+    const char *text = "[{\"id\":100},{\"id\":200},{\"id\":300}]";
+    JsonObj *arr = JSON_ParseArray(text, strlen(text));
+    ASSERT_NE(nullptr, arr);
+    int32_t size = JSON_GetArraySize(arr);
+    ASSERT_EQ(3, size);
+
+    JsonObj *first = JSON_GetArrayItem(arr, 0);
+    ASSERT_NE(nullptr, first);
+    int32_t id = 0;
+    EXPECT_TRUE(JSON_GetInt32FromOject(first, "id", &id));
+    EXPECT_EQ(100, id);
+    EXPECT_NO_FATAL_FAILURE(JSON_Delete(first));
+
+    JsonObj *last = JSON_GetArrayItem(arr, size - 1);
+    ASSERT_NE(nullptr, last);
+    id = 0;
+    EXPECT_TRUE(JSON_GetInt32FromOject(last, "id", &id));
+    EXPECT_EQ(300, id);
+    EXPECT_NO_FATAL_FAILURE(JSON_Delete(last));
+
+    EXPECT_NO_FATAL_FAILURE(JSON_Delete(arr));
+}
+
+/*
+ * @tc.name: JsonGetArrayItemTest002
+ * @tc.desc: index out of range returns null
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(AdaptorDsoftbusJsonTest, JsonGetArrayItemTest002, TestSize.Level1)
+{
+    const char *text = "[{\"id\":1}]";
+    JsonObj *arr = JSON_ParseArray(text, strlen(text));
+    ASSERT_NE(nullptr, arr);
+    ASSERT_EQ(1, JSON_GetArraySize(arr));
+    EXPECT_EQ(nullptr, JSON_GetArrayItem(arr, 1));
+    EXPECT_EQ(nullptr, JSON_GetArrayItem(arr, 100));
+    EXPECT_NO_FATAL_FAILURE(JSON_Delete(arr));
+}
+
+/*
+ * @tc.name: JsonGetArrayItemTest003
+ * @tc.desc: negative index returns null
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(AdaptorDsoftbusJsonTest, JsonGetArrayItemTest003, TestSize.Level1)
+{
+    const char *text = "[{\"id\":1}]";
+    JsonObj *arr = JSON_ParseArray(text, strlen(text));
+    ASSERT_NE(nullptr, arr);
+    EXPECT_EQ(nullptr, JSON_GetArrayItem(arr, -1));
+    EXPECT_NO_FATAL_FAILURE(JSON_Delete(arr));
+}
+
+/*
+ * @tc.name: JsonGetArrayItemTest004
+ * @tc.desc: null obj pointer returns null
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(AdaptorDsoftbusJsonTest, JsonGetArrayItemTest004, TestSize.Level1)
+{
+    EXPECT_EQ(nullptr, JSON_GetArrayItem(nullptr, 0));
+}
+
+/*
+ * @tc.name: JsonGetArrayItemTest005
+ * @tc.desc: returns null when the item at the index is not an object (e.g. a number)
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(AdaptorDsoftbusJsonTest, JsonGetArrayItemTest005, TestSize.Level1)
+{
+    const char *text = "[1,2,3]";
+    JsonObj *arr = JSON_ParseArray(text, strlen(text));
+    ASSERT_NE(nullptr, arr);
+    ASSERT_EQ(3, JSON_GetArraySize(arr));
+    EXPECT_EQ(nullptr, JSON_GetArrayItem(arr, 0));
+    EXPECT_EQ(nullptr, JSON_GetArrayItem(arr, 2));
+    EXPECT_NO_FATAL_FAILURE(JSON_Delete(arr));
+}
+
+/*
+ * @tc.name: JsonArrayRoundTripTest001
+ * @tc.desc: parse an array of objects and read back every field to verify field independence
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(AdaptorDsoftbusJsonTest, JsonArrayRoundTripTest001, TestSize.Level1)
+{
+    const char *text = "[{\"screenId\":0,\"userId\":100,\"stateType\":1},"
+                       "{\"screenId\":4,\"userId\":101,\"stateType\":0}]";
+    JsonObj *arr = JSON_ParseArray(text, strlen(text));
+    ASSERT_NE(nullptr, arr);
+    int32_t size = JSON_GetArraySize(arr);
+    EXPECT_EQ(2, size);
+
+    int64_t screenIds[] = {0, 4};
+    int32_t userIds[] = {100, 101};
+    int32_t stateTypes[] = {1, 0};
+
+    for (int32_t i = 0; i < size; ++i) {
+        JsonObj *item = JSON_GetArrayItem(arr, i);
+        ASSERT_NE(nullptr, item);
+        int64_t sid = -1;
+        int32_t uid = -1;
+        int32_t st = -1;
+        EXPECT_TRUE(JSON_GetInt64FromOject(item, "screenId", &sid));
+        EXPECT_EQ(screenIds[i], sid);
+        EXPECT_TRUE(JSON_GetInt32FromOject(item, "userId", &uid));
+        EXPECT_EQ(userIds[i], uid);
+        EXPECT_TRUE(JSON_GetInt32FromOject(item, "stateType", &st));
+        EXPECT_EQ(stateTypes[i], st);
+        EXPECT_NO_FATAL_FAILURE(JSON_Delete(item));
+    }
+    EXPECT_NO_FATAL_FAILURE(JSON_Delete(arr));
+}
