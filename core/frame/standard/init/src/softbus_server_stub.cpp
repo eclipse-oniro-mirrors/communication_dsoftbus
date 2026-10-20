@@ -469,7 +469,7 @@ static int32_t GetBundleName(pid_t callingUid, std::string &bundleName)
     return SOFTBUS_OK;
 }
 
-static int32_t GetAppId(const std::string &bundleName, std::string &appId)
+static int32_t GetAppId(const std::string &bundleName, std::string &appId, pid_t callingUid)
 {
     sptr<ISystemAbilityManager> systemAbilityManager =
         SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -488,7 +488,7 @@ static int32_t GetAppId(const std::string &bundleName, std::string &appId)
         return SOFTBUS_TRANS_GET_BUNDLE_MGR_FAILED;
     }
     int32_t userId;
-    auto result = AccountSA::OsAccountManager::GetForegroundOsAccountLocalId(userId);
+    auto result = AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
     if (result != 0) {
         COMM_LOGE(COMM_SVC, "GetForegroundOsAccountLocalId failed result=%{public}d", result);
         return result;
@@ -518,7 +518,7 @@ static int32_t CheckNormalAppSessionName(
             return result;
         }
         std::string appId;
-        result = GetAppId(bundleName, appId);
+        result = GetAppId(bundleName, appId, callingUid);
         if (result != SOFTBUS_OK) {
             COMM_LOGE(COMM_SVC, "get appId failed");
             return result;
