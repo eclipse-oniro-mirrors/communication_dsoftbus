@@ -2242,7 +2242,7 @@ HWTEST_F(SoftbusServerStubTest, SoftbusServerStubTest057, TestSize.Level1)
     int32_t ret = GetBundleName(0, bundleName);
     EXPECT_EQ(ret, SOFTBUS_TRANS_GET_BUNDLENAME_FAILED);
 
-    ret = GetAppId(bundleName, bundleName);
+    ret = GetAppId(bundleName, bundleName, 0);
     EXPECT_NE(ret, SOFTBUS_OK);
 }
 
