@@ -75,6 +75,7 @@ public:
     int32_t SetListenerState(int32_t channelId, int32_t type, bool CbEnabled) override;
     int32_t GetProxyChannelState(int32_t uid, bool *isEnable);
     int32_t RegisterPushHook();
+    int32_t SetWirelessLinkCtrl(int32_t socket);
 private:
     static inline BrokerDelegator<TransServerProxy> delegator_;
 };

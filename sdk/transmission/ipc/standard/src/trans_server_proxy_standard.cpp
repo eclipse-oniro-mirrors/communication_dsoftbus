@@ -964,6 +964,35 @@ int32_t TransServerProxy::ProcessInnerEvent(int32_t eventType, uint8_t *buf, uin
     return SOFTBUS_OK;
 }
 
+int32_t TransServerProxy::SetWirelessLinkCtrl(int32_t socket)
+{
+    sptr<IRemoteObject> remote = GetSystemAbility();
+    if (remote == nullptr) {
+        TRANS_LOGE(TRANS_SDK, "remote is null");
+        return SOFTBUS_TRANS_PROXY_REMOTE_NULL;
+    }
+
+    MessageParcel data;
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        TRANS_LOGE(TRANS_SDK, "write InterfaceToken failed!");
+        return SOFTBUS_TRANS_PROXY_WRITETOKEN_FAILED;
+    }
+
+    if (!data.WriteInt32(socket)) {
+        TRANS_LOGE(TRANS_SDK, "write socket failed!");
+        return SOFTBUS_TRANS_PROXY_WRITEINT_FAILED;
+    }
+
+    MessageParcel reply;
+    MessageOption option;
+    int32_t ret = remote->SendRequest(SERVER_SET_WIRELESS_LINK_CTRL, data, reply, option);
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_CTRL, "send request failed, ret=%{public}d", ret);
+        return ret;
+    }
+    return SOFTBUS_OK;
+}
+
 int32_t TransServerProxy::PrivilegeCloseChannel(uint64_t tokenId, int32_t pid, const char *peerNetworkId)
 {
     sptr<IRemoteObject> remote = GetSystemAbility();

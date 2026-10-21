@@ -613,7 +613,7 @@ static void TransOpenChannelSecondDFXEvent(SessionParam *param, AppInfo *appInfo
     TRANS_EVENT(EVENT_SCENE_OPEN_CHANNEL, EVENT_STAGE_OPEN_CHANNEL_START, extra);
 }
 
-int32_t TransMultipathOpenSecondChannel(int32_t channelId, uint64_t laneId)
+int32_t TransMultipathOpenSecondChannel(int32_t channelId, uint64_t laneId, bool onlyFirstPriority)
 {
     TRANS_LOGI(TRANS_CTRL, "enter. channelId=%{public}d, laneId=%{public}" PRIu64, channelId, laneId);
     if (channelId < 0) {
@@ -650,7 +650,7 @@ int32_t TransMultipathOpenSecondChannel(int32_t channelId, uint64_t laneId)
         goto EXIT_CLEAR;
     }
     TransOpenChannelSecondDFXEvent(&param, appInfo);
-    ret = TransAsyncGetLaneReserveInfo(&param, &laneHandle, laneId, appInfo);
+    ret = TransAsyncGetLaneReserveInfo(&param, &laneHandle, laneId, appInfo, onlyFirstPriority);
     if (ret != SOFTBUS_OK) {
         TRANS_LOGE(TRANS_CTRL, "realloc lane failed for sessionId=%{public}d", param.sessionId);
         if (ret != SOFTBUS_TRANS_STOP_BIND_BY_CANCEL) {
@@ -1441,7 +1441,7 @@ int32_t PrivilegeCloseListAddItem(ListNode *privilegeCloseList, int32_t pid, con
     return SOFTBUS_OK;
 }
 
-void TransHandleReallocLnn(void)
+static void TransHandleReallocLnnInner(bool onlyFirstPriority)
 {
     ListNode multipathReallocList;
     ListInit(&multipathReallocList);
@@ -1463,7 +1463,7 @@ void TransHandleReallocLnn(void)
             SoftBusFree(reallocNode);
             continue;
         }
-        ret = TransMultipathOpenSecondChannel(reallocNode->channelId, laneId);
+        ret = TransMultipathOpenSecondChannel(reallocNode->channelId, laneId, onlyFirstPriority);
         if (ret != SOFTBUS_OK) {
             TRANS_LOGE(
                 TRANS_CTRL, "realloc channel fail, sessionId=%{public}d, ret=%{public}d", reallocNode->sessionId, ret);
@@ -1471,4 +1471,20 @@ void TransHandleReallocLnn(void)
         ListDelete(&reallocNode->node);
         SoftBusFree(reallocNode);
     }
+}
+
+void TransHandleReallocLnn(void)
+{
+    TransHandleReallocLnnInner(false);
+}
+
+int32_t TransProcessWirelessLinkCtrl(int32_t socket)
+{
+    if (socket <= 0) {
+        TRANS_LOGE(TRANS_CTRL, "invalid socket=%{public}d", socket);
+        return SOFTBUS_INVALID_PARAM;
+    }
+    TRANS_LOGI(TRANS_CTRL, "triggered, socket=%{public}d", socket);
+    TransHandleReallocLnnInner(true);
+    return SOFTBUS_OK;
 }

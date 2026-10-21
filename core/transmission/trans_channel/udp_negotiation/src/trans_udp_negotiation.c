@@ -234,7 +234,7 @@ static int32_t NotifyUdpChannelOpened(const AppInfo *appInfo, bool isServerSide)
     }
 
     if (!info.isServer && info.enableMultipath && TransMultipathNeedReallocSecondLane(info.channelId)) {
-        TransMultipathOpenSecondChannel(info.channelId, info.laneId);
+        TransMultipathOpenSecondChannel(info.channelId, info.laneId, false);
     }
     return g_channelCb->OnChannelOpened(
         appInfo->myData.pkgName, appInfo->myData.pid, appInfo->myData.sessionName, &info);

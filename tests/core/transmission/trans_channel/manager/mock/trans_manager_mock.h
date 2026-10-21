@@ -50,7 +50,8 @@ public:
     virtual int32_t TransCommonGetLocalConfig(int32_t channelType, int32_t businessType, uint32_t *len) = 0;
     virtual int32_t LnnGetOsTypeByNetworkId(const char *networkId, int32_t *osType) = 0;
     virtual int32_t TransAsyncGetLaneReserveInfo(
-        const SessionParam *param, uint32_t *laneHandle, uint64_t laneId, const AppInfo *info) = 0;
+        const SessionParam *param, uint32_t *laneHandle, uint64_t laneId, const AppInfo *info,
+        bool onlyFirstPriority) = 0;
 };
 class TransManagerInterfaceMock : public TransManagerInterface {
 public:
@@ -71,7 +72,8 @@ public:
     MOCK_METHOD3(TransGetPkgNameBySessionName, int32_t (const char *, char *, uint16_t));
     MOCK_METHOD3(TransCommonGetLocalConfig, int32_t (int32_t, int32_t, uint32_t *));
     MOCK_METHOD2(LnnGetOsTypeByNetworkId, int32_t (const char *networkId, int32_t *osType));
-    MOCK_METHOD4(TransAsyncGetLaneReserveInfo, int32_t (const SessionParam *, uint32_t *, uint64_t, const AppInfo *));
+    MOCK_METHOD5(
+        TransAsyncGetLaneReserveInfo, int32_t(const SessionParam *, uint32_t *, uint64_t, const AppInfo *, bool));
 };
 } // namespace OHOS
 #endif // TRANS_MANAGER_MOCK_H

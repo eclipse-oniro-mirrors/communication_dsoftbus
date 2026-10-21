@@ -1072,4 +1072,63 @@ HWTEST_F(TransClientSocketServiceTest, SetSocketOptGroupIdInvalidGroupTest001, T
     int32_t ret = SetSocketOpt(1, OPT_LEVEL_SOFTBUS, OPT_TYPE_GROUP_ID, groupId, groupIdSize);
     EXPECT_EQ(ret, SOFTBUS_TRANS_SESSION_GROUP_INVALID);
 }
+
+/*
+ * @tc.name: SetSocketOptWirelessLinkCtrlInvalidParamTest001
+ * @tc.desc: test SetSocketOpt with OPT_TYPE_WIRELESS_LINK_CTRL invalid param combinations that
+ *           hit the SOFTBUS_INVALID_PARAM branch (invalid socket, level, null optValue,
+ *           invalid optValueSize)
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(TransClientSocketServiceTest, SetSocketOptWirelessLinkCtrlInvalidParamTest001, TestSize.Level1)
+{
+    bool wireLinkCtrl = true;
+    int32_t optValueSize = static_cast<int32_t>(sizeof(bool));
+    int32_t ret = SetSocketOpt(0, OPT_LEVEL_SOFTBUS, OPT_TYPE_WIRELESS_LINK_CTRL, &wireLinkCtrl, optValueSize);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+    ret = SetSocketOpt(1, OPT_LEVEL_KERNEL, OPT_TYPE_WIRELESS_LINK_CTRL, &wireLinkCtrl, optValueSize);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+    ret = SetSocketOpt(1, OPT_LEVEL_SOFTBUS, OPT_TYPE_WIRELESS_LINK_CTRL, nullptr, optValueSize);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+    ret = SetSocketOpt(1, OPT_LEVEL_SOFTBUS, OPT_TYPE_WIRELESS_LINK_CTRL, &wireLinkCtrl, DATA_LENS);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+}
+
+/*
+ * @tc.name: SetSocketOptWirelessLinkCtrlFalseValueTest001
+ * @tc.desc: test SetSocketOpt with OPT_TYPE_WIRELESS_LINK_CTRL when optValue is false,
+ *           returns SOFTBUS_INVALID_PARAM
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(TransClientSocketServiceTest, SetSocketOptWirelessLinkCtrlFalseValueTest001, TestSize.Level1)
+{
+    int32_t optValueSize = static_cast<int32_t>(sizeof(bool));
+    bool wireLinkCtrl = false;
+    int32_t ret = SetSocketOpt(1, OPT_LEVEL_SOFTBUS, OPT_TYPE_WIRELESS_LINK_CTRL, &wireLinkCtrl, optValueSize);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+    ret = SetSocketOpt(2, OPT_LEVEL_SOFTBUS, OPT_TYPE_WIRELESS_LINK_CTRL, &wireLinkCtrl, optValueSize);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+}
+
+/*
+ * @tc.name: SetSocketOptWirelessLinkCtrlDualPathNotEnabledTest001
+ * @tc.desc: test SetSocketOpt with OPT_TYPE_WIRELESS_LINK_CTRL when optValue is true and
+ *           session server is not initialized, propagates SOFTBUS_TRANS_SESSION_SERVER_NOINIT
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(TransClientSocketServiceTest, SetSocketOptWirelessLinkCtrlDualPathNotEnabledTest001, TestSize.Level1)
+{
+    int32_t optValueSize = static_cast<int32_t>(sizeof(bool));
+    bool wireLinkCtrl = true;
+    int32_t ret = SetSocketOpt(1, OPT_LEVEL_SOFTBUS, OPT_TYPE_WIRELESS_LINK_CTRL, &wireLinkCtrl, optValueSize);
+    EXPECT_NE(ret, SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(ret, SOFTBUS_TRANS_SESSION_SERVER_NOINIT);
+}
+
 } // namespace OHOS

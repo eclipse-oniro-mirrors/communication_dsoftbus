@@ -337,6 +337,14 @@ int32_t ServerIpcProcessInnerEvent(int32_t eventType, uint8_t *buf, uint32_t len
     return proxy->ProcessInnerEvent(eventType, buf, len);
 }
 
+int32_t ServerIpcSetWirelessLinkCtrl(int32_t socket)
+{
+    sptr<TransServerProxy> proxy = RetryGetProxy();
+    TRANS_CHECK_AND_RETURN_RET_LOGE(
+        proxy != nullptr, SOFTBUS_NO_INIT, TRANS_SDK, "softbus server g_serverProxy is nullptr");
+    return proxy->SetWirelessLinkCtrl(socket);
+}
+
 int32_t ServerIpcPrivilegeCloseChannel(uint64_t tokenId, int32_t pid, const char *peerNetworkId)
 {
     if (peerNetworkId == nullptr) {
