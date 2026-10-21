@@ -1293,10 +1293,10 @@ HWTEST_F(SoftbusGEnhanceTest, DcWifiDirectExclusiveClearByPidPackedTest001, Test
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     pfnLnnEnhanceFuncList->dcWifiDirectExclusiveClearByPid = nullptr;
-    DcWifiDirectExclusiveClearByPidPacked(TEST_PID);
+    EXPECT_NO_FATAL_FAILURE(DcWifiDirectExclusiveClearByPidPacked(TEST_PID));
 
     pfnLnnEnhanceFuncList->dcWifiDirectExclusiveClearByPid = DcWifiDirectExclusiveClearByPidStub;
-    DcWifiDirectExclusiveClearByPidPacked(TEST_PID);
+    EXPECT_NO_FATAL_FAILURE(DcWifiDirectExclusiveClearByPidPacked(TEST_PID));
 }
 
 /*
