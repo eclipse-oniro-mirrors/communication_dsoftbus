@@ -1890,7 +1890,7 @@ int32_t TransAsyncGetLaneInfo(const SessionParam *param, uint32_t *laneHandle, c
 }
 
 int32_t TransAsyncGetLaneReserveInfo(
-    const SessionParam *param, uint32_t *laneHandle, uint64_t laneId, const AppInfo *info)
+    const SessionParam *param, uint32_t *laneHandle, uint64_t laneId, const AppInfo *info, bool onlyFirstPriority)
 {
     if (param == NULL || laneHandle == NULL) {
         TRANS_LOGE(TRANS_SVC, "async get lane info param error.");
@@ -1904,6 +1904,7 @@ int32_t TransAsyncGetLaneReserveInfo(
         TRANS_LOGE(TRANS_SVC, "get alloc Info failed. laneHandle=%{public}u, ret=%{public}d", *laneHandle, ret);
         return ret;
     }
+    allocInfo.qosRequire.onlyFirstPriority = onlyFirstPriority;
     ret = TransAsyncGetReserveLaneInfoByQos(param, &allocInfo, laneHandle, laneId, info);
     if (ret != SOFTBUS_OK) {
         TRANS_LOGE(TRANS_SVC, "get lane info by allocInfo failed, ret=%{public}d", ret);

@@ -562,6 +562,7 @@ enum SoftBusErrNo {
     SOFTBUS_TRANS_DLSYM_FAILED,
     SOFTBUS_TRANS_DLCLOSE_FAILED,
     SOFTBUS_TRANS_META_PLUGIN_IS_ENABLE,
+    SOFTBUS_TRANS_WIRELESS_LINK_ALREADY_EXIST, // wireless link already exist, no need to realloc
 
     /* errno begin: -((203 << 21) | (3 << 16) | 0xFFFF) */
     SOFTBUS_AUTH_ERR_BASE = SOFTBUS_ERRNO(AUTH_SUB_MODULE_CODE),

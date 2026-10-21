@@ -89,6 +89,20 @@ HWTEST_F(TransMultipathManagerTest, TransMultipathGetReserveChannelInvalidParamT
     EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
 }
 
+HWTEST_F(TransMultipathManagerTest, TransMultipathGetRouteTypeInvalidParamTest001, TestSize.Level1)
+{
+    int32_t mainRouteType = 0;
+    int32_t reserveRouteType = 0;
+    int32_t ret = TransMultipathGetRouteType(-1, nullptr, nullptr);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+    ret = TransMultipathGetRouteType(-1, &mainRouteType, &reserveRouteType);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+    ret = TransMultipathGetRouteType(1, nullptr, &reserveRouteType);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+    ret = TransMultipathGetRouteType(1, &mainRouteType, nullptr);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+}
+
 HWTEST_F(TransMultipathManagerTest, TransMultipathClearReserveChannelInvalidParamTest001, TestSize.Level1)
 {
     int32_t ret = TransMultipathClearReserveChannel(-1);

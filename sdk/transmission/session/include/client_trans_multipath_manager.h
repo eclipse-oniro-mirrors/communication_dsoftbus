@@ -48,6 +48,8 @@ int32_t TransMultipathUpdateReserveChannel(int32_t sessionId, const ChannelInfo 
 int32_t TransMultipathGetReserveChannel(
     int32_t sessionId, int32_t *channelId, int32_t *channelType, int32_t *routeType);
 
+int32_t TransMultipathGetRouteType(int32_t sessionId, int32_t *mainRouteType, int32_t *reserveRouteType);
+
 int32_t TransMultipathClearReserveChannel(int32_t sessionId);
 
 int32_t TransMultipathGetChannelRole(int32_t sessionId, int32_t channelId, ChannelUseChooseState *useType);
