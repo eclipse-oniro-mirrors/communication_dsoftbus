@@ -817,12 +817,12 @@ HWTEST_F(LNNLaneListenerTest, WIFI_DIRECT_DEVICE_OFFLINE_EXCLUSIVE_CANCEL_001, T
     EXPECT_NO_FATAL_FAILURE(LnnOnWifiDirectDeviceOffline(MAC_TEST, "172.30.1.1", PEER_UDID, localIp));
     EXPECT_TRUE(g_canceledDeviceId.empty());
 
-    // P2P link, skip the exclusive cancel branch.
+    // P2P link, also trigger the exclusive cancel branch.
     EXPECT_CALL(laneMock, LnnGetNetworkIdByUuid)
         .WillRepeatedly(DoAll(SetArgPointee<1>('N'), Return(SOFTBUS_OK)));
     g_canceledDeviceId.clear();
     EXPECT_NO_FATAL_FAILURE(LnnOnWifiDirectDeviceOffline(MAC_TEST, PEER_IP_P2P, PEER_UDID, localIp));
-    EXPECT_TRUE(g_canceledDeviceId.empty());
+    EXPECT_EQ(g_canceledDeviceId, "N");
 
     // HML link with power control enabled and dc exclusive cancel failed -> error log branch.
     PowerControlEnabledMockGuard powerGuard(IsPowerControlEnabledTrueMock);
@@ -830,6 +830,13 @@ HWTEST_F(LNNLaneListenerTest, WIFI_DIRECT_DEVICE_OFFLINE_EXCLUSIVE_CANCEL_001, T
     g_canceledDeviceId.clear();
     EXPECT_NO_FATAL_FAILURE(LnnOnWifiDirectDeviceOffline(MAC_TEST, "172.30.1.1", PEER_UDID, localIp));
     EXPECT_EQ(g_canceledDeviceId, "N");
+
+    // P2P link but get networkId fail, skip the exclusive cancel branch.
+    EXPECT_CALL(laneMock, LnnGetNetworkIdByUuid)
+        .WillRepeatedly(Return(SOFTBUS_LANE_GET_LEDGER_INFO_ERR));
+    g_canceledDeviceId.clear();
+    EXPECT_NO_FATAL_FAILURE(LnnOnWifiDirectDeviceOffline(MAC_TEST, PEER_IP_P2P, PEER_UDID, localIp));
+    EXPECT_TRUE(g_canceledDeviceId.empty());
 }
 
 /*
@@ -867,7 +874,7 @@ HWTEST_F(LNNLaneListenerTest, WIFI_DIRECT_DISCONNECT_FOR_SINK_EXCLUSIVE_CANCEL_0
     EXPECT_NO_FATAL_FAILURE(LnnOnWifiDirectDisconnectedForSink(&hmlLink));
     EXPECT_TRUE(g_canceledDeviceId.empty());
 
-    // P2P link, skip the exclusive cancel branch.
+    // P2P link, also trigger the exclusive cancel branch.
     WifiDirectSinkLink p2pLink = {
         .linkType = WIFI_DIRECT_LINK_TYPE_P2P,
     };
@@ -876,13 +883,31 @@ HWTEST_F(LNNLaneListenerTest, WIFI_DIRECT_DISCONNECT_FOR_SINK_EXCLUSIVE_CANCEL_0
         .WillRepeatedly(DoAll(SetArgPointee<1>('N'), Return(SOFTBUS_OK)));
     g_canceledDeviceId.clear();
     EXPECT_NO_FATAL_FAILURE(LnnOnWifiDirectDisconnectedForSink(&p2pLink));
-    EXPECT_TRUE(g_canceledDeviceId.empty());
+    EXPECT_EQ(g_canceledDeviceId, "N");
 
     // HML link dc exclusive cancel failed -> error log branch.
     DcExclusiveCancelMockGuard failGuard(CancelByDeviceIdFailMock);
     g_canceledDeviceId.clear();
     EXPECT_NO_FATAL_FAILURE(LnnOnWifiDirectDisconnectedForSink(&hmlLink));
     EXPECT_EQ(g_canceledDeviceId, "N");
+
+    // P2P link but get networkId fail, skip the exclusive cancel branch.
+    EXPECT_CALL(laneMock, LnnGetNetworkIdByUuid)
+        .WillRepeatedly(Return(SOFTBUS_LANE_GET_LEDGER_INFO_ERR));
+    g_canceledDeviceId.clear();
+    EXPECT_NO_FATAL_FAILURE(LnnOnWifiDirectDisconnectedForSink(&p2pLink));
+    EXPECT_TRUE(g_canceledDeviceId.empty());
+
+    // Invalid link type, no exclusive cancel.
+    WifiDirectSinkLink invalidLink = {
+        .linkType = WIFI_DIRECT_LINK_TYPE_INVALID,
+    };
+    EXPECT_EQ(strncpy_s(invalidLink.remoteUuid, UDID_BUF_LEN, PEER_UDID, UDID_BUF_LEN), EOK);
+    EXPECT_CALL(laneMock, LnnGetNetworkIdByUuid)
+        .WillRepeatedly(DoAll(SetArgPointee<1>('N'), Return(SOFTBUS_OK)));
+    g_canceledDeviceId.clear();
+    EXPECT_NO_FATAL_FAILURE(LnnOnWifiDirectDisconnectedForSink(&invalidLink));
+    EXPECT_TRUE(g_canceledDeviceId.empty());
 }
 
 /*
