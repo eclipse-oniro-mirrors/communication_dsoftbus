@@ -1226,7 +1226,7 @@ HWTEST_F(SoftbusJsonUtilsTest, GetArrayItemNum002, TestSize.Level1)
 
 /*
  * @tc.name: GetArrayItemNum003
- * @tc.desc: Verify GetArrayItemNum returns zero when the JSON is not an array
+ * @tc.desc: Verify GetArrayItemNum returns member count when the JSON is an object (cJSON_GetArraySize behavior)
  * @tc.type: FUNC
  * @tc.require:
  */
@@ -1234,7 +1234,7 @@ HWTEST_F(SoftbusJsonUtilsTest, GetArrayItemNum003, TestSize.Level1)
 {
     cJSON *obj = CreateJsonObjectFromString("{\"key\":\"value\"}");
     ASSERT_NE(nullptr, obj);
-    EXPECT_EQ(0, GetArrayItemNum(obj));
+    EXPECT_EQ(1, GetArrayItemNum(obj));
     cJSON_Delete(obj);
 }
 
