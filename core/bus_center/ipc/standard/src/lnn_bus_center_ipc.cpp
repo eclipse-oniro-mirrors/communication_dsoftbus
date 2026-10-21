@@ -1051,7 +1051,7 @@ void BusCenterServerDeathCallback(const char *pkgName, int32_t pid)
     StopTimeSyncReq(pkgName);
     RemoveAgentCommunicationInfoByPid(pid);
     SdMgrDeathCallbackPacked(pkgName);
-    (void)DcWifiDirectExclusiveClearByPidPacked(pid);
+    DcWifiDirectExclusiveClearByPidPacked(pid);
 }
 
 static int32_t AddAccountAuthInfo(const char *pkgName, int32_t pid, int64_t requestId)

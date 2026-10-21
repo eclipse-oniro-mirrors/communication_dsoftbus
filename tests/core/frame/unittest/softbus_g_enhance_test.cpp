@@ -1252,10 +1252,9 @@ static int32_t DcWifiDirectExclusiveCancelByDeviceIdStub(const char *deviceId)
     return SOFTBUS_OK;
 }
 
-static int32_t DcWifiDirectExclusiveClearByPidStub(int32_t pid)
+static void DcWifiDirectExclusiveClearByPidStub(int32_t pid)
 {
     (void)pid;
-    return SOFTBUS_OK;
 }
 
 static int32_t DcWifiDirectExclusiveCancelBySessionNameStub(const char *sessionName)
@@ -1294,12 +1293,10 @@ HWTEST_F(SoftbusGEnhanceTest, DcWifiDirectExclusiveClearByPidPackedTest001, Test
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     pfnLnnEnhanceFuncList->dcWifiDirectExclusiveClearByPid = nullptr;
-    int32_t ret = DcWifiDirectExclusiveClearByPidPacked(TEST_PID);
-    EXPECT_EQ(ret, SOFTBUS_NOT_IMPLEMENT);
+    DcWifiDirectExclusiveClearByPidPacked(TEST_PID);
 
     pfnLnnEnhanceFuncList->dcWifiDirectExclusiveClearByPid = DcWifiDirectExclusiveClearByPidStub;
-    ret = DcWifiDirectExclusiveClearByPidPacked(TEST_PID);
-    EXPECT_EQ(ret, SOFTBUS_OK);
+    DcWifiDirectExclusiveClearByPidPacked(TEST_PID);
 }
 
 /*

@@ -2091,16 +2091,16 @@ int32_t DcWifiDirectExclusiveCancelByDeviceIdPacked(const char *deviceId)
     return pfnLnnEnhanceFuncList->dcWifiDirectExclusiveCancelByDeviceId(deviceId);
 }
 
-int32_t DcWifiDirectExclusiveClearByPidPacked(int32_t pid)
+void DcWifiDirectExclusiveClearByPidPacked(int32_t pid)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL) {
-        return SOFTBUS_NOT_IMPLEMENT;
+        return;
     }
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->dcWifiDirectExclusiveClearByPid) != SOFTBUS_OK) {
-        return SOFTBUS_NOT_IMPLEMENT;
+        return;
     }
-    return pfnLnnEnhanceFuncList->dcWifiDirectExclusiveClearByPid(pid);
+    pfnLnnEnhanceFuncList->dcWifiDirectExclusiveClearByPid(pid);
 }
 
 int32_t DcWifiDirectExclusiveCancelBySessionNamePacked(const char *sessionName)
