@@ -2078,3 +2078,39 @@ int32_t LnnGetAllDevicesUdidPacked(bool isCloud, char (**udidList)[UDID_BUF_LEN]
     }
     return pfnLnnEnhanceFuncList->lnnGetAllDevicesUdid(isCloud, udidList, count);
 }
+
+int32_t DcWifiDirectExclusiveCancelByDeviceIdPacked(const char *deviceId)
+{
+    LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
+    if (pfnLnnEnhanceFuncList == NULL) {
+        return SOFTBUS_NOT_IMPLEMENT;
+    }
+    if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->dcWifiDirectExclusiveCancelByDeviceId) != SOFTBUS_OK) {
+        return SOFTBUS_NOT_IMPLEMENT;
+    }
+    return pfnLnnEnhanceFuncList->dcWifiDirectExclusiveCancelByDeviceId(deviceId);
+}
+
+int32_t DcWifiDirectExclusiveClearByPidPacked(int32_t pid)
+{
+    LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
+    if (pfnLnnEnhanceFuncList == NULL) {
+        return SOFTBUS_NOT_IMPLEMENT;
+    }
+    if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->dcWifiDirectExclusiveClearByPid) != SOFTBUS_OK) {
+        return SOFTBUS_NOT_IMPLEMENT;
+    }
+    return pfnLnnEnhanceFuncList->dcWifiDirectExclusiveClearByPid(pid);
+}
+
+int32_t DcWifiDirectExclusiveCancelBySessionNamePacked(const char *sessionName)
+{
+    LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
+    if (pfnLnnEnhanceFuncList == NULL) {
+        return SOFTBUS_NOT_IMPLEMENT;
+    }
+    if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->dcWifiDirectExclusiveCancelBySessionName) != SOFTBUS_OK) {
+        return SOFTBUS_NOT_IMPLEMENT;
+    }
+    return pfnLnnEnhanceFuncList->dcWifiDirectExclusiveCancelBySessionName(sessionName);
+}

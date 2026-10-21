@@ -369,6 +369,22 @@ static int32_t GetStateNotifyInfo(const char *peerIp, const char *peerUuid, Lane
     return SOFTBUS_OK;
 }
 
+static void TryCancelWifiDirectExclusive(const char *remoteUuid)
+{
+    char networkId[NETWORK_ID_BUF_LEN] = {0};
+    if (LnnGetNetworkIdByUuid(remoteUuid, networkId, sizeof(networkId)) != SOFTBUS_OK) {
+        char *anonyUuid = NULL;
+        Anonymize(remoteUuid, &anonyUuid);
+        LNN_LOGW(LNN_LANE, "get networkId failed, skip exclusive cancel, uuid=%{public}s", AnonymizeWrapper(anonyUuid));
+        AnonymizeFree(anonyUuid);
+        return;
+    }
+    int32_t ret = DcWifiDirectExclusiveCancelByDeviceIdPacked(networkId);
+    if (ret != SOFTBUS_OK) {
+        LNN_LOGE(LNN_LANE, "dc wifi direct exclusive cancel failed, ret=%{public}d", ret);
+    }
+}
+
 static void LnnOnWifiDirectDeviceOnline(const char *peerMac, const char *peerIp, const char *peerUuid, bool isSource)
 {
     LNN_LOGI(LNN_LANE, "lnn wifidirect up");
@@ -401,8 +417,11 @@ static void LnnOnWifiDirectDeviceOffline(const char *peerMac, const char *peerIp
         LNN_LOGE(LNN_STATE, "get lane state notify info fail");
         return;
     }
-    if (laneLinkInfo.type == LANE_HML && IsPowerControlEnabledPacked()) {
-        DetectDisableWifiDirectApply();
+    if (laneLinkInfo.type == LANE_HML) {
+        if (IsPowerControlEnabledPacked()) {
+            DetectDisableWifiDirectApply();
+        }
+        TryCancelWifiDirectExclusive(peerUuid);
     }
     if (PostLaneStateChangeMessage(LANE_STATE_LINKDOWN, laneLinkInfo.peerUdid, &laneLinkInfo) != SOFTBUS_OK) {
         LNN_LOGE(LNN_LANE, "post laneState linkdown msg fail");
@@ -566,6 +585,9 @@ static void LnnOnWifiDirectDisconnectedForSink(const struct WifiDirectSinkLink *
     LNN_LOGI(LNN_STATE, "on server link=%{public}d disconnected, uuid=%{public}s",
         link->linkType, AnonymizeWrapper(anonyUuid));
     AnonymizeFree(anonyUuid);
+    if (link->linkType == WIFI_DIRECT_LINK_TYPE_HML) {
+        TryCancelWifiDirectExclusive(link->remoteUuid);
+    }
     char remoteUdid[UDID_BUF_LEN] = {0};
     if (LnnConvertDLidToUdid(link->remoteUuid, CATEGORY_UUID, remoteUdid, UDID_BUF_LEN) != SOFTBUS_OK) {
         LNN_LOGE(LNN_STATE, "get remote udid failed");

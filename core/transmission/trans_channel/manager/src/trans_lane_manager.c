@@ -1008,6 +1008,39 @@ int32_t TransGetPidFromSocketChannelInfoBySession(const char *sessionName, int32
     return SOFTBUS_NOT_FIND;
 }
 
+int32_t TransGetSessionNameByChannel(int32_t channelId, int32_t channelType, char *sessionName, uint32_t len)
+{
+    if (channelId == INVALID_CHANNEL_ID || sessionName == NULL || len == 0) {
+        TRANS_LOGE(TRANS_SVC, "invalid param, channelId=%{public}d, len=%{public}u", channelId, len);
+        return SOFTBUS_INVALID_PARAM;
+    }
+    if (g_socketChannelList == NULL) {
+        TRANS_LOGE(TRANS_INIT, "socket info manager hasn't init.");
+        return SOFTBUS_NO_INIT;
+    }
+    if (SoftBusMutexLock(&(g_socketChannelList->lock)) != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_SVC, "lock failed");
+        return SOFTBUS_LOCK_ERR;
+    }
+    SocketWithChannelInfo *socketItem = NULL;
+    LIST_FOR_EACH_ENTRY(socketItem, &(g_socketChannelList->list), SocketWithChannelInfo, node) {
+        if ((socketItem->channelId == channelId && socketItem->channelType == channelType) ||
+            (socketItem->channelIdReserve == channelId && socketItem->channelTypeReserve == channelType)) {
+            if (strcpy_s(sessionName, len, socketItem->sessionName) != EOK) {
+                (void)SoftBusMutexUnlock(&(g_socketChannelList->lock));
+                TRANS_LOGE(TRANS_SVC, "strcpy sessionName failed.");
+                return SOFTBUS_MEM_ERR;
+            }
+            (void)SoftBusMutexUnlock(&(g_socketChannelList->lock));
+            return SOFTBUS_OK;
+        }
+    }
+    (void)SoftBusMutexUnlock(&(g_socketChannelList->lock));
+    TRANS_LOGD(TRANS_SVC, "session name not found. channelId=%{public}d, channelType=%{public}d",
+        channelId, channelType);
+    return SOFTBUS_NOT_FIND;
+}
+
 static ConnectType ConvertLaneLinkTypeToConnectType(LaneLinkType laneLinkType)
 {
     switch (laneLinkType) {
