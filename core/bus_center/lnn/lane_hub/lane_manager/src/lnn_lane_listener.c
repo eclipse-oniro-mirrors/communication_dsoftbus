@@ -585,9 +585,6 @@ static void LnnOnWifiDirectDisconnectedForSink(const struct WifiDirectSinkLink *
     LNN_LOGI(LNN_STATE, "on server link=%{public}d disconnected, uuid=%{public}s",
         link->linkType, AnonymizeWrapper(anonyUuid));
     AnonymizeFree(anonyUuid);
-    if (link->linkType == WIFI_DIRECT_LINK_TYPE_HML || link->linkType == WIFI_DIRECT_LINK_TYPE_P2P) {
-        TryCancelWifiDirectExclusive(link->remoteUuid);
-    }
     char remoteUdid[UDID_BUF_LEN] = {0};
     if (LnnConvertDLidToUdid(link->remoteUuid, CATEGORY_UUID, remoteUdid, UDID_BUF_LEN) != SOFTBUS_OK) {
         LNN_LOGE(LNN_STATE, "get remote udid failed");
