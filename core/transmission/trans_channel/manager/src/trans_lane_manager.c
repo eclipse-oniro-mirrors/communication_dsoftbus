@@ -1036,7 +1036,7 @@ int32_t TransGetSessionNameByChannel(int32_t channelId, int32_t channelType, cha
         }
     }
     (void)SoftBusMutexUnlock(&(g_socketChannelList->lock));
-    TRANS_LOGD(TRANS_SVC, "session name not found. channelId=%{public}d, channelType=%{public}d",
+    TRANS_LOGE(TRANS_SVC, "session name not found. channelId=%{public}d, channelType=%{public}d",
         channelId, channelType);
     return SOFTBUS_NOT_FIND;
 }
