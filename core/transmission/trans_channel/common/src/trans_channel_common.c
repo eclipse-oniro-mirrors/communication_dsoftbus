@@ -486,7 +486,7 @@ static void CancelWifiDirectExclusive(const char *sessionName, int32_t channelId
     if (targetName == NULL) {
         int32_t ret = TransGetSessionNameByChannel(channelId, channelType, name, sizeof(name));
         if (ret != SOFTBUS_OK) {
-            TRANS_LOGD(TRANS_CTRL,
+            TRANS_LOGE(TRANS_CTRL,
                 "get session name by channel failed, channelId=%{public}d, channelType=%{public}d, ret=%{public}d",
                 channelId, channelType, ret);
             return;
