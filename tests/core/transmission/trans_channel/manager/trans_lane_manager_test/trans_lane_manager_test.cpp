@@ -1258,6 +1258,33 @@ HWTEST_F(TransLaneManagerTest, CancelWifiDirectExclusiveTest004, TestSize.Level1
 }
 
 /**
+ * @tc.name: CancelWifiDirectExclusiveTest005
+ * @tc.desc: test CancelWifiDirectExclusive with passive side tcp channel info.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransLaneManagerTest, CancelWifiDirectExclusiveTest005, TestSize.Level1)
+{
+    int32_t ret = CreateTcpChannelInfoList();
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    int32_t channelId = 2;
+    TcpChannelInfo *channelInfo = (TcpChannelInfo *)SoftBusCalloc(sizeof(TcpChannelInfo));
+    ASSERT_NE(nullptr, channelInfo);
+    channelInfo->channelId = channelId;
+    channelInfo->isServer = true;
+    ASSERT_EQ(EOK, strcpy_s(channelInfo->peerSessionName, sizeof(channelInfo->peerSessionName), TEST_SESSION_NAME));
+    ret = TransAddTcpChannelInfo(channelInfo);
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    g_cancelWifiDirectSessionName = nullptr;
+
+    EXPECT_NO_FATAL_FAILURE(CancelWifiDirectExclusive(nullptr, channelId, CHANNEL_TYPE_TCP_DIRECT));
+    EXPECT_NE(nullptr, g_cancelWifiDirectSessionName);
+    EXPECT_EQ(0, strcmp(g_cancelWifiDirectSessionName, TEST_SESSION_NAME));
+
+    (void)TransDelTcpChannelInfoByChannelId(channelId);
+}
+
+/**
  * @tc.name: TransCommonCloseChannel001
  * @tc.desc: test CancelWifiDirectExclusive is invoked in tcp-direct and udp close branches.
  * @tc.type: FUNC
