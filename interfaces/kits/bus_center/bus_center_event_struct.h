@@ -248,6 +248,7 @@ typedef struct {
     LnnEventBasicInfo basic;
     SoftBusMultiScreenState status;
     int64_t screenId;
+    int32_t userId;
 } LnnMultiScreenStateChangedEvent;
 
 typedef struct {

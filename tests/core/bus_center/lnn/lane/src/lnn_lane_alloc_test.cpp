@@ -1257,6 +1257,91 @@ HWTEST_F(LNNLaneAllocTest, LANE_RE_ALLOC_TEST_005, TestSize.Level1)
 }
 
 /*
+* @tc.name: LANE_RE_ALLOC_TEST_006
+* @tc.desc: lane re alloc with onlyFirstPriority=true after USB lane alloced, build hml
+* @tc.type: FUNC
+* @tc.require:
+*/
+HWTEST_F(LNNLaneAllocTest, LANE_RE_ALLOC_TEST_006, TestSize.Level1)
+{
+    const LnnLaneManager *laneManager = GetLaneManager();
+    ASSERT_NE(laneManager, nullptr);
+    LaneType laneType = LANE_TYPE_TRANS;
+    uint32_t laneReqId = laneManager->lnnGetLaneHandle(laneType);
+    EXPECT_NE(laneReqId, INVALID_LANE_REQ_ID);
+
+    NiceMock<LaneDepsInterfaceMock> mock;
+    mock.SetDefaultResult(reinterpret_cast<NodeInfo *>(&g_NodeInfo));
+    mock.SetDefaultResultForAlloc(255, 255, 1 << BIT_WIFI_DIRECT_ENHANCE_CAPABILITY,
+        1 << BIT_WIFI_DIRECT_ENHANCE_CAPABILITY);
+    EXPECT_CALL(mock, DeleteNetworkResourceByLaneId).WillRepeatedly(Return());
+    EXPECT_CALL(mock, GetWifiDirectManager).WillRepeatedly(Return(&g_manager));
+
+    int32_t ret = AddLaneResourceForAllocTest(LANE_USB);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+
+    NiceMock<LnnWifiAdpterInterfaceMock> wifiMock;
+    wifiMock.SetDefaultResult();
+    EXPECT_CALL(wifiMock, LnnConnectP2p(NotNull(), laneReqId, NotNull()))
+        .WillRepeatedly(LnnWifiAdpterInterfaceMock::ActionOfLnnConnectP2p);
+
+    LaneAllocInfo allocInfo;
+    ASSERT_EQ(memset_s(&allocInfo, sizeof(LaneAllocInfo), 0, sizeof(LaneAllocInfo)), EOK);
+    CreateAllocInfoForAllocTest(LANE_T_MSG, DEFAULT_QOSINFO_MIN_BW + HIGH_BW, DEFAULT_QOSINFO_MAX_LATENCY,
+        DEFAULT_QOSINFO_MIN_LATENCY, &allocInfo);
+    allocInfo.qosRequire.onlyFirstPriority = true;
+
+    SetIsNeedCondWait();
+    ret = laneManager->lnnReAllocLane(laneReqId, LANE_ID_BASE, &allocInfo, &g_listenerCbForHml);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    CondWait();
+    ret = DelLaneResourceByLaneId(LANE_ID_BASE, false, nullptr);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    SetIsNeedCondWait();
+    ret = laneManager->lnnFreeLane(laneReqId);
+    EXPECT_TRUE(ret == SOFTBUS_OK);
+    CondWait();
+}
+
+/*
+* @tc.name: LANE_RE_ALLOC_TEST_007
+* @tc.desc: lane re alloc, realloc laneId removes USB from candidate list, peer not support hml, no available link
+* @tc.type: FUNC
+* @tc.require:
+*/
+HWTEST_F(LNNLaneAllocTest, LANE_RE_ALLOC_TEST_007, TestSize.Level1)
+{
+    const LnnLaneManager *laneManager = GetLaneManager();
+    ASSERT_NE(laneManager, nullptr);
+    LaneType laneType = LANE_TYPE_TRANS;
+    uint32_t laneReqId = laneManager->lnnGetLaneHandle(laneType);
+    EXPECT_NE(laneReqId, INVALID_LANE_REQ_ID);
+
+    NiceMock<LaneDepsInterfaceMock> mock;
+    mock.SetDefaultResult(reinterpret_cast<NodeInfo *>(&g_NodeInfo));
+    mock.SetDefaultResultForAlloc(255, 255 & ~(1 << BIT_WIFI_P2P),
+        1 << BIT_WIFI_DIRECT_ENHANCE_CAPABILITY, 1 << BIT_WIFI_DIRECT_ENHANCE_CAPABILITY);
+    EXPECT_CALL(mock, DeleteNetworkResourceByLaneId).WillRepeatedly(Return());
+    EXPECT_CALL(mock, GetWifiDirectManager).WillRepeatedly(Return(&g_manager));
+    int32_t ret = AddLaneResourceForAllocTest(LANE_USB);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+
+    NiceMock<LnnWifiAdpterInterfaceMock> wifiMock;
+    wifiMock.SetDefaultResult();
+    LaneAllocInfo allocInfo;
+    ASSERT_EQ(memset_s(&allocInfo, sizeof(LaneAllocInfo), 0, sizeof(LaneAllocInfo)), EOK);
+    CreateAllocInfoForAllocTest(LANE_T_MSG, DEFAULT_QOSINFO_MIN_BW + HIGH_BW, DEFAULT_QOSINFO_MAX_LATENCY,
+        DEFAULT_QOSINFO_MIN_LATENCY, &allocInfo);
+    allocInfo.qosRequire.onlyFirstPriority = true;
+
+    ret = laneManager->lnnReAllocLane(laneReqId, LANE_ID_BASE, &allocInfo, &g_listenerCbForHml);
+    EXPECT_EQ(ret, SOFTBUS_LANE_WIFI_OFF);
+
+    ret = DelLaneResourceByLaneId(LANE_ID_BASE, false, nullptr);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+}
+
+/*
 * @tc.name: LNN_AUTH_ALLOC_TEST_001
 * @tc.desc: AuthAlloc
 * @tc.type: FUNC

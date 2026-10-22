@@ -29,7 +29,8 @@ using namespace std;
 static constexpr const char *THREAD_NAME = "linkEnhance";
 
 static std::map<int32_t, std::string> napiErrMsgMap {
-    {LINK_ENHANCE_PERMISSION_DENIED, "Permission denied."},
+    {LINK_ENHANCE_PERMISSION_DENIED,
+        "Permission verification failed. The application does not have the permission required to call the API."},
     {LINK_ENHANCE_CONNECT_TIMEOUT, "Connect timeout."},
     {LINK_ENHANCE_CONNECT_PEER_NOT_START_SERVICE, "Peer server is not started."},
     {LINK_ENHANCE_SERVERS_EXCEEDS, "The number of servers exceeds the limit."},

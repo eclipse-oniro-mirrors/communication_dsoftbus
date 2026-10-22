@@ -270,6 +270,33 @@ int32_t TransMultipathGetReserveChannel(int32_t sessionId, int32_t *channelId, i
     return SOFTBUS_OK;
 }
 
+int32_t TransMultipathGetRouteType(int32_t sessionId, int32_t *mainRouteType, int32_t *reserveRouteType)
+{
+    if (sessionId == INVALID_SESSION_ID || mainRouteType == NULL || reserveRouteType == NULL) {
+        TRANS_LOGE(TRANS_SDK, "Invalid param");
+        return SOFTBUS_INVALID_PARAM;
+    }
+
+    int32_t ret = LockClientSessionServerList();
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_SDK, "lock failed, ret=%{public}d", ret);
+        return ret;
+    }
+
+    ClientSessionServer *serverNode = NULL;
+    SessionInfo *sessionNode = NULL;
+    ret = GetSessionById(sessionId, &serverNode, &sessionNode);
+    if (ret != SOFTBUS_OK) {
+        UnlockClientSessionServerList();
+        TRANS_LOGE(TRANS_SDK, "socketFd=%{public}d not found", sessionId);
+        return ret;
+    }
+    *mainRouteType = sessionNode->routeType;
+    *reserveRouteType = sessionNode->routeTypeReserve;
+    UnlockClientSessionServerList();
+    return SOFTBUS_OK;
+}
+
 int32_t TransMultipathClearReserveChannel(int32_t sessionId)
 {
     if (sessionId == INVALID_SESSION_ID) {

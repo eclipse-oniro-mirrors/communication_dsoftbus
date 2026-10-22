@@ -66,11 +66,13 @@ typedef struct {
 } HbConditionState;
 
 static HbConditionState g_hbConditionState;
+#ifndef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
 static int64_t g_lastScreenOnTime = 0;
 static int64_t g_lastScreenOffTime = 0;
+static bool g_isScreenOnOnce = false;
+#endif
 static atomic_bool g_enableState = false;
 static atomic_bool g_enableStateMcu = false;
-static bool g_isScreenOnOnce = false;
 static atomic_bool g_isCloudSyncEnd = false;
 #ifdef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
 #define HB_INVALID_USER_ID (-1)
@@ -89,7 +91,11 @@ static IBleRangeInnerCallback g_bleRangeCallback = {
 static void InitHbConditionState(void)
 {
     g_hbConditionState.btState = SOFTBUS_BT_UNKNOWN;
+#ifdef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
+    g_hbConditionState.screenState = SOFTBUS_SCREEN_ON;
+#else
     g_hbConditionState.screenState = SOFTBUS_SCREEN_UNKNOWN;
+#endif
     g_hbConditionState.lockState = SOFTBUS_SCREEN_LOCK_UNKNOWN;
     // need suit for same account
     g_hbConditionState.accountState = SOFTBUS_ACCOUNT_UNKNOWN;
@@ -262,6 +268,7 @@ static void HbIpAddrChangeEventHandler(const LnnEventBasicInfo *info)
     }
 }
 
+#ifndef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
 static void HbSendCheckOffLineMessage(LnnHeartbeatType hbType)
 {
     int32_t i, infoNum;
@@ -286,6 +293,7 @@ static void HbSendCheckOffLineMessage(LnnHeartbeatType hbType)
     }
     SoftBusFree(info);
 }
+#endif
 
 static void HbSleStateEventHandler(const LnnEventBasicInfo *info)
 {
@@ -698,6 +706,7 @@ static void HbMasterNodeChangeEventHandler(const LnnEventBasicInfo *info)
     }
 }
 
+#ifndef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
 static void HbRemoveCheckOffLineMessage(LnnHeartbeatType hbType)
 {
     if (hbType <= HEARTBEAT_TYPE_MIN || hbType >= HEARTBEAT_TYPE_MAX) {
@@ -753,6 +762,7 @@ static void HbChangeMediumParamByState(SoftBusScreenState state)
     }
     LnnUpdateHeartbeatInfo(UPDATE_SCREEN_STATE_INFO);
 }
+#endif
 
 static void HbDelayConditionChanged(void *para)
 {
@@ -789,7 +799,6 @@ static int32_t HbTryCloudSync(void)
     }
     return ret;
 }
-#endif
 
 static void HbScreenOnOnceTryCloudSync(void)
 {
@@ -797,13 +806,8 @@ static void HbScreenOnOnceTryCloudSync(void)
     if (g_hbConditionState.screenState == SOFTBUS_SCREEN_ON && !g_isScreenOnOnce &&
         g_hbConditionState.accountState == SOFTBUS_ACCOUNT_LOG_IN &&
         g_hbConditionState.lockState == SOFTBUS_SCREEN_UNLOCK) {
-#ifdef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
-        HbTryHandleMultiUserCloudSync();
-        LnnAsyncCallbackDelayHelper(GetLooper(LOOP_TYPE_DEFAULT), HbDelayConditionChanged, NULL, 0);
-#else
         LnnAsyncCallbackDelayHelper(GetLooper(LOOP_TYPE_DEFAULT), HbDelayConditionChanged, NULL,
             HbTryCloudSync() == SOFTBUS_OK ? HB_CLOUD_SYNC_DELAY_LEN : 0);
-#endif
     }
 }
 
@@ -811,6 +815,7 @@ static void DfxRecordScreenChangeTimestamp(LnnTriggerReason reason)
 {
     DfxRecordTriggerTime(reason, EVENT_STAGE_LNN_SCREEN_STATE_CHANGED);
 }
+#endif
 
 static void HbDeviceRiskStateEventHandler(const LnnEventBasicInfo *info)
 {
@@ -861,6 +866,7 @@ static void HbConstraintStateChangeHandler(const LnnEventBasicInfo *info)
     }
 }
 
+#ifndef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
 static void HbScreenOnChangeEventHandler(int64_t nowTime)
 {
     LNN_LOGI(LNN_HEART_BEAT, "HB handle SOFTBUS_SCREEN_ON");
@@ -925,6 +931,37 @@ static void HbScreenStateChangeEventHandler(const LnnEventBasicInfo *info)
         HbSendCheckOffLineMessage(HEARTBEAT_TYPE_BLE_V1);
     }
 }
+#endif
+#ifdef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
+static void HbMultiScreenStateChangeEventHandler(const LnnEventBasicInfo *info)
+{
+    if (info == NULL || info->event != LNN_EVENT_MULTI_SCREEN_STATE_CHANGED) {
+        LNN_LOGE(LNN_HEART_BEAT, "multi screen state evt handler get invalid param");
+        return;
+    }
+    const LnnMultiScreenStateChangedEvent *event = (const LnnMultiScreenStateChangedEvent *)info;
+    if (event->userId <= 0) {
+        LNN_LOGW(LNN_HEART_BEAT, "multi screen event invalid userId=%{public}d, skip", event->userId);
+        return;
+    }
+
+    LnnHeartbeatChannel channel = HEARTBEAT_CHANNEL_DEFAULT;
+    int32_t ret = LnnHbGetChannelByUserId(&channel, event->userId);
+    if (ret != SOFTBUS_OK) {
+        LNN_LOGE(LNN_HEART_BEAT, "get channel failed, ret=%{public}d", ret);
+        return;
+    }
+    LNN_LOGI(LNN_HEART_BEAT, "hb handle trigger heartbeat userId=%{public}d, channel=%{public}d, "
+        "screenId=%{public}" PRId64 ", event->status=%{public}d", event->userId,
+        channel, event->screenId, event->status);
+    if (event->status == SOFTBUS_MULTI_SCREEN_OFF && event->screenId == 0) {
+        LnnStartHeartbeatForChannel(channel, 0);
+    } else if (event->status == SOFTBUS_MULTI_SCREEN_ON) {
+        LnnStartHeartbeatForChannel(channel, 0);
+    }
+}
+
+#endif
 
 static void HbScreenUnlockAsyncHandler(void)
 {
@@ -1605,8 +1642,13 @@ void LnnHbOnTrustedRelationReduced(void)
 static int32_t LnnRegisterCommonEvent(void)
 {
     int32_t ret;
+#ifdef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
+    ret = LnnRegisterEventHandler(LNN_EVENT_MULTI_SCREEN_STATE_CHANGED, HbMultiScreenStateChangeEventHandler);
+    LNN_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret, LNN_INIT, "regist multi screen state evt handler fail");
+#else
     ret = LnnRegisterEventHandler(LNN_EVENT_SCREEN_STATE_CHANGED, HbScreenStateChangeEventHandler);
     LNN_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret, LNN_INIT, "regist screen state change evt handler fail");
+#endif
     ret = LnnRegisterEventHandler(LNN_EVENT_SCREEN_LOCK_CHANGED, HbScreenLockChangeEventHandler);
     LNN_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret, LNN_INIT, "regist screen lock state change evt handler fai");
     ret = LnnRegisterEventHandler(LNN_EVENT_NIGHT_MODE_CHANGED, HbNightModeStateEventHandler);
@@ -1747,7 +1789,9 @@ void LnnDeinitHeartbeat(void)
     LnnUnregisterEventHandler(LNN_EVENT_BT_STATE_CHANGED, HbBtStateChangeEventHandler);
     LnnUnregisterEventHandler(LNN_EVENT_LANE_VAP_CHANGE, HbLaneVapChangeEventHandler);
     LnnUnregisterEventHandler(LNN_EVENT_NODE_MASTER_STATE_CHANGED, HbMasterNodeChangeEventHandler);
+#ifndef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
     LnnUnregisterEventHandler(LNN_EVENT_SCREEN_STATE_CHANGED, HbScreenStateChangeEventHandler);
+#endif
     LnnUnregisterEventHandler(LNN_EVENT_HOME_GROUP_CHANGED, HbHomeGroupStateChangeEventHandler);
     LnnUnregisterEventHandler(LNN_EVENT_SCREEN_LOCK_CHANGED, HbScreenLockChangeEventHandler);
     LnnUnregisterEventHandler(LNN_EVENT_ACCOUNT_CHANGED, HbAccountStateChangeEventHandler);

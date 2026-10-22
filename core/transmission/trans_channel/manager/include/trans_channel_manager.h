@@ -97,6 +97,8 @@ void TransCheckChannelOpenRemoveFromLooper(int32_t channelId);
 
 void TransHandleReallocLnn(void);
 
+int32_t TransProcessWirelessLinkCtrl(int32_t socket);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

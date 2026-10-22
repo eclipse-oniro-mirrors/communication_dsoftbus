@@ -373,11 +373,13 @@ static int32_t LnnReAllocLane(uint32_t laneReqId, uint64_t laneId, const LaneAll
         return SOFTBUS_INVALID_PARAM;
     }
     LNN_LOGI(LNN_LANE, "realloc lane enter, laneReqId=%{public}u, laneId=%{public}" PRIu64 ", laneType=%{public}d, "
-        "transType=%{public}d, minBW=%{public}u, maxLaneLatency=%{public}u, minLaneLatency=%{public}u",
+        "transType=%{public}d, minBW=%{public}u, maxLaneLatency=%{public}u, minLaneLatency=%{public}u, "
+        "onlyFirstPriority=%{public}d",
         laneReqId, laneId, allocInfo->type, allocInfo->transType,
         allocInfo->qosRequire.minBW,
         allocInfo->qosRequire.maxLaneLatency,
-        allocInfo->qosRequire.minLaneLatency);
+        allocInfo->qosRequire.minLaneLatency,
+        allocInfo->qosRequire.onlyFirstPriority);
     int32_t result = g_laneObject[allocInfo->type]->reallocLaneByQos(laneReqId, laneId, allocInfo, listener);
     if (result != SOFTBUS_OK) {
         LNN_LOGE(LNN_LANE, "realloc lane fail, laneReqId=%{public}u, result=%{public}d", laneReqId, result);

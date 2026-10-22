@@ -31,6 +31,7 @@ bool LnnHbChannelIsEnabled(LnnHeartbeatChannel channel);
 
 int32_t LnnHbChannelSetUserId(LnnHeartbeatChannel channel, int32_t userId);
 int32_t LnnHbChannelGetUserId(LnnHeartbeatChannel channel, int32_t *userId);
+int32_t LnnHbGetChannelByUserId(LnnHeartbeatChannel *channel, int32_t userId);
 bool LnnHbChannelIsSupportRelay(LnnHeartbeatChannel channel);
 
 #ifdef __cplusplus

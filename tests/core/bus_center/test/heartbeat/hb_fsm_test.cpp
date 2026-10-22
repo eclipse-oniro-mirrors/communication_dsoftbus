@@ -522,6 +522,7 @@ HWTEST_F(HeartBeatFSMTest, OnCheckDevStatusTest_01, TestSize.Level1)
     NiceMock<LnnNetLedgertInterfaceMock> netLedgerMock;
     NiceMock<HeartBeatFSMInterfaceMock> heartbeatFsmMock;
     FsmStateMachine fsm;
+    (void)memset_s(&fsm, sizeof(FsmStateMachine), 0, sizeof(FsmStateMachine));
     LnnHeartbeatFsm *hbFsm = LnnCreateHeartbeatFsm();
     ON_CALL(netLedgerMock, LnnGetAllOnlineNodeInfo).WillByDefault(Return(SOFTBUS_OK));
     int32_t ret = OnCheckDevStatus(nullptr, TEST_ARGS, nullptr);
@@ -572,6 +573,7 @@ HWTEST_F(HeartBeatFSMTest, LnnPostNextSendOnceMsgToHbFsmTest_01, TestSize.Level1
 {
     LnnHeartbeatFsm *hbFsm = LnnCreateHeartbeatFsm();
     FsmStateMachine fsm;
+    (void)memset_s(&fsm, sizeof(FsmStateMachine), 0, sizeof(FsmStateMachine));
     LnnHeartbeatSendEndData *custData = nullptr;
     int32_t ret = LnnPostNextSendOnceMsgToHbFsm(nullptr, nullptr, TEST_TIME1);
     EXPECT_TRUE(ret == SOFTBUS_INVALID_PARAM);
@@ -934,6 +936,9 @@ HWTEST_F(HeartBeatFSMTest, LnnPostSendBeginMsgToHbFsm_01, TestSize.Level1)
 {
     LnnHeartbeatFsm hbFsm = {};
     LnnProcessSendOnceMsgPara msgParas = {};
+    NiceMock<LnnNetLedgertInterfaceMock> netLedgerMock;
+    EXPECT_CALL(netLedgerMock, LnnGetLocalNumInfo(_, _))
+        .WillRepeatedly(DoAll(SetArgPointee<1>(1), Return(SOFTBUS_OK)));
     int32_t ret = LnnPostSendBeginMsgToHbFsm(nullptr, 0, true, &msgParas, 0);
     EXPECT_TRUE(ret == SOFTBUS_INVALID_PARAM);
     msgParas.isRelay = true;
@@ -1010,6 +1015,9 @@ HWTEST_F(HeartBeatFSMTest, LnnPostSendBeginMsgToHbFsm_02, TestSize.Level1)
     LnnHeartbeatType type = HEARTBEAT_TYPE_BLE_V1;
     bool wakeupFlag = true;
     LnnProcessSendOnceMsgPara msgPara;
+    NiceMock<LnnNetLedgertInterfaceMock> netLedgerMock;
+    EXPECT_CALL(netLedgerMock, LnnGetLocalNumInfo(_, _))
+        .WillRepeatedly(DoAll(SetArgPointee<1>(1), Return(SOFTBUS_OK)));
     int32_t ret = LnnPostSendBeginMsgToHbFsm(nullptr, type, wakeupFlag, &msgPara, TEST_TIME3);
     EXPECT_TRUE(ret == SOFTBUS_INVALID_PARAM);
     ret = LnnPostSendBeginMsgToHbFsm(&hbFsm, type, wakeupFlag, &msgPara, TEST_TIME3);
@@ -1154,6 +1162,9 @@ HWTEST_F(HeartBeatFSMTest, LnnPostSendEndMsgToHbFsm_01, TestSize.Level1)
  */
 HWTEST_F(HeartBeatFSMTest, LnnPostSendBeginMsgToHbFsm_03, TestSize.Level1)
 {
+    NiceMock<LnnNetLedgertInterfaceMock> netLedgerMock;
+    EXPECT_CALL(netLedgerMock, LnnGetLocalNumInfo(_, _))
+        .WillRepeatedly(DoAll(SetArgPointee<1>(1), Return(SOFTBUS_OK)));
     LnnHeartbeatFsm *hbFsm = LnnCreateHeartbeatFsm();
     LnnProcessSendOnceMsgPara msgPara = { 0 };
     int32_t ret = LnnPostSendBeginMsgToHbFsm(hbFsm, HEARTBEAT_TYPE_BLE_V0, false, &msgPara, TEST_TIME3);
@@ -1357,12 +1368,11 @@ HWTEST_F(HeartBeatFSMTest, OnCheckDevStatus_01, TestSize.Level1)
     NiceMock<HeartBeatFSMInterfaceMock> heartbeatFsmMock;
     NiceMock<LnnNetLedgertInterfaceMock> netLedgerMock;
     NiceMock<DistributeLedgerInterfaceMock> distriLedgerMock;
-    FsmStateMachine fsm;
     LnnCheckDevStatusMsgPara *msgPara = (LnnCheckDevStatusMsgPara *)SoftBusCalloc(sizeof(LnnCheckDevStatusMsgPara));
     ASSERT_TRUE(msgPara != nullptr);
     EXPECT_CALL(heartbeatFsmMock, GetScreenState).WillRepeatedly(Return(SOFTBUS_SCREEN_ON));
     EXPECT_CALL(distriLedgerMock, LnnGetDLHeartbeatTimestamp).WillRepeatedly(Return(SOFTBUS_OK));
-    int32_t ret = OnCheckDevStatus(&fsm, TEST_ARGS, msgPara);
+    int32_t ret = OnCheckDevStatus(nullptr, TEST_ARGS, msgPara);
     EXPECT_EQ(ret, SOFTBUS_NETWORK_HB_CHECK_DEV_STATUS_ERROR);
     int32_t infoNum = 2;
     LnnCheckDevStatusMsgPara *msgPara1 = (LnnCheckDevStatusMsgPara *)SoftBusCalloc(sizeof(LnnCheckDevStatusMsgPara));

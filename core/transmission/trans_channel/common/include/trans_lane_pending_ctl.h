@@ -47,7 +47,7 @@ int32_t TransAsyncGetReserveLaneInfoByQos(const SessionParam *param, const LaneA
     uint32_t *laneHandle, uint64_t laneId, const AppInfo *info);
 
 int32_t TransAsyncGetLaneReserveInfo(
-    const SessionParam *param, uint32_t *laneHandle, uint64_t laneId, const AppInfo *info);
+    const SessionParam *param, uint32_t *laneHandle, uint64_t laneId, const AppInfo *info, bool onlyFirstPriority);
 
 void ClearSessionParamMemory(SessionParam *param);
 #ifdef __cplusplus

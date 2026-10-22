@@ -1889,4 +1889,94 @@ HWTEST_F(TransClientSessionManagerTest, SaveAddrInfoInvalidParamTest001, TestSiz
     ret = SaveAddrInfo(TRANS_TEST_INVALID_CHANNEL_ID, nullptr, sizeof(addr));
     EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
 }
+
+/*
+ * @tc.name: ClientSetGroupIdBySocketInvalidParamTest001
+ * @tc.desc: test ClientSetGroupIdBySocket returns SOFTBUS_INVALID_PARAM for
+ *           invalid socket id or null groupId
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransClientSessionManagerTest, ClientSetGroupIdBySocketInvalidParamTest001, TestSize.Level1)
+{
+    const char *groupId = "test_group_id";
+    int32_t ret = ClientSetGroupIdBySocket(0, groupId);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+    ret = ClientSetGroupIdBySocket(-1, groupId);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+    ret = ClientSetGroupIdBySocket(1, nullptr);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+    ret = ClientSetGroupIdBySocket(0, nullptr);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+}
+
+/*
+ * @tc.name: ClientSetGroupIdBySocketInvalidGroupTest001
+ * @tc.desc: test ClientSetGroupIdBySocket returns SOFTBUS_TRANS_SESSION_GROUP_INVALID
+ *           when groupId length >= GROUP_ID_SIZE_MAX
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransClientSessionManagerTest, ClientSetGroupIdBySocketInvalidGroupTest001, TestSize.Level1)
+{
+    char groupId[GROUP_ID_SIZE_MAX + 2] = {0};
+    (void)memset_s(groupId, sizeof(groupId), 'G', GROUP_ID_SIZE_MAX + 1);
+    int32_t ret = ClientSetGroupIdBySocket(1, groupId);
+    EXPECT_EQ(ret, SOFTBUS_TRANS_SESSION_GROUP_INVALID);
+}
+
+/*
+ * @tc.name: ClientSetGroupIdBySocketNotFoundTest001
+ * @tc.desc: test ClientSetGroupIdBySocket returns error when session not found
+ *           (no session server initialized)
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransClientSessionManagerTest, ClientSetGroupIdBySocketNotFoundTest001, TestSize.Level1)
+{
+    int32_t ret = TransClientInit();
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    const char *groupId = "test_group_id";
+    ret = ClientSetGroupIdBySocket(TRANS_TEST_SESSION_ID, groupId);
+    EXPECT_NE(ret, SOFTBUS_OK);
+    TransClientDeinit();
+}
+
+/*
+ * @tc.name: ClientSetGroupIdBySocketSuccessTest001
+ * @tc.desc: test ClientSetGroupIdBySocket returns SOFTBUS_OK and writes groupId
+ *           into sessionNode->info.groupId when session exists
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransClientSessionManagerTest, ClientSetGroupIdBySocketSuccessTest001, TestSize.Level1)
+{
+    int32_t ret = TransClientInit();
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    uint64_t timestamp = 0;
+    ret = ClientAddSessionServer(SEC_TYPE_PLAINTEXT, g_pkgName, g_sessionName, &g_sessionlistener, &timestamp);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    SessionParam *sessionParam = reinterpret_cast<SessionParam *>(SoftBusCalloc(sizeof(SessionParam)));
+    ASSERT_TRUE(sessionParam != nullptr);
+    GenerateCommParam(sessionParam);
+    SessionInfo *session = GenerateSession(sessionParam);
+    ASSERT_TRUE(session != nullptr);
+    session->channelId = TRANS_TEST_CHANNEL_ID;
+    session->channelType = CHANNEL_TYPE_PROXY;
+    session->role = SESSION_ROLE_CLIENT;
+    session->lifecycle.sessionState = SESSION_STATE_INIT;
+    ret = ClientAddNewSession(g_sessionName, session);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+
+    const char *newGroupId = "new_test_group_id";
+    ret = ClientSetGroupIdBySocket(session->sessionId, newGroupId);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+
+    ret = ClientDeleteSession(session->sessionId);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    ret = ClientDeleteSessionServer(SEC_TYPE_PLAINTEXT, g_sessionName);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    SoftBusFree(sessionParam);
+    TransClientDeinit();
+}
 } // namespace OHOS
