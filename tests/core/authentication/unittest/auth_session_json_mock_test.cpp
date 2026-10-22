@@ -1820,16 +1820,7 @@ HWTEST_F(AuthSessionJsonMockTest, CRED_NEGO_STATE_ASK_RECEIVER_TEST_002, TestSiz
             }
             return true;
         }));
-    EXPECT_CALL(mocker, GetAllForegroundAccountIds).WillOnce(
-        Invoke([](int32_t **userIds, uint32_t *userIdsLen) {
-            *userIds = reinterpret_cast<int32_t *>(SoftBusCalloc(sizeof(int32_t)));
-            if (*userIds == nullptr) {
-                return SOFTBUS_MEM_ERR;
-            }
-            (*userIds)[0] = TEST_BASIC_USER_ID;
-            *userIdsLen = 1;
-            return SOFTBUS_OK;
-        }));
+    EXPECT_CALL(mocker, GetAllForegroundAccountIds).WillOnce(Invoke(FillForegroundAccountIds));
     EXPECT_CALL(mocker, GetArrayItemNum).WillRepeatedly(Return(1));
     EXPECT_CALL(mocker, GetArrayItemFromArray).WillOnce(Return(tmpJson2));
     EXPECT_CALL(mocker, cJSON_GetNumberValue).WillOnce(Return(TEST_BASIC_USER_ID));

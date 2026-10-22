@@ -105,7 +105,7 @@ HWTEST_F(LNNOhosAccountMockTest, LNN_INIT_OHOS_ACCOUNT_003, TestSize.Level1)
     EXPECT_CALL(mocker, SoftBusGenerateStrHash(_, _, _))
         .WillOnce(Return(SOFTBUS_OK));
     EXPECT_CALL(mocker, GetOsAccountUid(_, _, _))
-        .WillOnce(Return(SOFTBUS_ERR));
+        .WillOnce(Return(SOFTBUS_NETWORK_GET_ACCOUNT_INFO_FAILED));
     EXPECT_CALL(mocker, LnnSetLocalStrInfo(_, _))
         .WillOnce(Return(SOFTBUS_OK));
     int32_t result = LnnInitOhosAccount();
@@ -195,7 +195,7 @@ HWTEST_F(LNNOhosAccountMockTest, LNN_UPDATE_OHOS_ACCOUNT_004, TestSize.Level1) {
     NiceMock<LnnOhosAccountInterfaceMock> mocker;
 
     EXPECT_CALL(mocker, GetOsAccountUid(_, _, _))
-        .WillOnce(Return(SOFTBUS_ERR));
+        .WillOnce(Return(SOFTBUS_NETWORK_GET_ACCOUNT_INFO_FAILED));
 
     const char* expectedUid = defaultAccountUid;
     EXPECT_CALL(mocker, LnnSetLocalStrInfo(
