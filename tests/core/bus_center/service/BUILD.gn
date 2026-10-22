@@ -88,6 +88,7 @@ ohos_unittest("BusCenterEventTest") {
     cfi = true
     cfi_cross_dso = true
     debug = false
+    blocklist = "$dsoftbus_root_path/tests/cfi_blocklist.txt"
   }
   sources = [
     "$dsoftbus_root_path/core/bus_center/service/src/bus_center_event.c",

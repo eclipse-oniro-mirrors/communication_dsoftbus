@@ -175,10 +175,10 @@ HWTEST_F(LnnAsyncCallbackUtilsTest, LNN_ASYNC_CALLBACK_DELAY_HELPER_TEST_003, Te
     int32_t ret = LnnAsyncCallbackDelayHelper(looper, TestCallback, nullptr, TEST_DELAY_MILLIS);
     EXPECT_EQ(ret, SOFTBUS_OK);
 
-    sleep(1);
+    usleep(900 * 1000);
     EXPECT_FALSE(g_callbackExecuted);
 
-    sleep(1);
+    sleep(2);
     EXPECT_TRUE(g_callbackExecuted);
 }
 
