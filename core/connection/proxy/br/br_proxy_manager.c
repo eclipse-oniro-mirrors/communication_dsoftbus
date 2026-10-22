@@ -1074,7 +1074,8 @@ static void AclStateChangedHandler(ProxyChannelAclStateContext *context)
     reconnectDeviceInfo->innerRetryNum = 0;
     reconnectDeviceInfo->isAclConnected = (context->state == SOFTBUS_ACL_STATE_CONNECTED) ? true : false;
     if (!reconnectDeviceInfo->isAclConnected) {
-        g_listener.onBrProxyStateChanged(reconnectDeviceInfo->requestId, reconnectDeviceInfo->brMac);
+        g_listener.onBrProxyStateChanged(reconnectDeviceInfo->requestId, reconnectDeviceInfo->brMac,
+            &reconnectDeviceInfo->isSupportFarField);
         return;
     }
     ConnRemoveMsgFromLooper(&g_proxyChannelAsyncHandler, MSG_OPEN_PROXY_CHANNEL_RETRY, 0, 0,

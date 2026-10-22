@@ -227,7 +227,7 @@ static void OnBrOpenFail(uint32_t requestId, int32_t reason, const char *brMac)
 }
 
 static int32_t UpdateProxyChannelInfo(ProxyChannelInfo *channelInfo, const ProxyChannelParam *param,
-    const OpenProxyChannelCallback *callback, bool *isSupportFarField)
+    const OpenProxyChannelCallback *callback, bool isSupportFarField)
 {
     int32_t ret = channelInfo->Lock((SoftBusRcObject *)channelInfo);
     if (ret != SOFTBUS_OK) {
@@ -238,7 +238,7 @@ static int32_t UpdateProxyChannelInfo(ProxyChannelInfo *channelInfo, const Proxy
     channelInfo->isFirstConnect = param->isFirstConnect;
     channelInfo->appIndex = param->appIndex;
     channelInfo->callback = *callback;
-    *isSupportFarField = channelInfo->isSupportFarField;
+    channelInfo->isSupportFarField = isSupportFarField;
     channelInfo->Unlock((SoftBusRcObject *)channelInfo);
     return SOFTBUS_OK;
 }
@@ -275,17 +275,24 @@ static int32_t OpenProxyChannel(ProxyChannelParam *param, const OpenProxyChannel
         CONN_PROXY, "is not paired device");
     ProxyChannelInfo *channelInfo = (ProxyChannelInfo *)SoftBusRcGetCommon(
         &GetProxyChannelManager()->proxyConnectionList, ProxyChannelInfoMacMatcher, param->brMac);
+    bool isSupportFarField = false;
     if (channelInfo == NULL) {
         channelInfo = CreateProxyChannelInfo(BR_PROXY, param, isRealMac);
         CONN_CHECK_AND_RETURN_RET_LOGE(channelInfo != NULL, SOFTBUS_MALLOC_ERR, CONN_PROXY, "channelInfo is NULL");
+        isSupportFarField = channelInfo->isSupportFarField;
         int32_t ret = SoftBusRcSave(&GetProxyChannelManager()->proxyConnectionList, (SoftBusRcObject *)channelInfo);
         if (ret != SOFTBUS_OK) {
             channelInfo->Dereference((SoftBusRcObject **)&channelInfo);
             return ret;
         }
+    } else {
+        P2PDeviceInfo device = {0};
+        if (strcpy_s(device.brMac, BT_MAC_LEN, channelInfo->realBrMac) == EOK &&
+            strcpy_s(device.uuid, UUID_STRING_LEN, channelInfo->uuid) == EOK) {
+            isSupportFarField = FarFieldAdapterIsDeviceSupport(&device);
+        }
     }
-    bool isSupportFarField = false;
-    int32_t ret = UpdateProxyChannelInfo(channelInfo, param, callback, &isSupportFarField);
+    int32_t ret = UpdateProxyChannelInfo(channelInfo, param, callback, isSupportFarField);
     if (ret != SOFTBUS_OK) {
         SoftBusRcRemove(&GetProxyChannelManager()->proxyConnectionList, (SoftBusRcObject *)channelInfo);
         channelInfo->Dereference((SoftBusRcObject **)&channelInfo);
@@ -398,13 +405,22 @@ static void OnBrProxyReconnected(const char *addr, struct ProxyChannel *channel)
     channelInfo->Dereference((SoftBusRcObject **)&channelInfo);
 }
 
-static void OnBrProxyDisable(uint32_t requestId, const char *addr)
+static void OnBrProxyDisable(uint32_t requestId, const char *addr, bool *isSupportFarField)
 {
     (void)requestId;
     ProxyChannelInfo *channelInfo = (ProxyChannelInfo *)SoftBusRcGetCommon(
         &GetProxyChannelManager()->proxyConnectionList, ProxyChannelInfoMacMatcher, addr);
     CONN_CHECK_AND_RETURN_LOGE(channelInfo != NULL, CONN_PROXY, "channelInfo is NULL");
+    bool isSupport = channelInfo->isSupportFarField;
     if (!channelInfo->isSupportFarField) {
+        P2PDeviceInfo device = {0};
+        if (strcpy_s(device.brMac, BT_MAC_LEN, channelInfo->realBrMac) == EOK &&
+            strcpy_s(device.uuid, UUID_STRING_LEN, channelInfo->uuid) == EOK) {
+            isSupport = FarFieldAdapterIsDeviceSupport(&device);
+        }
+    }
+    *isSupportFarField = isSupport;
+    if (!isSupport) {
         CONN_LOGE(CONN_PROXY, "not support far filed ability");
         channelInfo->Dereference((SoftBusRcObject **)&channelInfo);
         return;
@@ -414,6 +430,7 @@ static void OnBrProxyDisable(uint32_t requestId, const char *addr)
         channelInfo->Dereference((SoftBusRcObject **)&channelInfo);
         return;
     }
+    channelInfo->isSupportFarField = isSupport;
     channelInfo->isDirectly = false;
     uint32_t channelRequestId = channelInfo->requestId;
     channelInfo->Unlock((SoftBusRcObject *)channelInfo);
@@ -477,10 +494,21 @@ static void OnFarFieldConnected(uint32_t requestId, struct ProxyChannel *channel
     }
 
     bool isDirectly = channelInfo->isDirectly;
+    bool isFirstConnect = channelInfo->isFirstConnect;
+    bool isSupportFarField = channelInfo->isSupportFarField;
     channelInfo->isDirectly = false;
     OpenProxyChannelCallback callback = channelInfo->callback;
     channelInfo->Unlock((SoftBusRcObject *)channelInfo);
     FarFieldDfxRecordConnectSuccess(requestId, channelInfo->realBrMac, isDirectly);
+    if (isFirstConnect) {
+        ProxyChannelParam param = {0};
+        param.requestId = channelRequestId;
+        if (strcpy_s(param.brMac, BT_MAC_MAX_LEN, channelInfo->srcBrMac) == EOK &&
+            strcpy_s(param.uuid, UUID_STRING_LEN, channelInfo->uuid) == EOK) {
+            GetBrProxyChannelManager()->addReconnectDeviceInfo(&param, IsRealMac(channelInfo->srcBrMac),
+                isSupportFarField);
+        }
+    }
     channelInfo->Dereference((SoftBusRcObject **)&channelInfo);
 
     if (isDirectly) {
@@ -536,22 +564,28 @@ static int32_t ProxyChannelRefresh(ProxyChannelParam *param, const OpenProxyChan
         channelInfo->Dereference((SoftBusRcObject **)&channelInfo);
         return ret;
     }
-    channelInfo->requestId = param->requestId;
-    channelInfo->isDirectly = true;
-    channelInfo->isFirstConnect = param->isFirstConnect;
     bool isSupportFarField = channelInfo->isSupportFarField;
-    char realBrMac[BT_MAC_LEN] = {0};
-    if (strcpy_s(realBrMac, BT_MAC_LEN, channelInfo->realBrMac) != EOK) {
+    channelInfo->Unlock((SoftBusRcObject *)channelInfo);
+    P2PDeviceInfo device = {0};
+    if (strcpy_s(device.brMac, BT_MAC_LEN, channelInfo->realBrMac) != EOK) {
         CONN_LOGE(CONN_PROXY, "copy realBrMac failed");
-        channelInfo->Unlock((SoftBusRcObject *)channelInfo);
         channelInfo->Dereference((SoftBusRcObject **)&channelInfo);
         return SOFTBUS_STRCPY_ERR;
     }
-    channelInfo->Unlock((SoftBusRcObject *)channelInfo);
+    if (!isSupportFarField) {
+        if (strcpy_s(device.uuid, UUID_STRING_LEN, channelInfo->uuid) == EOK) {
+            isSupportFarField = FarFieldAdapterIsDeviceSupport(&device);
+        }
+    }
+    ret = UpdateProxyChannelInfo(channelInfo, param, callback, isSupportFarField);
+    if (ret != SOFTBUS_OK) {
+        channelInfo->Dereference((SoftBusRcObject **)&channelInfo);
+        return ret;
+    }
     channelInfo->Dereference((SoftBusRcObject **)&channelInfo);
 
     bool isAclConnected = false;
-    bool isPairedDevice = IsPairedDevice(realBrMac, true, NULL, &isAclConnected);
+    bool isPairedDevice = IsPairedDevice(device.brMac, true, NULL, &isAclConnected);
     CONN_CHECK_AND_RETURN_RET_LOGE(isPairedDevice, SOFTBUS_CONN_BR_UNPAIRED, CONN_PROXY, "is not paired device");
 
     if (!isSupportFarField || isAclConnected) {
@@ -562,7 +596,7 @@ static int32_t ProxyChannelRefresh(ProxyChannelParam *param, const OpenProxyChan
         return GetBrProxyChannelManager()->refreshBrProxyChannel(param, IsRealMac(param->brMac),
             isSupportFarField, &innerCallback);
     }
-    RefreshFarField(param, realBrMac);
+    RefreshFarField(param, device.brMac);
     return SOFTBUS_OK;
 }
 

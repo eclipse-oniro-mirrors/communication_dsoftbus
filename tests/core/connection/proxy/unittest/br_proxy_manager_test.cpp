@@ -145,10 +145,11 @@ void TestOnProxyChannelReconnected(const char *addr, ProxyChannel *channel)
     g_channelId = channel->channelId;
 }
 
-void TestOnBrProxyStateChanged(uint32_t requestId, const char *addr)
+void TestOnBrProxyStateChanged(uint32_t requestId, const char *addr, bool *isSupportFarField)
 {
     (void)requestId;
     (void)addr;
+    (void)isSupportFarField;
 }
 
 int32_t ConstructParamAndOpenProxyChannel(uint32_t requestId, uint64_t timeoutMs)
@@ -1983,9 +1984,10 @@ HWTEST_F(BrProxyManagerTest, BrProxyManagerTest057, TestSize.Level1)
     ret = GetBrProxyChannelManager()->registerBrProxyListener(&listener);
     EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
 
-    listener.onBrProxyStateChanged = [](uint32_t requestId, const char *addr) {
+    listener.onBrProxyStateChanged = [](uint32_t requestId, const char *addr, bool *isSupportFarField) {
         (void)requestId;
         (void)addr;
+        (void)isSupportFarField;
     };
     ret = GetBrProxyChannelManager()->registerBrProxyListener(&listener);
     EXPECT_EQ(ret, SOFTBUS_OK);
