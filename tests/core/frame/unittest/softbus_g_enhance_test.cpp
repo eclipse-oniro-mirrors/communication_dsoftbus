@@ -1246,6 +1246,48 @@ HWTEST_F(SoftbusGEnhanceTest, SoftbusGEnhanceTest038, TestSize.Level1)
     EXPECT_EQ(ret, SOFTBUS_NOT_IMPLEMENT);
 }
 
+/*
+ * @tc.name: SoftbusGEnhanceTest039
+ * @tc.desc: DiscCoapAssembleBdataPacked and DiscCoapAssembleCapDataPacked test
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+#ifdef SUPPORT_JSAPI
+HWTEST_F(SoftbusGEnhanceTest, SoftbusGEnhanceTest039, TestSize.Level1)
+{
+    DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
+    uint32_t ret = 0;
+#if !defined(__G_ENHANCE_DISC_FUNC_PACK_INNER_DISC_COAP_VIRTUAL)
+#ifdef DSOFTBUS_FEATURE_DISC_COAP_CUSTDATA
+    ret = DiscCoapAssembleBdataPacked(nullptr, 0, nullptr, 0);
+    EXPECT_EQ(ret, SOFTBUS_MEM_ERR);
+#else
+    pfnDiscEnhanceFuncList->discCoapAssembleBdata = nullptr;
+    ret = DiscCoapAssembleBdataPacked(nullptr, 0, nullptr, 0);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    pfnDiscEnhanceFuncList->discCoapAssembleBdata = DiscCoapAssembleBdataStub;
+    ret = DiscCoapAssembleBdataPacked(nullptr, 0, nullptr, 0);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+#endif
+#ifdef DSOFTBUS_FEATURE_DISC_SHARED_COAP
+    pfnDiscEnhanceFuncList->discCoapAssembleCapData = nullptr;
+    ret = DiscCoapAssembleCapDataPacked(0, nullptr, 0, nullptr, 0);
+    EXPECT_EQ(ret, SOFTBUS_FUNC_NOT_SUPPORT);
+    pfnDiscEnhanceFuncList->discCoapAssembleCapData = DiscCoapAssembleCapDataStub;
+    ret = DiscCoapAssembleCapDataPacked(0, nullptr, 0, nullptr, 0);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+#endif
+#endif
+    pfnDiscEnhanceFuncList->discFillBtype = nullptr;
+    ret = DiscFillBtypePacked(0, 0, nullptr);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+    pfnDiscEnhanceFuncList->discFillBtype = DiscFillBtypeStub;
+    ret = DiscFillBtypePacked(0, 0, nullptr);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+}
+#endif
+
 static int32_t DcWifiDirectExclusiveCancelByDeviceIdStub(const char *deviceId)
 {
     (void)deviceId;

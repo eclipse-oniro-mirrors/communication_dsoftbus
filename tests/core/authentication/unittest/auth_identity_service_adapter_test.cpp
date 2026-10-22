@@ -83,6 +83,46 @@ int32_t QueryCredInfoByCredIdSucc(int32_t osAccountId, const char *credId, char 
     return g_ret;
 }
 
+struct QueryCredTestBuffers {
+    CredManager *manager;
+    cJSON *msg;
+    cJSON *msg1;
+    cJSON *msg2;
+    cJSON *credId;
+    char *testData;
+    char *testData1;
+    char *testData2;
+    char *credList;
+};
+
+static bool CreateQueryCredTestBuffers(QueryCredTestBuffers *buf)
+{
+    buf->manager = (CredManager *)SoftBusCalloc(sizeof(CredManager));
+    buf->msg = (cJSON *)SoftBusCalloc(sizeof(cJSON));
+    buf->msg1 = (cJSON *)SoftBusCalloc(sizeof(cJSON));
+    buf->msg2 = (cJSON *)SoftBusCalloc(sizeof(cJSON));
+    buf->credId = (cJSON *)SoftBusCalloc(sizeof(cJSON));
+    buf->testData = (char *)SoftBusCalloc(TEST_DATA_LEN);
+    buf->testData1 = (char *)SoftBusCalloc(TEST_DATA_LEN);
+    buf->testData2 = (char *)SoftBusCalloc(TEST_DATA_LEN);
+    buf->credList = (char *)SoftBusCalloc(TEST_DATA_LEN);
+    if (buf->manager == nullptr || buf->msg == nullptr || buf->msg1 == nullptr || buf->msg2 == nullptr ||
+        buf->credId == nullptr || buf->testData == nullptr || buf->testData1 == nullptr ||
+        buf->testData2 == nullptr || buf->credList == nullptr) {
+        SoftBusFree(buf->manager);
+        SoftBusFree(buf->msg);
+        SoftBusFree(buf->msg1);
+        SoftBusFree(buf->msg2);
+        SoftBusFree(buf->credId);
+        SoftBusFree(buf->testData);
+        SoftBusFree(buf->testData1);
+        SoftBusFree(buf->testData2);
+        SoftBusFree(buf->credList);
+        return false;
+    }
+    return true;
+}
+
 /*
  * @tc.name: ID_SERVICE_GENERATE_QUERY_PARAM_BY_CRED_TYPE_TEST_001
  * @tc.desc: Verify that IdServiceGenerateQueryParamByCredType returns nullptr when
@@ -389,17 +429,20 @@ HWTEST_F(AuthIdentityServiceAdapterTest, AUTH_ID_SERVICE_QUERY_CREDENTIAL_TEST_0
     ASSERT_NE(manager, nullptr);
     cJSON *msg = (cJSON *)SoftBusCalloc(sizeof(cJSON));
     cJSON *credId = (cJSON *)SoftBusCalloc(sizeof(cJSON));
+    cJSON *credId1 = (cJSON *)SoftBusCalloc(sizeof(cJSON));
     char *testData = (char *)SoftBusCalloc(TEST_DATA_LEN);
     char *credList = (char *)SoftBusCalloc(TEST_DATA_LEN);
-    if (msg == nullptr || credId == nullptr || testData == nullptr || credList == nullptr) {
+    if (msg == nullptr || credId == nullptr || credId1 == nullptr || testData == nullptr || credList == nullptr) {
         SoftBusFree(manager);
         SoftBusFree(msg);
         SoftBusFree(credId);
+        SoftBusFree(credId1);
         SoftBusFree(testData);
         SoftBusFree(credList);
     }
     ASSERT_NE(msg, nullptr);
     ASSERT_NE(credId, nullptr);
+    ASSERT_NE(credId1, nullptr);
     ASSERT_NE(testData, nullptr);
     ASSERT_NE(credList, nullptr);
     manager->queryCredentialByParams = QueryCredentialByParams;
@@ -413,8 +456,8 @@ HWTEST_F(AuthIdentityServiceAdapterTest, AUTH_ID_SERVICE_QUERY_CREDENTIAL_TEST_0
     EXPECT_CALL(mock, AddStringToJsonObject).WillRepeatedly(Return(true));
     EXPECT_CALL(mock, AddNumberToJsonObject).WillRepeatedly(Return(true));
     EXPECT_CALL(mock, cJSON_PrintUnformatted).WillOnce(Return(testData));
-    EXPECT_CALL(mock, GetArrayItemNum).WillOnce(Return(1));
-    EXPECT_CALL(mock, CreateJsonObjectFromString).WillOnce(Return(credId));
+    EXPECT_CALL(mock, GetArrayItemNum).WillOnce(Return(1)).WillOnce(Return(1));
+    EXPECT_CALL(mock, CreateJsonObjectFromString).WillOnce(Return(credId)).WillOnce(Return(credId1));
     EXPECT_CALL(mock, cJSON_Delete).WillRepeatedly(Return());
     int32_t ret = AuthIdServiceQueryCredential(peerUserId, udidHash, accountHash, isSameAccount, &credList);
     EXPECT_EQ(ret, SOFTBUS_OK);
@@ -434,52 +477,30 @@ HWTEST_F(AuthIdentityServiceAdapterTest, AUTH_ID_SERVICE_QUERY_CREDENTIAL_TEST_0
 HWTEST_F(AuthIdentityServiceAdapterTest, AUTH_ID_SERVICE_QUERY_CREDENTIAL_TEST_006, TestSize.Level1)
 {
     int32_t peerUserId = 0;
-    char udidHash[UDID_HASH_LEN];
-    char accountHash[SHA_256_HEX_HASH_LEN];
+    char udidHash[UDID_HASH_LEN] = {0};
+    char accountHash[SHA_256_HEX_HASH_LEN] = {0};
     bool isSameAccount = false;
     AuthIdentityServiceAdapterInterfaceMock mock;
-    CredManager *manager = (CredManager *)SoftBusCalloc(sizeof(CredManager));
-    ASSERT_NE(manager, nullptr);
-    cJSON *msg = (cJSON *)SoftBusCalloc(sizeof(cJSON));
-    cJSON *msg1 = (cJSON *)SoftBusCalloc(sizeof(cJSON));
-    cJSON *credId = (cJSON *)SoftBusCalloc(sizeof(cJSON));
-    char *testData = (char *)SoftBusCalloc(TEST_DATA_LEN);
-    char *testData1 = (char *)SoftBusCalloc(TEST_DATA_LEN);
-    char *credList = (char *)SoftBusCalloc(TEST_DATA_LEN);
-    if (msg == nullptr || msg1 == nullptr || credId == nullptr || testData == nullptr || testData1 == nullptr ||
-        credList == nullptr) {
-        SoftBusFree(manager);
-        SoftBusFree(msg);
-        SoftBusFree(msg1);
-        SoftBusFree(credId);
-        SoftBusFree(testData);
-        SoftBusFree(testData1);
-        SoftBusFree(credList);
-    }
-    ASSERT_NE(msg, nullptr);
-    ASSERT_NE(msg1, nullptr);
-    ASSERT_NE(credId, nullptr);
-    ASSERT_NE(testData, nullptr);
-    ASSERT_NE(testData1, nullptr);
-    ASSERT_NE(credList, nullptr);
-    manager->queryCredentialByParams = QueryCredentialByParams;
-    manager->destroyInfo = DestroyInfo;
-    (void)memset_s(udidHash, UDID_HASH_LEN, 0, UDID_HASH_LEN);
-    (void)memset_s(accountHash, SHA_256_HEX_HASH_LEN, 0, SHA_256_HEX_HASH_LEN);
+    QueryCredTestBuffers buf = {};
+    ASSERT_TRUE(CreateQueryCredTestBuffers(&buf));
+    buf.manager->queryCredentialByParams = QueryCredentialByParams;
+    buf.manager->destroyInfo = DestroyInfo;
     EXPECT_CALL(mock, InitDeviceAuthService).WillRepeatedly(Return(HC_SUCCESS));
-    EXPECT_CALL(mock, GetCredMgrInstance).WillRepeatedly(Return(manager));
+    EXPECT_CALL(mock, GetCredMgrInstance).WillRepeatedly(Return(buf.manager));
     EXPECT_CALL(mock, JudgeDeviceTypeAndGetOsAccountIds).WillOnce(Return(0));
-    EXPECT_CALL(mock, cJSON_CreateObject).WillOnce(Return(msg)).WillOnce(Return(msg1));
+    EXPECT_CALL(mock, cJSON_CreateObject).WillOnce(Return(buf.msg)).WillOnce(Return(buf.msg1))
+        .WillOnce(Return(buf.msg2));
     EXPECT_CALL(mock, AddStringToJsonObject).WillRepeatedly(Return(true));
     EXPECT_CALL(mock, AddNumberToJsonObject).WillRepeatedly(Return(true));
-    EXPECT_CALL(mock, cJSON_PrintUnformatted).WillOnce(Return(testData)).WillOnce(Return(testData1));
+    EXPECT_CALL(mock, cJSON_PrintUnformatted)
+        .WillOnce(Return(buf.testData)).WillOnce(Return(buf.testData1)).WillOnce(Return(buf.testData2));
     EXPECT_CALL(mock, GetArrayItemNum).WillOnce(Return(0));
-    EXPECT_CALL(mock, CreateJsonObjectFromString).WillOnce(Return(credId));
+    EXPECT_CALL(mock, CreateJsonObjectFromString).WillOnce(Return(buf.credId));
     EXPECT_CALL(mock, cJSON_Delete).WillRepeatedly(Return());
-    int32_t ret = AuthIdServiceQueryCredential(peerUserId, udidHash, accountHash, isSameAccount, &credList);
+    int32_t ret = AuthIdServiceQueryCredential(peerUserId, udidHash, accountHash, isSameAccount, &buf.credList);
     EXPECT_EQ(ret, SOFTBUS_OK);
-    SoftBusFree(credList);
-    SoftBusFree(manager);
+    SoftBusFree(buf.credList);
+    SoftBusFree(buf.manager);
 }
 
 /*
@@ -541,44 +562,49 @@ HWTEST_F(AuthIdentityServiceAdapterTest, AUTH_ID_SERVICE_QUERY_CREDENTIAL_TEST_0
 HWTEST_F(AuthIdentityServiceAdapterTest, AUTH_ID_SERVICE_QUERY_CREDENTIAL_TEST_008, TestSize.Level1)
 {
     int32_t peerUserId = 0;
-    char udidHash[UDID_HASH_LEN];
-    char accountHash[SHA_256_HEX_HASH_LEN];
-    bool isSameAccount = false;
+    char udidHash[UDID_HASH_LEN] = {0};
+    char accountHash[SHA_256_HEX_HASH_LEN] = {0};
     AuthIdentityServiceAdapterInterfaceMock mock;
     CredManager *manager = (CredManager *)SoftBusCalloc(sizeof(CredManager));
     ASSERT_NE(manager, nullptr);
     cJSON *msg = (cJSON *)SoftBusCalloc(sizeof(cJSON));
     cJSON *msg1 = (cJSON *)SoftBusCalloc(sizeof(cJSON));
+    cJSON *msg2 = (cJSON *)SoftBusCalloc(sizeof(cJSON));
     char *testData = (char *)SoftBusCalloc(TEST_DATA_LEN);
     char *testData1 = (char *)SoftBusCalloc(TEST_DATA_LEN);
+    char *testData2 = (char *)SoftBusCalloc(TEST_DATA_LEN);
     char *credList = (char *)SoftBusCalloc(TEST_DATA_LEN);
-    if (msg == nullptr || msg1 == nullptr || testData == nullptr || testData1 == nullptr || credList == nullptr) {
+    if (msg == nullptr || msg1 == nullptr || msg2 == nullptr || testData == nullptr || testData1 == nullptr ||
+        testData2 == nullptr || credList == nullptr) {
         SoftBusFree(manager);
         SoftBusFree(msg);
         SoftBusFree(msg1);
+        SoftBusFree(msg2);
         SoftBusFree(testData);
         SoftBusFree(testData1);
+        SoftBusFree(testData2);
         SoftBusFree(credList);
     }
     ASSERT_NE(msg, nullptr);
     ASSERT_NE(msg1, nullptr);
+    ASSERT_NE(msg2, nullptr);
     ASSERT_NE(testData, nullptr);
     ASSERT_NE(testData1, nullptr);
+    ASSERT_NE(testData2, nullptr);
     ASSERT_NE(credList, nullptr);
     manager->queryCredentialByParams = QueryCredentialByParams;
     manager->destroyInfo = DestroyInfo;
-    (void)memset_s(udidHash, UDID_HASH_LEN, 0, UDID_HASH_LEN);
-    (void)memset_s(accountHash, SHA_256_HEX_HASH_LEN, 0, SHA_256_HEX_HASH_LEN);
     EXPECT_CALL(mock, InitDeviceAuthService).WillRepeatedly(Return(HC_SUCCESS));
     EXPECT_CALL(mock, GetCredMgrInstance).WillRepeatedly(Return(manager));
     EXPECT_CALL(mock, JudgeDeviceTypeAndGetOsAccountIds).WillOnce(Return(0));
-    EXPECT_CALL(mock, cJSON_CreateObject).WillOnce(Return(msg)).WillOnce(Return(msg1));
+    EXPECT_CALL(mock, cJSON_CreateObject).WillOnce(Return(msg)).WillOnce(Return(msg1)).WillOnce(Return(msg2));
     EXPECT_CALL(mock, AddStringToJsonObject).WillRepeatedly(Return(true));
     EXPECT_CALL(mock, AddNumberToJsonObject).WillRepeatedly(Return(true));
-    EXPECT_CALL(mock, cJSON_PrintUnformatted).WillOnce(Return(testData)).WillOnce(Return(testData1));
+    EXPECT_CALL(mock, cJSON_PrintUnformatted)
+        .WillOnce(Return(testData)).WillOnce(Return(testData1)).WillOnce(Return(testData2));
     EXPECT_CALL(mock, cJSON_Delete).WillRepeatedly(Return());
     EXPECT_CALL(mock, GetSoftbusHichainAuthErrorCode).WillOnce(DoAll(SetArgPointee<1>(HC_ERROR), Return()));
-    int32_t ret = AuthIdServiceQueryCredential(peerUserId, udidHash, accountHash, isSameAccount, &credList);
+    int32_t ret = AuthIdServiceQueryCredential(peerUserId, udidHash, accountHash, false, &credList);
     EXPECT_EQ(ret, HC_ERROR);
     SoftBusFree(credList);
     SoftBusFree(manager);

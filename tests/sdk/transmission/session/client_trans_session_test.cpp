@@ -2105,4 +2105,136 @@ HWTEST_F(TransClientSessionTest, ClientDfsBindInvalidParamTest001, TestSize.Leve
     ret = ClientDfsBind(TRANS_TEST_INVALID_SESSION_ID, nullptr);
     EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
 }
+
+/*
+ * @tc.name: CreateNewSocketSessionGroupIdInitTest001
+ * @tc.desc: test CreateNewSocketSession initializes info.groupId to "reserved"
+ *           regardless of param->groupId value
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransClientSessionTest, CreateNewSocketSessionGroupIdInitTest001, TestSize.Level1)
+{
+    SessionParam *sessionParam = reinterpret_cast<SessionParam*>(SoftBusCalloc(sizeof(SessionParam)));
+    ASSERT_TRUE(sessionParam != nullptr);
+    TestGenerateCommParam(sessionParam);
+    sessionParam->groupId = "custom_group_id";
+    SessionInfo *session = CreateNewSocketSession(sessionParam);
+    ASSERT_TRUE(session != nullptr);
+    EXPECT_STREQ(session->info.groupId, "reserved");
+    SoftBusFree(session);
+    SoftBusFree(sessionParam);
+}
+
+/*
+ * @tc.name: FillSessionParamGroupIdTest001
+ * @tc.desc: test FillSessionParam reads sessionNode->info.groupId into param->groupId
+ *           (not hardcoded "reserved")
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransClientSessionTest, FillSessionParamGroupIdTest001, TestSize.Level1)
+{
+    SessionParam *sessionParam = reinterpret_cast<SessionParam*>(SoftBusCalloc(sizeof(SessionParam)));
+    ASSERT_TRUE(sessionParam != nullptr);
+    TestGenerateCommParam(sessionParam);
+    SessionInfo *info = TestGenerateSession(sessionParam);
+    ASSERT_TRUE(info != nullptr);
+    const char *testGroupId = "fill_test_group_id";
+    (void)strcpy_s(info->info.groupId, GROUP_ID_SIZE_MAX, testGroupId);
+
+    ClientSessionServer serverNode;
+    SessionAttribute tmpAttr;
+    (void)memset_s(&serverNode, sizeof(ClientSessionServer), 0, sizeof(ClientSessionServer));
+    (void)memset_s(&tmpAttr, sizeof(SessionAttribute), 0, sizeof(SessionAttribute));
+    FillSessionParam(sessionParam, &tmpAttr, &serverNode, info);
+    EXPECT_STREQ(sessionParam->groupId, testGroupId);
+
+    strcpy_s(info->info.groupId, GROUP_ID_SIZE_MAX, "reserved");
+    FillSessionParam(sessionParam, &tmpAttr, &serverNode, info);
+    EXPECT_STREQ(sessionParam->groupId, "reserved");
+
+    SoftBusFree(sessionParam);
+    SoftBusFree(info);
+}
+
+/*
+ * @tc.name: FillDfsSocketParamGroupIdTest001
+ * @tc.desc: test FillDfsSocketParam reads sessionNode->info.groupId into param->groupId
+ *           (not hardcoded "reserved")
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransClientSessionTest, FillDfsSocketParamGroupIdTest001, TestSize.Level1)
+{
+    SessionParam *sessionParam = reinterpret_cast<SessionParam*>(SoftBusCalloc(sizeof(SessionParam)));
+    ASSERT_TRUE(sessionParam != nullptr);
+    TestGenerateCommParam(sessionParam);
+    SessionInfo *info = TestGenerateSession(sessionParam);
+    ASSERT_TRUE(info != nullptr);
+    const char *testGroupId = "dfs_test_group_id";
+    (void)strcpy_s(info->info.groupId, GROUP_ID_SIZE_MAX, testGroupId);
+
+    ClientSessionServer serverNode;
+    SessionAttribute tmpAttr;
+    (void)memset_s(&serverNode, sizeof(ClientSessionServer), 0, sizeof(ClientSessionServer));
+    (void)memset_s(&tmpAttr, sizeof(SessionAttribute), 0, sizeof(SessionAttribute));
+    FillDfsSocketParam(sessionParam, &tmpAttr, &serverNode, info);
+    EXPECT_STREQ(sessionParam->groupId, testGroupId);
+
+    strcpy_s(info->info.groupId, GROUP_ID_SIZE_MAX, "reserved");
+    FillDfsSocketParam(sessionParam, &tmpAttr, &serverNode, info);
+    EXPECT_STREQ(sessionParam->groupId, "reserved");
+
+    SoftBusFree(sessionParam);
+    SoftBusFree(info);
+}
+
+/*
+ * @tc.name: ClientSetGroupIdBySocketWhiteBoxTest001
+ * @tc.desc: test ClientSetGroupIdBySocket writes groupId into sessionNode->info.groupId
+ *           and FillSessionParam reads the updated value
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransClientSessionTest, ClientSetGroupIdBySocketWhiteBoxTest001, TestSize.Level1)
+{
+    int32_t ret = TransClientInit();
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    uint64_t timestamp = 0;
+    ret = ClientAddSessionServer(SEC_TYPE_PLAINTEXT, g_pkgName, g_sessionName, &g_sessionlistener, &timestamp);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    SessionParam *sessionParam = reinterpret_cast<SessionParam*>(SoftBusCalloc(sizeof(SessionParam)));
+    ASSERT_TRUE(sessionParam != nullptr);
+    TestGenerateCommParam(sessionParam);
+    SessionInfo *session = TestGenerateSession(sessionParam);
+    ASSERT_TRUE(session != nullptr);
+    session->channelId = TRANS_TEST_CHANNEL_ID;
+    session->channelType = CHANNEL_TYPE_PROXY;
+    session->role = SESSION_ROLE_CLIENT;
+    session->lifecycle.sessionState = SESSION_STATE_INIT;
+    ret = ClientAddNewSession(g_sessionName, session);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+
+    const char *newGroupId = "whitebox_group_id";
+    ret = ClientSetGroupIdBySocket(session->sessionId, newGroupId);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+
+    ClientSessionServer *serverNode = nullptr;
+    SessionInfo *sessionNode = nullptr;
+    ret = LockClientSessionServerList();
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    ret = GetSessionById(session->sessionId, &serverNode, &sessionNode);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    ASSERT_TRUE(sessionNode != nullptr);
+    EXPECT_STREQ(sessionNode->info.groupId, newGroupId);
+    UnlockClientSessionServerList();
+
+    ret = ClientDeleteSession(session->sessionId);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    ret = ClientDeleteSessionServer(SEC_TYPE_PLAINTEXT, g_sessionName);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    SoftBusFree(sessionParam);
+    TransClientDeinit();
+}
 }

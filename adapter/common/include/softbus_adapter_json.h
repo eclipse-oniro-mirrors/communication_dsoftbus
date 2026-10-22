@@ -41,6 +41,12 @@ char *JSON_PrintUnformatted(const JsonObj *obj);
 
 JsonObj *JSON_Parse(const char *str, uint32_t len);
 
+JsonObj *JSON_ParseArray(const char *str, uint32_t len);
+
+int32_t JSON_GetArraySize(const JsonObj *obj);
+
+JsonObj *JSON_GetArrayItem(const JsonObj *obj, int32_t index);
+
 bool JSON_AddBoolToObject(JsonObj *obj, const char *key, bool value);
 
 bool JSON_GetBoolFromOject(const JsonObj *obj, const char *key, bool *value);

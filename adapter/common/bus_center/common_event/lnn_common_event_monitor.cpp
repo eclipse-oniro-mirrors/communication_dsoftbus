@@ -28,6 +28,7 @@
 #include "lnn_ohos_account.h"
 #include "lnn_ohos_account_adapter.h"
 #include "long_wrapper.h"
+#include "softbus_adapter_json.h"
 #include "power_mgr_client.h"
 #include "softbus_error_code.h"
 #include "lnn_init_monitor.h"
@@ -38,27 +39,79 @@ static const int32_t RETRY_MAX = 20;
 #define COMMON_EVENT_USER_SLEEP_STATE_CHANGED "COMMON_EVENT_USER_SLEEP_STATE_CHANGED"
 
 #ifdef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
+enum MultiScreenId {
+    SCREEN_ID_CENTER = 0,
+    SCREEN_ID_CO_DRIVER = 4,
+    SCREEN_ID_ADDITIONAL = 6,
+};
+
 struct LnnMultiScreenStateNode {
-    int64_t screenId;
+    int64_t dispalyId;
     SoftBusMultiScreenState state;
 };
 
 static std::mutex g_multiScreenLock;
 static std::list<LnnMultiScreenStateNode> g_multiScreenStateList;
 
-static void UpdateMultiScreenState(int64_t screenId, SoftBusMultiScreenState state)
+static bool UpdateMultiScreenState(int64_t screenId, SoftBusMultiScreenState state)
 {
     std::lock_guard<std::mutex> lock(g_multiScreenLock);
     for (auto &item : g_multiScreenStateList) {
-        if (item.screenId == screenId) {
+        if (item.dispalyId == screenId) {
+            if (item.state == state) {
+                return false;
+            }
             item.state = state;
-            return;
+            return true;
         }
     }
-    LnnMultiScreenStateNode node = { .screenId = screenId, .state = state };
+    LnnMultiScreenStateNode node = { .dispalyId = screenId, .state = state };
     g_multiScreenStateList.push_back(node);
-    LNN_LOGI(LNN_EVENT, "add multi screen state screenId=%{public}" PRId64 ", state=%{public}d, listSize=%{public}zu",
-        screenId, state, g_multiScreenStateList.size());
+    return true;
+}
+
+static bool IsValidScreenId(int64_t screenId)
+{
+    return screenId == SCREEN_ID_CENTER || screenId == SCREEN_ID_CO_DRIVER || screenId == SCREEN_ID_ADDITIONAL;
+}
+
+static void NotifyMultiScreenStateChanged(int32_t stateType, int64_t screenId, int32_t userId)
+{
+    if (stateType != SOFTBUS_MULTI_SCREEN_ON && stateType != SOFTBUS_MULTI_SCREEN_OFF) {
+        return;
+    }
+    if (!IsValidScreenId(screenId)) {
+        return;
+    }
+    bool changed = UpdateMultiScreenState(screenId, (SoftBusMultiScreenState)stateType);
+    if (changed) {
+        LnnNotifyMultiScreenStateChangeEvent((SoftBusMultiScreenState)stateType, screenId, userId);
+    }
+}
+
+static void ParseAllScreenStates(const std::string &allStates)
+{
+    JsonObj *jsonArray = JSON_ParseArray(allStates.c_str(), static_cast<uint32_t>(allStates.length()));
+    if (jsonArray == nullptr) {
+        LNN_LOGE(LNN_EVENT, "parse allScreenStates fail or not array");
+        return;
+    }
+    int32_t size = JSON_GetArraySize(jsonArray);
+    for (int32_t i = 0; i < size; i++) {
+        JsonObj *item = JSON_GetArrayItem(jsonArray, i);
+        if (item == nullptr) {
+            continue;
+        }
+        int64_t screenId = -1;
+        int32_t userId = -1;
+        int32_t stateType = -1;
+        JSON_GetInt64FromOject(item, "screenId", &screenId);
+        JSON_GetInt32FromOject(item, "userId", &userId);
+        JSON_GetInt32FromOject(item, "stateType", &stateType);
+        JSON_Delete(item);
+        NotifyMultiScreenStateChanged(stateType, screenId, userId);
+    }
+    JSON_Delete(jsonArray);
 }
 #endif
 
@@ -141,8 +194,7 @@ static void HandleDistributedAccountChange(const CommonEventData &data)
 }
 
 #ifdef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
-static const char *COMMON_EVENT_MULTI_SCREEN_OFF = "usual.event.MULTI_SCREEN_OFF";
-static const char *COMMON_EVENT_MULTI_SCREEN_ON = "usual.event.MULTI_SCREEN_ON";
+static const char *COMMON_EVENT_MULTI_SCREEN_CHANGE = "usual.event.ivi.DISPLAY_STATE_CHANGED";
 
 static void HandleSubProfileSwitched(const CommonEventData &data)
 {
@@ -156,36 +208,20 @@ static void HandleSubProfileSwitched(const CommonEventData &data)
     LnnNotifyAccountSwitchCheckEvent(userId);
 }
 
-static int64_t ParseMultiScreenId(const AAFwk::WantParams &wantParams)
+static void HandleMultiScreenStateChange(const CommonEventData &data)
 {
-    auto interfacePtr = wantParams.GetParam("screenId");
-    auto longValue = AAFwk::ILong::Query(interfacePtr);
-    if (longValue == nullptr) {
-        LNN_LOGW(LNN_EVENT, "multi screen event missing screenId");
-        return 0;
+    auto want = data.GetWant();
+    int64_t screenId = want.GetLongParam("screenId", -1);
+    int32_t userId = want.GetIntParam("userId", -1);
+    int32_t stateType = want.GetIntParam("stateType", -1);
+    std::string allStates = want.GetStringParam("allScreenStates");
+    if (allStates.empty()) {
+        NotifyMultiScreenStateChanged(stateType, screenId, userId);
+        return;
     }
-    return AAFwk::Long::Unbox64(longValue);
+    ParseAllScreenStates(allStates);
 }
 
-static void HandleMultiScreenOn(const CommonEventData &data)
-{
-    const AAFwk::WantParams &wantParams = data.GetWant().GetParams();
-    int64_t screenId = ParseMultiScreenId(wantParams);
-    int32_t reason = wantParams.GetIntParam("reason", -1);
-    LNN_LOGI(LNN_EVENT, "multi screen on screenId=%{public}" PRId64 ", reason=%{public}d", screenId, reason);
-    UpdateMultiScreenState(screenId, SOFTBUS_MULTI_SCREEN_ON);
-    LnnNotifyMultiScreenStateChangeEvent(SOFTBUS_MULTI_SCREEN_ON, screenId);
-}
-
-static void HandleMultiScreenOff(const CommonEventData &data)
-{
-    const AAFwk::WantParams &wantParams = data.GetWant().GetParams();
-    int64_t screenId = ParseMultiScreenId(wantParams);
-    int32_t reason = wantParams.GetIntParam("reason", -1);
-    LNN_LOGI(LNN_EVENT, "multi screen off screenId=%{public}" PRId64 ", reason=%{public}d", screenId, reason);
-    UpdateMultiScreenState(screenId, SOFTBUS_MULTI_SCREEN_OFF);
-    LnnNotifyMultiScreenStateChangeEvent(SOFTBUS_MULTI_SCREEN_OFF, screenId);
-}
 #endif
 
 static void HandleUserSwitched(const CommonEventData &data)
@@ -229,8 +265,7 @@ CommonEventMonitor::CommonEventMonitor(const CommonEventSubscribeInfo &subscribe
     eventHandlers_[CommonEventSupport::COMMON_EVENT_DISTRIBUTED_ACCOUNT_LOGIN] = HandleDistributedAccountChange;
 #ifdef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
     eventHandlers_[CommonEventSupport::COMMON_EVENT_OS_ACCOUNT_SUB_PROFILE_SWITCHED] = HandleSubProfileSwitched;
-    eventHandlers_[COMMON_EVENT_MULTI_SCREEN_OFF] = HandleMultiScreenOff;
-    eventHandlers_[COMMON_EVENT_MULTI_SCREEN_ON] = HandleMultiScreenOn;
+    eventHandlers_[COMMON_EVENT_MULTI_SCREEN_CHANGE] = HandleMultiScreenStateChange;
 #endif
     eventHandlers_[CommonEventSupport::COMMON_EVENT_USER_SWITCHED] = HandleUserSwitched;
     eventHandlers_[COMMON_EVENT_USER_SLEEP_STATE_CHANGED] = HandleUserSleepStateChange;
@@ -263,8 +298,7 @@ int32_t SubscribeEvent::SubscribeCommonEvent()
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_DISTRIBUTED_ACCOUNT_LOGIN);
 #ifdef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_OS_ACCOUNT_SUB_PROFILE_SWITCHED);
-    matchingSkills.AddEvent(COMMON_EVENT_MULTI_SCREEN_OFF);
-    matchingSkills.AddEvent(COMMON_EVENT_MULTI_SCREEN_ON);
+    matchingSkills.AddEvent(COMMON_EVENT_MULTI_SCREEN_CHANGE);
 #endif
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_USER_UNLOCKED);
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_SCREEN_UNLOCKED);
@@ -303,17 +337,34 @@ bool LnnIsAllMultiScreenOff(void)
     for (const auto &item : g_multiScreenStateList) {
         if (item.state != SOFTBUS_MULTI_SCREEN_OFF) {
             allOff = false;
-            LNN_LOGI(LNN_EVENT, "screen not off, screenId=%{public}" PRId64, item.screenId);
+            LNN_LOGI(LNN_EVENT, "screen not off, screenId=%{public}" PRId64, item.dispalyId);
             break;
         }
     }
     LNN_LOGI(LNN_EVENT, "all multi screen off=%{public}d, listSize=%{public}zu", allOff, g_multiScreenStateList.size());
     return allOff;
 }
+
+SoftBusScreenState LnnQueryCenterScreenStatus(void)
+{
+    std::lock_guard<std::mutex> lock(g_multiScreenLock);
+    for (const auto &item : g_multiScreenStateList) {
+        if (item.dispalyId == static_cast<int64_t>(SCREEN_ID_CENTER)) {
+            return (item.state == SOFTBUS_MULTI_SCREEN_ON) ? SOFTBUS_SCREEN_ON : SOFTBUS_SCREEN_OFF;
+        }
+    }
+    LNN_LOGW(LNN_EVENT, "center screen state not found, return UNKNOWN");
+    return SOFTBUS_SCREEN_UNKNOWN;
+}
 #else
 bool LnnIsAllMultiScreenOff(void)
 {
     return false;
+}
+
+SoftBusScreenState LnnQueryCenterScreenStatus(void)
+{
+    return SOFTBUS_SCREEN_UNKNOWN;
 }
 #endif
 

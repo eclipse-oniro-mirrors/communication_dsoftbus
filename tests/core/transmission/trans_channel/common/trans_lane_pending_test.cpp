@@ -2313,11 +2313,11 @@ HWTEST_F(TransLanePendingTest, TransAsyncGetLaneReserveInfoTest001, TestSize.Lev
     uint64_t laneId = 1;
     AppInfo appInfo;
     (void)memset_s(&appInfo, sizeof(AppInfo), 0, sizeof(AppInfo));
-    int32_t ret = TransAsyncGetLaneReserveInfo(nullptr, nullptr, laneId, &appInfo);
+    int32_t ret = TransAsyncGetLaneReserveInfo(nullptr, nullptr, laneId, &appInfo, false);
     EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
-    ret = TransAsyncGetLaneReserveInfo(&param, nullptr, laneId, &appInfo);
+    ret = TransAsyncGetLaneReserveInfo(&param, nullptr, laneId, &appInfo, false);
     EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
-    ret = TransAsyncGetLaneReserveInfo(nullptr, &laneHandle, laneId, &appInfo);
+    ret = TransAsyncGetLaneReserveInfo(nullptr, &laneHandle, laneId, &appInfo, false);
     EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
 }
 
@@ -2337,7 +2337,7 @@ HWTEST_F(TransLanePendingTest, TransAsyncGetLaneReserveInfoTest002, TestSize.Lev
     ASSERT_TRUE(param != nullptr);
     AppInfo appInfo;
     (void)memset_s(&appInfo, sizeof(AppInfo), 0, sizeof(AppInfo));
-    int32_t ret = TransAsyncGetLaneReserveInfo(param, &laneHandle, laneId, &appInfo);
+    int32_t ret = TransAsyncGetLaneReserveInfo(param, &laneHandle, laneId, &appInfo, false);
     EXPECT_EQ(SOFTBUS_TRANS_INVALID_SESSION_TYPE, ret);
     SoftBusFree(const_cast<SessionAttribute *>(param->attr));
     param->attr = nullptr;
@@ -2365,7 +2365,7 @@ HWTEST_F(TransLanePendingTest, TransAsyncGetLaneReserveInfoTest003, TestSize.Lev
     EXPECT_CALL(mock, LnnHasDiscoveryType).WillRepeatedly(Return(true));
     EXPECT_CALL(mock, LnnGetRemoteStrInfo).WillRepeatedly(Return(SOFTBUS_OK));
     EXPECT_CALL(mock, TransGetUidAndPid).WillRepeatedly(Return(SOFTBUS_OK));
-    int32_t ret = TransAsyncGetLaneReserveInfo(param, &laneHandle, laneId, &appInfo);
+    int32_t ret = TransAsyncGetLaneReserveInfo(param, &laneHandle, laneId, &appInfo, false);
     EXPECT_EQ(SOFTBUS_TRANS_GET_LANE_INFO_ERR, ret);
     SoftBusFree(const_cast<SessionAttribute *>(param->attr));
     param->attr = nullptr;
@@ -2395,7 +2395,7 @@ HWTEST_F(TransLanePendingTest, TransAsyncGetLaneReserveInfoTest004, TestSize.Lev
     int32_t ret = TransAddSocketChannelInfo(TEST_SESSION_NAME, TEST_SESSION_ID,
         TEST_CHANNEL_ID, channelType, state);
     EXPECT_EQ(SOFTBUS_OK, ret);
-    ret = TransAsyncGetLaneReserveInfo(param, &laneHandle, laneId, &appInfo);
+    ret = TransAsyncGetLaneReserveInfo(param, &laneHandle, laneId, &appInfo, false);
     EXPECT_EQ(SOFTBUS_TRANS_GET_LANE_INFO_ERR, ret);
     ret = TransDeleteSocketChannelInfoBySession(TEST_SESSION_NAME, TEST_SESSION_ID);
     EXPECT_EQ(SOFTBUS_OK, ret);

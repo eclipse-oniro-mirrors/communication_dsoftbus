@@ -106,11 +106,13 @@ CONN_ASSIGNER(Errcode, BrProxyState, brProxyState)
 CONN_ASSIGNER(Errcode, BrProxyIsClear, brProxyIsClear)
 CONN_ASSIGNER(Errcode, BrProxyIsRetry, brProxyIsRetry)
 CONN_ASSIGNER(Errcode, BrProxyIsAcl, brProxyIsAcl)
+CONN_ASSIGNER(Errcode, IsDirectly, isDirectly)
+CONN_ASSIGNER(Errcode, IsSupportFarField, isSupportFarField)
 CONN_ASSIGNER(Errcode, ConnectReason, connectReason)
 CONN_ASSIGNER(Errcode, SendCnt, sendCnt)
 CONN_ASSIGNER(Errcode, ReceiveCnt, receiveCnt)
 
-#define CONN_ASSIGNER_SIZE 75 // Size of g_connAssigners
+#define CONN_ASSIGNER_SIZE 77 // Size of g_connAssigners
 static HiSysEventParamAssigner g_connAssigners[] = {
     { "STAGE_RES",         HISYSEVENT_INT32,  ConnAssignerResult        },
     { "ERROR_CODE",        HISYSEVENT_INT32,  ConnAssignerErrcode       },
@@ -184,6 +186,8 @@ static HiSysEventParamAssigner g_connAssigners[] = {
     { "BR_PROXY_IS_CLEAR",      HISYSEVENT_INT32,  ConnAssignerBrProxyIsClear      },
     { "BR_PROXY_IS_RETRY",      HISYSEVENT_INT32,  ConnAssignerBrProxyIsRetry      },
     { "BR_PROXY_IS_ACL",        HISYSEVENT_INT32,  ConnAssignerBrProxyIsAcl        },
+    { "FAR_FIELD_IS_DIRECTLY",  HISYSEVENT_INT32,  ConnAssignerIsDirectly          },
+    { "FAR_FIELD_IS_SUPPORT",   HISYSEVENT_INT32,  ConnAssignerIsSupportFarField   },
     { "CONNECT_REASON",         HISYSEVENT_INT32,  ConnAssignerConnectReason       },
     { "SEND_CNT",               HISYSEVENT_INT32,  ConnAssignerSendCnt             },
     { "RECEIVE_CNT",            HISYSEVENT_INT32,  ConnAssignerReceiveCnt          },

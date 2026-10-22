@@ -15,10 +15,15 @@
 
 #include "client_trans_socket_option.h"
 
+#include <string.h>
+
+#include "client_trans_multipath_manager.h"
 #include "client_trans_session_manager.h"
+#include "softbus_app_info.h"
 #include "softbus_def.h"
 #include "softbus_error_code.h"
 #include "trans_log.h"
+#include "trans_server_proxy.h"
 #include "trans_type.h"
 
 typedef struct {
@@ -116,6 +121,25 @@ static int32_t TransSetKeyType(
     return ClientSetKeyTypeBySocket(socket, keyType);
 }
 
+static int32_t TransSetGroupId(
+    int32_t socket, OptLevel level, OptType optType, void *optValue, int32_t optValueSize)
+{
+    if (socket <= 0 || optValue == NULL || optValueSize <= 0) {
+        TRANS_LOGE(TRANS_SDK, "invalid param, socket=%{public}d", socket);
+        return SOFTBUS_INVALID_PARAM;
+    }
+    if (level != OPT_LEVEL_SOFTBUS) {
+        TRANS_LOGE(TRANS_SDK, "invalid level, socket=%{public}d, level=%{public}d", socket, level);
+        return SOFTBUS_INVALID_PARAM;
+    }
+    const char *groupId = (const char *)optValue;
+    if (strnlen(groupId, GROUP_ID_SIZE_MAX) >= GROUP_ID_SIZE_MAX) {
+        TRANS_LOGE(TRANS_SDK, "invalid groupId, socket=%{public}d", socket);
+        return SOFTBUS_TRANS_SESSION_GROUP_INVALID;
+    }
+    return ClientSetGroupIdBySocket(socket, groupId);
+}
+
 static int32_t TransGetKeyType(
     int32_t socket, OptLevel level, OptType optType, void *optValue, int32_t *optValueSize)
 {
@@ -137,6 +161,69 @@ static int32_t TransGetKeyType(
     return SOFTBUS_OK;
 }
 
+static bool TransIsWirelessRoute(int32_t routeType)
+{
+    return routeType == WIFI_STA || routeType == WIFI_P2P || routeType == WIFI_P2P_REUSE;
+}
+
+static int32_t TransCheckChannelState(int32_t socket, bool *wirelessLinkExist)
+{
+    int32_t mainRouteType = INVALID_ROUTE_TYPE;
+    int32_t reserveRouteType = INVALID_ROUTE_TYPE;
+    int32_t ret = TransMultipathGetRouteType(socket, &mainRouteType, &reserveRouteType);
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_SDK, "get route type fail, socket=%{public}d, ret=%{public}d", socket, ret);
+        return ret;
+    }
+    *wirelessLinkExist = TransIsWirelessRoute(mainRouteType) || TransIsWirelessRoute(reserveRouteType);
+    return SOFTBUS_OK;
+}
+
+static int32_t TransSetWirelessLinkCtrl(
+    int32_t socket, OptLevel level, OptType optType, void *optValue, int32_t optValueSize)
+{
+    (void)optType;
+    if (socket <= 0 || optValue == NULL) {
+        TRANS_LOGE(TRANS_SDK, "invalid param, socket=%{public}d", socket);
+        return SOFTBUS_INVALID_PARAM;
+    }
+    if (level != OPT_LEVEL_SOFTBUS) {
+        TRANS_LOGE(TRANS_SDK, "invalid level=%{public}d, socket=%{public}d", level, socket);
+        return SOFTBUS_INVALID_PARAM;
+    }
+    if (optValueSize != (int32_t)sizeof(bool)) {
+        TRANS_LOGE(TRANS_SDK, "invalid optValueSize=%{public}d", optValueSize);
+        return SOFTBUS_INVALID_PARAM;
+    }
+
+    bool wireLinkCtrl = *(bool *)optValue;
+    if (!wireLinkCtrl) {
+        TRANS_LOGE(TRANS_SDK, "invalid wireLinkCtrl, socket=%{public}d", socket);
+        return SOFTBUS_INVALID_PARAM;
+    }
+
+    bool enableMultipath = false;
+    int32_t ret = TransMultipathGetEnabled(socket, &enableMultipath);
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_SDK, "get enableMultipath fail, socket=%{public}d, ret=%{public}d", socket, ret);
+        return ret;
+    }
+    if (!enableMultipath) {
+        TRANS_LOGE(TRANS_SDK, "dual-path not enabled, socket=%{public}d", socket);
+        return SOFTBUS_TRANS_FUNC_NOT_SUPPORT;
+    }
+    bool wirelessLinkExist = false;
+    ret = TransCheckChannelState(socket, &wirelessLinkExist);
+    if (ret != SOFTBUS_OK) {
+        return ret;
+    }
+    if (wirelessLinkExist) {
+        TRANS_LOGI(TRANS_SDK, "wireless link already exist, skip realloc, socket=%{public}d", socket);
+        return SOFTBUS_TRANS_WIRELESS_LINK_ALREADY_EXIST;
+    }
+    return ServerIpcSetWirelessLinkCtrl(socket);
+}
+
 static SocketOptMap g_socketOptMap[] = {
     { OPT_TYPE_MAX_BUFFER, TransGetSocketMaxBufferLen, NULL },
     { OPT_TYPE_FIRST_PACKAGE, NULL, NULL },
@@ -145,6 +232,8 @@ static SocketOptMap g_socketOptMap[] = {
     { OPT_TYPE_NEED_ACK, NULL, TransSetNeedAck },
     { OPT_TYPE_LOGICAL_BANDWIDTH, TransGetLogicalBandwidth, NULL},
     { OPT_TYPE_KEY_TYPE, TransGetKeyType, TransSetKeyType },
+    { OPT_TYPE_GROUP_ID, NULL, TransSetGroupId },
+    { OPT_TYPE_WIRELESS_LINK_CTRL, NULL, TransSetWirelessLinkCtrl },
 };
 
 int32_t GetCommonSocketOpt(int32_t socket, OptLevel level, OptType optType, void *optValue, int32_t *optValueSize)

@@ -41,7 +41,7 @@ bool TransMultipathNeedReallocSecondLane(int32_t channelId);
 
 void TransMultipathGetReallocList(ListNode *multipathReallocList);
 
-int32_t TransMultipathOpenSecondChannel(int32_t channelId, uint64_t laneId);
+int32_t TransMultipathOpenSecondChannel(int32_t channelId, uint64_t laneId, bool onlyFirstPriority);
 
 /* ========== Multipath initialization on channel open ========== */
 

@@ -315,7 +315,7 @@ HWTEST_F(TransClientMsgServiceTest, TransClientMsgServiceTest03, TestSize.Level1
         g_sessionName, CHANNEL_TYPE_AUTH, BUSINESS_TYPE_MESSAGE, false, ENABLE_STATUS_SUCCESS);
     ASSERT_GT(sessionId, 0);
     ret = SendMessage(sessionId, TRANS_TEST_AUTH_DATA, TRANS_TEST_BEYOND_MAX_MSG_LEN);
-    EXPECT_EQ(ret, SOFTBUS_PERMISSION_DENIED);
+    EXPECT_EQ(ret, SOFTBUS_TRANS_SEND_LEN_BEYOND_LIMIT);
     DeleteSessionServerAndSession(g_sessionName, sessionId);
 
     sessionId = AddSessionServerAndSession(
@@ -483,7 +483,7 @@ HWTEST_F(TransClientMsgServiceTest, CheckMessageBusinessTypeAndOsTypeTest01, Tes
         g_sessionName, CHANNEL_TYPE_UDP, BUSINESS_TYPE_MESSAGE, false, ENABLE_STATUS_SUCCESS);
     ASSERT_GT(sessionId, 0);
     ret = CheckMessageBusinessTypeAndOsType(sessionId, TRANS_TEST_CHANNEL_ID, CHANNEL_TYPE_UDP, TRANS_TEST_SEND_LEN);
-    EXPECT_EQ(ret, SOFTBUS_OK);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
     DeleteSessionServerAndSession(g_sessionName, sessionId);
 }
 

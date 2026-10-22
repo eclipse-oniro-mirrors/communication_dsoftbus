@@ -114,6 +114,83 @@ JsonObj *JSON_Parse(const char *str, uint32_t len)
     return obj;
 }
 
+JsonObj *JSON_ParseArray(const char *str, uint32_t len)
+{
+    JsonObj *obj = JSON_CreateObject();
+    if (obj == nullptr) {
+        COMM_LOGE(COMM_ADAPTER, "create json object fail");
+        return nullptr;
+    }
+    nlohmann::json *json = reinterpret_cast<nlohmann::json *>(obj->context);
+    if (json == nullptr) {
+        JSON_Delete(obj);
+        COMM_LOGE(COMM_ADAPTER, "cast json fail");
+        return nullptr;
+    }
+    std::string jsonString(str, len);
+    nlohmann::json entity = nlohmann::json::parse(jsonString, nullptr, false);
+    if (entity.is_discarded() || !entity.is_array()) {
+        JSON_Delete(obj);
+        COMM_LOGE(COMM_ADAPTER, "parse json array fail");
+        return nullptr;
+    }
+    *json = entity;
+    return obj;
+}
+
+int32_t JSON_GetArraySize(const JsonObj *obj)
+{
+    if (obj == nullptr) {
+        COMM_LOGE(COMM_ADAPTER, "invalid param");
+        return 0;
+    }
+    nlohmann::json *json = reinterpret_cast<nlohmann::json *>(obj->context);
+    if (json == nullptr) {
+        COMM_LOGE(COMM_ADAPTER, "invaild json param");
+        return 0;
+    }
+    if (!json->is_array()) {
+        COMM_LOGE(COMM_ADAPTER, "json is not array");
+        return 0;
+    }
+    return static_cast<int32_t>(json->size());
+}
+
+JsonObj *JSON_GetArrayItem(const JsonObj *obj, int32_t index)
+{
+    if (obj == nullptr || index < 0) {
+        COMM_LOGE(COMM_ADAPTER, "invalid param");
+        return nullptr;
+    }
+    nlohmann::json *json = reinterpret_cast<nlohmann::json *>(obj->context);
+    if (json == nullptr) {
+        COMM_LOGE(COMM_ADAPTER, "invaild json param");
+        return nullptr;
+    }
+    if (!json->is_array() || static_cast<size_t>(index) >= json->size()) {
+        COMM_LOGE(COMM_ADAPTER, "json is not array or index out of range");
+        return nullptr;
+    }
+    nlohmann::json item = (*json)[index];
+    if (!item.is_object()) {
+        COMM_LOGE(COMM_ADAPTER, "array item is not object");
+        return nullptr;
+    }
+    JsonObj *itemObj = JSON_CreateObject();
+    if (itemObj == nullptr) {
+        COMM_LOGE(COMM_ADAPTER, "create item json object fail");
+        return nullptr;
+    }
+    nlohmann::json *itemJson = reinterpret_cast<nlohmann::json *>(itemObj->context);
+    if (itemJson == nullptr) {
+        JSON_Delete(itemObj);
+        COMM_LOGE(COMM_ADAPTER, "cast item json fail");
+        return nullptr;
+    }
+    *itemJson = item;
+    return itemObj;
+}
+
 bool JSON_AddBoolToObject(JsonObj *obj, const char *key, bool value)
 {
     if (obj == nullptr || key == nullptr) {

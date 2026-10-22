@@ -311,6 +311,7 @@ ohos_unittest("AuthTestCallBackTest") {
     cfi = true
     cfi_cross_dso = true
     debug = false
+    blocklist = "$dsoftbus_root_path/tests/cfi_blocklist.txt"
   }
   sources = [
     "$dsoftbus_root_path/core/adapter/authentication/src/lnn_extdata_config_virtual.c",
@@ -1726,6 +1727,7 @@ ohos_unittest("AuthApplyKeyManagerTest") {
     cfi = true
     cfi_cross_dso = true
     debug = false
+    blocklist = "$dsoftbus_root_path/tests/cfi_blocklist.txt"
   }
   sources = [
     "$dsoftbus_root_path/core/bus_center/utils/src/lnn_map.c",

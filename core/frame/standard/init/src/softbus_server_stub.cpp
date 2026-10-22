@@ -223,6 +223,7 @@ void SoftBusServerStub::InitMemberFuncMap()
     memberFuncMap_[SERVER_GET_DATASYNC_EX_OBJ] = &SoftBusServerStub::GetBusCenterExObjInner;
     memberFuncMap_[SERVER_GET_DM_EX_OBJ] = &SoftBusServerStub::GetBusCenterExObjInner;
     memberFuncMap_[SERVER_PROCESS_INNER_EVENT] = &SoftBusServerStub::ProcessInnerEventInner;
+    memberFuncMap_[SERVER_SET_WIRELESS_LINK_CTRL] = &SoftBusServerStub::SetWirelessLinkCtrlInner;
     memberFuncMap_[SERVER_PRIVILEGE_CLOSE_CHANNEL] = &SoftBusServerStub::PrivilegeCloseChannelInner;
     memberFuncMap_[SERVER_SET_DISPLAY_NAME] = &SoftBusServerStub::SetDisplayNameInner;
     memberFuncMap_[SERVER_CREATE_GROUP_OWNER] = &SoftBusServerStub::CreateGroupOwnerInner;
@@ -297,6 +298,7 @@ void SoftBusServerStub::InitMemberPermissionMap()
     memberPermissionMap_[SERVER_GET_DM_EX_OBJ] = OHOS_PERMISSION_ACCESS_SERVICE_DM;
     memberPermissionMap_[SERVER_EVALUATE_QOS] = OHOS_PERMISSION_DISTRIBUTED_DATASYNC;
     memberPermissionMap_[SERVER_PROCESS_INNER_EVENT] = OHOS_PERMISSION_DISTRIBUTED_DATASYNC;
+    memberPermissionMap_[SERVER_SET_WIRELESS_LINK_CTRL] = OHOS_PERMISSION_DISTRIBUTED_DATASYNC;
     memberPermissionMap_[SERVER_PRIVILEGE_CLOSE_CHANNEL] = OHOS_PERMISSION_DISTRIBUTED_DATASYNC;
     memberPermissionMap_[SERVER_SET_DISPLAY_NAME] = OHOS_PERMISSION_DISTRIBUTED_SOFTBUS_CENTER;
     memberPermissionMap_[SERVER_CREATE_GROUP_OWNER] = OHOS_PERMISSION_DISTRIBUTED_SOFTBUS_CENTER;
@@ -469,7 +471,7 @@ static int32_t GetBundleName(pid_t callingUid, std::string &bundleName)
     return SOFTBUS_OK;
 }
 
-static int32_t GetAppId(const std::string &bundleName, std::string &appId)
+static int32_t GetAppId(const std::string &bundleName, std::string &appId, pid_t callingUid)
 {
     sptr<ISystemAbilityManager> systemAbilityManager =
         SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -488,7 +490,7 @@ static int32_t GetAppId(const std::string &bundleName, std::string &appId)
         return SOFTBUS_TRANS_GET_BUNDLE_MGR_FAILED;
     }
     int32_t userId;
-    auto result = AccountSA::OsAccountManager::GetForegroundOsAccountLocalId(userId);
+    auto result = AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
     if (result != 0) {
         COMM_LOGE(COMM_SVC, "GetForegroundOsAccountLocalId failed result=%{public}d", result);
         return result;
@@ -518,7 +520,7 @@ static int32_t CheckNormalAppSessionName(
             return result;
         }
         std::string appId;
-        result = GetAppId(bundleName, appId);
+        result = GetAppId(bundleName, appId, callingUid);
         if (result != SOFTBUS_OK) {
             COMM_LOGE(COMM_SVC, "get appId failed");
             return result;
@@ -2220,6 +2222,29 @@ int32_t SoftBusServerStub::ProcessInnerEventInner(MessageParcel &data, MessagePa
     return SOFTBUS_OK;
 }
 
+int32_t SoftBusServerStub::SetWirelessLinkCtrlInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t socket = 0;
+    if (!data.ReadInt32(socket)) {
+        COMM_LOGE(COMM_SVC, "read socket failed!");
+        return SOFTBUS_TRANS_PROXY_READINT_FAILED;
+    }
+    int32_t ret = TransProcessWirelessLinkCtrl(socket);
+    if (ret != SOFTBUS_OK) {
+        COMM_LOGE(COMM_SVC, "failed, socket=%{public}d, ret=%{public}d", socket, ret);
+        if (!reply.WriteInt32(ret)) {
+            COMM_LOGE(COMM_SVC, "write reply failed!");
+            return SOFTBUS_TRANS_PROXY_WRITEINT_FAILED;
+        }
+        return ret;
+    }
+    if (!reply.WriteInt32(ret)) {
+        COMM_LOGE(COMM_SVC, "write reply failed!");
+        return SOFTBUS_TRANS_PROXY_WRITEINT_FAILED;
+    }
+    return ret;
+}
+
 int32_t SoftBusServerStub::PrivilegeCloseChannelInner(MessageParcel &data, MessageParcel &reply)
 {
     COMM_LOGD(COMM_SVC, "enter");
@@ -2946,6 +2971,12 @@ static int32_t ReadPerceptionRequestHeader(MessageParcel &data, const char **pkg
 
 int32_t SoftBusServerStub::StartPerceptionAdvInner(MessageParcel &data, MessageParcel &reply)
 {
+#ifdef SUPPORT_BUNDLENAME
+    if (CheckMDMControl()) {
+        COMM_LOGE(COMM_SVC, "MDM control, not allow");
+        return SOFTBUS_ACCOUNT_CONSTRAINT_ENABLE;
+    }
+#endif
     int32_t permRet = SysHapPermissionVerify(SERVER_START_PERCEPTION_ADV);
     if (permRet != SOFTBUS_OK) {
         COMM_LOGE(COMM_SVC, "permission verification failed");
@@ -2977,6 +3008,12 @@ int32_t SoftBusServerStub::StartPerceptionAdvInner(MessageParcel &data, MessageP
 
 int32_t SoftBusServerStub::SetPerceptionAdvHighFreqInner(MessageParcel &data, MessageParcel &reply)
 {
+#ifdef SUPPORT_BUNDLENAME
+    if (CheckMDMControl()) {
+        COMM_LOGE(COMM_SVC, "MDM control, not allow");
+        return SOFTBUS_ACCOUNT_CONSTRAINT_ENABLE;
+    }
+#endif
     int32_t permRet = SysHapPermissionVerify(SERVER_SET_PERCEPTION_ADV_HIGH_FREQ);
     if (permRet != SOFTBUS_OK) {
         COMM_LOGE(COMM_SVC, "permission verification failed");
@@ -3008,6 +3045,12 @@ int32_t SoftBusServerStub::SetPerceptionAdvHighFreqInner(MessageParcel &data, Me
 
 int32_t SoftBusServerStub::StopPerceptionAdvInner(MessageParcel &data, MessageParcel &reply)
 {
+#ifdef SUPPORT_BUNDLENAME
+    if (CheckMDMControl()) {
+        COMM_LOGE(COMM_SVC, "MDM control, not allow");
+        return SOFTBUS_ACCOUNT_CONSTRAINT_ENABLE;
+    }
+#endif
     int32_t permRet = SysHapPermissionVerify(SERVER_STOP_PERCEPTION_ADV);
     if (permRet != SOFTBUS_OK) {
         COMM_LOGE(COMM_SVC, "permission verification failed");
@@ -3029,6 +3072,12 @@ int32_t SoftBusServerStub::StopPerceptionAdvInner(MessageParcel &data, MessagePa
 
 int32_t SoftBusServerStub::StartPerceptionScanInner(MessageParcel &data, MessageParcel &reply)
 {
+#ifdef SUPPORT_BUNDLENAME
+    if (CheckMDMControl()) {
+        COMM_LOGE(COMM_SVC, "MDM control, not allow");
+        return SOFTBUS_ACCOUNT_CONSTRAINT_ENABLE;
+    }
+#endif
     int32_t permRet = SysHapPermissionVerify(SERVER_START_PERCEPTION_SCAN);
     if (permRet != SOFTBUS_OK) {
         COMM_LOGE(COMM_SVC, "permission verification failed");
@@ -3055,6 +3104,12 @@ int32_t SoftBusServerStub::StartPerceptionScanInner(MessageParcel &data, Message
 
 int32_t SoftBusServerStub::StopPerceptionScanInner(MessageParcel &data, MessageParcel &reply)
 {
+#ifdef SUPPORT_BUNDLENAME
+    if (CheckMDMControl()) {
+        COMM_LOGE(COMM_SVC, "MDM control, not allow");
+        return SOFTBUS_ACCOUNT_CONSTRAINT_ENABLE;
+    }
+#endif
     int32_t permRet = SysHapPermissionVerify(SERVER_STOP_PERCEPTION_SCAN);
     if (permRet != SOFTBUS_OK) {
         COMM_LOGE(COMM_SVC, "permission verification failed");
@@ -3076,6 +3131,12 @@ int32_t SoftBusServerStub::StopPerceptionScanInner(MessageParcel &data, MessageP
 
 int32_t SoftBusServerStub::GetPerceptionDeviceListInner(MessageParcel &data, MessageParcel &reply)
 {
+#ifdef SUPPORT_BUNDLENAME
+    if (CheckMDMControl()) {
+        COMM_LOGE(COMM_SVC, "MDM control, not allow");
+        return SOFTBUS_ACCOUNT_CONSTRAINT_ENABLE;
+    }
+#endif
     int32_t permRet = SysHapPermissionVerify(SERVER_GET_PERCEPTION_DEVICE_LIST);
     if (permRet != SOFTBUS_OK) {
         COMM_LOGE(COMM_SVC, "permission verification failed");
