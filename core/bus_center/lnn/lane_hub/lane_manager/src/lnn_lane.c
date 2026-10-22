@@ -495,14 +495,13 @@ int32_t LnnRequestLane(uint32_t laneReqId, const LaneRequestOption *request,
         LNN_LOGE(LNN_LANE, "lane type is not supported. type=%{public}d", request->type);
         return SOFTBUS_INVALID_PARAM;
     }
-    int32_t result;
     LNN_LOGI(LNN_LANE, "laneRequest, laneReqId=%{public}u, laneType=%{public}d, transType=%{public}d",
         laneReqId, request->type, request->requestInfo.trans.transType);
     for (uint32_t i = 0; i < request->requestInfo.trans.expectedLink.linkTypeNum; i++) {
         LNN_LOGI(LNN_LANE, "laneRequest assign the priority=%{public}u, link=%{public}d",
             i, request->requestInfo.trans.expectedLink.linkType[i]);
     }
-    result = g_laneObject[request->type]->allocLane(laneReqId, request, listener);
+    int32_t result = g_laneObject[request->type]->allocLane(laneReqId, request, listener);
     if (result != SOFTBUS_OK) {
         LNN_LOGE(LNN_LANE, "alloc lane fail, result=%{public}d", result);
         return result;

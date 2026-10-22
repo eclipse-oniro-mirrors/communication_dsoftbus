@@ -69,7 +69,7 @@ uint64_t GenerateLaneId(const char *localUdid, const char *remoteUdid, LaneLinkT
 {
     if (localUdid == NULL || remoteUdid == NULL) {
         LNN_LOGE(LNN_LANE, "udid is NULL");
-        return SOFTBUS_INVALID_PARAM;
+        return INVALID_LANE_ID;
     }
     const char *bigUdid = NULL;
     const char *smallUdid = NULL;
