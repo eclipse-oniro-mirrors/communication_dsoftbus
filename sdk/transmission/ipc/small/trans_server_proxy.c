@@ -527,3 +527,9 @@ int32_t ServerIpcPrivilegeCloseChannel(uint64_t tokenId, int32_t pid, const char
     }
     return ret;
 }
+
+int32_t ServerIpcSetWirelessLinkCtrl(int32_t socket)
+{
+    (void)socket;
+    return SOFTBUS_NOT_IMPLEMENT;
+}
