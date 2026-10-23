@@ -479,49 +479,60 @@ static int32_t CancelWaitLaneState(const char *sessionName, int32_t sessionId)
     return SOFTBUS_OK;
 }
 
-static int32_t TransGetSessionNameForCancel(const char **sessionName, int32_t channelId, int32_t channelType,
-    char *name, uint32_t len)
+static int32_t TransGetSessionNameForCancel(int32_t channelId, int32_t channelType, char *sessionName,
+    uint32_t len)
 {
-    if (sessionName == NULL || name == NULL) {
-        TRANS_LOGW(TRANS_CTRL, "invalid param");
+    if (sessionName == NULL || len == 0) {
+        TRANS_LOGE(TRANS_CTRL, "invalid param, channelId=%{public}d, len=%{public}u", channelId, len);
         return SOFTBUS_INVALID_PARAM;
     }
-    if (*sessionName != NULL) {
-        return SOFTBUS_OK;
-    }
-    int32_t ret = TransGetSessionNameByChannel(channelId, channelType, name, len);
+    int32_t ret = TransGetSessionNameByChannel(channelId, channelType, sessionName, len);
     if (ret == SOFTBUS_OK) {
-        *sessionName = name;
+        TRANS_LOGI(TRANS_CTRL, "get session name from socket channel list, channelId=%{public}d, "
+            "channelType=%{public}d, sessionName=%{public}s", channelId, channelType, sessionName);
         return SOFTBUS_OK;
     }
-    TRANS_LOGD(TRANS_CTRL, "session name not in socket channel list, try passive side, "
+    TRANS_LOGI(TRANS_CTRL, "session name not in socket channel list, try passive side, "
         "channelId=%{public}d, channelType=%{public}d", channelId, channelType);
     if (channelType == CHANNEL_TYPE_TCP_DIRECT) {
         TcpChannelInfo channelInfo;
         (void)memset_s(&channelInfo, sizeof(channelInfo), 0, sizeof(channelInfo));
         ret = TransGetTdcChannelById(channelId, &channelInfo);
-        if (ret == SOFTBUS_OK && strcpy_s(name, len, channelInfo.peerSessionName) == EOK) {
-            *sessionName = name;
-            return SOFTBUS_OK;
+        if (ret != SOFTBUS_OK) {
+            TRANS_LOGE(TRANS_CTRL, "get tdc channel by id failed, channelId=%{public}d, ret=%{public}d",
+                channelId, ret);
+            return SOFTBUS_NOT_FIND;
         }
+        if (strcpy_s(sessionName, len, channelInfo.peerSessionName) != EOK) {
+            TRANS_LOGE(TRANS_CTRL, "copy peer session name failed, channelId=%{public}d", channelId);
+            return SOFTBUS_STRCPY_ERR;
+        }
+        TRANS_LOGI(TRANS_CTRL, "get session name from tdc channel info, channelId=%{public}d, "
+            "channelType=%{public}d, sessionName=%{public}s", channelId, channelType, sessionName);
+        return SOFTBUS_OK;
     } else if (channelType == CHANNEL_TYPE_UDP) {
         char pkgName[PKG_NAME_SIZE_MAX] = { 0 };
-        ret = TransUdpGetNameByChanId(channelId, pkgName, name, PKG_NAME_SIZE_MAX, (uint16_t)len);
-        if (ret == SOFTBUS_OK) {
-            *sessionName = name;
-            return SOFTBUS_OK;
+        ret = TransUdpGetNameByChanId(channelId, pkgName, sessionName, PKG_NAME_SIZE_MAX, (uint16_t)len);
+        if (ret != SOFTBUS_OK) {
+            TRANS_LOGE(TRANS_CTRL, "get udp name by channel id failed, channelId=%{public}d, ret=%{public}d",
+                channelId, ret);
+            return SOFTBUS_NOT_FIND;
         }
+        TRANS_LOGI(TRANS_CTRL, "get session name from udp channel info, channelId=%{public}d, "
+            "channelType=%{public}d, sessionName=%{public}s", channelId, channelType, sessionName);
+        return SOFTBUS_OK;
     }
-    TRANS_LOGE(TRANS_CTRL, "get session name for cancel failed, channelId=%{public}d, channelType=%{public}d",
-        channelId, channelType);
+    TRANS_LOGE(TRANS_CTRL, "get session name for cancel failed, channelId=%{public}d, channelType=%{public}d, "
+        "ret=%{public}d", channelId, channelType, ret);
     return SOFTBUS_NOT_FIND;
 }
 
-static void CancelWifiDirectExclusive(const char *sessionName, int32_t channelId, int32_t channelType)
+static void CancelWifiDirectExclusive(int32_t channelId, int32_t channelType)
 {
-    char name[SESSION_NAME_SIZE_MAX] = { 0 };
-    int32_t ret = TransGetSessionNameForCancel(&sessionName, channelId, channelType, name, sizeof(name));
-    if (ret != SOFTBUS_OK || sessionName == NULL) {
+    char sessionName[SESSION_NAME_SIZE_MAX] = { 0 };
+    int32_t ret = TransGetSessionNameForCancel(channelId, channelType, sessionName, sizeof(sessionName));
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_CTRL, "get session name failed, skip exclusive cancel, ret=%{public}d", ret);
         return;
     }
     ret = DcWifiDirectExclusiveCancelBySessionNamePacked(sessionName);
@@ -554,7 +565,7 @@ int32_t TransCommonCloseChannel(const char *sessionName, int32_t channelId, int3
                 break;
             case CHANNEL_TYPE_TCP_DIRECT:
                 CloseHtpChannelPacked(channelId);
-                CancelWifiDirectExclusive(sessionName, channelId, channelType);
+                CancelWifiDirectExclusive(channelId, channelType);
                 (void)TransDelTcpChannelInfoByChannelId(channelId);
                 (void)TransDelSessionConnById(channelId); // socket Fd will be shutdown when recv peer reply
                 (void)TransLaneMgrDelLane(channelId, channelType, false);
@@ -564,7 +575,7 @@ int32_t TransCommonCloseChannel(const char *sessionName, int32_t channelId, int3
                 (void)NotifyQosChannelClosedPacked(channelId, channelType);
                 ret = TransCloseUdpChannel(channelId);
                 (void)TransLaneMgrDelLane(channelId, channelType, false);
-                CancelWifiDirectExclusive(sessionName, channelId, channelType);
+                CancelWifiDirectExclusive(channelId, channelType);
                 break;
             case CHANNEL_TYPE_AUTH:
                 ret = TransCloseAuthChannel(channelId);
