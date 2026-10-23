@@ -479,20 +479,19 @@ static int32_t CancelWaitLaneState(const char *sessionName, int32_t sessionId)
     return SOFTBUS_OK;
 }
 
-static int32_t TransGetSessionNameForCancel(const char *sessionName, int32_t channelId, int32_t channelType,
-    const char **targetName, char *name, uint32_t len)
+static int32_t TransGetSessionNameForCancel(const char **sessionName, int32_t channelId, int32_t channelType,
+    char *name, uint32_t len)
 {
-    if (targetName == NULL || name == NULL) {
+    if (sessionName == NULL || name == NULL) {
         TRANS_LOGW(TRANS_CTRL, "invalid param");
         return SOFTBUS_INVALID_PARAM;
     }
-    if (sessionName != NULL) {
-        *targetName = sessionName;
+    if (*sessionName != NULL) {
         return SOFTBUS_OK;
     }
     int32_t ret = TransGetSessionNameByChannel(channelId, channelType, name, len);
     if (ret == SOFTBUS_OK) {
-        *targetName = name;
+        *sessionName = name;
         return SOFTBUS_OK;
     }
     TRANS_LOGD(TRANS_CTRL, "session name not in socket channel list, try passive side, "
@@ -502,18 +501,17 @@ static int32_t TransGetSessionNameForCancel(const char *sessionName, int32_t cha
         (void)memset_s(&channelInfo, sizeof(channelInfo), 0, sizeof(channelInfo));
         ret = TransGetTdcChannelById(channelId, &channelInfo);
         if (ret == SOFTBUS_OK && strcpy_s(name, len, channelInfo.peerSessionName) == EOK) {
-            *targetName = name;
+            *sessionName = name;
             return SOFTBUS_OK;
         }
     } else if (channelType == CHANNEL_TYPE_UDP) {
         char pkgName[PKG_NAME_SIZE_MAX] = { 0 };
         ret = TransUdpGetNameByChanId(channelId, pkgName, name, PKG_NAME_SIZE_MAX, (uint16_t)len);
         if (ret == SOFTBUS_OK) {
-            *targetName = name;
+            *sessionName = name;
             return SOFTBUS_OK;
         }
     }
-    *targetName = NULL;
     TRANS_LOGE(TRANS_CTRL, "get session name for cancel failed, channelId=%{public}d, channelType=%{public}d",
         channelId, channelType);
     return SOFTBUS_NOT_FIND;
@@ -522,12 +520,11 @@ static int32_t TransGetSessionNameForCancel(const char *sessionName, int32_t cha
 static void CancelWifiDirectExclusive(const char *sessionName, int32_t channelId, int32_t channelType)
 {
     char name[SESSION_NAME_SIZE_MAX] = { 0 };
-    const char *targetName = NULL;
-    int32_t ret = TransGetSessionNameForCancel(sessionName, channelId, channelType, &targetName, name, sizeof(name));
-    if (ret != SOFTBUS_OK || targetName == NULL) {
+    int32_t ret = TransGetSessionNameForCancel(&sessionName, channelId, channelType, name, sizeof(name));
+    if (ret != SOFTBUS_OK || sessionName == NULL) {
         return;
     }
-    ret = DcWifiDirectExclusiveCancelBySessionNamePacked(targetName);
+    ret = DcWifiDirectExclusiveCancelBySessionNamePacked(sessionName);
     if (ret != SOFTBUS_OK) {
         TRANS_LOGW(TRANS_CTRL, "dc wifi direct exclusive cancel failed, ret=%{public}d", ret);
     }
