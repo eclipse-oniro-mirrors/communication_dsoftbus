@@ -23,12 +23,26 @@
 
 using namespace testing::ext;
 
+namespace {
+int32_t g_cancelWifiDirectRet = SOFTBUS_OK;
+const char *g_cancelWifiDirectSessionName = nullptr; // NOLINT
+}
+
+extern "C" {
+int32_t DcWifiDirectExclusiveCancelBySessionNamePacked(const char *sessionName)
+{
+    g_cancelWifiDirectSessionName = sessionName;
+    return g_cancelWifiDirectRet;
+}
+}
+
 namespace OHOS {
 #define TEST_RET 2
 #define TEST_AUTH_ID 1
 #define TEST_CHANNEL_ID 100
 #define TEST_PID 10
 #define TEST_SEQ 100
+#define TEST_SESSION_NAME "testSessionName"
 #define TEST_SIZE 64
 #define TEST_TYPE 10
 
@@ -294,5 +308,54 @@ HWTEST_F(TransUdpStaticTest, TransUdpStaticTest010, TestSize.Level1)
     g_seq = INT64_MAX;
     GenerateSeq(true);
     EXPECT_EQ(TEST_RET, g_seq);
+}
+
+/*
+ * @tc.name: TransUdpStaticTest011
+ * @tc.desc: CloseUdpChannel test
+ *           Verify that the wifi direct exclusive mark is cancelled by session name when the udp channel
+ *           close state is processed on both server and client side
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransUdpStaticTest, TransUdpStaticTest011, TestSize.Level1)
+{
+    IServerChannelCallBack *cb = TestTransServerGetChannelCb();
+    int32_t ret = TransUdpChannelInit(cb);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    UdpChannelInfo *udpChannel = (UdpChannelInfo *)SoftBusCalloc(sizeof(UdpChannelInfo));
+    ASSERT_NE(nullptr, udpChannel);
+    udpChannel->info.myData.channelId = TEST_CHANNEL_ID;
+    (void)strcpy_s(udpChannel->info.myData.sessionName, sizeof(udpChannel->info.myData.sessionName),
+        TEST_SESSION_NAME);
+    ret = TransAddUdpChannel(udpChannel);
+    ASSERT_EQ(SOFTBUS_OK, ret);
+
+    AppInfo *appInfo = (AppInfo *)SoftBusCalloc(sizeof(AppInfo));
+    ASSERT_NE(nullptr, appInfo);
+    appInfo->myData.channelId = TEST_CHANNEL_ID;
+    (void)strcpy_s(appInfo->myData.sessionName, sizeof(appInfo->myData.sessionName), TEST_SESSION_NAME);
+    g_cancelWifiDirectSessionName = nullptr;
+
+    ret = CloseUdpChannel(appInfo, true);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    EXPECT_NE(nullptr, g_cancelWifiDirectSessionName);
+    EXPECT_EQ(0, strcmp(g_cancelWifiDirectSessionName, TEST_SESSION_NAME));
+
+    g_cancelWifiDirectSessionName = nullptr;
+    ret = CloseUdpChannel(appInfo, false);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    EXPECT_NE(nullptr, g_cancelWifiDirectSessionName);
+    EXPECT_EQ(0, strcmp(g_cancelWifiDirectSessionName, TEST_SESSION_NAME));
+
+    g_cancelWifiDirectRet = SOFTBUS_ERR;
+    g_cancelWifiDirectSessionName = nullptr;
+    ret = CloseUdpChannel(appInfo, true);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    EXPECT_NE(nullptr, g_cancelWifiDirectSessionName);
+    g_cancelWifiDirectRet = SOFTBUS_OK;
+
+    SoftBusFree(appInfo);
+    TransUdpChannelDeinit();
 }
 }

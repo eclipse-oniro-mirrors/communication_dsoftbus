@@ -20,6 +20,7 @@
 #include "access_control.h"
 #include "bus_center_manager.h"
 #include "g_enhance_auth_func_pack.h"
+#include "g_enhance_lnn_func_pack.h"
 #include "g_enhance_trans_func.h"
 #include "g_enhance_trans_func_pack.h"
 #include "legacy/softbus_hisysevt_transreporter.h"
@@ -478,6 +479,21 @@ static int32_t CancelWaitLaneState(const char *sessionName, int32_t sessionId)
     return SOFTBUS_OK;
 }
 
+static void CancelWifiDirectExclusive(int32_t channelId)
+{
+    TcpChannelInfo channelInfo;
+    (void)memset_s(&channelInfo, sizeof(channelInfo), 0, sizeof(channelInfo));
+    int32_t ret = TransGetTdcChannelById(channelId, &channelInfo);
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_CTRL, "get tdc channel by id failed, skip exclusive cancel, channelId=%{public}d", channelId);
+        return;
+    }
+    ret = DcWifiDirectExclusiveCancelBySessionNamePacked(channelInfo.mySessionName);
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGW(TRANS_CTRL, "dc wifi direct exclusive cancel failed, ret=%{public}d", ret);
+    }
+}
+
 int32_t TransCommonCloseChannel(const char *sessionName, int32_t channelId, int32_t channelType)
 {
     TRANS_LOGI(TRANS_CTRL, "close channel: channelId=%{public}d, channelType=%{public}d", channelId, channelType);
@@ -502,6 +518,7 @@ int32_t TransCommonCloseChannel(const char *sessionName, int32_t channelId, int3
                 break;
             case CHANNEL_TYPE_TCP_DIRECT:
                 CloseHtpChannelPacked(channelId);
+                CancelWifiDirectExclusive(channelId);
                 (void)TransDelTcpChannelInfoByChannelId(channelId);
                 (void)TransDelSessionConnById(channelId); // socket Fd will be shutdown when recv peer reply
                 (void)TransLaneMgrDelLane(channelId, channelType, false);

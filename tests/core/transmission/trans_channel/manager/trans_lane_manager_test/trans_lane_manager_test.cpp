@@ -23,6 +23,20 @@
 
 using namespace testing;
 using namespace testing::ext;
+
+namespace {
+int32_t g_cancelWifiDirectRet = SOFTBUS_OK;
+const char *g_cancelWifiDirectSessionName = nullptr; // NOLINT
+}
+
+extern "C" {
+int32_t DcWifiDirectExclusiveCancelBySessionNamePacked(const char *sessionName)
+{
+    g_cancelWifiDirectSessionName = sessionName;
+    return g_cancelWifiDirectRet;
+}
+}
+
 namespace OHOS {
 #define TEST_SESSION_NAME "com.softbus.transmission.test"
 #define TEST_CONN_IP "192.168.8.1"
@@ -1045,5 +1059,142 @@ HWTEST_F(TransLaneManagerTest, TransSetSocketChannelStateReserveBySession001, Te
     ret = TransSetSocketChannelStateReserveBySession(sessionName, sessionId, CORE_SESSION_STATE_INIT);
     EXPECT_EQ(SOFTBUS_OK, ret);
     TransSocketLaneMgrDeinit();
+}
+
+/**
+ * @tc.name: CancelWifiDirectExclusiveTest002
+ * @tc.desc: test CancelWifiDirectExclusive aborts when channel is not found.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransLaneManagerTest, CancelWifiDirectExclusiveTest002, TestSize.Level1)
+{
+    g_cancelWifiDirectSessionName = nullptr;
+
+    EXPECT_NO_FATAL_FAILURE(CancelWifiDirectExclusive(1));
+    EXPECT_EQ(nullptr, g_cancelWifiDirectSessionName);
+}
+
+/**
+ * @tc.name: CancelWifiDirectExclusiveTest004
+ * @tc.desc: test CancelWifiDirectExclusive with different packed result.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransLaneManagerTest, CancelWifiDirectExclusiveTest004, TestSize.Level1)
+{
+    int32_t ret = CreateTcpChannelInfoList();
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    int32_t channelId = 1;
+    TcpChannelInfo *channelInfo = (TcpChannelInfo *)SoftBusCalloc(sizeof(TcpChannelInfo));
+    ASSERT_NE(nullptr, channelInfo);
+    channelInfo->channelId = channelId;
+    channelInfo->isServer = true;
+    ASSERT_EQ(EOK, strcpy_s(channelInfo->mySessionName, sizeof(channelInfo->mySessionName), TEST_SESSION_NAME));
+    ret = TransAddTcpChannelInfo(channelInfo);
+    ASSERT_EQ(SOFTBUS_OK, ret);
+
+    g_cancelWifiDirectRet = SOFTBUS_ERR;
+    g_cancelWifiDirectSessionName = nullptr;
+    EXPECT_NO_FATAL_FAILURE(CancelWifiDirectExclusive(channelId));
+    EXPECT_NE(nullptr, g_cancelWifiDirectSessionName);
+    EXPECT_EQ(0, strcmp(g_cancelWifiDirectSessionName, TEST_SESSION_NAME));
+
+    g_cancelWifiDirectRet = SOFTBUS_OK;
+    (void)TransDelTcpChannelInfoByChannelId(channelId);
+}
+
+/**
+ * @tc.name: CancelWifiDirectExclusiveTest005
+ * @tc.desc: test CancelWifiDirectExclusive with tcp channel info.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransLaneManagerTest, CancelWifiDirectExclusiveTest005, TestSize.Level1)
+{
+    int32_t ret = CreateTcpChannelInfoList();
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    int32_t channelId = 2;
+    TcpChannelInfo *channelInfo = (TcpChannelInfo *)SoftBusCalloc(sizeof(TcpChannelInfo));
+    ASSERT_NE(nullptr, channelInfo);
+    channelInfo->channelId = channelId;
+    channelInfo->isServer = true;
+    ASSERT_EQ(EOK, strcpy_s(channelInfo->mySessionName, sizeof(channelInfo->mySessionName), TEST_SESSION_NAME));
+    ret = TransAddTcpChannelInfo(channelInfo);
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    g_cancelWifiDirectSessionName = nullptr;
+
+    EXPECT_NO_FATAL_FAILURE(CancelWifiDirectExclusive(channelId));
+    EXPECT_NE(nullptr, g_cancelWifiDirectSessionName);
+    EXPECT_EQ(0, strcmp(g_cancelWifiDirectSessionName, TEST_SESSION_NAME));
+
+    (void)TransDelTcpChannelInfoByChannelId(channelId);
+}
+
+/**
+ * @tc.name: CancelWifiDirectExclusiveTest007
+ * @tc.desc: test CancelWifiDirectExclusive skips when channel is not found.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransLaneManagerTest, CancelWifiDirectExclusiveTest007, TestSize.Level1)
+{
+    int32_t ret = CreateTcpChannelInfoList();
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    g_cancelWifiDirectSessionName = nullptr;
+
+    EXPECT_NO_FATAL_FAILURE(CancelWifiDirectExclusive(1));
+    EXPECT_EQ(nullptr, g_cancelWifiDirectSessionName);
+}
+
+/**
+ * @tc.name: TransCommonCloseChannel002
+ * @tc.desc: test CancelWifiDirectExclusive is not invoked in proxy and auth close branch.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransLaneManagerTest, TransCommonCloseChannel002, TestSize.Level1)
+{
+    int32_t ret = TransSocketLaneMgrInit();
+    ASSERT_EQ(SOFTBUS_OK, ret);
+
+    g_cancelWifiDirectSessionName = nullptr;
+    EXPECT_NO_FATAL_FAILURE(TransCommonCloseChannel(TEST_SESSION_NAME, 1, CHANNEL_TYPE_PROXY));
+    EXPECT_EQ(nullptr, g_cancelWifiDirectSessionName);
+
+    g_cancelWifiDirectSessionName = nullptr;
+    EXPECT_NO_FATAL_FAILURE(TransCommonCloseChannel(TEST_SESSION_NAME, 1, CHANNEL_TYPE_AUTH));
+    EXPECT_EQ(nullptr, g_cancelWifiDirectSessionName);
+
+    EXPECT_NO_FATAL_FAILURE(TransSocketLaneMgrDeinit());
+}
+
+/**
+ * @tc.name: TransCommonCloseChannel003
+ * @tc.desc: test CancelWifiDirectExclusive is invoked in passive tcp-direct close branch.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransLaneManagerTest, TransCommonCloseChannel003, TestSize.Level1)
+{
+    int32_t ret = CreateTcpChannelInfoList();
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    int32_t channelId = 5;
+    TcpChannelInfo *channelInfo = (TcpChannelInfo *)SoftBusCalloc(sizeof(TcpChannelInfo));
+    ASSERT_NE(nullptr, channelInfo);
+    channelInfo->channelId = channelId;
+    channelInfo->isServer = true;
+    ASSERT_EQ(EOK, strcpy_s(channelInfo->mySessionName, sizeof(channelInfo->mySessionName), TEST_SESSION_NAME));
+    ret = TransAddTcpChannelInfo(channelInfo);
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    g_cancelWifiDirectSessionName = nullptr;
+
+    EXPECT_NO_FATAL_FAILURE(TransCommonCloseChannel(TEST_SESSION_NAME, channelId, CHANNEL_TYPE_TCP_DIRECT));
+    EXPECT_NE(nullptr, g_cancelWifiDirectSessionName);
+    EXPECT_EQ(0, strcmp(g_cancelWifiDirectSessionName, TEST_SESSION_NAME));
+
+    TcpChannelInfo result;
+    (void)memset_s(&result, sizeof(result), 0, sizeof(result));
+    EXPECT_NE(SOFTBUS_OK, TransGetTdcChannelById(channelId, &result));
 }
 } // OHOS

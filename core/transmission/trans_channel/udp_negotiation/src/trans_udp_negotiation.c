@@ -477,6 +477,10 @@ static int32_t CloseUdpChannel(AppInfo *appInfo, bool isServerSide)
     if (TransDelUdpChannel(appInfo->myData.channelId) != SOFTBUS_OK) {
         TRANS_LOGE(TRANS_CTRL, "delete udp channel failed.");
     }
+    int32_t ret = DcWifiDirectExclusiveCancelBySessionNamePacked(appInfo->myData.sessionName);
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGW(TRANS_CTRL, "dc wifi direct exclusive cancel failed, ret=%{public}d", ret);
+    }
     int32_t messageType = isServerSide ? MESSAGE_TYPE_NOMAL : MESSAGE_TYPE_CLOSE_ACK;
     if (NotifyUdpChannelClosed(appInfo, messageType) != SOFTBUS_OK) {
         TRANS_LOGE(TRANS_CTRL, "notify app udp channel closed failed.");

@@ -324,6 +324,9 @@ typedef int32_t (*PerceptionEnhanceInitFunc)(void);
 typedef void (*PerceptionEnhanceDeinitFunc)(void);
 typedef int32_t (*AuthMetaOpenConnWithOtherOsTypeFunc)(const AuthConnInfo *info, const char *networkId,
     uint32_t requestId, const AuthConnCallback *callback);
+typedef int32_t (*DcWifiDirectExclusiveCancelByDeviceIdFunc)(const char *deviceId);
+typedef void (*DcWifiDirectExclusiveClearByPidFunc)(int32_t pid);
+typedef int32_t (*DcWifiDirectExclusiveCancelBySessionNameFunc)(const char *sessionName);
 
 typedef struct TagLnnEnhanceFuncList {
     // time_sync
@@ -591,6 +594,9 @@ typedef struct TagLnnEnhanceFuncList {
     PerceptionSyncCycleFunc perceptionSyncCycle;
     PerceptionEnhanceInitFunc perceptionEnhanceInit;
     PerceptionEnhanceDeinitFunc perceptionEnhanceDeinit;
+    DcWifiDirectExclusiveCancelByDeviceIdFunc dcWifiDirectExclusiveCancelByDeviceId;
+    DcWifiDirectExclusiveClearByPidFunc dcWifiDirectExclusiveClearByPid;
+    DcWifiDirectExclusiveCancelBySessionNameFunc dcWifiDirectExclusiveCancelBySessionName;
 } LnnEnhanceFuncList;
 
 LnnEnhanceFuncList *LnnEnhanceFuncListGet(void);
