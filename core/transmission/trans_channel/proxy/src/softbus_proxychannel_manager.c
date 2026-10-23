@@ -2287,6 +2287,35 @@ int32_t TransProxyOpenProxyChannel(AppInfo *appInfo, const ConnectOption *connIn
     return TransProxyOpenConnChannel(appInfo, connInfo, channelId);
 }
 
+int32_t TransProxySetDisconnectPolicy(int32_t channelId, DisconnectPolicy policy)
+{
+    if (channelId < 0 || policy < DISCONNECT_POLICY_DEFAULT || policy >= DISCONNECT_POLICY_BUTT) {
+        TRANS_LOGE(TRANS_CTRL, "invalid param, channelId=%{public}d, policy=%{public}d", channelId, policy);
+        return SOFTBUS_INVALID_PARAM;
+    }
+    if (g_proxyChannelList == NULL) {
+        TRANS_LOGE(TRANS_CTRL, "g_proxyChannelList is null");
+        return SOFTBUS_NO_INIT;
+    }
+    if (SoftBusMutexLock(&g_proxyChannelList->lock) != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_CTRL, "lock mutex fail!");
+        return SOFTBUS_LOCK_ERR;
+    }
+    ProxyChannelInfo *item = NULL;
+    int32_t ret = SOFTBUS_TRANS_NODE_NOT_FOUND;
+    LIST_FOR_EACH_ENTRY(item, &g_proxyChannelList->list, ProxyChannelInfo, node) {
+        if (item->channelId == channelId) {
+            item->appInfo.disconnectPolicy = policy;
+            ret = SOFTBUS_OK;
+            break;
+        }
+    }
+    (void)SoftBusMutexUnlock(&g_proxyChannelList->lock);
+    TRANS_LOGI(TRANS_CTRL, "set disconnect policy, channelId=%{public}d, policy=%{public}d, ret=%{public}d",
+        channelId, policy, ret);
+    return ret;
+}
+
 int32_t TransProxyCloseProxyChannel(int32_t channelId)
 {
     ProxyChannelInfo *info = (ProxyChannelInfo *)SoftBusCalloc(sizeof(ProxyChannelInfo));

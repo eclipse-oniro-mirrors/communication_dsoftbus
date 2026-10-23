@@ -96,6 +96,7 @@ int32_t TransProxyD2dGetSleMac(int32_t channelId, int32_t pid, char *sleMac, uin
 void TransProxyUnRegQosInfo(uint32_t connId, int32_t channelId, bool isD2d);
 int32_t TransDisableConnBrIdleCheck(int32_t channelId);
 void TransProxySetKeyTypeByChanId(int32_t chanId, int32_t keyType);
+int32_t TransProxySetDisconnectPolicy(int32_t channelId, DisconnectPolicy policy);
 #ifdef __cplusplus
 }
 #endif
