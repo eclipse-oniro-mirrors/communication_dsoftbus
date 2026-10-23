@@ -1396,4 +1396,153 @@ HWTEST_F(SoftbusProxyTransceiverTest, TransProxyOpenNewConnChannelWithLocalCopy0
     int32_t ret = TransProxyOpenNewConnChannel(PROXY, &connInfo, channelId);
     EXPECT_NE(SOFTBUS_OK, ret);
 }
+
+/*
+ * @tc.name: TransProxyResetAndCloseConnForceTest001
+ * @tc.desc: TransProxyResetAndCloseConn with DISCONNECT_POLICY_FORCE and CONNECT_BLE
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusProxyTransceiverTest, TransProxyResetAndCloseConnForceTest001, TestSize.Level1)
+{
+    g_proxyConnectionList = CreateSoftBusList();
+    ASSERT_TRUE(g_proxyConnectionList != nullptr);
+    g_proxyConnectionList->cnt = 1;
+
+    ProxyConnInfo *proxyConnInfo = static_cast<ProxyConnInfo *>(SoftBusCalloc(sizeof(ProxyConnInfo)));
+    ASSERT_TRUE(proxyConnInfo != nullptr);
+    proxyConnInfo->connId = 5678;
+    proxyConnInfo->isServerSide = true;
+    proxyConnInfo->ref = 1;
+    proxyConnInfo->connInfo.type = CONNECT_BLE;
+
+    ListAdd(&(g_proxyConnectionList->list), &(proxyConnInfo->node));
+
+    ProxyChannelInfo chan = {
+        .connId = 5678,
+        .isServer = false,
+        .deviceTypeIsWinpc = false,
+        .type = CONNECT_BLE,
+        .myId = 100,
+        .peerId = 200,
+        .channelId = 100,
+    };
+    chan.appInfo.disconnectPolicy = DISCONNECT_POLICY_FORCE;
+
+    int32_t ret = TransProxyResetAndCloseConn(&chan);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+
+    SoftBusFree(proxyConnInfo);
+    DestroySoftBusList(g_proxyConnectionList);
+    g_proxyConnectionList = NULL;
+}
+
+/*
+ * @tc.name: TransProxyResetAndCloseConnForceTest002
+ * @tc.desc: TransProxyResetAndCloseConn with DISCONNECT_POLICY_FORCE but non-BLE type
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusProxyTransceiverTest, TransProxyResetAndCloseConnForceTest002, TestSize.Level1)
+{
+    g_proxyConnectionList = CreateSoftBusList();
+    ASSERT_TRUE(g_proxyConnectionList != nullptr);
+    g_proxyConnectionList->cnt = 1;
+
+    ProxyConnInfo *proxyConnInfo = static_cast<ProxyConnInfo *>(SoftBusCalloc(sizeof(ProxyConnInfo)));
+    ASSERT_TRUE(proxyConnInfo != nullptr);
+    proxyConnInfo->connId = 9012;
+    proxyConnInfo->isServerSide = true;
+    proxyConnInfo->ref = 1;
+    proxyConnInfo->connInfo.type = CONNECT_TCP;
+
+    ListAdd(&(g_proxyConnectionList->list), &(proxyConnInfo->node));
+
+    ProxyChannelInfo chan = {
+        .connId = 9012,
+        .isServer = true,
+        .deviceTypeIsWinpc = true,
+        .type = CONNECT_TCP,
+        .myId = 300,
+        .peerId = 400,
+        .channelId = 300,
+    };
+    chan.appInfo.disconnectPolicy = DISCONNECT_POLICY_FORCE;
+
+    int32_t ret = TransProxyResetAndCloseConn(&chan);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+
+    SoftBusFree(proxyConnInfo);
+    DestroySoftBusList(g_proxyConnectionList);
+    g_proxyConnectionList = NULL;
+}
+
+/*
+ * @tc.name: TransProxyResetAndCloseConnForceTest003
+ * @tc.desc: TransProxyResetAndCloseConn with DISCONNECT_POLICY_DEFAULT and BLE type
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusProxyTransceiverTest, TransProxyResetAndCloseConnForceTest003, TestSize.Level1)
+{
+    g_proxyConnectionList = CreateSoftBusList();
+    ASSERT_TRUE(g_proxyConnectionList != nullptr);
+    g_proxyConnectionList->cnt = 1;
+
+    ProxyConnInfo *proxyConnInfo = static_cast<ProxyConnInfo *>(SoftBusCalloc(sizeof(ProxyConnInfo)));
+    ASSERT_TRUE(proxyConnInfo != nullptr);
+    proxyConnInfo->connId = 3456;
+    proxyConnInfo->isServerSide = true;
+    proxyConnInfo->ref = 1;
+    proxyConnInfo->connInfo.type = CONNECT_BLE;
+
+    ListAdd(&(g_proxyConnectionList->list), &(proxyConnInfo->node));
+
+    ProxyChannelInfo chan = {
+        .connId = 3456,
+        .isServer = true,
+        .deviceTypeIsWinpc = true,
+        .type = CONNECT_BLE,
+        .myId = 500,
+        .peerId = 600,
+        .channelId = 500,
+    };
+    chan.appInfo.disconnectPolicy = DISCONNECT_POLICY_DEFAULT;
+
+    int32_t ret = TransProxyResetAndCloseConn(&chan);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+
+    SoftBusFree(proxyConnInfo);
+    DestroySoftBusList(g_proxyConnectionList);
+    g_proxyConnectionList = NULL;
+}
+
+/*
+ * @tc.name: TransProxyResetAndCloseConnForceTest004
+ * @tc.desc: TransProxyResetAndCloseConn with FORCE but conn not found (fallback)
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusProxyTransceiverTest, TransProxyResetAndCloseConnForceTest004, TestSize.Level1)
+{
+    g_proxyConnectionList = CreateSoftBusList();
+    ASSERT_TRUE(g_proxyConnectionList != nullptr);
+
+    ProxyChannelInfo chan = {
+        .connId = 9999,
+        .isServer = false,
+        .deviceTypeIsWinpc = false,
+        .type = CONNECT_BLE,
+        .myId = 700,
+        .peerId = 800,
+        .channelId = 700,
+    };
+    chan.appInfo.disconnectPolicy = DISCONNECT_POLICY_FORCE;
+
+    int32_t ret = TransProxyResetAndCloseConn(&chan);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+
+    DestroySoftBusList(g_proxyConnectionList);
+    g_proxyConnectionList = NULL;
+}
 } // namespace OHOS
