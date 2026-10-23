@@ -59,6 +59,12 @@ typedef enum {
 } AppType;
 
 typedef enum {
+    DISCONNECT_POLICY_DEFAULT = 0,
+    DISCONNECT_POLICY_FORCE,
+    DISCONNECT_POLICY_BUTT,
+} DisconnectPolicy;
+
+typedef enum {
     TRANS_CONN_ALL = 0,
     TRANS_CONN_P2P = 1,
     TRANS_CONN_HML = 2,
@@ -146,6 +152,7 @@ typedef struct {
     BlePriority blePriority;
     TransFlowInfo flowInfo;
     int fd;
+    DisconnectPolicy disconnectPolicy;
     AppType appType;
     ProtocolType protocol;
     int32_t pagingId;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -303,6 +303,7 @@ typedef enum {
     OPT_TYPE_KEY_TYPE,                     /**< @reserved key type used by the current socket. */
     OPT_TYPE_GROUP_ID,                     /**< Group id used by the current socket. */
     OPT_TYPE_WIRELESS_LINK_CTRL,           /**< @reserved wireless link control. */
+    OPT_TYPE_DISCONNECT_POLICY,            /**< Disconnect policy for ProxyChannel+BLE. */
     OPT_TYPE_END,
 } OptType;
 
