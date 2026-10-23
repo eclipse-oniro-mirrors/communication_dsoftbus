@@ -319,6 +319,12 @@ typedef enum {
     OPT_LEVEL_BUTT,
 } OptLevel;
 
+typedef enum {
+    DISCONNECT_POLICY_DEFAULT = 0,
+    DISCONNECT_POLICY_FORCE,
+    DISCONNECT_POLICY_BUTT,
+} DisconnectPolicy;
+
 typedef struct {
     int32_t socket;                 /**< Socket fd */
     const char *initFileName;       /**< Init file name */

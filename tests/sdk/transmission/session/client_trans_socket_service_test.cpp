@@ -20,7 +20,6 @@
 #include "client_trans_socket_option.h"
 #include "inner_socket.h"
 #include "socket.h"
-#include "softbus_app_info.h"
 #include "softbus_error_code.h"
 
 #define SOCKET_NAME_MAX_LEN          255
