@@ -474,6 +474,11 @@ TcpChannelInfo *CreateTcpChannelInfo(const ChannelInfo *channel)
     tcpChannelInfo->callingTokenId = conn.appInfo.callingTokenId;
     tcpChannelInfo->fdProtocol = conn.appInfo.fdProtocol;
     tcpChannelInfo->osType = conn.appInfo.osType;
+    if (strcpy_s(tcpChannelInfo->mySessionName, SESSION_NAME_SIZE_MAX, conn.appInfo.myData.sessionName) != EOK) {
+        TRANS_LOGE(TRANS_CTRL, "failed to strcpy mySessionName, channelId=%{public}d", channel->channelId);
+        SoftBusFree(tcpChannelInfo);
+        return NULL;
+    }
     return tcpChannelInfo;
 }
 
