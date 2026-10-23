@@ -532,6 +532,7 @@ ohos_unittest("TransClientSocketServiceTest") {
   include_dirs = [
     "$dsoftbus_root_path/sdk/transmission/session/include",
     "$dsoftbus_root_path/core/common/include",
+    "$dsoftbus_root_path/core/transmission/common/include",
   ]
   deps = [ "$dsoftbus_root_path/tests/sdk:softbus_client_static" ]
 
