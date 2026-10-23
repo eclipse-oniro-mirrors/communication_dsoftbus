@@ -1472,7 +1472,6 @@ HWTEST_F(SoftbusProxyTransceiverTest, TransProxyResetAndCloseConnForceTest002, T
     int32_t ret = TransProxyResetAndCloseConn(&chan);
     EXPECT_EQ(ret, SOFTBUS_OK);
 
-    SoftBusFree(proxyConnInfo);
     DestroySoftBusList(g_proxyConnectionList);
     g_proxyConnectionList = NULL;
 }
@@ -1512,7 +1511,6 @@ HWTEST_F(SoftbusProxyTransceiverTest, TransProxyResetAndCloseConnForceTest003, T
     int32_t ret = TransProxyResetAndCloseConn(&chan);
     EXPECT_EQ(ret, SOFTBUS_OK);
 
-    SoftBusFree(proxyConnInfo);
     DestroySoftBusList(g_proxyConnectionList);
     g_proxyConnectionList = NULL;
 }
