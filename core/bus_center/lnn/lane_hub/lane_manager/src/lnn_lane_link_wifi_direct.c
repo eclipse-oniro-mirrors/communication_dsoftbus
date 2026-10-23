@@ -56,7 +56,7 @@ static bool IsForceDownInfoExists(uint32_t p2pRequestId)
 {
     if (LinkWifiDirectLock() != SOFTBUS_OK) {
         LNN_LOGE(LNN_LANE, "link wifidirect lock fail");
-        return SOFTBUS_LOCK_ERR;
+        return false;
     }
     ForceDownInfo *item = NULL;
     ForceDownInfo *next = NULL;

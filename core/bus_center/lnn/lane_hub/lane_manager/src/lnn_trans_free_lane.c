@@ -143,7 +143,7 @@ void NotifyFreeLaneResult(uint32_t laneReqId, int32_t errCode)
             LNN_LOGI(LNN_LANE, "free unused link do nothing, laneReqId=%{public}u", laneReqId);
             break;
         case NOTIFY_TYPE_NORMAL: {
-            LNN_LOGI(LNN_LANE, "notify free lane result, laneReqId=%{public}d, errCode=%{public}d", laneReqId, errCode);
+            LNN_LOGI(LNN_LANE, "notify free lane result, laneReqId=%{public}u, errCode=%{public}d", laneReqId, errCode);
             ReportLaneEventWithFreeLinkInfo(laneReqId, errCode);
             DelLaneResourceByLaneId(reqInfo.laneId, false, reqInfo.allocInfo.networkId);
             NotifyFreeLaneCallback(&reqInfo, errCode);
