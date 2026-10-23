@@ -99,6 +99,8 @@ void TransHandleReallocLnn(void);
 
 int32_t TransProcessWirelessLinkCtrl(int32_t socket);
 
+int32_t TransProcessDisconnectPolicy(int32_t channelId, DisconnectPolicy policy);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
