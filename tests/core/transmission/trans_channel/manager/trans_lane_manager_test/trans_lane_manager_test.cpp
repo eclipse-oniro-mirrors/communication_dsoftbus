@@ -16,6 +16,7 @@
 #include "gtest/gtest.h"
 #include <securec.h>
 
+#include "g_enhance_lnn_func.h"
 #include "softbus_adapter_mem.h"
 #include "trans_channel_common.c"
 #include "trans_lane_manager.c"
@@ -26,13 +27,15 @@ using namespace testing::ext;
 
 namespace {
 int32_t g_cancelWifiDirectRet = SOFTBUS_OK;
-const char *g_cancelWifiDirectSessionName = nullptr; // NOLINT
-}
+char g_cancelWifiDirectSessionName[SESSION_NAME_SIZE_MAX] = {0}; // NOLINT
 
-extern "C" {
-int32_t DcWifiDirectExclusiveCancelBySessionNamePacked(const char *sessionName)
+int32_t DcWifiDirectExclusiveCancelBySessionNameStub(const char *sessionName)
 {
-    g_cancelWifiDirectSessionName = sessionName;
+    if (sessionName != nullptr) {
+        (void)strcpy_s(g_cancelWifiDirectSessionName, SESSION_NAME_SIZE_MAX, sessionName);
+    } else {
+        g_cancelWifiDirectSessionName[0] = '\0';
+    }
     return g_cancelWifiDirectRet;
 }
 }
@@ -66,11 +69,24 @@ public:
     {}
 };
 
+static DcWifiDirectExclusiveCancelBySessionNameFunc g_oldCancelBySessionNameFunc = nullptr;
+
 void TransLaneManagerTest::SetUpTestCase(void)
-{}
+{
+    LnnEnhanceFuncList *funcList = LnnEnhanceFuncListGet();
+    if (funcList != nullptr) {
+        g_oldCancelBySessionNameFunc = funcList->dcWifiDirectExclusiveCancelBySessionName;
+        funcList->dcWifiDirectExclusiveCancelBySessionName = DcWifiDirectExclusiveCancelBySessionNameStub;
+    }
+}
 
 void TransLaneManagerTest::TearDownTestCase(void)
-{}
+{
+    LnnEnhanceFuncList *funcList = LnnEnhanceFuncListGet();
+    if (funcList != nullptr) {
+        funcList->dcWifiDirectExclusiveCancelBySessionName = g_oldCancelBySessionNameFunc;
+    }
+}
 
 /**
  * @tc.name: GetTransSessionInfoByLane001
@@ -1069,10 +1085,10 @@ HWTEST_F(TransLaneManagerTest, TransSetSocketChannelStateReserveBySession001, Te
  */
 HWTEST_F(TransLaneManagerTest, CancelWifiDirectExclusiveTest002, TestSize.Level1)
 {
-    g_cancelWifiDirectSessionName = nullptr;
+    g_cancelWifiDirectSessionName[0] = '\0';
 
     EXPECT_NO_FATAL_FAILURE(CancelWifiDirectExclusive(1));
-    EXPECT_EQ(nullptr, g_cancelWifiDirectSessionName);
+    EXPECT_EQ('\0', g_cancelWifiDirectSessionName[0]);
 }
 
 /**
@@ -1095,9 +1111,9 @@ HWTEST_F(TransLaneManagerTest, CancelWifiDirectExclusiveTest004, TestSize.Level1
     ASSERT_EQ(SOFTBUS_OK, ret);
 
     g_cancelWifiDirectRet = SOFTBUS_ERR;
-    g_cancelWifiDirectSessionName = nullptr;
+    g_cancelWifiDirectSessionName[0] = '\0';
     EXPECT_NO_FATAL_FAILURE(CancelWifiDirectExclusive(channelId));
-    EXPECT_NE(nullptr, g_cancelWifiDirectSessionName);
+    EXPECT_NE('\0', g_cancelWifiDirectSessionName[0]);
     EXPECT_EQ(0, strcmp(g_cancelWifiDirectSessionName, TEST_SESSION_NAME));
 
     g_cancelWifiDirectRet = SOFTBUS_OK;
@@ -1122,10 +1138,10 @@ HWTEST_F(TransLaneManagerTest, CancelWifiDirectExclusiveTest005, TestSize.Level1
     ASSERT_EQ(EOK, strcpy_s(channelInfo->mySessionName, sizeof(channelInfo->mySessionName), TEST_SESSION_NAME));
     ret = TransAddTcpChannelInfo(channelInfo);
     ASSERT_EQ(SOFTBUS_OK, ret);
-    g_cancelWifiDirectSessionName = nullptr;
+    g_cancelWifiDirectSessionName[0] = '\0';
 
     EXPECT_NO_FATAL_FAILURE(CancelWifiDirectExclusive(channelId));
-    EXPECT_NE(nullptr, g_cancelWifiDirectSessionName);
+    EXPECT_NE('\0', g_cancelWifiDirectSessionName[0]);
     EXPECT_EQ(0, strcmp(g_cancelWifiDirectSessionName, TEST_SESSION_NAME));
 
     (void)TransDelTcpChannelInfoByChannelId(channelId);
@@ -1141,10 +1157,10 @@ HWTEST_F(TransLaneManagerTest, CancelWifiDirectExclusiveTest007, TestSize.Level1
 {
     int32_t ret = CreateTcpChannelInfoList();
     ASSERT_EQ(SOFTBUS_OK, ret);
-    g_cancelWifiDirectSessionName = nullptr;
+    g_cancelWifiDirectSessionName[0] = '\0';
 
     EXPECT_NO_FATAL_FAILURE(CancelWifiDirectExclusive(1));
-    EXPECT_EQ(nullptr, g_cancelWifiDirectSessionName);
+    EXPECT_EQ('\0', g_cancelWifiDirectSessionName[0]);
 }
 
 /**
@@ -1158,13 +1174,13 @@ HWTEST_F(TransLaneManagerTest, TransCommonCloseChannel002, TestSize.Level1)
     int32_t ret = TransSocketLaneMgrInit();
     ASSERT_EQ(SOFTBUS_OK, ret);
 
-    g_cancelWifiDirectSessionName = nullptr;
+    g_cancelWifiDirectSessionName[0] = '\0';
     EXPECT_NO_FATAL_FAILURE(TransCommonCloseChannel(TEST_SESSION_NAME, 1, CHANNEL_TYPE_PROXY));
-    EXPECT_EQ(nullptr, g_cancelWifiDirectSessionName);
+    EXPECT_EQ('\0', g_cancelWifiDirectSessionName[0]);
 
-    g_cancelWifiDirectSessionName = nullptr;
+    g_cancelWifiDirectSessionName[0] = '\0';
     EXPECT_NO_FATAL_FAILURE(TransCommonCloseChannel(TEST_SESSION_NAME, 1, CHANNEL_TYPE_AUTH));
-    EXPECT_EQ(nullptr, g_cancelWifiDirectSessionName);
+    EXPECT_EQ('\0', g_cancelWifiDirectSessionName[0]);
 
     EXPECT_NO_FATAL_FAILURE(TransSocketLaneMgrDeinit());
 }
@@ -1187,10 +1203,10 @@ HWTEST_F(TransLaneManagerTest, TransCommonCloseChannel003, TestSize.Level1)
     ASSERT_EQ(EOK, strcpy_s(channelInfo->mySessionName, sizeof(channelInfo->mySessionName), TEST_SESSION_NAME));
     ret = TransAddTcpChannelInfo(channelInfo);
     ASSERT_EQ(SOFTBUS_OK, ret);
-    g_cancelWifiDirectSessionName = nullptr;
+    g_cancelWifiDirectSessionName[0] = '\0';
 
     EXPECT_NO_FATAL_FAILURE(TransCommonCloseChannel(TEST_SESSION_NAME, channelId, CHANNEL_TYPE_TCP_DIRECT));
-    EXPECT_NE(nullptr, g_cancelWifiDirectSessionName);
+    EXPECT_NE('\0', g_cancelWifiDirectSessionName[0]);
     EXPECT_EQ(0, strcmp(g_cancelWifiDirectSessionName, TEST_SESSION_NAME));
 
     TcpChannelInfo result;
