@@ -470,6 +470,7 @@ typedef struct {
     uint8_t linkRole;
     uint8_t frameType;
     uint8_t businessType;
+    bool isIncludeDeviceName;
 } BroadcastParam;
 
 /**

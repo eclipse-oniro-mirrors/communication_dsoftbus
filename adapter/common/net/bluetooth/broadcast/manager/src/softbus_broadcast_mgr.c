@@ -1930,6 +1930,7 @@ static void ConvertBcParams(BroadcastProtocol protocol,
     dstParam->linkRole = srcParam->linkRole;
     dstParam->frameType = srcParam->frameType;
     dstParam->businessType = srcParam->businessType;
+    dstParam->isIncludeDeviceName = srcParam->isIncludeDeviceName;
     if (memcpy_s(dstParam->ownIrk, SOFTBUS_IRK_LEN, srcParam->ownIrk, BC_IRK_LEN) != EOK) {
         DISC_LOGE(DISC_BROADCAST, "memcpy ownIrk failed");
         return;
@@ -2140,7 +2141,7 @@ int32_t StartBroadcasting(int32_t bcId, const BroadcastParam *param, const Broad
         SoftBusMutexUnlock(&g_bcLock);
         return ret;
     }
-    SoftbusBroadcastParam adapterParam;
+    SoftbusBroadcastParam adapterParam = {0};
     ConvertBcParams(protocol, param, &adapterParam);
     DISC_LOGI(DISC_BROADCAST, "start bc srvType=%{public}s, bcId=%{public}d, "
         "c=%{public}u", GetSrvType(g_bcManager[bcId].srvType), bcId, callCount++);
