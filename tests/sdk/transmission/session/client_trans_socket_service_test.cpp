@@ -1131,4 +1131,45 @@ HWTEST_F(TransClientSocketServiceTest, SetSocketOptWirelessLinkCtrlDualPathNotEn
     EXPECT_EQ(ret, SOFTBUS_TRANS_SESSION_SERVER_NOINIT);
 }
 
+/*
+ * @tc.name: SetSocketOptDisconnectPolicyTest001
+ * @tc.desc: test SetSocketOpt with OPT_TYPE_DISCONNECT_POLICY invalid params
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransClientSocketServiceTest, SetSocketOptDisconnectPolicyTest001, TestSize.Level1)
+{
+    int32_t socket = 1;
+    DisconnectPolicy policy = DISCONNECT_POLICY_DEFAULT;
+    int32_t optValueSize = sizeof(DisconnectPolicy);
+
+    int32_t ret = SetSocketOpt(socket, OPT_LEVEL_BUTT, OPT_TYPE_DISCONNECT_POLICY, &policy, optValueSize);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+
+    ret = SetSocketOpt(socket, OPT_LEVEL_SOFTBUS, OPT_TYPE_DISCONNECT_POLICY, nullptr, optValueSize);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+
+    ret = SetSocketOpt(socket, OPT_LEVEL_SOFTBUS, OPT_TYPE_DISCONNECT_POLICY, &policy, -1);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+
+    ret = SetSocketOpt(socket, OPT_LEVEL_SOFTBUS, OPT_TYPE_DISCONNECT_POLICY, &policy, DATA_LENS);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+}
+
+/*
+ * @tc.name: SetSocketOptDisconnectPolicyTest002
+ * @tc.desc: test SetSocketOpt with OPT_TYPE_DISCONNECT_POLICY valid params but no channel
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransClientSocketServiceTest, SetSocketOptDisconnectPolicyTest002, TestSize.Level1)
+{
+    int32_t socket = 1;
+    DisconnectPolicy policy = DISCONNECT_POLICY_FORCE;
+    int32_t optValueSize = sizeof(DisconnectPolicy);
+
+    int32_t ret = SetSocketOpt(socket, OPT_LEVEL_SOFTBUS, OPT_TYPE_DISCONNECT_POLICY, &policy, optValueSize);
+    EXPECT_NE(ret, SOFTBUS_OK);
+}
+
 } // namespace OHOS
