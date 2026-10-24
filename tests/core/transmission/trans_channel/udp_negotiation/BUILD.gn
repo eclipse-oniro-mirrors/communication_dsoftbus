@@ -205,6 +205,7 @@ ohos_unittest("TransUdpStaticTest") {
     "$dsoftbus_core_path/connection/wifi_direct_cpp",
     "$dsoftbus_core_path/discovery/interface",
     "$dsoftbus_core_path/discovery/manager/include",
+    "$dsoftbus_core_path/frame/init/include",
     "$dsoftbus_core_path/interfaces/kits/connect",
     "$dsoftbus_core_path/transmission/common/include",
     "$dsoftbus_core_path/transmission/session/cpp/include",

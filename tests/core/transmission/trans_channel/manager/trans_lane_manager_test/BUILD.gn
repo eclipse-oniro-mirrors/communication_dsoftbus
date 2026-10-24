@@ -32,6 +32,7 @@ ohos_unittest("TransLaneManagerTest") {
     "$dsoftbus_core_path/connection/wifi_direct_cpp",
     "$dsoftbus_core_path/discovery/interface",
     "$dsoftbus_core_path/discovery/manager/include",
+    "$dsoftbus_core_path/frame/init/include",
     "$dsoftbus_core_path/transmission/ipc/include",
     "$dsoftbus_core_path/transmission/session/cpp/include",
     "$dsoftbus_core_path/transmission/session/include",
