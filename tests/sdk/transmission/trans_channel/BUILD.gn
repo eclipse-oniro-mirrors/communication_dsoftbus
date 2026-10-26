@@ -501,6 +501,7 @@ if (defined(ohos_lite)) {
       cfi = true
       cfi_cross_dso = true
       debug = false
+      blocklist = "$dsoftbus_root_path/tests/cfi_blocklist.txt"
     }
     module_out_path = module_output_path
     sources = [ "udp/stream/client_trans_udp_stream_interface_test.cpp" ]
@@ -642,7 +643,7 @@ if (defined(ohos_lite)) {
         if (!defined(ohos_lite)) {
           deps += [
             ":ClientTransStreamTest",
-            #":ClientTransUdpStreamInterfaceTest",
+            ":ClientTransUdpStreamInterfaceTest",
             ":StreamAdaptorTest",
             ":ClientTransUdpManagerStaticTest",
             "tcp_direct:unittest",
