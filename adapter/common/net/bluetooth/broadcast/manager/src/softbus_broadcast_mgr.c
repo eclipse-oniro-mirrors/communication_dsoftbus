@@ -2013,6 +2013,7 @@ static int32_t BuildSoftbusBroadcastData(BroadcastProtocol protocol,
 {
     softbusBcData->isSupportFlag = packet->isSupportFlag;
     softbusBcData->flag = packet->flag;
+    softbusBcData->isIncludeDeviceName = packet->isIncludeDeviceName;
 
     // 1. Build broadcast paylod.
     int32_t ret = BuildSoftbusBcPayload(&(packet->bcData), &(softbusBcData->bcData));

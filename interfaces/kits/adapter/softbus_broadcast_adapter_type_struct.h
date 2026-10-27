@@ -88,6 +88,7 @@ typedef struct {
     SoftbusBroadcastPayload bcData;
     SoftbusBroadcastPayload rspData;
     SoftbusBroadcastPayload uuidData;
+    bool isIncludeDeviceName;
 } SoftbusBroadcastData;
 
 /**
