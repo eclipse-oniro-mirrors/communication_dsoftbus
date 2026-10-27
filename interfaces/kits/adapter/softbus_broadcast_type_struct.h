@@ -400,6 +400,7 @@ typedef struct {
     BroadcastPayload bcData;
     BroadcastPayload rspData;
     BroadcastPayload uuidData;
+    bool isIncludeDeviceName;
 } BroadcastPacket;
 
 /**
