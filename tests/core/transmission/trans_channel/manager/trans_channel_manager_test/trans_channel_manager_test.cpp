@@ -2229,4 +2229,101 @@ HWTEST_F(TransChannelManagerTest, CheckAuthChannelIsExit004, TestSize.Level1)
     int32_t ret = CheckAuthChannelIsExit(&connInfo);
     EXPECT_EQ(ret, SOFTBUS_TRANS_NOT_MATCH);
 }
+
+/*
+ * @tc.name: TransProcessWirelessLinkCtrl001
+ * @tc.desc: test TransProcessWirelessLinkCtrl with invalid socket (<=0), expect SOFTBUS_INVALID_PARAM
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransChannelManagerTest, TransProcessWirelessLinkCtrl001, TestSize.Level1)
+{
+    int32_t ret = TransProcessWirelessLinkCtrl(0);
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
+    ret = TransProcessWirelessLinkCtrl(-1);
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
+}
+
+/*
+ * @tc.name: TransProcessWirelessLinkCtrl002
+ * @tc.desc: test TransProcessWirelessLinkCtrl with valid socket (>0), realloc list empty, expect SOFTBUS_OK
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransChannelManagerTest, TransProcessWirelessLinkCtrl002, TestSize.Level1)
+{
+    int32_t ret = TransSocketLaneMgrInit();
+    ASSERT_EQ(ret, SOFTBUS_OK);
+    ret = TransProcessWirelessLinkCtrl(1);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    TransSocketLaneMgrDeinit();
+}
+
+/*
+ * @tc.name: TransHandleReallocLnnInner001
+ * @tc.desc: test TransHandleReallocLnnInner with empty realloc list (onlyFirstPriority=false), early return
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransChannelManagerTest, TransHandleReallocLnnInner001, TestSize.Level1)
+{
+    int32_t ret = TransSocketLaneMgrInit();
+    ASSERT_EQ(ret, SOFTBUS_OK);
+    TransHandleReallocLnnInner(false);
+    TransSocketLaneMgrDeinit();
+    EXPECT_EQ(ret, SOFTBUS_OK);
+}
+
+/*
+ * @tc.name: TransHandleReallocLnnInner002
+ * @tc.desc: test TransHandleReallocLnnInner with empty realloc list (onlyFirstPriority=true), early return
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransChannelManagerTest, TransHandleReallocLnnInner002, TestSize.Level1)
+{
+    int32_t ret = TransSocketLaneMgrInit();
+    ASSERT_EQ(ret, SOFTBUS_OK);
+    TransHandleReallocLnnInner(true);
+    TransSocketLaneMgrDeinit();
+    EXPECT_EQ(ret, SOFTBUS_OK);
+}
+
+/*
+ * @tc.name: TransOpenChannelSecond005
+ * @tc.desc: test TransMultipathOpenSecondChannel with onlyFirstPriority=true, covers the new
+ *           onlyFirstPriority=true parameter propagation path. Mock TransCommonGetAppInfo to
+ *           return SOFTBUS_TRANS_BUSINESS_TYPE_NOT_MATCH so it exits before lane reserve.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransChannelManagerTest, TransOpenChannelSecond005, TestSize.Level1)
+{
+    TransManagerInterfaceMock mock;
+    int32_t sessionId = 1;
+    int32_t channelId = 1;
+    int32_t laneId = TEST_LANE_ID;
+
+    int32_t ret = TransSocketLaneMgrInit();
+    ASSERT_EQ(ret, SOFTBUS_OK);
+    SessionAttribute attr;
+    attr.dataType = TYPE_FILE;
+    SessionParam addParam = {
+        .sessionName = "testSessionName",
+        .peerSessionName = "testPeerSessionName",
+        .peerDeviceId = "testPeerDeviceId",
+        .groupId = "testGroupId",
+        .attr = &attr,
+    };
+    ret = TransAddSocketChannelInfoMultipath(
+        "testSessionName", sessionId, channelId, CHANNEL_TYPE_BUTT, CORE_SESSION_STATE_INIT);
+    ASSERT_EQ(ret, SOFTBUS_OK);
+    ret = TransAddSessionParamBySessionId("testSessionName", sessionId, &addParam);
+    ASSERT_EQ(ret, SOFTBUS_OK);
+
+    EXPECT_CALL(mock, TransCommonGetAppInfo).WillOnce(Return(SOFTBUS_TRANS_BUSINESS_TYPE_NOT_MATCH));
+    ret = TransMultipathOpenSecondChannel(channelId, laneId, true);
+    EXPECT_NE(SOFTBUS_OK, ret);
+    TransSocketLaneMgrDeinit();
+}
 } // namespace OHOS
