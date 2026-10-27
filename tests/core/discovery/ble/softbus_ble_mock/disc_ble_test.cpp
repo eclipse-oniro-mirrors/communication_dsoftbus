@@ -508,7 +508,7 @@ HWTEST_F(DiscBleTest, StopActivePublish001, TestSize.Level1)
     PublishOption option = GetPublishOptionForCastPlus();
     EXPECT_EQ(g_interface->mediumInterface->Unpublish(&option), SOFTBUS_OK);
 
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    BleMock::WaitForBleMockSafeDestruction();
     DISC_LOGI(DISC_TEST, "StopActivePublish001 end ----");
 }
 

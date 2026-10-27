@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 
-#include "ble_mock.h"
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <thread>
+#include "ble_mock.h"
 #include "disc_ble_constant.h"
 #include "disc_log.h"
 #include "securec.h"
@@ -29,94 +29,166 @@ using testing::NotNull;
 /* implement related global function of BLE */
 int32_t SoftBusAddBtStateListener(const SoftBusBtStateListener *listener, int32_t *listenerId)
 {
-    return BleMock::GetMock()->SoftBusAddBtStateListener(listener, listenerId);
+    BleMock *mock = BleMock::GetMock();
+    if (mock == nullptr) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    return mock->SoftBusAddBtStateListener(listener, listenerId);
 }
 
 int32_t InitBroadcastMgr()
 {
-    return BleMock::GetMock()->InitBroadcastMgr();
+    BleMock *mock = BleMock::GetMock();
+    if (mock == nullptr) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    return mock->InitBroadcastMgr();
 }
 
 int32_t DeInitBroadcastMgr()
 {
-    return BleMock::GetMock()->DeInitBroadcastMgr();
+    BleMock *mock = BleMock::GetMock();
+    if (mock == nullptr) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    return mock->DeInitBroadcastMgr();
 }
 
 int32_t RegisterScanListener(BroadcastProtocol protocol,
     BaseServiceType type, int32_t *listenerId, const ScanCallback *cb)
 {
-    return BleMock::GetMock()->RegisterScanListener(protocol, type, listenerId, cb);
+    BleMock *mock = BleMock::GetMock();
+    if (mock == nullptr) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    return mock->RegisterScanListener(protocol, type, listenerId, cb);
 }
 
 int32_t SetScanFilter(int32_t listenerId, const BcScanFilter *scanFilter, uint8_t filterNum)
 {
-    return BleMock::GetMock()->SetScanFilter(listenerId, scanFilter, filterNum);
+    BleMock *mock = BleMock::GetMock();
+    if (mock == nullptr) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    return mock->SetScanFilter(listenerId, scanFilter, filterNum);
 }
 
 int32_t RegisterBroadcaster(BroadcastProtocol protocol,
     BaseServiceType type, int32_t *bcId, const BroadcastCallback *cb)
 {
-    return BleMock::GetMock()->RegisterBroadcaster(protocol, type, bcId, cb);
+    BleMock *mock = BleMock::GetMock();
+    if (mock == nullptr) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    return mock->RegisterBroadcaster(protocol, type, bcId, cb);
 }
 
 int32_t UnRegisterBroadcaster(int32_t bcId)
 {
-    return BleMock::GetMock()->UnRegisterBroadcaster(bcId);
+    BleMock *mock = BleMock::GetMock();
+    if (mock == nullptr) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    return mock->UnRegisterBroadcaster(bcId);
 }
 
 int32_t StopScan(int32_t listenerId)
 {
-    return BleMock::GetMock()->StopScan(listenerId);
+    BleMock *mock = BleMock::GetMock();
+    if (mock == nullptr) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    return mock->StopScan(listenerId);
 }
 
 int32_t SoftBusRemoveBtStateListener(int32_t listenerId)
 {
-    return BleMock::GetMock()->SoftBusRemoveBtStateListener(listenerId);
+    BleMock *mock = BleMock::GetMock();
+    if (mock == nullptr) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    return mock->SoftBusRemoveBtStateListener(listenerId);
 }
 
 int32_t UnRegisterScanListener(int32_t listenerId)
 {
-    return BleMock::GetMock()->UnRegisterScanListener(listenerId);
+    BleMock *mock = BleMock::GetMock();
+    if (mock == nullptr) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    return mock->UnRegisterScanListener(listenerId);
 }
 
 int32_t StopBroadcasting(int32_t bcId)
 {
-    return BleMock::GetMock()->StopBroadcasting(bcId);
+    BleMock *mock = BleMock::GetMock();
+    if (mock == nullptr) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    return mock->StopBroadcasting(bcId);
 }
 
 int32_t UpdateBroadcasting(int32_t bcId, const BroadcastParam *param, const BroadcastPacket *packet)
 {
-    return BleMock::GetMock()->UpdateBroadcasting(bcId, param, packet);
+    BleMock *mock = BleMock::GetMock();
+    if (mock == nullptr) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    return mock->UpdateBroadcasting(bcId, param, packet);
 }
 
 int32_t StartScan(int32_t listenerId, const BcScanParams *param)
 {
-    return BleMock::GetMock()->StartScan(listenerId, param);
+    BleMock *mock = BleMock::GetMock();
+    if (mock == nullptr) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    return mock->StartScan(listenerId, param);
 }
 
 int32_t SetBroadcastingData(int32_t bcId, const BroadcastPacket *packet)
 {
-    return BleMock::GetMock()->SetBroadcastingData(bcId, packet);
+    BleMock *mock = BleMock::GetMock();
+    if (mock == nullptr) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    return mock->SetBroadcastingData(bcId, packet);
 }
 
 int32_t StartBroadcasting(int32_t bcId, const BroadcastParam *param, const BroadcastPacket *packet)
 {
-    return BleMock::GetMock()->StartBroadcasting(bcId, param, packet);
+    BleMock *mock = BleMock::GetMock();
+    if (mock == nullptr) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    return mock->StartBroadcasting(bcId, param, packet);
 }
 
 int32_t SoftBusGetBtMacAddr(SoftBusBtAddr *mac)
 {
-    return BleMock::GetMock()->SoftBusGetBtMacAddr(mac);
+    BleMock *mock = BleMock::GetMock();
+    if (mock == nullptr) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    return mock->SoftBusGetBtMacAddr(mac);
 }
 
 int32_t SoftBusGetBtState()
 {
-    return BleMock::GetMock()->SoftBusGetBtState();
+    BleMock *mock = BleMock::GetMock();
+    if (mock == nullptr) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    return mock->SoftBusGetBtState();
 }
 
 int32_t SoftBusGetBrState()
 {
-    return BleMock::GetMock()->SoftBusGetBrState();
+    BleMock *mock = BleMock::GetMock();
+    if (mock == nullptr) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    return mock->SoftBusGetBrState();
 }
 
 /* definition for class BleMock */
