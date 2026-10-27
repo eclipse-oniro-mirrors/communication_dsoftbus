@@ -17,10 +17,17 @@
 #include <gtest/gtest.h>
 #include <securec.h>
 
+#include "client_trans_multipath_manager.h"
+#include "client_trans_session_manager.h"
 #include "client_trans_socket_option.h"
 #include "inner_socket.h"
+#include "session.h"
 #include "socket.h"
+#include "softbus_adapter_mem.h"
+#include "softbus_app_info.h"
+#include "softbus_def.h"
 #include "softbus_error_code.h"
+#include "softbus_trans_def.h"
 
 #define SOCKET_NAME_MAX_LEN          255
 #define SOCKET_NAME_INVALID_LEN      (SOCKET_NAME_MAX_LEN + 1)
@@ -31,6 +38,7 @@
 #define DATA_LENS 32
 #define INVALID_VALUE (-1)
 #define TEST_GROUP_ID_SIZE_MAX 128
+#define TEST_CHANNEL_ID 1000
 
 using namespace testing::ext;
 namespace OHOS {
@@ -38,6 +46,114 @@ static std::string g_pkgName = "dms";
 static std::string g_socketName = "ohos.distributedschedule.dms.test.client";
 static std::string g_socketPeerName = "ohos.distributedschedule.dms.test.server";
 static std::string g_networkId = "ABCDEF00ABCDEF00ABCDEF00ABCDEF00ABCDEF00ABCDEF00ABCDEF00ABCDEF0";
+
+// 辅助构造：用于无线链路控制相关用例的真实 session 数据
+static const char *WIRELESS_PKG_NAME = "dms_wireless";
+static const char *WIRELESS_SESSION_NAME = "ohos.distributedschedule.dms.test.wireless";
+static const char *WIRELESS_PEER_NAME = "ohos.distributedschedule.dms.test.wireless.peer";
+static const char *WIRELESS_DEVICE_ID = "ABCDEF00ABCDEF00ABCDEF00ABCDEF00ABCDEF00ABCDEF00ABCDEF00ABCDEF0";
+static const char *WIRELESS_GROUP_ID = "TEST_GROUP_ID_WIRELESS";
+static SessionAttribute WIRELESS_SESSION_ATTR = {
+    .dataType = TYPE_BYTES,
+};
+
+static void TestGenerateWirelessCommParam(SessionParam *sessionParam)
+{
+    sessionParam->sessionName = const_cast<char *>(WIRELESS_SESSION_NAME);
+    sessionParam->peerSessionName = const_cast<char *>(WIRELESS_PEER_NAME);
+    sessionParam->peerDeviceId = const_cast<char *>(WIRELESS_DEVICE_ID);
+    sessionParam->groupId = const_cast<char *>(WIRELESS_GROUP_ID);
+    sessionParam->attr = &WIRELESS_SESSION_ATTR;
+}
+
+static SessionInfo *TestGenerateWirelessSession(const SessionParam *param)
+{
+    SessionInfo *session = reinterpret_cast<SessionInfo *>(SoftBusCalloc(sizeof(SessionInfo)));
+    if (session == nullptr) {
+        return nullptr;
+    }
+    if (strcpy_s(session->info.peerSessionName, SESSION_NAME_SIZE_MAX, param->peerSessionName) != EOK ||
+        strcpy_s(session->info.peerDeviceId, DEVICE_ID_SIZE_MAX, param->peerDeviceId) != EOK ||
+        strcpy_s(session->info.groupId, GROUP_ID_SIZE_MAX, param->groupId) != EOK) {
+        SoftBusFree(session);
+        return nullptr;
+    }
+    session->sessionId = INVALID_SESSION_ID;
+    session->channelId = 0;
+    session->channelType = CHANNEL_TYPE_BUTT;
+    session->isServer = false;
+    session->enableStatus = ENABLE_STATUS_INIT;
+    session->routeType = ROUTE_TYPE_ALL;
+    session->routeTypeReserve = INVALID_ROUTE_TYPE;
+    session->info.flag = TYPE_BYTES;
+    session->isEncrypt = true;
+    session->algorithm = 0;
+    session->fileEncrypt = 0;
+    session->crc = 0;
+    session->lifecycle.sessionState = SESSION_STATE_INIT;
+    return session;
+}
+
+// 构造一个已注册的 session server + session，并按 routeType / enableMultipath 配置。
+// 返回 sessionId；失败返回负值。sessionParamOut 由调用方释放（SoftBusFree）。
+static int32_t BuildWirelessSession(int32_t routeType, int32_t routeTypeReserve, bool enableMultipath,
+    SessionParam **sessionParamOut)
+{
+    int32_t ret = TransClientInit();
+    if (ret != SOFTBUS_OK) {
+        return ret;
+    }
+    ISessionListener listener = { 0 };
+    uint64_t timestamp = 0;
+    ret = ClientAddSessionServer(SEC_TYPE_PLAINTEXT, WIRELESS_PKG_NAME, WIRELESS_SESSION_NAME, &listener, &timestamp);
+    if (ret != SOFTBUS_OK && ret != SOFTBUS_SERVER_NAME_REPEATED) {
+        TransClientDeinit();
+        return ret;
+    }
+    SessionParam *sessionParam = reinterpret_cast<SessionParam *>(SoftBusCalloc(sizeof(SessionParam)));
+    if (sessionParam == nullptr) {
+        (void)ClientDeleteSessionServer(SEC_TYPE_PLAINTEXT, WIRELESS_SESSION_NAME);
+        TransClientDeinit();
+        return SOFTBUS_MEM_ERR;
+    }
+    TestGenerateWirelessCommParam(sessionParam);
+    SessionInfo *session = TestGenerateWirelessSession(sessionParam);
+    if (session == nullptr) {
+        SoftBusFree(sessionParam);
+        (void)ClientDeleteSessionServer(SEC_TYPE_PLAINTEXT, WIRELESS_SESSION_NAME);
+        TransClientDeinit();
+        return SOFTBUS_MEM_ERR;
+    }
+    session->channelId = TEST_CHANNEL_ID;
+    session->channelType = CHANNEL_TYPE_PROXY;
+    session->role = SESSION_ROLE_CLIENT;
+    session->routeType = routeType;
+    session->routeTypeReserve = routeTypeReserve;
+    session->enableMultipath = enableMultipath;
+    session->lifecycle.sessionState = SESSION_STATE_INIT;
+    ret = ClientAddNewSession(WIRELESS_SESSION_NAME, session);
+    if (ret != SOFTBUS_OK) {
+        SoftBusFree(session);
+        SoftBusFree(sessionParam);
+        (void)ClientDeleteSessionServer(SEC_TYPE_PLAINTEXT, WIRELESS_SESSION_NAME);
+        TransClientDeinit();
+        return ret;
+    }
+    *sessionParamOut = sessionParam;
+    return session->sessionId;
+}
+
+static void DestroyWirelessSession(int32_t sessionId, SessionParam *sessionParam)
+{
+    if (sessionId >= 0) {
+        (void)ClientDeleteSession(sessionId);
+    }
+    (void)ClientDeleteSessionServer(SEC_TYPE_PLAINTEXT, WIRELESS_SESSION_NAME);
+    if (sessionParam != nullptr) {
+        SoftBusFree(sessionParam);
+    }
+    TransClientDeinit();
+}
 
 class TransClientSocketServiceTest : public testing::Test {
 public:
@@ -1170,6 +1286,84 @@ HWTEST_F(TransClientSocketServiceTest, SetSocketOptDisconnectPolicyTest002, Test
 
     int32_t ret = SetSocketOpt(socket, OPT_LEVEL_SOFTBUS, OPT_TYPE_DISCONNECT_POLICY, &policy, optValueSize);
     EXPECT_NE(ret, SOFTBUS_OK);
+}
+
+/*
+ * @tc.name: SetSocketOptWirelessLinkCtrlDualPathDisabledTest001
+ * @tc.desc: test SetSocketOpt with OPT_TYPE_WIRELESS_LINK_CTRL when session exists and
+ *           enableMultipath=false, returns SOFTBUS_TRANS_FUNC_NOT_SUPPORT
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(TransClientSocketServiceTest, SetSocketOptWirelessLinkCtrlDualPathDisabledTest001, TestSize.Level1)
+{
+    // 构造 session：enableMultipath=false，routeType 为非无线（ROUTE_TYPE_ALL）
+    SessionParam *sessionParam = nullptr;
+    int32_t sessionId = BuildWirelessSession(ROUTE_TYPE_ALL, INVALID_ROUTE_TYPE, false, &sessionParam);
+    ASSERT_GE(sessionId, 0);
+
+    bool wireLinkCtrl = true;
+    int32_t optValueSize = static_cast<int32_t>(sizeof(bool));
+    int32_t ret = SetSocketOpt(sessionId, OPT_LEVEL_SOFTBUS, OPT_TYPE_WIRELESS_LINK_CTRL, &wireLinkCtrl, optValueSize);
+    EXPECT_EQ(ret, SOFTBUS_TRANS_FUNC_NOT_SUPPORT);
+
+    DestroyWirelessSession(sessionId, sessionParam);
+}
+
+/*
+ * @tc.name: SetSocketOptWirelessLinkCtrlWirelessLinkExistTest001
+ * @tc.desc: test SetSocketOpt with OPT_TYPE_WIRELESS_LINK_CTRL when session exists,
+ *           enableMultipath=true and routeType=WIFI_STA (wireless), returns
+ *           SOFTBUS_TRANS_WIRELESS_LINK_ALREADY_EXIST
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(TransClientSocketServiceTest, SetSocketOptWirelessLinkCtrlWirelessLinkExistTest001, TestSize.Level1)
+{
+    // 构造 session：enableMultipath=true，routeType=WIFI_STA（无线），reserve=非无线
+    SessionParam *sessionParam = nullptr;
+    int32_t sessionId = BuildWirelessSession(WIFI_STA, INVALID_ROUTE_TYPE, true, &sessionParam);
+    ASSERT_GE(sessionId, 0);
+
+    bool wireLinkCtrl = true;
+    int32_t optValueSize = static_cast<int32_t>(sizeof(bool));
+    int32_t ret = SetSocketOpt(sessionId, OPT_LEVEL_SOFTBUS, OPT_TYPE_WIRELESS_LINK_CTRL, &wireLinkCtrl, optValueSize);
+    EXPECT_EQ(ret, SOFTBUS_TRANS_WIRELESS_LINK_ALREADY_EXIST);
+
+    DestroyWirelessSession(sessionId, sessionParam);
+}
+
+/*
+ * @tc.name: SetSocketOptWirelessLinkCtrlCallIpcTest001
+ * @tc.desc: test SetSocketOpt with OPT_TYPE_WIRELESS_LINK_CTRL when session exists,
+ *           enableMultipath=true and both routeType/routeTypeReserve are non-wireless,
+ *           falls through to ServerIpcSetWirelessLinkCtrl which returns SOFTBUS_NO_INIT
+ *           (no SA in test environment on standard system)
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(TransClientSocketServiceTest, SetSocketOptWirelessLinkCtrlCallIpcTest001, TestSize.Level1)
+{
+    // 构造 session：enableMultipath=true，routeType=ROUTE_TYPE_ALL（非无线），reserve=非无线
+    SessionParam *sessionParam = nullptr;
+    int32_t sessionId = BuildWirelessSession(ROUTE_TYPE_ALL, INVALID_ROUTE_TYPE, true, &sessionParam);
+    ASSERT_GE(sessionId, 0);
+
+    bool wireLinkCtrl = true;
+    int32_t optValueSize = static_cast<int32_t>(sizeof(bool));
+    int32_t ret = SetSocketOpt(sessionId, OPT_LEVEL_SOFTBUS, OPT_TYPE_WIRELESS_LINK_CTRL, &wireLinkCtrl, optValueSize);
+    // 走到 IPC 调用分支即可，具体返回值取决于测试环境的 SA/proxy 状态：
+    // 可能是 SOFTBUS_NO_INIT / SOFTBUS_NOT_IMPLEMENT / SOFTBUS_TRANS_PROXY_REMOTE_NULL /
+    // SOFTBUS_ACCESS_TOKEN_DENIED 等，只要不是入口校验返回的 SOFTBUS_INVALID_PARAM、
+    // SOFTBUS_TRANS_FUNC_NOT_SUPPORT、SOFTBUS_TRANS_WIRELESS_LINK_ALREADY_EXIST 即可。
+    EXPECT_NE(ret, SOFTBUS_INVALID_PARAM);
+    EXPECT_NE(ret, SOFTBUS_TRANS_FUNC_NOT_SUPPORT);
+    EXPECT_NE(ret, SOFTBUS_TRANS_WIRELESS_LINK_ALREADY_EXIST);
+
+    DestroyWirelessSession(sessionId, sessionParam);
 }
 
 } // namespace OHOS
