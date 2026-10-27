@@ -337,13 +337,14 @@ int32_t ServerCloseChannel(IpcIo *req, IpcIo *reply)
         return SOFTBUS_IPC_ERR;
     }
     int32_t callingPid = GetCallingPid();
+    int32_t ret;
     if (channelType == CHANNEL_TYPE_UNDEFINED) {
         sessionName = (const char*)ReadString(req, &size);
         if (sessionName == NULL || size > SESSION_NAME_SIZE_MAX) {
             TRANS_LOGE(TRANS_CTRL, "ServerCloseChannel sessionName is invalid");
             return SOFTBUS_IPC_ERR;
         }
-        int32_t ret = TransGetAndComparePidBySession(callingPid, sessionName, channelId);
+        ret = TransGetAndComparePidBySession(callingPid, sessionName, channelId);
         if (ret != SOFTBUS_OK) {
             TRANS_LOGE(TRANS_CTRL, "Pid can not close channel, pid=%{public}d, sessionId=%{public}d, ret=%{public}d",
                 callingPid, channelId, ret);
@@ -351,7 +352,7 @@ int32_t ServerCloseChannel(IpcIo *req, IpcIo *reply)
             return ret;
         }
     } else {
-        int32_t ret = TransGetAndComparePid(callingPid, channelId, channelType);
+        ret = TransGetAndComparePid(callingPid, channelId, channelType);
         if (ret != SOFTBUS_OK) {
             TRANS_LOGE(TRANS_CTRL, "Pid can not close channel, pid=%{public}d, channelId=%{public}d, ret=%{public}d",
                 callingPid, channelId, ret);
@@ -359,7 +360,7 @@ int32_t ServerCloseChannel(IpcIo *req, IpcIo *reply)
             return ret;
         }
     }
-    int32_t ret = TransCloseChannel(sessionName, channelId, channelType);
+    ret = TransCloseChannel(sessionName, channelId, channelType);
 
     WriteInt32(reply, ret);
     return ret;
