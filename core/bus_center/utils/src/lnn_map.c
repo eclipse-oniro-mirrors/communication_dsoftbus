@@ -204,7 +204,7 @@ int32_t LnnMapSet(Map *map, const char *key, const void *value, uint32_t valueSi
 void* LnnMapGet(const Map *map, const char *key)
 {
     if (map == NULL || key == NULL || map->nodeSize == 0 || map->nodes == NULL) {
-        LNN_LOGE(LNN_STATE, "invalid param");
+        LNN_LOGD(LNN_STATE, "invalid param");
         return NULL;
     }
 
@@ -236,7 +236,7 @@ void* LnnMapGet(const Map *map, const char *key)
 int32_t LnnMapErase(Map *map, const char *key)
 {
     if (map == NULL || key == NULL || map->nodeSize == 0 || map->nodes == NULL) {
-        LNN_LOGE(LNN_STATE, "invalid param");
+        LNN_LOGD(LNN_STATE, "invalid param");
         return SOFTBUS_INVALID_PARAM;
     }
 

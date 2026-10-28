@@ -540,7 +540,7 @@ bool IdServiceIsPotentialTrustedDevice(const char *shortUdidHash, const char *sh
     int32_t userId = JudgeDeviceTypeAndGetOsAccountIds();
     SoftBusCredInfo credInfo;
     (void)memset_s(&credInfo, sizeof(SoftBusCredInfo), 0, sizeof(SoftBusCredInfo));
-    AUTH_LOGI(AUTH_HICHAIN, "get userId=%{public}d", userId);
+    AUTH_LOGD(AUTH_HICHAIN, "get userId=%{public}d", userId);
     int32_t ret = IdServiceQueryCredential(userId, shortUdidHash, shortAccountIdHash, isSameAccount, &credList);
     if (ret != SOFTBUS_OK) {
         AUTH_LOGE(AUTH_HICHAIN, "query credential fail, ret=%{public}d", ret);
@@ -548,7 +548,7 @@ bool IdServiceIsPotentialTrustedDevice(const char *shortUdidHash, const char *sh
     }
     char *credId = IdServiceGetCredIdFromCredList(userId, credList);
     if (credId == NULL) {
-        AUTH_LOGE(AUTH_HICHAIN, "get cred id fail");
+        AUTH_LOGD(AUTH_HICHAIN, "get cred id fail");
         IdServiceDestroyCredentialList(&credList);
         return false;
     }

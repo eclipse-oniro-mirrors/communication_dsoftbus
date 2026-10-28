@@ -253,7 +253,7 @@ void LnnUpdateOhosAccount(UpdateAccountReason reason)
     }
     if ((reason == UPDATE_ACCOUNT_ONLY || reason == UPDATE_HEARTBEAT) &&
         memcmp(accountHash, localAccountHash, SHA_256_HASH_LEN) == EOK) {
-        LNN_LOGW(LNN_STATE, "accountHash not changed, accountHash=[%{public}02X, %{public}02X]",
+        LNN_LOGD(LNN_STATE, "accountHash not changed, accountHash=[%{public}02X, %{public}02X]",
             accountHash[0], accountHash[1]);
         return;
     }

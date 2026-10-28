@@ -111,7 +111,7 @@ static void PerceptionScreenStateChangeAsync(void *para)
     bool *isScreenOn = (bool *)para;
     bool on = (isScreenOn != NULL) ? *isScreenOn : false;
     SoftBusFree(isScreenOn);
-    LNN_LOGI(LNN_STATE, "perception handle screen %{public}s, refresh scan params", on ? "on" : "off");
+    LNN_LOGD(LNN_STATE, "perception handle screen %{public}s, refresh scan params", on ? "on" : "off");
     PerceptionScanOnScreenStateChanged(on);
 }
 

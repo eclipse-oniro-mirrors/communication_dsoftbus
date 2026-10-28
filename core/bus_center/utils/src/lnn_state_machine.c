@@ -196,7 +196,7 @@ static void FsmStateMsgHandler(SoftBusMessage *msg)
     }
 
     if (msg->what != FSM_CTRL_MSG_DATA) {
-        LNN_LOGI(LNN_STATE, "process fsm ctrl msgType=%{public}d", msg->what);
+        LNN_LOGD(LNN_STATE, "process fsm ctrl msgType=%{public}d", msg->what);
     }
     switch (msg->what) {
         case FSM_CTRL_MSG_START:
@@ -245,7 +245,7 @@ static int32_t RemoveMessageFunc(const SoftBusMessage *msg, void *para)
     }
     msgType = (int32_t)(intptr_t)para;
     if (msg->what == FSM_CTRL_MSG_DATA && (int32_t)msg->arg1 == msgType) {
-        LNN_LOGI(LNN_STATE, "remove fsm data msgType=%{public}d", msgType);
+        LNN_LOGD(LNN_STATE, "remove fsm data msgType=%{public}d", msgType);
         FreeFsmHandleMsgObj((FsmCtrlMsgObj *)msg->obj);
         return 0;
     }
