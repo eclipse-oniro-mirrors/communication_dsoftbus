@@ -1004,7 +1004,7 @@ static bool CompareAssetAclFields(
     if ((flags & ACL_CMP_UDID) &&
         (profile.srcUdid.compare(std::string(mapped.srcUdid)) != 0 ||
         profile.sinkUdid.compare(std::string(mapped.sinkUdid)) != 0)) {
-        LNN_LOGE(LNN_STATE, "udid compare fail");
+        LNN_LOGD(LNN_STATE, "udid not match");
         return false;
     }
     if ((flags & ACL_CMP_USER_ID) &&
@@ -1539,7 +1539,7 @@ static bool CompareAssetAclWithUdid(
         itemSinkDeviceId.compare(std::string(peerUdid)) != 0) &&
         (itemSourceDeviceId.compare(std::string(peerUdid)) != 0 ||
         itemSinkDeviceId.compare(std::string(localUdid)) != 0)) {
-        LNN_LOGE(LNN_STATE, "udid compare fail");
+        LNN_LOGE(LNN_STATE, "udid not match");
         return false;
     }
     return true;

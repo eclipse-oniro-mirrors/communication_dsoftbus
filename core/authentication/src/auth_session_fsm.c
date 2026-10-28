@@ -449,7 +449,7 @@ static void DfxRecordLnnAuthEnd(AuthFsm *authFsm, uint64_t costTime, int32_t rea
 
 static void ReportAuthResultEvt(AuthFsm *authFsm, int32_t result)
 {
-    AUTH_LOGE(AUTH_FSM, "report auth result evt enter");
+    AUTH_LOGD(AUTH_FSM, "report auth result evt enter");
     SoftBusLinkType linkType = ConvertAuthLinkTypeToHisysEvtLinkType(authFsm->info.connInfo.type);
     if (linkType == SOFTBUS_HISYSEVT_LINK_TYPE_BUTT) {
         return;
@@ -555,7 +555,7 @@ static void UpdateDpAclSKId(AuthFsm *authFsm)
     SessionKey sessionKey;
     (void)memset_s(&sessionKey, sizeof(SessionKey), 0, sizeof(SessionKey));
     if (AuthManagerGetSessionKey(authFsm->authSeq, &authFsm->info, &sessionKey) != SOFTBUS_OK) {
-        AUTH_LOGE(AUTH_FSM, "get session key fail");
+        AUTH_LOGD(AUTH_FSM, "not find session key");
         return;
     }
     AuthSessionInfo *info = &authFsm->info;
