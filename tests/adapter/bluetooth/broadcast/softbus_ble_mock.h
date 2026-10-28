@@ -57,6 +57,7 @@ public:
     static const SoftbusScanCallback *scanCallback;
     static inline const SoftbusScanCallback *softbusScanCallback {};
     static inline const SoftbusBroadcastCallback *softbusBroadcastCallback {};
+    static inline bool capturedIsIncludeDeviceName {false};
 
 private:
     static ManagerMock *managerMock;

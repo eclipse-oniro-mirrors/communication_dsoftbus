@@ -643,6 +643,7 @@ static int32_t StartBleAdv(int32_t advId, int32_t *btAdvId, const SoftbusBroadca
             return SOFTBUS_BC_ADAPTER_ASSEMBLE_FAIL;
         }
     }
+    advRawData.rspIncludeDeviceName = param->isIncludeDeviceName;
     DumpSoftbusAdapterData("mgr pkg:", advRawData.advData, advRawData.advDataLen);
     int32_t ret = BleStartAdvEx(btAdvId, advRawData, advParam);
     SoftBusFree(advRawData.advData);
