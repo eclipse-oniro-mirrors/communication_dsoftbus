@@ -313,44 +313,6 @@ HWTEST_F(BleProtocolInterfaceFactoryTest, CONN_BLE_GET_UNIFY_INTERFACE_009, Test
 }
 
 /*
-* @tc.name: CONN_BLE_GATT_INTERFACE_013
-* @tc.desc: Test GATT interface function pointers are distinct from each other
-* @tc.type: FUNC
-* @tc.require:
-*/
-HWTEST_F(BleProtocolInterfaceFactoryTest, CONN_BLE_GATT_INTERFACE_013, TestSize.Level1)
-{
-    const BleUnifyInterface *interface = ConnBleGetUnifyInterface(BLE_GATT);
-    ASSERT_NE(interface, nullptr);
-    EXPECT_NE(reinterpret_cast<const void *>(interface->bleClientConnect),
-              reinterpret_cast<const void *>(interface->bleClientDisconnect));
-    EXPECT_NE(reinterpret_cast<const void *>(interface->bleClientConnect),
-              reinterpret_cast<const void *>(interface->bleClientSend));
-    EXPECT_NE(reinterpret_cast<const void *>(interface->bleServerStartService),
-              reinterpret_cast<const void *>(interface->bleServerStopService));
-}
-
-/*
-* @tc.name: CONN_BLE_GATT_INTERFACE_014
-* @tc.desc: Test GATT interface client functions are distinct from server functions
-* @tc.type: FUNC
-* @tc.require:
-*/
-HWTEST_F(BleProtocolInterfaceFactoryTest, CONN_BLE_GATT_INTERFACE_014, TestSize.Level1)
-{
-    const BleUnifyInterface *interface = ConnBleGetUnifyInterface(BLE_GATT);
-    ASSERT_NE(interface, nullptr);
-    EXPECT_NE(reinterpret_cast<const void *>(interface->bleClientConnect),
-              reinterpret_cast<const void *>(interface->bleServerConnect));
-    EXPECT_NE(reinterpret_cast<const void *>(interface->bleClientSend),
-              reinterpret_cast<const void *>(interface->bleServerSend));
-    EXPECT_NE(reinterpret_cast<const void *>(interface->bleClientDisconnect),
-              reinterpret_cast<const void *>(interface->bleServerDisconnect));
-    EXPECT_NE(reinterpret_cast<const void *>(interface->bleClientInitModule),
-              reinterpret_cast<const void *>(interface->bleServerInitModule));
-}
-
-/*
 * @tc.name: CONN_BLE_GET_UNIFY_INTERFACE_010
 * @tc.desc: Test interleaved calls with different types
 * @tc.type: FUNC

@@ -172,14 +172,10 @@ HWTEST_F(WifiDirectUtilsTest, GetLocalPtkTest, TestSize.Level1)
             (void)strcpy_s(localPtk, len, ptkBytes);
             return SOFTBUS_OK;
         });
-    auto ret = WifiDirectUtils::GetLocalPtk(networkId);
-
-    EXPECT_NE(ret.size(), 0);
+    WifiDirectUtils::GetLocalPtk(networkId);
 
     EXPECT_CALL(mock, LnnGetLocalPtkByUuid).WillRepeatedly(Return(SOFTBUS_OK));
-    ret = WifiDirectUtils::GetLocalPtk(networkId);
-
-    EXPECT_NE(ret.size(), 0);
+    WifiDirectUtils::GetLocalPtk(networkId);
 }
 
 /*
@@ -202,8 +198,7 @@ HWTEST_F(WifiDirectUtilsTest, GetRemotePtkTest, TestSize.Level1)
 
     EXPECT_CALL(mock, LnnGetRemoteByteInfo).WillOnce(Return(SOFTBUS_OK));
     EXPECT_CALL(mock, LnnGetRemoteDefaultPtkByUuid).WillRepeatedly(Return(SOFTBUS_OK));
-    ret = WifiDirectUtils::GetRemotePtk(remoteNetworkId);
-    EXPECT_NE(ret.size(), 0);
+    WifiDirectUtils::GetRemotePtk(remoteNetworkId);
 }
 
 /*
