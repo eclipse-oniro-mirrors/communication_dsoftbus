@@ -14,8 +14,9 @@
  */
 
 #include "softbus_adapter_perf.h"
+#include "softbus_def.h"
 
-bool SoftBusIsRamTest(void)
+SOFTBUS_SYMBOL_EXPORT bool SoftBusIsRamTest(void)
 {
     return false;
 }

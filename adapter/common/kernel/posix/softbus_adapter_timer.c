@@ -48,7 +48,7 @@ __attribute__((no_sanitize("hwaddress"))) static void HandleTimeoutAdapterFun(un
     }
 }
 
-__attribute__((no_sanitize("hwaddress"))) void SetTimerFunc(TimerFunc func)
+SOFTBUS_SYMBOL_EXPORT __attribute__((no_sanitize("hwaddress"))) void SetTimerFunc(TimerFunc func)
 {
     g_timerFunc = func;
 }
@@ -62,7 +62,7 @@ static void HandleTimeoutFunWithFfrt(void *data)
     }
 }
 
-int32_t SoftBusStartTimerWithFfrt(int32_t *timerHandle, uint64_t timeout, bool repeat)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusStartTimerWithFfrt(int32_t *timerHandle, uint64_t timeout, bool repeat)
 {
     if (timerHandle == NULL) {
         COMM_LOGE(COMM_ADAPTER, "timerHandle is null");
@@ -78,7 +78,7 @@ int32_t SoftBusStartTimerWithFfrt(int32_t *timerHandle, uint64_t timeout, bool r
     return SOFTBUS_OK;
 }
 
-void SoftBusStopTimerWithFfrt(int32_t timerHandle)
+SOFTBUS_SYMBOL_EXPORT void SoftBusStopTimerWithFfrt(int32_t timerHandle)
 {
     if (timerHandle < 0) {
         COMM_LOGE(COMM_ADAPTER, "invalid timerHandle=%{public}d", timerHandle);
@@ -93,7 +93,7 @@ void SoftBusStopTimerWithFfrt(int32_t timerHandle)
 }
 #endif
 
-void *SoftBusCreateTimer(void **timerId, unsigned int type)
+SOFTBUS_SYMBOL_EXPORT void *SoftBusCreateTimer(void **timerId, unsigned int type)
 {
     if (timerId == NULL) {
         COMM_LOGE(COMM_ADAPTER, "timerId is null");
@@ -114,7 +114,7 @@ void *SoftBusCreateTimer(void **timerId, unsigned int type)
     return *timerId;
 }
 
-int SoftBusStartTimer(void *timerId, unsigned int tickets)
+SOFTBUS_SYMBOL_EXPORT int SoftBusStartTimer(void *timerId, unsigned int tickets)
 {
     if (timerId == NULL) {
         COMM_LOGE(COMM_ADAPTER, "timerId is null");
@@ -140,7 +140,7 @@ int SoftBusStartTimer(void *timerId, unsigned int tickets)
     return SOFTBUS_OK;
 }
 
-int SoftBusDeleteTimer(void *timerId)
+SOFTBUS_SYMBOL_EXPORT int SoftBusDeleteTimer(void *timerId)
 {
     if (timerId == NULL) {
         COMM_LOGE(COMM_ADAPTER, "timerId is null");
@@ -155,7 +155,7 @@ int SoftBusDeleteTimer(void *timerId)
     return SOFTBUS_OK;
 }
 
-int SoftBusSleepMs(unsigned int ms)
+SOFTBUS_SYMBOL_EXPORT int SoftBusSleepMs(unsigned int ms)
 {
     int ret;
     struct timeval tm;
@@ -169,7 +169,7 @@ int SoftBusSleepMs(unsigned int ms)
     return SOFTBUS_ERR;
 }
 
-int32_t SoftBusGetTime(SoftBusSysTime *sysTime)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusGetTime(SoftBusSysTime *sysTime)
 {
     if (sysTime == NULL) {
         COMM_LOGI(COMM_ADAPTER, "sysTime is null");
@@ -183,7 +183,7 @@ int32_t SoftBusGetTime(SoftBusSysTime *sysTime)
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusGetRealTime(SoftBusSysTime *sysTime)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusGetRealTime(SoftBusSysTime *sysTime)
 {
     if (sysTime == NULL) {
         COMM_LOGW(COMM_ADAPTER, "sysTime is null");
@@ -196,7 +196,7 @@ int32_t SoftBusGetRealTime(SoftBusSysTime *sysTime)
     return SOFTBUS_OK;
 }
 
-uint64_t SoftBusGetCalendarTime(void)
+SOFTBUS_SYMBOL_EXPORT uint64_t SoftBusGetCalendarTime(void)
 {
     struct timespec time = {0};
     if (clock_gettime(CLOCK_REALTIME, &time) != 0) {
@@ -206,7 +206,7 @@ uint64_t SoftBusGetCalendarTime(void)
     return (uint64_t)time.tv_sec * MS_PER_SECOND + (uint64_t)time.tv_nsec / (US_PER_MSECOND * NS_PER_USECOND);
 }
 
-uint64_t SoftBusGetSysTimeMs(void)
+SOFTBUS_SYMBOL_EXPORT uint64_t SoftBusGetSysTimeMs(void)
 {
     struct timeval time;
     time.tv_sec = 0;
@@ -218,7 +218,7 @@ uint64_t SoftBusGetSysTimeMs(void)
     return (uint64_t)time.tv_sec * MS_PER_SECOND + (uint64_t)time.tv_usec / US_PER_MSECOND;
 }
 
-uint64_t SoftBusGetTimeMs(void)
+SOFTBUS_SYMBOL_EXPORT uint64_t SoftBusGetTimeMs(void)
 {
     struct timespec time = {0};
     if (clock_gettime(CLOCK_MONOTONIC, &time) != 0) {
@@ -228,7 +228,7 @@ uint64_t SoftBusGetTimeMs(void)
     return (uint64_t)time.tv_sec * MS_PER_SECOND + (uint64_t)time.tv_nsec / (US_PER_MSECOND * NS_PER_USECOND);
 }
 
-const char *SoftBusFormatTimestamp(uint64_t timestamp)
+SOFTBUS_SYMBOL_EXPORT const char *SoftBusFormatTimestamp(uint64_t timestamp)
 {
     uint32_t milliseconds = timestamp % MS_PER_SECOND;
     time_t seconds = (time_t)(timestamp / MS_PER_SECOND);

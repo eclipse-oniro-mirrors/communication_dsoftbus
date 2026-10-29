@@ -17,7 +17,7 @@
 #include "softbus_adapter_crypto.h"
 #include "softbus_error_code.h"
 
-int32_t SoftBusGenerateHmacHash(
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusGenerateHmacHash(
     const EncryptKey *randomKey, const uint8_t *rootKey, uint32_t rootKeyLen, uint8_t *hash, uint32_t hashLen)
 {
     (void)randomKey;
@@ -28,7 +28,7 @@ int32_t SoftBusGenerateHmacHash(
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t SoftBusAesCfbRootEncrypt(const AesInputData *inData, const EncryptKey *randomKey, EncryptKey *rootKey,
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusAesCfbRootEncrypt(const AesInputData *inData, const EncryptKey *randomKey, EncryptKey *rootKey,
     int32_t encMode, AesOutputData *outData)
 {
     (void)inData;
@@ -39,7 +39,7 @@ int32_t SoftBusAesCfbRootEncrypt(const AesInputData *inData, const EncryptKey *r
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t SoftBusAesCfbEncrypt(
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusAesCfbEncrypt(
     const AesInputData *inData, AesCipherKey *cipherKey, int32_t encMode, AesOutputData *outData)
 {
     (void)inData;
@@ -49,7 +49,7 @@ int32_t SoftBusAesCfbEncrypt(
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t SoftBusAesGcmEncrypt(
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusAesGcmEncrypt(
     const AesInputData *inData, AesCipherKey *cipherKey, int32_t encMode, AesOutputData *outData)
 {
     (void)inData;
@@ -59,7 +59,7 @@ int32_t SoftBusAesGcmEncrypt(
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t SoftBusEncryptDataByGcm128(AesGcm128CipherKey *cipherKey, const unsigned char *input, uint32_t inLen,
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusEncryptDataByGcm128(AesGcm128CipherKey *cipherKey, const unsigned char *input, uint32_t inLen,
     unsigned char *encryptData, uint32_t *encryptLen)
 {
     (void)cipherKey;
@@ -70,7 +70,7 @@ int32_t SoftBusEncryptDataByGcm128(AesGcm128CipherKey *cipherKey, const unsigned
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t SoftBusDecryptDataByGcm128(AesGcm128CipherKey *cipherKey, const unsigned char *input, uint32_t inLen,
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusDecryptDataByGcm128(AesGcm128CipherKey *cipherKey, const unsigned char *input, uint32_t inLen,
     unsigned char *decryptData, uint32_t *decryptLen)
 {
     (void)cipherKey;
@@ -81,7 +81,7 @@ int32_t SoftBusDecryptDataByGcm128(AesGcm128CipherKey *cipherKey, const unsigned
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t SoftBusCalcHKDF(const uint8_t *inData, uint32_t inLen, uint8_t *outData, uint32_t outLen)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusCalcHKDF(const uint8_t *inData, uint32_t inLen, uint8_t *outData, uint32_t outLen)
 {
     (void)inData;
     (void)inLen;

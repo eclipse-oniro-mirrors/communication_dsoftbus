@@ -25,18 +25,19 @@
 
 #include "softbus_adapter_mem.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 static int32_t g_timeWaitSec = TIME_WAIT_SEC_DEFAULT;
 
 static pthread_mutex_t g_adapterStaticLock = PTHREAD_MUTEX_INITIALIZER;
 
-void SetTimeWaitSec(int32_t timeWaitSec)
+SOFTBUS_SYMBOL_EXPORT void SetTimeWaitSec(int32_t timeWaitSec)
 {
     g_timeWaitSec = timeWaitSec;
 }
 
 /* mutex */
-int32_t SoftBusMutexAttrInit(SoftBusMutexAttr *mutexAttr)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusMutexAttrInit(SoftBusMutexAttr *mutexAttr)
 {
     if (mutexAttr == NULL) {
         COMM_LOGE(COMM_ADAPTER, "mutexAttr is null");
@@ -47,7 +48,7 @@ int32_t SoftBusMutexAttrInit(SoftBusMutexAttr *mutexAttr)
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusMutexInit(SoftBusMutex *mutex, SoftBusMutexAttr *mutexAttr)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusMutexInit(SoftBusMutex *mutex, SoftBusMutexAttr *mutexAttr)
 {
     if (mutex == NULL) {
         COMM_LOGE(COMM_ADAPTER, "mutex is null");
@@ -96,7 +97,7 @@ int32_t SoftBusMutexInit(SoftBusMutex *mutex, SoftBusMutexAttr *mutexAttr)
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusMutexLockInner(SoftBusMutex *mutex)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusMutexLockInner(SoftBusMutex *mutex)
 {
 #ifndef __LITEOS_M__
     struct timespec timeSpec = {0};
@@ -131,12 +132,12 @@ int32_t SoftBusMutexLockInner(SoftBusMutex *mutex)
 #endif
 }
 
-int32_t SoftBusMutexUnlockInner(SoftBusMutex *mutex)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusMutexUnlockInner(SoftBusMutex *mutex)
 {
     return pthread_mutex_unlock((pthread_mutex_t *)mutex->mutex);
 }
 
-int32_t SoftBusMutexDestroy(SoftBusMutex *mutex)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusMutexDestroy(SoftBusMutex *mutex)
 {
     if (CheckMutexIsNull(mutex)) {
         COMM_LOGD(COMM_ADAPTER, "mutex is null");
@@ -159,7 +160,7 @@ int32_t SoftBusMutexDestroy(SoftBusMutex *mutex)
 }
 
 /* pthread */
-int32_t SoftBusThreadAttrInit(SoftBusThreadAttr *threadAttr)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusThreadAttrInit(SoftBusThreadAttr *threadAttr)
 {
     if (threadAttr == NULL) {
         COMM_LOGE(COMM_ADAPTER, "threadAttr is null");
@@ -289,7 +290,7 @@ static int32_t SoftBusConfTransPthreadAttr(SoftBusThreadAttr *threadAttr, pthrea
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusThreadCreate(SoftBusThread *thread, SoftBusThreadAttr *threadAttr,
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusThreadCreate(SoftBusThread *thread, SoftBusThreadAttr *threadAttr,
     void *(*threadEntry) (void *), void *arg)
 {
     if (thread == NULL) {
@@ -338,7 +339,7 @@ int32_t SoftBusThreadCreate(SoftBusThread *thread, SoftBusThreadAttr *threadAttr
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusThreadJoin(SoftBusThread thread, void **value)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusThreadJoin(SoftBusThread thread, void **value)
 {
     if (thread <= 0) {
         COMM_LOGE(COMM_ADAPTER, "thread is invalid");
@@ -354,7 +355,7 @@ int32_t SoftBusThreadJoin(SoftBusThread thread, void **value)
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusThreadSetName(SoftBusThread thread, const char *name)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusThreadSetName(SoftBusThread thread, const char *name)
 {
     if (thread <= 0) {
         COMM_LOGE(COMM_ADAPTER, "thread is invalid");
@@ -379,13 +380,13 @@ int32_t SoftBusThreadSetName(SoftBusThread thread, const char *name)
     return SOFTBUS_OK;
 }
 
-SoftBusThread SoftBusThreadGetSelf(void)
+SOFTBUS_SYMBOL_EXPORT SoftBusThread SoftBusThreadGetSelf(void)
 {
     return (SoftBusThread)pthread_self();
 }
 
 /* cond */
-int32_t SoftBusCondInit(SoftBusCond *cond)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusCondInit(SoftBusCond *cond)
 {
     if (cond == NULL) {
         COMM_LOGE(COMM_ADAPTER, "cond is null");
@@ -420,7 +421,7 @@ int32_t SoftBusCondInit(SoftBusCond *cond)
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusCondSignal(SoftBusCond *cond)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusCondSignal(SoftBusCond *cond)
 {
     if ((cond == NULL) || ((void *)(*cond) == NULL)) {
         COMM_LOGE(COMM_ADAPTER, "cond is null");
@@ -436,7 +437,7 @@ int32_t SoftBusCondSignal(SoftBusCond *cond)
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusCondBroadcast(SoftBusCond *cond)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusCondBroadcast(SoftBusCond *cond)
 {
     if ((cond == NULL) || ((void *)(*cond) == NULL)) {
         COMM_LOGE(COMM_ADAPTER, "cond is null");
@@ -452,7 +453,7 @@ int32_t SoftBusCondBroadcast(SoftBusCond *cond)
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusCondWait(SoftBusCond *cond, SoftBusMutex *mutex, SoftBusSysTime *time)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusCondWait(SoftBusCond *cond, SoftBusMutex *mutex, SoftBusSysTime *time)
 {
 #define USECTONSEC 1000
     if ((cond == NULL) || ((void *)(*cond) == NULL)) {
@@ -491,7 +492,7 @@ int32_t SoftBusCondWait(SoftBusCond *cond, SoftBusMutex *mutex, SoftBusSysTime *
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusCondDestroy(SoftBusCond *cond)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusCondDestroy(SoftBusCond *cond)
 {
     if ((cond == NULL) || ((void *)(*cond) == NULL)) {
         COMM_LOGE(COMM_ADAPTER, "cond is null");

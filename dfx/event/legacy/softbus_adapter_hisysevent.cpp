@@ -22,6 +22,7 @@
 #include "softbus_adapter_mem.h"
 #include "softbus_adapter_thread.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 static const char *g_domain = "DSOFTBUS";
 static bool g_init_lock = false;
@@ -177,7 +178,7 @@ extern "C" {
 #endif
 #endif
 
-int32_t SoftbusWriteHisEvt(SoftBusEvtReportMsg *reportMsg)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftbusWriteHisEvt(SoftBusEvtReportMsg *reportMsg)
 {
     if (reportMsg == nullptr) {
         return SOFTBUS_ERR;
@@ -198,7 +199,7 @@ int32_t SoftbusWriteHisEvt(SoftBusEvtReportMsg *reportMsg)
     return SOFTBUS_OK;
 }
 
-void SoftbusFreeEvtReportMsg(SoftBusEvtReportMsg *msg)
+SOFTBUS_SYMBOL_EXPORT void SoftbusFreeEvtReportMsg(SoftBusEvtReportMsg *msg)
 {
     if (msg == nullptr) {
         return;
@@ -210,7 +211,7 @@ void SoftbusFreeEvtReportMsg(SoftBusEvtReportMsg *msg)
     SoftBusFree(msg);
 }
 
-SoftBusEvtReportMsg *SoftbusCreateEvtReportMsg(int32_t paramNum)
+SOFTBUS_SYMBOL_EXPORT SoftBusEvtReportMsg *SoftbusCreateEvtReportMsg(int32_t paramNum)
 {
     if (paramNum <= SOFTBUS_EVT_PARAM_ZERO || paramNum >= SOFTBUS_EVT_PARAM_BUTT) {
         COMM_LOGE(COMM_ADAPTER, "param is invalid");

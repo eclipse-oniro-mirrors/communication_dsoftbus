@@ -24,6 +24,7 @@
 #include <unistd.h>
 
 #include "comm_log.h"
+#include "softbus_def.h"
 
 static int32_t GetNetworkIfIp(int32_t fd, struct ifreq *req, char *ip, char *netmask, uint32_t len)
 {
@@ -59,7 +60,7 @@ static int32_t GetNetworkIfIp(int32_t fd, struct ifreq *req, char *ip, char *net
     return SOFTBUS_OK;
 }
 
-int32_t GetNetworkIpByIfName(const char *ifName, char *ip, char *netmask, uint32_t len)
+SOFTBUS_SYMBOL_EXPORT int32_t GetNetworkIpByIfName(const char *ifName, char *ip, char *netmask, uint32_t len)
 {
     if (ifName == NULL || ip == NULL) {
         COMM_LOGE(COMM_ADAPTER, "ifName or ip buffer is NULL!");
@@ -86,7 +87,7 @@ int32_t GetNetworkIpByIfName(const char *ifName, char *ip, char *netmask, uint32
     return SOFTBUS_OK;
 }
 
-int32_t GetNetworkIpv6ByIfName(const char *ifName, char *ip, uint32_t len)
+SOFTBUS_SYMBOL_EXPORT int32_t GetNetworkIpv6ByIfName(const char *ifName, char *ip, uint32_t len)
 {
     if (ifName == NULL || ip == NULL) {
         COMM_LOGE(COMM_ADAPTER, "ifName or ip buffer is NULL!");
@@ -120,7 +121,7 @@ int32_t GetNetworkIpv6ByIfName(const char *ifName, char *ip, uint32_t len)
     return SOFTBUS_NETWORK_GET_IP_ADDR_FAILED;
 }
 
-bool GetLinkUpStateByIfName(const char *ifName)
+SOFTBUS_SYMBOL_EXPORT bool GetLinkUpStateByIfName(const char *ifName)
 {
     if (ifName == NULL) {
         COMM_LOGE(COMM_ADAPTER, "ifName buffer is NULL!");

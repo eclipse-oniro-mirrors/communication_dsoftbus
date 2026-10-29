@@ -239,6 +239,10 @@ if (defined(ohos_lite)) {
         debug = false
       }
       branch_protector_ret = "pac_ret"
+      cflags = [ "-Os" ]
+      cflags += [ "-fvisibility=hidden" ]
+      ldflags = [ "-Wl,--exclude-libs,ALL" ]
+      version_script = "libsoftbus_adapter_map"
 
       include_dirs = [
         "$dsoftbus_dfx_path/interface/include",

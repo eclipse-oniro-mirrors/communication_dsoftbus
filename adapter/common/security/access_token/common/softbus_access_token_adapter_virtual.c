@@ -16,35 +16,36 @@
 #include "softbus_access_token_adapter.h"
 
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
-bool SoftBusCheckIsSystemService(uint64_t tokenId)
+SOFTBUS_SYMBOL_EXPORT bool SoftBusCheckIsSystemService(uint64_t tokenId)
 {
     (void)tokenId;
     return false;
 }
 
-bool SoftBusCheckIsNormalAppByUid(uint64_t fullTokenId, pid_t uid)
+SOFTBUS_SYMBOL_EXPORT bool SoftBusCheckIsNormalAppByUid(uint64_t fullTokenId, pid_t uid)
 {
     (void)fullTokenId;
     (void)uid;
     return false;
 }
 
-bool SoftBusCheckIsNormalApp(uint64_t fullTokenId, const char *sessionName)
+SOFTBUS_SYMBOL_EXPORT bool SoftBusCheckIsNormalApp(uint64_t fullTokenId, const char *sessionName)
 {
     (void)fullTokenId;
     (void)sessionName;
     return false;
 }
 
-bool SoftBusCheckIsAccessAndRecordAccessToken(uint64_t tokenId, const char *permission)
+SOFTBUS_SYMBOL_EXPORT bool SoftBusCheckIsAccessAndRecordAccessToken(uint64_t tokenId, const char *permission)
 {
     (void)tokenId;
     (void)permission;
     return false;
 }
 
-int32_t SoftBusCalcPermType(uint64_t fullTokenId, pid_t uid, pid_t pid)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusCalcPermType(uint64_t fullTokenId, pid_t uid, pid_t pid)
 {
     (void)fullTokenId;
     (void)uid;
@@ -52,13 +53,13 @@ int32_t SoftBusCalcPermType(uint64_t fullTokenId, pid_t uid, pid_t pid)
     return SOFTBUS_FUNC_NOT_SUPPORT;
 }
 
-int32_t SoftBusCheckDynamicPermission(uint64_t tokenId)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusCheckDynamicPermission(uint64_t tokenId)
 {
     (void)tokenId;
     return SOFTBUS_PERMISSION_DENIED;
 }
 
-void SoftBusRegisterPermission(
+SOFTBUS_SYMBOL_EXPORT void SoftBusRegisterPermission(
     const uint64_t tokenId, const char *permissionName, const char *pkgName, int32_t pid)
 {
     (void)tokenId;
@@ -67,23 +68,23 @@ void SoftBusRegisterPermission(
     (void)pid;
 }
 
-void SoftBusUnRegisterPermission(int32_t pid)
+SOFTBUS_SYMBOL_EXPORT void SoftBusUnRegisterPermission(int32_t pid)
 {
     (void)pid;
 }
 
-void SoftBusRegisterPermissionChangeCb(PermissionChangeCb cb)
+SOFTBUS_SYMBOL_EXPORT void SoftBusRegisterPermissionChangeCb(PermissionChangeCb cb)
 {
     (void)cb;
 }
 
-int32_t SoftBusGetAccessTokenType(uint64_t tokenId)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusGetAccessTokenType(uint64_t tokenId)
 {
     (void)tokenId;
     return SOFTBUS_FUNC_NOT_SUPPORT;
 }
 
-void SoftBusGetTokenNameByTokenType(
+SOFTBUS_SYMBOL_EXPORT void SoftBusGetTokenNameByTokenType(
     char *tokenName, int32_t nameLen, uint64_t tokenId, SoftBusAccessTokenType tokenType)
 {
     (void)tokenName;
@@ -92,31 +93,31 @@ void SoftBusGetTokenNameByTokenType(
     (void)tokenType;
 }
 
-int32_t SoftBusCheckDmsServerPermission(uint64_t tokenId)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusCheckDmsServerPermission(uint64_t tokenId)
 {
     (void)tokenId;
     return SOFTBUS_PERMISSION_DENIED;
 }
 
-bool SoftBusCheckIsCollabApp(uint64_t fullTokenId, const char *sessionName)
+SOFTBUS_SYMBOL_EXPORT bool SoftBusCheckIsCollabApp(uint64_t fullTokenId, const char *sessionName)
 {
     (void)fullTokenId;
     (void)sessionName;
     return false;
 }
 
-bool SoftBusCheckIsAccess(void)
+SOFTBUS_SYMBOL_EXPORT bool SoftBusCheckIsAccess(void)
 {
     return false;
 }
 
-bool SoftBusSaCanUseDeviceKey(uint64_t tokenId)
+SOFTBUS_SYMBOL_EXPORT bool SoftBusSaCanUseDeviceKey(uint64_t tokenId)
 {
     (void)tokenId;
     return false;
 }
 
-int32_t SoftBusGetNativeProcessName(uint64_t tokenId, char *processName, int32_t processNameLen)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusGetNativeProcessName(uint64_t tokenId, char *processName, int32_t processNameLen)
 {
     (void)tokenId;
     (void)processName;

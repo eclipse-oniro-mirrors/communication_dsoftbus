@@ -17,7 +17,9 @@
 
 #include <securec.h>
 
-void *SoftBusMalloc(unsigned int size)
+#include "softbus_def.h"
+
+SOFTBUS_SYMBOL_EXPORT void *SoftBusMalloc(unsigned int size)
 {
     if (size > MAX_MALLOC_SIZE) {
         return NULL;
@@ -25,7 +27,7 @@ void *SoftBusMalloc(unsigned int size)
     return malloc(size);
 }
 
-void *SoftBusCalloc(unsigned int size)
+SOFTBUS_SYMBOL_EXPORT void *SoftBusCalloc(unsigned int size)
 {
     void *tmp = SoftBusMalloc(size);
     if (tmp == NULL) {
@@ -40,7 +42,7 @@ void *SoftBusCalloc(unsigned int size)
     return tmp;
 }
 
-void SoftBusFree(void *pt)
+SOFTBUS_SYMBOL_EXPORT void SoftBusFree(void *pt)
 {
     if (pt == NULL) {
         return;
@@ -48,7 +50,7 @@ void SoftBusFree(void *pt)
     free(pt);
 }
 
-void SoftBusClearFree(void *pt, unsigned int size)
+SOFTBUS_SYMBOL_EXPORT void SoftBusClearFree(void *pt, unsigned int size)
 {
     if (pt == NULL) {
         return;
