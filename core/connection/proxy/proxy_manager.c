@@ -45,7 +45,7 @@ typedef struct {
     ProxyChannelType type;
     bool isDirectly;
     bool isFirstConnect;
-    int32_t requestId;
+    uint32_t requestId;
     char realBrMac[BT_MAC_LEN];
     char srcBrMac[BT_MAC_MAX_LEN];
     char uuid[UUID_STRING_LEN];
