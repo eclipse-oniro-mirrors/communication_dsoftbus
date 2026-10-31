@@ -35,6 +35,7 @@
 #include "softbus_tcp_socket.h"
 #include "lnn_connection_fsm.h"
 #include "lnn_init_monitor.h"
+#include "softbus_def.h"
 
 #define MAX_AUTH_VALID_PERIOD              (30 * 60 * 1000L)            /* 30 mins */
 #define SCHEDULE_UPDATE_SESSION_KEY_PERIOD ((5 * 60 + 30) * 60 * 1000L) /* 5 hour 30 mins */
@@ -103,14 +104,14 @@ static AuthManager *DupAuthManager(const AuthManager *auth)
     return newAuth;
 }
 
-void DelDupAuthManager(AuthManager *auth)
+SOFTBUS_VISIBILITY void DelDupAuthManager(AuthManager *auth)
 {
     AUTH_CHECK_AND_RETURN_LOGE(auth != NULL, AUTH_FSM, "auth is null");
     DestroySessionKeyList(&auth->sessionKeyList);
     SoftBusFree(auth);
 }
 
-void DelAuthManager(AuthManager *auth, int32_t type)
+SOFTBUS_VISIBILITY void DelAuthManager(AuthManager *auth, int32_t type)
 {
     AUTH_CHECK_AND_RETURN_LOGE(auth != NULL, AUTH_FSM, "auth is null");
     if (type < AUTH_LINK_TYPE_WIFI || type > AUTH_LINK_TYPE_MAX) {
@@ -438,7 +439,7 @@ static int32_t GetAvailableAuthConnInfoByUuid(const char *uuid, AuthLinkType typ
 }
 
 /* Note: must call DelDupAuthManager(auth) to free. */
-AuthManager *GetAuthManagerByAuthId(int64_t authId)
+SOFTBUS_VISIBILITY AuthManager *GetAuthManagerByAuthId(int64_t authId)
 {
     if (!RequireAuthLock()) {
         return NULL;
@@ -749,7 +750,7 @@ static void UpdateSessionKeyScheduled(AuthManager *auth, AuthSessionInfo *info)
     }
 }
 
-bool RawLinkNeedUpdateAuthManager(const char *uuid, bool isServer)
+SOFTBUS_VISIBILITY bool RawLinkNeedUpdateAuthManager(const char *uuid, bool isServer)
 {
     if (uuid == NULL) {
         AUTH_LOGE(AUTH_FSM, "invalid uuid param");
@@ -781,7 +782,8 @@ bool RawLinkNeedUpdateAuthManager(const char *uuid, bool isServer)
     return false;
 }
 
-int32_t AuthManagerSetSessionKey(int64_t authSeq, AuthSessionInfo *info, const SessionKey *sessionKey,
+SOFTBUS_VISIBILITY int32_t AuthManagerSetSessionKey(int64_t authSeq, AuthSessionInfo *info,
+    const SessionKey *sessionKey,
     bool isConnect, bool isOldKey)
 {
     AUTH_CHECK_AND_RETURN_RET_LOGE(info != NULL, SOFTBUS_INVALID_PARAM, AUTH_FSM, "info is NULL");
@@ -830,7 +832,8 @@ int32_t AuthManagerSetSessionKey(int64_t authSeq, AuthSessionInfo *info, const S
     return ret;
 }
 
-int32_t AuthManagerGetSessionKey(int64_t authSeq, const AuthSessionInfo *info, SessionKey *sessionKey)
+SOFTBUS_VISIBILITY int32_t AuthManagerGetSessionKey(int64_t authSeq, const AuthSessionInfo *info,
+    SessionKey *sessionKey)
 {
     AUTH_CHECK_AND_RETURN_RET_LOGE(info != NULL, SOFTBUS_INVALID_PARAM, AUTH_FSM, "info is NULL");
     AUTH_CHECK_AND_RETURN_RET_LOGE(sessionKey != NULL, SOFTBUS_INVALID_PARAM, AUTH_FSM, "sessionKey is NULL");
@@ -1728,7 +1731,7 @@ static void OnDataReceived(
     SoftbusHitraceStop();
 }
 
-bool IsHaveAuthIdByConnId(uint64_t connId)
+SOFTBUS_VISIBILITY bool IsHaveAuthIdByConnId(uint64_t connId)
 {
     int64_t authIds[2];
     uint32_t num = 0;
@@ -1781,12 +1784,12 @@ static void OnDisconnected(uint64_t connId, const AuthConnInfo *connInfo)
     (void)PostAuthEvent(EVENT_AUTH_DISCONNECT, HandleDisconnectedEvent, &connId, sizeof(connId), 0);
 }
 
-uint32_t AuthGenRequestId(void)
+SOFTBUS_VISIBILITY uint32_t AuthGenRequestId(void)
 {
     return ConnGetNewRequestId(MODULE_DEVICE_AUTH);
 }
 
-void AuthHandleLeaveLNN(AuthHandle authHandle)
+SOFTBUS_VISIBILITY void AuthHandleLeaveLNN(AuthHandle authHandle)
 {
     if (authHandle.type < AUTH_LINK_TYPE_WIFI || authHandle.type >= AUTH_LINK_TYPE_MAX) {
         AUTH_LOGE(AUTH_FSM, "authHandle type error");
@@ -1867,7 +1870,7 @@ static int32_t SetLocalTcpKeepalive(const char *uuid, ModeCycle cycle)
     return ret;
 }
 
-int32_t AuthFlushDevice(const char *uuid, AuthLinkType type)
+SOFTBUS_VISIBILITY int32_t AuthFlushDevice(const char *uuid, AuthLinkType type)
 {
     if (type != AUTH_LINK_TYPE_WIFI) {
         AUTH_LOGE(AUTH_CONN, "invalid auth type");
@@ -1884,7 +1887,7 @@ int32_t AuthFlushDevice(const char *uuid, AuthLinkType type)
     return SOFTBUS_OK;
 }
 
-int32_t AuthSendKeepaliveOption(const char *uuid, ModeCycle cycle)
+SOFTBUS_VISIBILITY int32_t AuthSendKeepaliveOption(const char *uuid, ModeCycle cycle)
 {
     if (uuid == NULL || uuid[0] == '\0' || cycle < HIGH_FREQ_CYCLE || cycle > DEFAULT_FREQ_CYCLE) {
         AUTH_LOGE(AUTH_CONN, "uuid is empty or invalid cycle");
@@ -1901,7 +1904,7 @@ int32_t AuthSendKeepaliveOption(const char *uuid, ModeCycle cycle)
     return SOFTBUS_OK;
 }
 
-int32_t GetConnectionIdByHandle(AuthHandle handle)
+SOFTBUS_SYMBOL_EXPORT int32_t GetConnectionIdByHandle(AuthHandle handle)
 {
     AUTH_CHECK_AND_RETURN_RET_LOGE(handle.type >= 0 && handle.type < AUTH_LINK_TYPE_MAX,
         SOFTBUS_INVALID_PARAM, AUTH_CONN, "handle type is invalid");
@@ -2062,7 +2065,7 @@ int32_t AuthDeviceGetHmlConnInfo(const char *uuid, AuthConnInfo *connInfo)
     return ret;
 }
 
-bool AuthDeviceCheckConnInfo(const char *uuid, AuthLinkType type, bool checkConnection)
+SOFTBUS_VISIBILITY bool AuthDeviceCheckConnInfo(const char *uuid, AuthLinkType type, bool checkConnection)
 {
     AUTH_CHECK_AND_RETURN_RET_LOGE(uuid, false, AUTH_CONN, "invalid null uuid");
     AUTH_CHECK_AND_RETURN_RET_LOGE(uuid[0] != '\0', false, AUTH_CONN, "invalid empty uuid");
@@ -2078,6 +2081,7 @@ bool AuthDeviceCheckConnInfo(const char *uuid, AuthLinkType type, bool checkConn
     return ret;
 }
 
+SOFTBUS_VISIBILITY
 int32_t AuthGetLatestAuthSeqListByType(const char *udid, int64_t *seqList, uint64_t *authVerifyTime, DiscoveryType type)
 {
     if (udid == NULL || udid[0] == '\0' || seqList == NULL || authVerifyTime == NULL) {
@@ -2114,7 +2118,7 @@ int32_t AuthGetLatestAuthSeqListByType(const char *udid, int64_t *seqList, uint6
     return SOFTBUS_OK;
 }
 
-int32_t AuthGetLatestAuthSeqList(const char *udid, int64_t *seqList, uint32_t num)
+SOFTBUS_VISIBILITY int32_t AuthGetLatestAuthSeqList(const char *udid, int64_t *seqList, uint32_t num)
 {
     if (udid == NULL || udid[0] == '\0' || seqList == NULL || num != DISCOVERY_TYPE_COUNT) {
         AUTH_LOGE(AUTH_CONN, "invalid param");
@@ -2202,7 +2206,7 @@ static uint32_t GetAllHmlOrP2pAuthHandleNum(void)
     return count;
 }
 
-int32_t GetHmlOrP2pAuthHandle(AuthHandle **authHandle, int32_t *num)
+SOFTBUS_VISIBILITY int32_t GetHmlOrP2pAuthHandle(AuthHandle **authHandle, int32_t *num)
 {
     if (authHandle == NULL || num == NULL) {
         AUTH_LOGE(AUTH_CONN, "authHandle is empty");
@@ -2233,7 +2237,7 @@ int32_t GetHmlOrP2pAuthHandle(AuthHandle **authHandle, int32_t *num)
     return SOFTBUS_OK;
 }
 
-void AuthDeviceGetLatestIdByUuid(const char *uuid, AuthLinkType type, AuthHandle *authHandle)
+SOFTBUS_VISIBILITY void AuthDeviceGetLatestIdByUuid(const char *uuid, AuthLinkType type, AuthHandle *authHandle)
 {
     if (uuid == NULL || uuid[0] == '\0' || authHandle == NULL) {
         AUTH_LOGE(AUTH_CONN, "uuid is empty");
@@ -2279,7 +2283,7 @@ void AuthDeviceGetLatestIdByUuid(const char *uuid, AuthLinkType type, AuthHandle
     AnonymizeFree(anonyUuid);
 }
 
-int64_t AuthDeviceGetIdByConnInfo(const AuthConnInfo *connInfo, bool isServer)
+SOFTBUS_VISIBILITY int64_t AuthDeviceGetIdByConnInfo(const AuthConnInfo *connInfo, bool isServer)
 {
     if (connInfo == NULL) {
         AUTH_LOGE(AUTH_CONN, "connInfo is null");
@@ -2348,7 +2352,7 @@ int32_t AuthDeviceGetAuthHandleByIndex(const char *udid, bool isServer, int32_t 
     return SOFTBUS_OK;
 }
 
-uint32_t AuthGetEncryptSize(int64_t authId, uint32_t inLen)
+SOFTBUS_VISIBILITY uint32_t AuthGetEncryptSize(int64_t authId, uint32_t inLen)
 {
     AuthManager *auth = GetAuthManagerByAuthId(authId);
     if (auth != NULL) {
@@ -2358,7 +2362,7 @@ uint32_t AuthGetEncryptSize(int64_t authId, uint32_t inLen)
     return inLen + OVERHEAD_LEN;
 }
 
-uint32_t AuthGetDecryptSize(uint32_t inLen)
+SOFTBUS_VISIBILITY uint32_t AuthGetDecryptSize(uint32_t inLen)
 {
     if (inLen <= OVERHEAD_LEN) {
         return inLen;
@@ -2397,7 +2401,7 @@ int32_t AuthDeviceSetIsCreatedSessionKey(int64_t authId, const bool isCreatedSes
     return SOFTBUS_OK;
 }
 
-int32_t AuthDeviceInit(const AuthTransCallback *callback)
+SOFTBUS_VISIBILITY int32_t AuthDeviceInit(const AuthTransCallback *callback)
 {
     AUTH_LOGI(AUTH_INIT, "auth init enter");
     if (callback == NULL) {

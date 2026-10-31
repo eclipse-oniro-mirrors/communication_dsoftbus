@@ -16,6 +16,7 @@
 
 #include "softbus_error_code.h"
 #include "softbus_json_utils.h"
+#include "softbus_def.h"
 #include "softbus_proxychannel_message.h"
 #include "trans_log.h"
 
@@ -29,7 +30,7 @@
 #define UID "UID"
 #define MIN_TP "MIN_TP"
 
-char *VerifyP2pPackError(int32_t code, int32_t errCode, const char *errDesc)
+SOFTBUS_VISIBILITY char *VerifyP2pPackError(int32_t code, int32_t errCode, const char *errDesc)
 {
     if (errDesc == NULL) {
         TRANS_LOGE(TRANS_CTRL, "param invalid");
@@ -51,7 +52,7 @@ char *VerifyP2pPackError(int32_t code, int32_t errCode, const char *errDesc)
     return data;
 }
 
-char *VerifyP2pPack(VerifyP2pInfo *info)
+SOFTBUS_VISIBILITY char *VerifyP2pPack(VerifyP2pInfo *info)
 {
     if (info == NULL || info->myIp == NULL || info->myPort <= 0) {
         TRANS_LOGE(TRANS_CTRL, "param invalid");

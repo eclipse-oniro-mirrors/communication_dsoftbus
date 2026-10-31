@@ -63,7 +63,7 @@ void TransPermissionDeinit(void)
     DeinitRpcSaPermissionJson();
 }
 
-int32_t CheckLnnPermission(const char *interfaceName, const char *processName)
+SOFTBUS_VISIBILITY int32_t CheckLnnPermission(const char *interfaceName, const char *processName)
 {
     if (interfaceName == nullptr || processName == nullptr) {
         COMM_LOGE(COMM_PERM, "invalid param");
@@ -72,7 +72,7 @@ int32_t CheckLnnPermission(const char *interfaceName, const char *processName)
     return CheckLnnPermissionEntry(interfaceName, processName);
 }
 
-int32_t LnnInitPermission(void)
+SOFTBUS_VISIBILITY int32_t LnnInitPermission(void)
 {
     int32_t ret = LoadLnnPermissionJson(LNN_PERMISSION_JSON_FILE);
     if (ret != SOFTBUS_OK) {
@@ -87,7 +87,7 @@ void LnnDeinitPermission(void)
     DeinitLnnPermissionJson();
 }
 
-int32_t CheckTransPermission(
+SOFTBUS_VISIBILITY int32_t CheckTransPermission(
     pid_t callingUid, pid_t callingPid, const char *pkgName, const char *sessionName, uint32_t actions)
 {
     if (sessionName == nullptr || pkgName == nullptr) {
@@ -131,7 +131,7 @@ EXIT_ERR:
     return SOFTBUS_PERMISSION_DENIED;
 }
 
-int32_t CheckTransSecLevel(const char *mySessionName, const char *peerSessionName)
+SOFTBUS_VISIBILITY int32_t CheckTransSecLevel(const char *mySessionName, const char *peerSessionName)
 {
     if (mySessionName == nullptr || peerSessionName == nullptr) {
         COMM_LOGI(COMM_PERM, "invalid param");

@@ -18,6 +18,11 @@ module_output_path = "dsoftbus/soft_bus/dfx"
 
 ohos_unittest("SoftBusDfxLogTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "mock/hilog_mock.cpp",
     "src/auth_log_test.cpp",

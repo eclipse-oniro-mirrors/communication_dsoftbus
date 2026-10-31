@@ -19,8 +19,7 @@ import("../../../../../dsoftbus.gni")
 
 ohos_fuzztest("AuthIdentityServiceAdapterFuzzTest") {
   module_out_path = dsoftbus_fuzz_out_path
-  fuzz_config_file =
-      "$dsoftbus_root_path/tests/core/authentication/fuzztest/authidentityserviceadapter_fuzzer"
+  fuzz_config_file = "$dsoftbus_root_path/tests/core/authentication/fuzztest/authidentityserviceadapter_fuzzer"
   include_dirs = [
     "$dsoftbus_dfx_path/interface/include",
     "$dsoftbus_dfx_path/interface/include/form",
@@ -51,7 +50,7 @@ ohos_fuzztest("AuthIdentityServiceAdapterFuzzTest") {
     "$dsoftbus_root_path/tests/common/include",
     "$dsoftbus_root_path/tests/sdk/common/include",
   ]
-  
+
   cflags = [
     "-g",
     "-O0",
@@ -64,17 +63,18 @@ ohos_fuzztest("AuthIdentityServiceAdapterFuzzTest") {
   deps = [
     "$dsoftbus_dfx_path:softbus_dfx",
     "$dsoftbus_root_path/adapter:softbus_adapter",
-    "$dsoftbus_root_path/core/frame:softbus_server",
     "$dsoftbus_root_path/core/common:softbus_utils",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
     "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
   ]
 
   external_deps = [
     "bounds_checking_function:libsec_shared",
     "c_utils:utils",
-    "hilog:libhilog",
     "device_auth:deviceauth_sdk",
     "googletest:gtest_rtti",
+    "hilog:libhilog",
     "hitrace:libhitracechain",
     "init:libbegetutil",
   ]

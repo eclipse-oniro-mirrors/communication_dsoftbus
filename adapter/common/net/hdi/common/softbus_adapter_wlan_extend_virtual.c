@@ -15,14 +15,15 @@
 
 #include "softbus_adapter_wlan_extend.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
-int32_t SoftBusRegWlanChannelInfoCb(WlanChannelInfoCb *cb)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusRegWlanChannelInfoCb(WlanChannelInfoCb *cb)
 {
     (void)cb;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t SoftBusRequestWlanChannelInfo(int32_t *channelId, uint32_t num)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusRequestWlanChannelInfo(int32_t *channelId, uint32_t num)
 {
     (void)channelId;
     (void)num;

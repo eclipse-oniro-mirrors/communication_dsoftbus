@@ -57,12 +57,12 @@ int32_t TransProxyOnMsgReceived(const char *pkgName, int32_t pid, int32_t channe
     return g_channelCb.OnDataReceived(pkgName, pid, channelId, CHANNEL_TYPE_PROXY, receiveData);
 }
 
-int32_t TransProxyGetPkgName(const char *sessionName, char *pkgName, uint16_t len)
+SOFTBUS_VISIBILITY int32_t TransProxyGetPkgName(const char *sessionName, char *pkgName, uint16_t len)
 {
     return g_channelCb.GetPkgNameBySessionName(sessionName, pkgName, len);
 }
 
-int32_t TransProxyGetUidAndPidBySessionName(const char *sessionName, int32_t *uid, int32_t *pid)
+SOFTBUS_VISIBILITY int32_t TransProxyGetUidAndPidBySessionName(const char *sessionName, int32_t *uid, int32_t *pid)
 {
     return g_channelCb.GetUidAndPidBySessionName(sessionName, uid, pid);
 }

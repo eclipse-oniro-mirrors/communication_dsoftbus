@@ -119,6 +119,7 @@ static void HandleAuthMessage(SoftBusMessage *msg)
     handler(msg->obj);
 }
 
+SOFTBUS_VISIBILITY
 int32_t PostAuthEvent(EventType event, EventHandler handler, const void *obj, uint32_t size, uint64_t delayMs)
 {
     if (!IsAuthHandlerInit()) {
@@ -155,7 +156,7 @@ static int32_t CustomFunc(const SoftBusMessage *msg, void *param)
     return info->cmpFunc(msg->obj, info->param);
 }
 
-int32_t RemoveAuthEvent(EventType event, RemoveCompareFunc func, void *param)
+SOFTBUS_SYMBOL_EXPORT int32_t RemoveAuthEvent(EventType event, RemoveCompareFunc func, void *param)
 {
     if (!IsAuthHandlerInit()) {
         return SOFTBUS_NO_INIT;
@@ -170,7 +171,7 @@ int32_t RemoveAuthEvent(EventType event, RemoveCompareFunc func, void *param)
 }
 
 /* auth lock */
-bool RequireAuthLock(void)
+SOFTBUS_SYMBOL_EXPORT bool RequireAuthLock(void)
 {
     if (SoftBusMutexLock(&g_authLock) != SOFTBUS_OK) {
         AUTH_LOGE(AUTH_CONN, "auth lock fail");
@@ -179,7 +180,7 @@ bool RequireAuthLock(void)
     return true;
 }
 
-void ReleaseAuthLock(void)
+SOFTBUS_SYMBOL_EXPORT void ReleaseAuthLock(void)
 {
     if (SoftBusMutexUnlock(&g_authLock) != SOFTBUS_OK) {
         AUTH_LOGE(AUTH_CONN, "auth unlock fail");
@@ -249,7 +250,7 @@ static void UpdateUniqueId(void)
     g_uniqueId = (g_uniqueId << SEQ_TIME_STAMP_BITS) | (SEQ_TIME_STAMP_MASK & timeStamp);
 }
 
-int64_t GenSeq(bool isServer)
+SOFTBUS_VISIBILITY int64_t GenSeq(bool isServer)
 {
     if (SoftBusMutexLock(&g_authIdSeqLock) != SOFTBUS_OK) {
         AUTH_LOGE(AUTH_CONN, "seq lock fail");
@@ -318,7 +319,7 @@ uint64_t GetCurrentTimeMs(void)
     return (uint64_t)now.sec * TIME_SEC_TO_MSEC + (uint64_t)now.usec / TIME_MSEC_TO_USEC;
 }
 
-const char *GetAuthSideStr(bool isServer)
+SOFTBUS_VISIBILITY const char *GetAuthSideStr(bool isServer)
 {
     return isServer ? "server" : "client";
 }
@@ -414,7 +415,7 @@ static CompareByType g_compareByType[] = {
     {AUTH_LINK_TYPE_USB,          CompareUsbConnInfo},
 };
 
-bool CompareConnInfo(const AuthConnInfo *info1, const AuthConnInfo *info2, bool cmpShortHash)
+SOFTBUS_SYMBOL_EXPORT bool CompareConnInfo(const AuthConnInfo *info1, const AuthConnInfo *info2, bool cmpShortHash)
 {
     CHECK_NULL_PTR_RETURN_VALUE(info1, false);
     CHECK_NULL_PTR_RETURN_VALUE(info2, false);
@@ -450,7 +451,7 @@ static int32_t SetP2pSocketOption(const AuthConnInfo *connInfo, ConnectOption *o
     return SOFTBUS_OK;
 }
 
-int32_t ConvertToConnectOption(const AuthConnInfo *connInfo, ConnectOption *option)
+SOFTBUS_SYMBOL_EXPORT int32_t ConvertToConnectOption(const AuthConnInfo *connInfo, ConnectOption *option)
 {
     CHECK_NULL_PTR_RETURN_VALUE(connInfo, SOFTBUS_INVALID_PARAM);
     CHECK_NULL_PTR_RETURN_VALUE(option, SOFTBUS_INVALID_PARAM);
@@ -568,7 +569,7 @@ int32_t ConvertToAuthInfoForSle(const ConnectionInfo *info, AuthConnInfo *connIn
     return SOFTBUS_OK;
 }
 
-DiscoveryType ConvertToDiscoveryType(AuthLinkType type)
+SOFTBUS_SYMBOL_EXPORT DiscoveryType ConvertToDiscoveryType(AuthLinkType type)
 {
     switch (type) {
         case AUTH_LINK_TYPE_WIFI:
@@ -648,7 +649,7 @@ void AuthCommonDeinit(void)
     }
 }
 
-int32_t GetPeerUdidByNetworkId(const char *networkId, char *udid, uint32_t len)
+SOFTBUS_VISIBILITY int32_t GetPeerUdidByNetworkId(const char *networkId, char *udid, uint32_t len)
 {
     if (networkId == NULL || udid == NULL || len < UDID_BUF_LEN) {
         AUTH_LOGW(AUTH_CONN, "param err");
@@ -668,7 +669,7 @@ int32_t GetPeerUdidByNetworkId(const char *networkId, char *udid, uint32_t len)
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t GetIsExchangeUdidByNetworkId(const char *networkId, bool *isExchangeUdid)
+SOFTBUS_VISIBILITY int32_t GetIsExchangeUdidByNetworkId(const char *networkId, bool *isExchangeUdid)
 {
     if (networkId == NULL || isExchangeUdid == NULL) {
         AUTH_LOGW(AUTH_CONN, "param err");
@@ -768,7 +769,7 @@ int32_t CheckAclInfoIsAccesser(const AuthACLInfo *acl, bool *isAccesser)
     return SOFTBUS_AUTH_UK_NOT_FIND;
 }
 
-void SetDpGroupShare(const NodeInfo *info, AuthHandle authHandle)
+SOFTBUS_VISIBILITY void SetDpGroupShare(const NodeInfo *info, AuthHandle authHandle)
 {
     if (info == NULL) {
         AUTH_LOGE(AUTH_CONN, "invalid param");

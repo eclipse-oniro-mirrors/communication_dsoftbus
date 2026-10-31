@@ -1379,7 +1379,7 @@ HWTEST_F(AuthSessionJsonMockTest, QUERY_ALL_CRED_TYPE_BY_QUERY_PARAM_TEST_001, T
     EXPECT_CALL(mocker, cJSON_AddItemToArray).WillRepeatedly(
         Invoke([](cJSON *arrayJson, cJSON *item) {
             if (item != nullptr) {
-                cJSON_Delete(item);
+                (void)item;
             }
             return true;
         }));
@@ -1499,10 +1499,10 @@ HWTEST_F(AuthSessionJsonMockTest, QUERY_ALL_CRED_TYPE_PER_PEER_USERID_TEST_002, 
     EXPECT_CALL(mocker, IdServiceGetCredIdByCredType).WillOnce(Return(msg1)).WillOnce(Return(nullptr))
         .WillOnce(Return(nullptr));
     EXPECT_CALL(mocker, AddNumberToJsonObject).WillRepeatedly(Return(true));
-    EXPECT_CALL(mocker, cJSON_AddItemToArray).WillOnce(
+    EXPECT_CALL(mocker, cJSON_AddItemToArray).WillRepeatedly(
         Invoke([](cJSON *arrayJson, cJSON *item) {
             if (item != nullptr) {
-                cJSON_Delete(item);
+                (void)item;
             }
             return true;
         }));
@@ -1797,7 +1797,6 @@ HWTEST_F(AuthSessionJsonMockTest, CRED_NEGO_STATE_ASK_RECEIVER_TEST_002, TestSiz
     info.isSameAccount = false;
     info.credNegoState = CRED_NEGO_STATE_ASK;
     char udidHash[SHA_256_HEX_HASH_LEN] = {0};
-    int64_t authSeq = 1;
     NiceMock<AuthSessionJsonDepsInterfaceMock> mocker;
     char *msg1 = reinterpret_cast<char *>(SoftBusCalloc(1));
     char *msg2 = reinterpret_cast<char *>(SoftBusCalloc(1));
@@ -1815,9 +1814,6 @@ HWTEST_F(AuthSessionJsonMockTest, CRED_NEGO_STATE_ASK_RECEIVER_TEST_002, TestSiz
     EXPECT_CALL(mocker, cJSON_CreateNumber).WillOnce(Return(tmpJson2));
     EXPECT_CALL(mocker, cJSON_AddItemToArray).WillOnce(Return(true)).WillRepeatedly(
         Invoke([](cJSON *arrayJson, cJSON *item) {
-            if (item != nullptr) {
-                cJSON_Delete(item);
-            }
             return true;
         }));
     EXPECT_CALL(mocker, GetAllForegroundAccountIds).WillOnce(Invoke(FillForegroundAccountIds));
@@ -1827,8 +1823,7 @@ HWTEST_F(AuthSessionJsonMockTest, CRED_NEGO_STATE_ASK_RECEIVER_TEST_002, TestSiz
     EXPECT_CALL(mocker, IdServiceGetCredIdByCredType).WillOnce(Return(nullptr))
         .WillOnce(Return(msg1)).WillOnce(Return(msg2));
     EXPECT_CALL(mocker, AddNumberToJsonObject).WillRepeatedly(Return(true));
-    // succ
-    EXPECT_TRUE(CredNegoStateAskReceiver(&info, udidHash, udidHash, authSeq));
+    EXPECT_TRUE(CredNegoStateAskReceiver(&info, udidHash, udidHash, 1));
     EXPECT_EQ(info.credTypeInfo, tmpJson2);
     EXPECT_EQ(info.credNegoState, CRED_NEGO_STATE_REPLY);
     cJSON_Delete(tmpJson2);

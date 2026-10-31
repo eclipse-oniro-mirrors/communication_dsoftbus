@@ -20,6 +20,7 @@
 #include "auth_manager.h"
 #include "iservice_registry.h"
 #include "lnn_async_callback_utils.h"
+#include "softbus_def.h"
 #include "system_ability_definition.h"
 #include "system_ability_status_change_stub.h"
 
@@ -99,7 +100,7 @@ void SystemAbilityListener::OnRemoveSystemAbility(int32_t saId, const std::strin
 
 std::atomic<bool> OHOS::SaEventFwk::SystemAbilityListener::isReg = false;
 
-int32_t RegHichainSaStatusListener(void)
+SOFTBUS_VISIBILITY int32_t RegHichainSaStatusListener(void)
 {
     OHOS::sptr<OHOS::ISystemAbilityManager> samgrProxy =
         OHOS::SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();

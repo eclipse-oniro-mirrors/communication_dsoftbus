@@ -16,8 +16,9 @@
 #include "trans_ipc_adapter.h"
 
 #include "ipc_skeleton.h"
+#include "softbus_def.h"
 
-uint64_t TransAclGetFirstTokenID(void)
+SOFTBUS_VISIBILITY uint64_t TransAclGetFirstTokenID(void)
 {
     return OHOS::IPCSkeleton::GetFirstFullTokenID();
 }

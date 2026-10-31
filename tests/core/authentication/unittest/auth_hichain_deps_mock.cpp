@@ -14,6 +14,7 @@
  */
 
 #include "auth_hichain_deps_mock.h"
+#include "softbus_def.h"
 
 using namespace testing;
 using namespace testing::ext;
@@ -286,10 +287,6 @@ bool IsSupportUDIDAbatementPacked(void)
     return GetAuthHichainMockInterface()->IsSupportUDIDAbatementPacked();
 }
 
-bool IsNeedUDIDAbatementPacked(const AuthSessionInfo *info)
-{
-    return GetAuthHichainMockInterface()->IsNeedUDIDAbatementPacked(info);
-}
 
 int32_t LnnGetLocalNumInfo(InfoKey key, int32_t *info)
 {
@@ -330,3 +327,10 @@ bool IsForegroundUserId(int32_t userId)
 }
 } // extern "C"
 } // namespace OHOS
+
+extern "C" {
+SOFTBUS_VISIBILITY bool IsNeedUDIDAbatementPacked(const AuthSessionInfo *info)
+{
+    return OHOS::GetAuthHichainMockInterface()->IsNeedUDIDAbatementPacked(info);
+}
+}

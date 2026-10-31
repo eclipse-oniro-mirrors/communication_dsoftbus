@@ -19,6 +19,11 @@ dsoftbus_root_path = "../../../../../.."
 
 ohos_unittest("PermissionEntryTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "unittest/permission_entry_test.cpp" ]
 
   include_dirs = [
@@ -29,7 +34,8 @@ ohos_unittest("PermissionEntryTest") {
 
   deps = [
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
     "$dsoftbus_root_path/tests/sdk:softbus_client_static",
     "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
   ]
@@ -48,6 +54,11 @@ ohos_unittest("PermissionEntryTest") {
 
 ohos_unittest("PermissionEntryStaticTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "unittest/permission_entry_static_test.cpp" ]
 
   include_dirs = [
@@ -59,7 +70,8 @@ ohos_unittest("PermissionEntryStaticTest") {
 
   deps = [
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
     "$dsoftbus_root_path/tests/sdk:softbus_client_static",
     "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
   ]
@@ -71,6 +83,11 @@ ohos_unittest("PermissionEntryStaticTest") {
 
 ohos_unittest("PermissionEntryMockTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   sources = [
     "$dsoftbus_root_path/adapter/common/kernel/posix/softbus_adapter_mem.c",
@@ -92,7 +109,7 @@ ohos_unittest("PermissionEntryMockTest") {
 
   deps = [
     "$dsoftbus_dfx_path:softbus_dfx",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
     "$dsoftbus_root_path/tests/sdk:softbus_client_static",
   ]
 

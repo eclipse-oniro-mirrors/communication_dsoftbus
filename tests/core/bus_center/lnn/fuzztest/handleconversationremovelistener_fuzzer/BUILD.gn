@@ -10,12 +10,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
- 
+
 #####################hydra-fuzz###################
 import("//build/test.gni")
 import("../../../../../../dsoftbus.gni")
+
 ##############################fuzztest##########################################
- 
+
 ohos_fuzztest("HandleConversationRemoveListenerFuzzTest") {
   module_out_path = dsoftbus_fuzz_out_path
   fuzz_config_file = "$dsoftbus_root_path/tests/core/bus_center/lnn/fuzztest/handleconversationremovelistener_fuzzer"
@@ -36,24 +37,23 @@ ohos_fuzztest("HandleConversationRemoveListenerFuzzTest") {
     "$dsoftbus_root_path/tests/common/include",
     "$dsoftbus_root_path/tests/sdk/common/include",
   ]
- 
+
   cflags = [
     "-g",
     "-O0",
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
   ]
- 
-  sources = [
-    "handleconversationremovelistener_fuzzer.cpp",
-  ]
- 
+
+  sources = [ "handleconversationremovelistener_fuzzer.cpp" ]
+
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
     "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
   ]
- 
+
   external_deps = [
     "access_token:libaccesstoken_sdk",
     "c_utils:utils",

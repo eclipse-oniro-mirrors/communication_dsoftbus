@@ -25,6 +25,7 @@
 #include "softbus_adapter_crypto.h"
 #include "softbus_adapter_mem.h"
 #include "softbus_json_utils.h"
+#include "softbus_def.h"
 #include "softbus_utils.h"
 #include "trans_log.h"
 #include "trans_session_manager.h"
@@ -99,7 +100,7 @@ int32_t TransUkRequestAddItem(uint32_t requestId, int32_t channelId, int32_t cha
     return SOFTBUS_OK;
 }
 
-int32_t TransUkRequestGetRequestInfoByRequestId(uint32_t requestId, UkRequestNode *ukRequest)
+SOFTBUS_VISIBILITY int32_t TransUkRequestGetRequestInfoByRequestId(uint32_t requestId, UkRequestNode *ukRequest)
 {
     TRANS_CHECK_AND_RETURN_RET_LOGE(
         g_ukRequestManagerList != NULL, SOFTBUS_NO_INIT, TRANS_INIT, "uk request manager list not init.");
@@ -121,7 +122,7 @@ int32_t TransUkRequestGetRequestInfoByRequestId(uint32_t requestId, UkRequestNod
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t TransUkRequestDeleteItem(uint32_t requestId)
+SOFTBUS_VISIBILITY int32_t TransUkRequestDeleteItem(uint32_t requestId)
 {
     if (g_ukRequestManagerList == NULL) {
         TRANS_LOGE(TRANS_INIT, "trans uk manager list not init.");
@@ -195,7 +196,7 @@ bool IsValidUkInfo(const UkIdInfo *ukIdInfo)
     return (ukIdInfo != NULL && ukIdInfo->myId != 0 && ukIdInfo->peerId != 0);
 }
 
-int32_t GetLocalAccountUidByUserId(char *id, uint32_t idLen, uint32_t *len, int32_t userId)
+SOFTBUS_VISIBILITY int32_t GetLocalAccountUidByUserId(char *id, uint32_t idLen, uint32_t *len, int32_t userId)
 {
     if (id == NULL || len == NULL) {
         TRANS_LOGE(TRANS_CTRL, "invalid param.");

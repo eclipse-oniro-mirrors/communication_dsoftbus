@@ -17,12 +17,12 @@ import("../../../../dsoftbus.gni")
 module_output_path = "dsoftbus/soft_bus/transmission"
 
 ohos_unittest("TransClientSessionManagerTest") {
+  module_out_path = module_output_path
   sanitize = {
     cfi = true
     cfi_cross_dso = true
-    debug = true
+    debug = false
   }
-  module_out_path = module_output_path
   sources = [ "client_trans_session_manager_test.cpp" ]
 
   include_dirs = [
@@ -47,10 +47,11 @@ ohos_unittest("TransClientSessionManagerTest") {
 
   deps = [
     "$dsoftbus_dfx_path:softbus_dfx",
-    "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
-    "$dsoftbus_root_path/tests/sdk:softbus_client_static",
     "$dsoftbus_root_path/adapter:softbus_adapter",
+    "$dsoftbus_root_path/core/common:softbus_utils",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
+    "$dsoftbus_root_path/tests/sdk:softbus_client_static",
   ]
 
   if (is_standard_system) {
@@ -69,12 +70,12 @@ ohos_unittest("TransClientSessionManagerTest") {
 }
 
 ohos_unittest("TransClientSessionManagerTest2") {
+  module_out_path = module_output_path
   sanitize = {
     cfi = true
     cfi_cross_dso = true
-    debug = true
+    debug = false
   }
-  module_out_path = module_output_path
   sources = [ "client_trans_session_manager_test2.cpp" ]
 
   include_dirs = [
@@ -99,10 +100,11 @@ ohos_unittest("TransClientSessionManagerTest2") {
 
   deps = [
     "$dsoftbus_dfx_path:softbus_dfx",
-    "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
-    "$dsoftbus_root_path/tests/sdk:softbus_client_static",
     "$dsoftbus_root_path/adapter:softbus_adapter",
+    "$dsoftbus_root_path/core/common:softbus_utils",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
+    "$dsoftbus_root_path/tests/sdk:softbus_client_static",
   ]
 
   if (is_standard_system) {
@@ -121,16 +123,16 @@ ohos_unittest("TransClientSessionManagerTest2") {
 }
 
 ohos_unittest("TransClientSessionManagerExTest") {
+  module_out_path = module_output_path
   sanitize = {
     cfi = true
     cfi_cross_dso = true
-    debug = true
+    debug = false
   }
-  module_out_path = module_output_path
   sources = [
-    "client_trans_session_manager_ex_test.cpp",
     "$dsoftbus_root_path/tests/sdk/transmission/session/mock/src/trans_common_mock.cpp",
     "$dsoftbus_root_path/tests/sdk/transmission/session/mock/src/trans_socket_mgr_mock.cpp",
+    "client_trans_session_manager_ex_test.cpp",
   ]
 
   include_dirs = [
@@ -154,27 +156,28 @@ ohos_unittest("TransClientSessionManagerExTest") {
 
   deps = [
     "$dsoftbus_dfx_path:softbus_dfx",
-    "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
     "$dsoftbus_root_path/adapter:softbus_adapter",
+    "$dsoftbus_root_path/core/common:softbus_utils",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
+    "$dsoftbus_root_path/tests/sdk:softbus_client_static",
   ]
 
   external_deps = [
     "c_utils:utils",
-    "hilog:libhilog",
     "googletest:gmock",
     "googletest:gtest_main",
+    "hilog:libhilog",
   ]
 }
 
 ohos_unittest("TransClientSessionServiceTest") {
+  module_out_path = module_output_path
   sanitize = {
     cfi = true
     cfi_cross_dso = true
     debug = false
-    blocklist = "$dsoftbus_root_path/tests/cfi_blocklist.txt"
   }
-  module_out_path = module_output_path
   sources = [ "client_trans_session_service_test.cpp" ]
 
   include_dirs = [
@@ -201,7 +204,8 @@ ohos_unittest("TransClientSessionServiceTest") {
   deps = [
     "$dsoftbus_dfx_path:softbus_dfx",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
     "$dsoftbus_root_path/tests/sdk:softbus_client_static",
   ]
 
@@ -221,12 +225,12 @@ ohos_unittest("TransClientSessionServiceTest") {
 }
 
 ohos_unittest("TransClientSessionCallbackTest") {
+  module_out_path = module_output_path
   sanitize = {
     cfi = true
     cfi_cross_dso = true
     debug = false
   }
-  module_out_path = module_output_path
   defines = []
   if (dsoftbus_feature_trans_proxy_file || dsoftbus_feature_trans_udp_file) {
     defines += [ "DSOFTBUS_FEATURE_TRANS_FILE" ]
@@ -263,7 +267,8 @@ ohos_unittest("TransClientSessionCallbackTest") {
   deps = [
     "$dsoftbus_dfx_path:softbus_dfx",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
     "$dsoftbus_root_path/tests/sdk:softbus_client_static",
   ]
 
@@ -275,16 +280,15 @@ ohos_unittest("TransClientSessionCallbackTest") {
 }
 
 ohos_unittest("TransClientSessionCallbackExTest") {
+  module_out_path = module_output_path
   sanitize = {
     cfi = true
     cfi_cross_dso = true
     debug = false
-    blocklist = "$dsoftbus_root_path/tests/cfi_blocklist.txt"
   }
-  module_out_path = module_output_path
   sources = [
-    "client_trans_session_callback_ex_test.cpp",
     "$dsoftbus_root_path/tests/sdk/transmission/session/mock/src/trans_session_mgr_mock.cpp",
+    "client_trans_session_callback_ex_test.cpp",
   ]
 
   include_dirs = [
@@ -333,21 +337,27 @@ ohos_unittest("TransClientSessionCallbackExTest") {
 
   deps = [
     "$dsoftbus_dfx_path:softbus_dfx",
-    "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
     "$dsoftbus_root_path/adapter:softbus_adapter",
+    "$dsoftbus_root_path/core/common:softbus_utils",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
     "c_utils:utils",
-    "hilog:libhilog",
     "googletest:gmock",
     "googletest:gtest_main",
+    "hilog:libhilog",
   ]
 }
 
 ohos_unittest("TransClientMsgServiceTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   defines = []
   if (dsoftbus_feature_trans_proxy_file || dsoftbus_feature_trans_udp_file) {
     defines += [ "DSOFTBUS_FEATURE_TRANS_FILE" ]
@@ -384,11 +394,12 @@ ohos_unittest("TransClientMsgServiceTest") {
 
   deps = [
     "$dsoftbus_dfx_path:softbus_dfx",
+    "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
     "$dsoftbus_root_path/tests/sdk:softbus_client_static",
     "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
-    "$dsoftbus_root_path/adapter:softbus_adapter",
   ]
 
   external_deps = [
@@ -400,6 +411,11 @@ ohos_unittest("TransClientMsgServiceTest") {
 
 ohos_unittest("TransClientMsgServiceExTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   include_dirs = [
     "$dsoftbus_dfx_path/interface/include/form",
@@ -433,35 +449,36 @@ ohos_unittest("TransClientMsgServiceExTest") {
   ]
 
   sources = [
-    "client_trans_message_service_ex_test.cpp",
     "$dsoftbus_root_path/tests/sdk/transmission/session/mock/src/trans_common_mock.cpp",
     "$dsoftbus_root_path/tests/sdk/transmission/session/mock/src/trans_session_mgr_mock.cpp",
     "$dsoftbus_root_path/tests/sdk/transmission/session/mock/src/trans_session_svc_mock.cpp",
+    "client_trans_message_service_ex_test.cpp",
   ]
 
   deps = [
     "$dsoftbus_dfx_path:softbus_dfx",
-    "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
     "$dsoftbus_root_path/adapter:softbus_adapter",
+    "$dsoftbus_root_path/core/common:softbus_utils",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
+    "$dsoftbus_root_path/tests/sdk:softbus_client_static",
   ]
 
   external_deps = [
     "c_utils:utils",
-    "hilog:libhilog",
     "googletest:gmock",
     "googletest:gtest_main",
+    "hilog:libhilog",
   ]
 }
 
 ohos_unittest("TransClientSessionTest") {
+  module_out_path = module_output_path
   sanitize = {
     cfi = true
     cfi_cross_dso = true
     debug = false
-    blocklist = "$dsoftbus_root_path/tests/cfi_blocklist.txt"
   }
-  module_out_path = module_output_path
   defines = []
   if (dsoftbus_feature_trans_proxy_file || dsoftbus_feature_trans_udp_file) {
     defines += [ "DSOFTBUS_FEATURE_TRANS_FILE" ]
@@ -503,11 +520,12 @@ ohos_unittest("TransClientSessionTest") {
 
   deps = [
     "$dsoftbus_dfx_path:softbus_dfx",
+    "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
     "$dsoftbus_root_path/tests/sdk:softbus_client_static",
     "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
-    "$dsoftbus_root_path/adapter:softbus_adapter",
   ]
 
   if (is_standard_system) {
@@ -528,6 +546,11 @@ ohos_unittest("TransClientSessionTest") {
 
 ohos_unittest("TransClientSocketServiceTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "client_trans_socket_service_test.cpp" ]
   include_dirs = [
     "$dsoftbus_root_path/sdk/transmission/session/include",
@@ -550,6 +573,11 @@ ohos_unittest("TransClientSocketServiceTest") {
 
 ohos_unittest("TransClientSocketTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "client_trans_inner_socket_test.cpp" ]
 
   deps = [ "$dsoftbus_root_path/tests/sdk:softbus_client_static" ]
@@ -578,6 +606,11 @@ ohos_unittest("TransClientSocketTest") {
 
 ohos_unittest("TransClientSocketServiceExTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   include_dirs = [
     "$dsoftbus_root_path/core/common/include",
     "$dsoftbus_root_path/components/nstackx/fillp/include",
@@ -591,35 +624,37 @@ ohos_unittest("TransClientSocketServiceExTest") {
   ]
 
   sources = [
-    "client_trans_socket_service_ex_test.cpp",
     "$dsoftbus_root_path/tests/sdk/transmission/session/mock/src/trans_common_mock.cpp",
     "$dsoftbus_root_path/tests/sdk/transmission/session/mock/src/trans_session_mgr_mock.cpp",
     "$dsoftbus_root_path/tests/sdk/transmission/session/mock/src/trans_session_svc_mock.cpp",
     "$dsoftbus_root_path/tests/sdk/transmission/session/mock/src/trans_socket_mgr_mock.cpp",
+    "client_trans_socket_service_ex_test.cpp",
   ]
 
   deps = [
     "$dsoftbus_dfx_path:softbus_dfx",
-    "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
     "$dsoftbus_root_path/adapter:softbus_adapter",
+    "$dsoftbus_root_path/core/common:softbus_utils",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
+    "$dsoftbus_root_path/tests/sdk:softbus_client_static",
   ]
 
   external_deps = [
     "c_utils:utils",
-    "hilog:libhilog",
     "googletest:gmock",
     "googletest:gtest_main",
+    "hilog:libhilog",
   ]
 }
 
 ohos_unittest("TransMultipathManagerTest") {
+  module_out_path = module_output_path
   sanitize = {
     cfi = true
     cfi_cross_dso = true
-    debug = true
+    debug = false
   }
-  module_out_path = module_output_path
   sources = [ "client_trans_multipath_manager_test.cpp" ]
 
   include_dirs = [
@@ -644,10 +679,10 @@ ohos_unittest("TransMultipathManagerTest") {
 
   deps = [
     "$dsoftbus_dfx_path:softbus_dfx",
-    "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
-    "$dsoftbus_root_path/tests/sdk:softbus_client_static",
     "$dsoftbus_root_path/adapter:softbus_adapter",
+    "$dsoftbus_root_path/core/common:softbus_utils",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/tests/sdk:softbus_client_static",
   ]
 
   if (is_standard_system) {
@@ -668,16 +703,16 @@ ohos_unittest("TransMultipathManagerTest") {
 group("unittest") {
   testonly = true
   deps = [
+    ":TransClientMsgServiceExTest",
     ":TransClientMsgServiceTest",
+    ":TransClientSessionCallbackExTest",
     ":TransClientSessionCallbackTest",
+    ":TransClientSessionManagerExTest",
     ":TransClientSessionManagerTest",
     ":TransClientSessionManagerTest2",
-    ":TransClientSessionManagerExTest",
     ":TransClientSessionServiceTest",
-    ":TransClientSocketServiceTest",
-    ":TransClientMsgServiceExTest",
-    ":TransClientSessionCallbackExTest",
     ":TransClientSocketServiceExTest",
+    ":TransClientSocketServiceTest",
     ":TransMultipathManagerTest",
   ]
 

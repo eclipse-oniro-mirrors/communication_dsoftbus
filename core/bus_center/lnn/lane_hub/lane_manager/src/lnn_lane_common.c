@@ -18,6 +18,7 @@
 #include <securec.h>
 
 #include "lnn_log.h"
+#include "softbus_def.h"
 
 #define UINT_TO_STR_MAX_LEN 11
 
@@ -247,7 +248,7 @@ int32_t LaneInfoProcess(const LaneLinkInfo *linkInfo, LaneConnInfo *connInfo, La
     return g_funcList[linkInfo->type](linkInfo, connInfo, profile);
 }
 
-int32_t LnnCreateData(Map *map, uint32_t key, const void *value, uint32_t valueSize)
+SOFTBUS_SYMBOL_EXPORT int32_t LnnCreateData(Map *map, uint32_t key, const void *value, uint32_t valueSize)
 {
     char keyStr[UINT_TO_STR_MAX_LEN] = {0};
     if (sprintf_s(keyStr, UINT_TO_STR_MAX_LEN, "%u", key) < 0) {
@@ -273,7 +274,7 @@ void *LnnReadData(const Map *map, uint32_t key)
     return data;
 }
 
-void LnnDeleteData(Map *map, uint32_t key)
+SOFTBUS_SYMBOL_EXPORT void LnnDeleteData(Map *map, uint32_t key)
 {
     char keyStr[UINT_TO_STR_MAX_LEN] = {0};
     if (sprintf_s(keyStr, UINT_TO_STR_MAX_LEN, "%u", key) < 0) {
@@ -286,7 +287,7 @@ void LnnDeleteData(Map *map, uint32_t key)
     }
 }
 
-uint64_t LnnGetSysTimeMs(void)
+SOFTBUS_SYMBOL_EXPORT uint64_t LnnGetSysTimeMs(void)
 {
     return SoftBusGetSysTimeMs();
 }

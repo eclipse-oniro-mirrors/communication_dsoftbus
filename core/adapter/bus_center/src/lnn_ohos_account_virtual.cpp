@@ -17,11 +17,12 @@
 #include "lnn_ohos_account.h"
 #include "softbus_adapter_crypto.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 static const char DEFAULT_USER_ID[] = "0";
 static const char DEFAULT_ACCOUNT_UID[] = "ohosAnonymousUid";
 
-int32_t LnnGetOhosAccountInfo(uint8_t *accountHash, uint32_t len)
+SOFTBUS_VISIBILITY int32_t LnnGetOhosAccountInfo(uint8_t *accountHash, uint32_t len)
 {
     (void)accountHash;
     (void)len;
@@ -36,7 +37,8 @@ int32_t LnnGetOhosAccountInfoByUserId(int32_t userId, uint8_t *accountHash, uint
     return SOFTBUS_OK;
 }
 
-int32_t LnnGetAccountIdByUserId(int32_t userId, int64_t *accountId, uint8_t *accountHash, uint32_t len)
+SOFTBUS_VISIBILITY int32_t LnnGetAccountIdByUserId(int32_t userId, int64_t *accountId, uint8_t *accountHash,
+    uint32_t len)
 {
     (void)userId;
     (void)accountId;
@@ -45,7 +47,7 @@ int32_t LnnGetAccountIdByUserId(int32_t userId, int64_t *accountId, uint8_t *acc
     return SOFTBUS_OK;
 }
 
-int32_t LnnInitOhosAccount(void)
+SOFTBUS_VISIBILITY int32_t LnnInitOhosAccount(void)
 {
     uint8_t accountHash[SHA_256_HASH_LEN] = {0};
 
@@ -61,21 +63,21 @@ int32_t LnnInitOhosAccount(void)
     return LnnSetLocalByteInfo(BYTE_KEY_ACCOUNT_HASH, accountHash, SHA_256_HASH_LEN);
 }
 
-void LnnUpdateOhosAccount(UpdateAccountReason reason)
+SOFTBUS_VISIBILITY void LnnUpdateOhosAccount(UpdateAccountReason reason)
 {
     (void)reason;
 }
 
-void LnnOnOhosAccountLogout(void)
+SOFTBUS_VISIBILITY void LnnOnOhosAccountLogout(void)
 {
 }
 
-bool LnnIsDefaultOhosAccount(void)
+SOFTBUS_VISIBILITY bool LnnIsDefaultOhosAccount(void)
 {
     return true;
 }
 
-int32_t LnnJudgeDeviceTypeAndGetOsAccountInfo(uint8_t *accountHash, uint32_t len)
+SOFTBUS_VISIBILITY int32_t LnnJudgeDeviceTypeAndGetOsAccountInfo(uint8_t *accountHash, uint32_t len)
 {
     (void)accountHash;
     (void)len;

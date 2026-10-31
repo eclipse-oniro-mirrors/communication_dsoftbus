@@ -15,8 +15,9 @@
 
 #include "auth_hichain.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
-int32_t RegHichainSaStatusListener(void)
+SOFTBUS_VISIBILITY int32_t RegHichainSaStatusListener(void)
 {
     return SOFTBUS_NOT_IMPLEMENT;
 }

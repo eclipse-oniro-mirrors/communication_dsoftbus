@@ -69,14 +69,14 @@ ohos_fuzztest("WifiDirectP2pAdapterFuzzTest") {
 
   sources = [
     "$dsoftbus_dfx_path/anonymize/src/anonymizer.c",
+    "$dsoftbus_root_path/core/frame/common/src/softbus_init_common.c",
+    "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func.c",
     "$dsoftbus_root_path/tests/core/connection/wifi_direct_cpp/mock/p2p_adapter_mock.cpp",
     "$dsoftbus_root_path/tests/core/connection/wifi_direct_cpp/mock/p2p_entity_mock.cpp",
     "$dsoftbus_root_path/tests/core/connection/wifi_direct_cpp/net_conn_client.cpp",
     "$dsoftbus_root_path/tests/core/connection/wifi_direct_cpp/wifi_direct_mock.cpp",
     "$dsoftbus_root_path/tests/core/connection/wifi_direct_cpp/wifi_direct_utils.cpp",
-    "$dsoftbus_root_path/core/frame/common/src/softbus_init_common.c",
     "wifidirectp2padapter_fuzzer.cpp",
-    "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func.c",
   ]
 
   cflags = [
@@ -92,9 +92,10 @@ ohos_fuzztest("WifiDirectP2pAdapterFuzzTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
-    "$dsoftbus_root_path/dfx:softbus_dfx",
     "$dsoftbus_root_path/core/connection/wifi_direct_cpp:wifi_direct",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/dfx:softbus_dfx",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [

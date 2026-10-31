@@ -661,7 +661,7 @@ int32_t LnnGenerateCeKeyByHuks(struct HksBlob *keyAlias, bool isUnlocked)
     return SOFTBUS_OK;
 }
 
-int32_t LnnGenerateKeyByHuks(struct HksBlob *keyAlias)
+SOFTBUS_VISIBILITY int32_t LnnGenerateKeyByHuks(struct HksBlob *keyAlias)
 {
     if (keyAlias == NULL) {
         LNN_LOGE(LNN_LEDGER, "invalid param");
@@ -699,7 +699,7 @@ int32_t LnnDeleteCeKeyByHuks(struct HksBlob *keyAlias, bool isUnlocked)
     return SOFTBUS_OK;
 }
 
-int32_t LnnDeleteKeyByHuks(struct HksBlob *keyAlias)
+SOFTBUS_VISIBILITY int32_t LnnDeleteKeyByHuks(struct HksBlob *keyAlias)
 {
     if (keyAlias == NULL) {
         LNN_LOGE(LNN_LEDGER, "invalid param");
@@ -713,7 +713,7 @@ int32_t LnnDeleteKeyByHuks(struct HksBlob *keyAlias)
     return SOFTBUS_OK;
 }
 
-int32_t LnnEncryptDataByHuks(const struct HksBlob *keyAlias, const struct HksBlob *inData,
+SOFTBUS_VISIBILITY int32_t LnnEncryptDataByHuks(const struct HksBlob *keyAlias, const struct HksBlob *inData,
     struct HksBlob *outData)
 {
     if (keyAlias == NULL || inData == NULL || outData == NULL || inData->size == 0) {
@@ -737,7 +737,7 @@ int32_t LnnEncryptDataByHuks(const struct HksBlob *keyAlias, const struct HksBlo
     return ret;
 }
 
-int32_t LnnDecryptDataByHuks(const struct HksBlob *keyAlias, const struct HksBlob *inData,
+SOFTBUS_VISIBILITY int32_t LnnDecryptDataByHuks(const struct HksBlob *keyAlias, const struct HksBlob *inData,
     struct HksBlob *outData)
 {
     if (keyAlias == NULL || inData == NULL || outData == NULL || inData->size == 0) {
@@ -747,7 +747,7 @@ int32_t LnnDecryptDataByHuks(const struct HksBlob *keyAlias, const struct HksBlo
     return DecryptDataCore(keyAlias, inData, outData, BuildDeDecryptParamSet);
 }
 
-int32_t LnnCeEncryptDataByHuks(const struct HksBlob *keyAlias, const struct HksBlob *inData,
+SOFTBUS_VISIBILITY int32_t LnnCeEncryptDataByHuks(const struct HksBlob *keyAlias, const struct HksBlob *inData,
     struct HksBlob *outData)
 {
     if (keyAlias == NULL || inData == NULL || outData == NULL || inData->size == 0) {
@@ -771,7 +771,7 @@ int32_t LnnCeEncryptDataByHuks(const struct HksBlob *keyAlias, const struct HksB
     return ret;
 }
 
-int32_t LnnCeDecryptDataByHuks(const struct HksBlob *keyAlias, const struct HksBlob *inData,
+SOFTBUS_VISIBILITY int32_t LnnCeDecryptDataByHuks(const struct HksBlob *keyAlias, const struct HksBlob *inData,
     struct HksBlob *outData)
 {
     if (keyAlias == NULL || inData == NULL || outData == NULL || inData->size == 0) {
@@ -781,7 +781,7 @@ int32_t LnnCeDecryptDataByHuks(const struct HksBlob *keyAlias, const struct HksB
     return DecryptDataCore(keyAlias, inData, outData, BuildCeDecryptParamSet);
 }
 
-int32_t LnnGenerateRandomByHuks(uint8_t *random, uint32_t len)
+SOFTBUS_VISIBILITY int32_t LnnGenerateRandomByHuks(uint8_t *random, uint32_t len)
 {
     if (random == NULL) {
         LNN_LOGE(LNN_LEDGER, "invalid param");

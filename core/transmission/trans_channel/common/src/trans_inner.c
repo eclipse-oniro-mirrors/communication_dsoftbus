@@ -24,6 +24,7 @@
 #include "softbus_adapter_thread.h"
 #include "softbus_common.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 #include "softbus_proxychannel_manager.h"
 #include "softbus_socket.h"
 #include "softbus_tcp_socket.h"
@@ -144,7 +145,7 @@ void TransSrvDelInnerDataBufNode(int32_t channelId)
     (void)SoftBusMutexUnlock(&g_innerChannelDataBufList->lock);
 }
 
-int32_t TransInnerAddDataBufNode(int32_t channelId, int32_t fd, int32_t channelType)
+SOFTBUS_VISIBILITY int32_t TransInnerAddDataBufNode(int32_t channelId, int32_t fd, int32_t channelType)
 {
     if (channelType != CHANNEL_TYPE_TCP_DIRECT) {
         return SOFTBUS_OK;
@@ -179,7 +180,7 @@ int32_t TransInnerAddDataBufNode(int32_t channelId, int32_t fd, int32_t channelT
     return SOFTBUS_OK;
 }
 
-int32_t InnerAddSession(InnerSessionInfo *innerInfo)
+SOFTBUS_VISIBILITY int32_t InnerAddSession(InnerSessionInfo *innerInfo)
 {
     TRANS_CHECK_AND_RETURN_RET_LOGE(innerInfo != NULL, SOFTBUS_INVALID_PARAM, TRANS_CTRL, "invalid param");
     TRANS_CHECK_AND_RETURN_RET_LOGE(g_sessionList != NULL, SOFTBUS_NO_INIT, TRANS_CTRL, "session list not init");
@@ -733,7 +734,7 @@ static int32_t DirectChannelOnDataEvent(ListenerModule module, int32_t events, i
     return SOFTBUS_OK;
 }
 
-int32_t DirectChannelCreateListener(int32_t fd)
+SOFTBUS_VISIBILITY int32_t DirectChannelCreateListener(int32_t fd)
 {
     if (SoftBusMutexLock(&g_directChannelInitLock) != SOFTBUS_OK) {
         TRANS_LOGE(TRANS_CTRL, "lock failed");
@@ -1097,7 +1098,7 @@ static int32_t ClientTransProxySubPacketProc(int32_t channelId, const SliceHead 
     return ret;
 }
 
-int32_t ProxyDataRecvHandler(int32_t channelId, const char *data, uint32_t len)
+SOFTBUS_VISIBILITY int32_t ProxyDataRecvHandler(int32_t channelId, const char *data, uint32_t len)
 {
     if (data == NULL || len <= sizeof(SliceHead)) {
         TRANS_LOGE(TRANS_CTRL, "dataLen err, len=%{public}u, channelId=%{public}d", len, channelId);
@@ -1179,7 +1180,7 @@ static int32_t ProxySendData(int32_t channelId, const void *data, uint32_t len, 
     return SOFTBUS_OK;
 }
 
-int32_t TransSendData(int32_t channelId, const void *data, uint32_t len)
+SOFTBUS_VISIBILITY int32_t TransSendData(int32_t channelId, const void *data, uint32_t len)
 {
     TransInnerSessionInfo info = { 0 };
     int32_t ret = GetSessionInfoByChanId(channelId, &info);
@@ -1193,7 +1194,7 @@ int32_t TransSendData(int32_t channelId, const void *data, uint32_t len)
     return TdcSendData(channelId, data, len);
 }
 
-void CloseSessionInner(int32_t channelId)
+SOFTBUS_SYMBOL_EXPORT void CloseSessionInner(int32_t channelId)
 {
     TransInnerSessionInfo info = { 0 };
     int32_t ret = GetSessionInfoByChanId(channelId, &info);
@@ -1217,7 +1218,8 @@ void CloseSessionInner(int32_t channelId)
     DeleteSession(info.fd, info.channelId);
 }
 
-int32_t GetSessionInfo(int32_t channelId, int32_t *fd, int32_t *channelType, char *sessionKey, int32_t keyLen)
+SOFTBUS_SYMBOL_EXPORT int32_t GetSessionInfo(int32_t channelId, int32_t *fd, int32_t *channelType, char *sessionKey,
+    int32_t keyLen)
 {
     TRANS_LOGI(TRANS_CTRL, "enter! channelId=%{public}d", channelId);
     AppInfo appInfo;
@@ -1281,7 +1283,7 @@ void InnerListDeinit(void)
     (void)SoftBusMutexDestroy(&g_directChannelInitLock);
 }
 
-int32_t ServerSideSendAck(int32_t sessionId, int32_t result)
+SOFTBUS_VISIBILITY int32_t ServerSideSendAck(int32_t sessionId, int32_t result)
 {
     int32_t channelType = CHANNEL_TYPE_TCP_DIRECT;
     AppInfo appInfo;

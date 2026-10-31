@@ -18,6 +18,11 @@ module_output_path = "dsoftbus/soft_bus/transmission"
 
 ohos_unittest("TransClientProxyTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "trans_client_proxy_test.cpp" ]
 
   include_dirs = [
@@ -29,7 +34,7 @@ ohos_unittest("TransClientProxyTest") {
 
   deps = [
     "$dsoftbus_core_path/common:softbus_utils",
-    "$dsoftbus_core_path/frame:softbus_server",
+    "$dsoftbus_core_path/frame:softbus_server_test",
     "$dsoftbus_root_path/adapter:softbus_adapter",
   ]
 
@@ -43,6 +48,11 @@ ohos_unittest("TransClientProxyTest") {
 
 ohos_unittest("TransClientProxyStandardTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "trans_client_proxy_standard_test.cpp" ]
 
   include_dirs = [
@@ -53,7 +63,7 @@ ohos_unittest("TransClientProxyStandardTest") {
 
   deps = [
     "$dsoftbus_core_path/common:softbus_utils",
-    "$dsoftbus_core_path/frame:softbus_server",
+    "$dsoftbus_core_path/frame:softbus_server_test",
   ]
 
   external_deps = [
@@ -66,9 +76,12 @@ ohos_unittest("TransClientProxyStandardTest") {
 
 ohos_unittest("TransClientProxyGitpidTest") {
   module_out_path = module_output_path
-  sources = [
-    "trans_client_proxy_getpid_test.cpp"
-  ]
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+  sources = [ "trans_client_proxy_getpid_test.cpp" ]
 
   include_dirs = [
     "$dsoftbus_core_path/transmission/ipc/standard/include",
@@ -78,7 +91,7 @@ ohos_unittest("TransClientProxyGitpidTest") {
 
   deps = [
     "$dsoftbus_core_path/common:softbus_utils",
-    "$dsoftbus_core_path/frame:softbus_server",
+    "$dsoftbus_core_path/frame:softbus_server_test",
     "$dsoftbus_root_path/adapter:softbus_adapter",
   ]
 
@@ -93,8 +106,8 @@ ohos_unittest("TransClientProxyGitpidTest") {
 group("unittest") {
   testonly = true
   deps = [
+    ":TransClientProxyGitpidTest",
     ":TransClientProxyStandardTest",
     ":TransClientProxyTest",
-    ":TransClientProxyGitpidTest",
   ]
 }

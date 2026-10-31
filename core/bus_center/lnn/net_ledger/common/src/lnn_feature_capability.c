@@ -18,6 +18,7 @@
 
 #include "g_enhance_lnn_func_pack.h"
 #include "softbus_feature_config.h"
+#include "softbus_def.h"
 
 #define DEFAUTL_LNN_FEATURE 0x3E2 // 0x3EA
 
@@ -41,12 +42,12 @@ int32_t LnnClearFeatureCapability(uint64_t *feature, FeatureCapability capaBit)
     return SOFTBUS_OK;
 }
 
-bool IsFeatureSupport(uint64_t feature, FeatureCapability capaBit)
+SOFTBUS_VISIBILITY bool IsFeatureSupport(uint64_t feature, FeatureCapability capaBit)
 {
     return ((feature & (1 << (uint64_t)capaBit)) != 0);
 }
 
-uint64_t LnnGetFeatureCapabilty(void)
+SOFTBUS_VISIBILITY uint64_t LnnGetFeatureCapabilty(void)
 {
     uint64_t configValue;
     if (SoftbusGetConfig(SOFTBUS_INT_LNN_SUPPORT_FEATURE,

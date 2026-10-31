@@ -123,7 +123,8 @@ static int32_t TransProxyPostPacketData(int32_t channelId, const unsigned char *
     return ret;
 }
 
-int32_t TransProxyPostSessionData(int32_t channelId, const unsigned char *data, uint32_t len, SessionPktType flags)
+SOFTBUS_SYMBOL_EXPORT int32_t TransProxyPostSessionData(int32_t channelId, const unsigned char *data,
+    uint32_t len, SessionPktType flags)
 {
     ProxyPacketType type = SessionTypeToPacketType(flags);
     return TransProxyPostPacketData(channelId, data, len, type);

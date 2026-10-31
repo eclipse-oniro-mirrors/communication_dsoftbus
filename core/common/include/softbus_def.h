@@ -40,6 +40,18 @@ extern "C" {
 #define NO_SANITIZE(type)
 #endif
 
+#ifdef DSOFTBUS_TEST_BUILD
+#define SOFTBUS_VISIBILITY __attribute__((weak))
+#else
+#define SOFTBUS_VISIBILITY
+#endif
+
+#ifdef DSOFTBUS_TEST_BUILD
+#define SOFTBUS_SYMBOL_EXPORT
+#else
+#define SOFTBUS_SYMBOL_EXPORT __attribute__((visibility("default"), used, noinline))
+#endif
+
 #define INVALID_SESSION_ID (-1)
 #define INVALID_CHANNEL_ID (-1)
 #define INVALID_ROUTE_TYPE (-1)

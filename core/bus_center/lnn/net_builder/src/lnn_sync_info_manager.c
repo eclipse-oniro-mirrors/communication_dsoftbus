@@ -29,6 +29,7 @@
 #include "lnn_log.h"
 #include "softbus_adapter_json.h"
 #include "softbus_adapter_mem.h"
+#include "softbus_def.h"
 #include "softbus_transmission_interface.h"
 
 #define MSG_HEAD_LEN 4
@@ -847,7 +848,7 @@ static void OnWifiDirectSyncAuthClose(AuthHandle authHandle)
     LNN_LOGW(LNN_BUILDER, "authId=%{public}" PRId64, authHandle.authId);
 }
 
-int32_t LnnInitSyncInfoManager(void)
+SOFTBUS_VISIBILITY int32_t LnnInitSyncInfoManager(void)
 {
     int32_t i;
 
@@ -891,7 +892,7 @@ int32_t LnnInitSyncInfoManager(void)
     return SOFTBUS_OK;
 }
 
-void LnnDeinitSyncInfoManager(void)
+SOFTBUS_VISIBILITY void LnnDeinitSyncInfoManager(void)
 {
     int32_t i;
     for (i = 0; i < LNN_INFO_TYPE_COUNT; ++i) {
@@ -909,7 +910,7 @@ void LnnDeinitSyncInfoManager(void)
     SoftBusMutexDestroy(&g_syncInfoManager.lock);
 }
 
-int32_t LnnRegSyncInfoHandler(LnnSyncInfoType type, LnnSyncInfoMsgHandler handler)
+SOFTBUS_VISIBILITY int32_t LnnRegSyncInfoHandler(LnnSyncInfoType type, LnnSyncInfoMsgHandler handler)
 {
     if (type >= LNN_INFO_TYPE_COUNT || handler == NULL) {
         LNN_LOGE(LNN_BUILDER, "invalid sync info hander reg param. type=%{public}d", type);
@@ -929,7 +930,7 @@ int32_t LnnRegSyncInfoHandler(LnnSyncInfoType type, LnnSyncInfoMsgHandler handle
     return SOFTBUS_OK;
 }
 
-int32_t LnnUnregSyncInfoHandler(LnnSyncInfoType type, LnnSyncInfoMsgHandler handler)
+SOFTBUS_VISIBILITY int32_t LnnUnregSyncInfoHandler(LnnSyncInfoType type, LnnSyncInfoMsgHandler handler)
 {
     if (type >= LNN_INFO_TYPE_COUNT || handler == NULL) {
         LNN_LOGE(LNN_BUILDER, "invalid sync info hander unreg param. type=%{public}d", type);
@@ -1176,7 +1177,7 @@ static bool IsNeedSyncByAuth(const char *networkId)
     return true;
 }
 
-int32_t LnnSendSyncInfoMsg(LnnSyncInfoType type, const char *networkId,
+SOFTBUS_VISIBILITY int32_t LnnSendSyncInfoMsg(LnnSyncInfoType type, const char *networkId,
     const uint8_t *msg, uint32_t len, LnnSyncInfoMsgComplete complete)
 {
     SyncInfoMsg *syncMsg = NULL;
@@ -1236,7 +1237,7 @@ static int32_t GetAuthHandleByNetworkId(const char *networkId, AuthHandle *authH
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t LnnSendP2pSyncInfoMsg(const char *networkId, uint32_t netCapability)
+SOFTBUS_VISIBILITY int32_t LnnSendP2pSyncInfoMsg(const char *networkId, uint32_t netCapability)
 {
     char *anonyNetworkId = NULL;
     if (networkId == NULL) {
@@ -1288,7 +1289,7 @@ int32_t LnnSendP2pSyncInfoMsg(const char *networkId, uint32_t netCapability)
     return SOFTBUS_OK;
 }
 
-int32_t LnnSendWifiOfflineInfoMsg(void)
+SOFTBUS_SYMBOL_EXPORT int32_t LnnSendWifiOfflineInfoMsg(void)
 {
     int32_t authPort = 0;
     char localOfflineCode[WIFI_OFFLINE_CODE_LEN] = {0};
@@ -1336,7 +1337,7 @@ int32_t LnnSendWifiOfflineInfoMsg(void)
     return SOFTBUS_OK;
 }
 
-void LnnSendAsyncInfoMsg(void *param)
+SOFTBUS_VISIBILITY void LnnSendAsyncInfoMsg(void *param)
 {
     SendSyncInfoParam *data = (SendSyncInfoParam *)param;
     if (data == NULL) {
@@ -1357,7 +1358,7 @@ void LnnSendAsyncInfoMsg(void *param)
     SoftBusFree(data);
 }
 
-SendSyncInfoParam *CreateSyncInfoParam(
+SOFTBUS_VISIBILITY SendSyncInfoParam *CreateSyncInfoParam(
     LnnSyncInfoType type, const char *networkId, const uint8_t *msg, uint32_t len, LnnSyncInfoMsgComplete complete)
 {
     SendSyncInfoParam *data = (SendSyncInfoParam *)SoftBusCalloc(sizeof(SendSyncInfoParam));

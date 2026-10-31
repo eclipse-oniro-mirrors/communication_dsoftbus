@@ -27,6 +27,7 @@
 #include "softbus_adapter_bt_common.h"
 #include "softbus_conn_interface_struct.h"
 #include "softbus_conn_manager_struct.h"
+#include "softbus_def.h"
 
 static ProxyConnectListener g_listener = {0};
 static SoftBusMutex g_reqIdLock;
@@ -615,12 +616,12 @@ static ProxyChannelManager g_proxyChannelManager = {
     .clearProxyInfo = ClearProxyInfo,
 };
 
-ProxyChannelManager *GetProxyChannelManager(void)
+SOFTBUS_VISIBILITY ProxyChannelManager *GetProxyChannelManager(void)
 {
     return &g_proxyChannelManager;
 }
 
-int32_t ProxyChannelManagerInit(void)
+SOFTBUS_VISIBILITY int32_t ProxyChannelManagerInit(void)
 {
     int32_t ret = SoftBusRcCollectionConstruct("proxy_channel", &GetProxyChannelManager()->proxyConnectionList, NULL);
     CONN_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, SOFTBUS_CREATE_LIST_ERR,

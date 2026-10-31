@@ -25,6 +25,7 @@
 #include "softbus_adapter_bt_common.h"
 #include "softbus_adapter_mem.h"
 #include "softbus_adapter_socket.h"
+#include "softbus_def.h"
 #include "wifi_direct_manager.h"
 
 #define AUTH_CONN_DATA_HEAD_SIZE             24
@@ -120,7 +121,7 @@ uint32_t GetConnId(uint64_t connId)
     return (uint32_t)(connId & MASK_UINT64_L32);
 }
 
-int32_t GetFd(uint64_t connId)
+SOFTBUS_VISIBILITY int32_t GetFd(uint64_t connId)
 {
     return (int32_t)(connId & MASK_UINT64_L32);
 }
@@ -214,12 +215,12 @@ static void NotifyDataReceived(
 }
 
 /* AuthData */
-uint32_t GetAuthDataSize(uint32_t len)
+SOFTBUS_VISIBILITY uint32_t GetAuthDataSize(uint32_t len)
 {
     return AUTH_CONN_DATA_HEAD_SIZE + len;
 }
 
-int32_t PackAuthData(const AuthDataHead *head, const uint8_t *data,
+SOFTBUS_VISIBILITY int32_t PackAuthData(const AuthDataHead *head, const uint8_t *data,
     uint8_t *buf, uint32_t size)
 {
     if (head == NULL || data == NULL || buf == NULL) {
@@ -248,7 +249,7 @@ int32_t PackAuthData(const AuthDataHead *head, const uint8_t *data,
     return SOFTBUS_OK;
 }
 
-const uint8_t *UnpackAuthData(const uint8_t *data, uint32_t len, AuthDataHead *head)
+SOFTBUS_VISIBILITY const uint8_t *UnpackAuthData(const uint8_t *data, uint32_t len, AuthDataHead *head)
 {
     if (len < GetAuthDataSize(0)) {
         AUTH_LOGE(AUTH_CONN, "head not enough");
@@ -619,7 +620,7 @@ static void OnCommDisconnected(uint32_t connectionId, const ConnectionInfo *info
     NotifyDisconnected(GenConnId(connInfo.type, connectionId), &connInfo);
 }
 
-int32_t GetConnInfoByConnectionId(uint32_t connectionId, AuthConnInfo *connInfo)
+SOFTBUS_SYMBOL_EXPORT int32_t GetConnInfoByConnectionId(uint32_t connectionId, AuthConnInfo *connInfo)
 {
     ConnectionInfo info = { 0 };
     int32_t ret = ConnGetConnectionInfo(connectionId, &info);
@@ -974,7 +975,7 @@ static int32_t PostBytesForSessionKey(int32_t fd, const AuthDataHead *head, cons
     return ret;
 }
 
-int32_t PostAuthData(uint64_t connId, bool toServer, const AuthDataHead *head, const uint8_t *data)
+SOFTBUS_VISIBILITY int32_t PostAuthData(uint64_t connId, bool toServer, const AuthDataHead *head, const uint8_t *data)
 {
     CHECK_NULL_PTR_RETURN_VALUE(head, SOFTBUS_INVALID_PARAM);
     CHECK_NULL_PTR_RETURN_VALUE(data, SOFTBUS_INVALID_PARAM);
@@ -1037,7 +1038,7 @@ bool CheckActiveAuthConnection(const AuthConnInfo *connInfo)
     return CheckActiveConnection(&connOpt, true);
 }
 
-int32_t AuthStartListening(AuthLinkType type, const char *ip, int32_t port)
+SOFTBUS_VISIBILITY int32_t AuthStartListening(AuthLinkType type, const char *ip, int32_t port)
 {
     if (ip == NULL) {
         AUTH_LOGW(AUTH_CONN, "invalid param");
@@ -1080,7 +1081,7 @@ int32_t AuthStartListening(AuthLinkType type, const char *ip, int32_t port)
     return SOFTBUS_INVALID_PARAM;
 }
 
-void AuthStopListening(AuthLinkType type)
+SOFTBUS_VISIBILITY void AuthStopListening(AuthLinkType type)
 {
     AUTH_LOGI(AUTH_CONN, "stop auth listening, linkType=%{public}d", type);
     switch (type) {
@@ -1099,7 +1100,8 @@ void AuthStopListening(AuthLinkType type)
     }
 }
 
-int32_t AuthStartListeningForWifiDirect(AuthLinkType type, const char *ip, int32_t port, ListenerModule *moduleId)
+SOFTBUS_SYMBOL_EXPORT int32_t AuthStartListeningForWifiDirect(AuthLinkType type, const char *ip, int32_t port,
+    ListenerModule *moduleId)
 {
     AUTH_CHECK_AND_RETURN_RET_LOGE(ip != NULL, SOFTBUS_INVALID_PARAM, AUTH_CONN, "ip is null");
     AUTH_CHECK_AND_RETURN_RET_LOGE(moduleId != NULL, SOFTBUS_INVALID_PARAM, AUTH_CONN, "moduleId is null");
@@ -1135,7 +1137,7 @@ int32_t AuthStartListeningForWifiDirect(AuthLinkType type, const char *ip, int32
     return realPort;
 }
 
-void AuthStopListeningForWifiDirect(AuthLinkType type, ListenerModule moduleId)
+SOFTBUS_SYMBOL_EXPORT void AuthStopListeningForWifiDirect(AuthLinkType type, ListenerModule moduleId)
 {
     AUTH_CHECK_AND_RETURN_LOGE(type == AUTH_LINK_TYPE_P2P || type == AUTH_LINK_TYPE_ENHANCED_P2P, AUTH_CONN,
                                "invalid type=%{public}d", type);

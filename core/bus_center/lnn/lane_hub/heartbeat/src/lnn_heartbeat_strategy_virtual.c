@@ -16,7 +16,9 @@
 #include "lnn_heartbeat_strategy.h"
 
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
+SOFTBUS_VISIBILITY
 int32_t LnnStartHbByTypeAndStrategy(LnnHeartbeatType hbType, LnnHeartbeatStrategyType strategyType, bool isRelay)
 {
     (void)hbType;
@@ -25,13 +27,13 @@ int32_t LnnStartHbByTypeAndStrategy(LnnHeartbeatType hbType, LnnHeartbeatStrateg
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnStartHeartbeat(uint64_t delayMillis)
+SOFTBUS_VISIBILITY int32_t LnnStartHeartbeat(uint64_t delayMillis)
 {
     (void)delayMillis;
     return SOFTBUS_OK;
 }
 
-int32_t LnnStartHbByTypeAndStrategyEx(LnnProcessSendOnceMsgPara *msgPara)
+SOFTBUS_VISIBILITY int32_t LnnStartHbByTypeAndStrategyEx(LnnProcessSendOnceMsgPara *msgPara)
 {
     (void)msgPara;
     return SOFTBUS_NOT_IMPLEMENT;
@@ -43,7 +45,7 @@ LnnHeartbeatStrategyType GetStrategyTypeByPolicy(int32_t policy)
     return STRATEGY_HB_SEND_SINGLE;
 }
 
-int32_t LnnEnableHeartbeatByType(LnnHeartbeatType type, bool isEnable)
+SOFTBUS_VISIBILITY int32_t LnnEnableHeartbeatByType(LnnHeartbeatType type, bool isEnable)
 {
     (void)type;
     (void)isEnable;
@@ -67,7 +69,7 @@ int32_t LnnGetHbStrategyManager(LnnHeartbeatStrategyManager *mgr, LnnHeartbeatTy
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnGetMediumParamBySpecificType(LnnHeartbeatMediumParam *param, LnnHeartbeatType type)
+SOFTBUS_SYMBOL_EXPORT int32_t LnnGetMediumParamBySpecificType(LnnHeartbeatMediumParam *param, LnnHeartbeatType type)
 {
     (void)param;
     (void)type;
@@ -76,12 +78,12 @@ int32_t LnnGetMediumParamBySpecificType(LnnHeartbeatMediumParam *param, LnnHeart
 
 void LnnHbStrategyDeinit(void) { }
 
-int32_t LnnHbStrategyInit(void)
+SOFTBUS_VISIBILITY int32_t LnnHbStrategyInit(void)
 {
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-bool LnnIsHeartbeatEnable(LnnHeartbeatType type)
+SOFTBUS_SYMBOL_EXPORT bool LnnIsHeartbeatEnable(LnnHeartbeatType type)
 {
     (void)type;
     return false;
@@ -93,9 +95,10 @@ int32_t LnnRegistParamMgrByType(LnnHeartbeatType type)
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-void LnnRemoveV0BroadcastAndCheckDev(void) { }
+SOFTBUS_VISIBILITY void LnnRemoveV0BroadcastAndCheckDev(void) { }
 
-int32_t LnnSetGearModeBySpecificType(const char *callerId, const GearMode *mode, LnnHeartbeatType type)
+SOFTBUS_VISIBILITY int32_t LnnSetGearModeBySpecificType(const char *callerId, const GearMode *mode,
+    LnnHeartbeatType type)
 {
     (void)callerId;
     (void)mode;
@@ -103,13 +106,13 @@ int32_t LnnSetGearModeBySpecificType(const char *callerId, const GearMode *mode,
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnSetHbAsMasterNodeState(bool isMasterNode)
+SOFTBUS_VISIBILITY int32_t LnnSetHbAsMasterNodeState(bool isMasterNode)
 {
     (void)isMasterNode;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnSetMediumParamBySpecificType(const LnnHeartbeatMediumParam *param)
+SOFTBUS_VISIBILITY int32_t LnnSetMediumParamBySpecificType(const LnnHeartbeatMediumParam *param)
 {
     (void)param;
     return SOFTBUS_NOT_IMPLEMENT;
@@ -126,58 +129,58 @@ int32_t LnnStartHbByTypeAndStrategyDirectly(LnnHeartbeatType hbType, LnnHeartbea
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnStartNewHbStrategyFsm(void)
+SOFTBUS_VISIBILITY int32_t LnnStartNewHbStrategyFsm(void)
 {
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnStartOfflineTimingStrategy(const char *networkId, ConnectionAddrType addrType)
-{
-    (void)networkId;
-    (void)addrType;
-    return SOFTBUS_NOT_IMPLEMENT;
-}
-
-int32_t LnnStartScreenChangeOfflineTiming(const char *networkId, ConnectionAddrType addrType)
+SOFTBUS_VISIBILITY int32_t LnnStartOfflineTimingStrategy(const char *networkId, ConnectionAddrType addrType)
 {
     (void)networkId;
     (void)addrType;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnStartSleOfflineTimingStrategy(const char *networkId)
+SOFTBUS_VISIBILITY int32_t LnnStartScreenChangeOfflineTiming(const char *networkId, ConnectionAddrType addrType)
+{
+    (void)networkId;
+    (void)addrType;
+    return SOFTBUS_NOT_IMPLEMENT;
+}
+
+SOFTBUS_VISIBILITY int32_t LnnStartSleOfflineTimingStrategy(const char *networkId)
 {
     (void)networkId;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnStopHeartBeatAdvByTypeNow(LnnHeartbeatType registedHbType)
+SOFTBUS_VISIBILITY int32_t LnnStopHeartBeatAdvByTypeNow(LnnHeartbeatType registedHbType)
 {
     (void)registedHbType;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnStopHeartbeatByType(LnnHeartbeatType type)
+SOFTBUS_VISIBILITY int32_t LnnStopHeartbeatByType(LnnHeartbeatType type)
 {
     (void)type;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnStopOfflineTimingStrategy(const char *networkId, ConnectionAddrType addrType)
+SOFTBUS_VISIBILITY int32_t LnnStopOfflineTimingStrategy(const char *networkId, ConnectionAddrType addrType)
 {
     (void)networkId;
     (void)addrType;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnStopScreenChangeOfflineTiming(const char *networkId, ConnectionAddrType addrType)
+SOFTBUS_VISIBILITY int32_t LnnStopScreenChangeOfflineTiming(const char *networkId, ConnectionAddrType addrType)
 {
     (void)networkId;
     (void)addrType;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnStopSleOfflineTimingStrategy(const char *networkId)
+SOFTBUS_VISIBILITY int32_t LnnStopSleOfflineTimingStrategy(const char *networkId)
 {
     (void)networkId;
     return SOFTBUS_NOT_IMPLEMENT;
@@ -193,7 +196,7 @@ void LnnUnRegistParamMgrByType(LnnHeartbeatType type)
     (void)type;
 }
 
-int32_t LnnUpdateSendInfoStrategy(LnnHeartbeatUpdateInfoType type)
+SOFTBUS_VISIBILITY int32_t LnnUpdateSendInfoStrategy(LnnHeartbeatUpdateInfoType type)
 {
     (void)type;
     return SOFTBUS_NOT_IMPLEMENT;

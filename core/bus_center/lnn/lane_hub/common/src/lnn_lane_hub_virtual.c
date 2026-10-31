@@ -16,14 +16,15 @@
 #include "lnn_lane_hub.h"
 #include "lnn_log.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
-int32_t LnnInitLaneHub(void)
+SOFTBUS_VISIBILITY int32_t LnnInitLaneHub(void)
 {
     LNN_LOGI(LNN_INIT, "init virtual lane hub");
     return SOFTBUS_OK;
 }
 
-int32_t LnnInitLaneHubDelay(void)
+SOFTBUS_VISIBILITY int32_t LnnInitLaneHubDelay(void)
 {
     LNN_LOGI(LNN_INIT, "init virtual lane hub delay");
     return SOFTBUS_OK;

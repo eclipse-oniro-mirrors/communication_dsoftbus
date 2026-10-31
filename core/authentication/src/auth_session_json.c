@@ -40,6 +40,7 @@
 #include "softbus_adapter_mem.h"
 #include "softbus_adapter_socket.h"
 #include "softbus_feature_config.h"
+#include "softbus_def.h"
 #include "softbus_socket.h"
 
 /* DeviceId */
@@ -382,7 +383,7 @@ static bool GetUdidOrShortHash(const AuthSessionInfo *info, char *udidBuf, uint3
     return false;
 }
 
-bool GetUdidShortHash(const AuthSessionInfo *info, char *udidBuf, uint32_t bufLen)
+SOFTBUS_VISIBILITY bool GetUdidShortHash(const AuthSessionInfo *info, char *udidBuf, uint32_t bufLen)
 {
     if (info == NULL || udidBuf == NULL || bufLen <= UDID_SHORT_HASH_HEX_STR) {
         AUTH_LOGE(AUTH_FSM, "param error");
@@ -908,7 +909,7 @@ static void UnpackFastAuth(JsonObj *obj, AuthSessionInfo *info)
     (void)memset_s(&deviceKey, sizeof(deviceKey), 0, sizeof(deviceKey));
 }
 
-bool IsSameAccount(const char *accountHash)
+SOFTBUS_VISIBILITY bool IsSameAccount(const char *accountHash)
 {
     if (accountHash == NULL) {
         AUTH_LOGE(AUTH_FSM, "invalid param");
@@ -930,7 +931,7 @@ bool IsSameAccount(const char *accountHash)
         (!LnnIsDefaultOhosAccount());
 }
 
-int32_t GetLocalUdidShortHash(char *localUdidHash)
+SOFTBUS_VISIBILITY int32_t GetLocalUdidShortHash(char *localUdidHash)
 {
     if (localUdidHash == NULL) {
         AUTH_LOGE(AUTH_FSM, "localUdidHash is null");
@@ -3379,7 +3380,7 @@ static bool IsInvalidDeviceInfo(JsonObj *obj, NodeInfo *nodeInfo, const AuthSess
     return false;
 }
 
-int32_t UnpackDeviceInfoMessage(
+SOFTBUS_SYMBOL_EXPORT int32_t UnpackDeviceInfoMessage(
     const DevInfoData *devInfo, NodeInfo *nodeInfo, bool isMetaAuth, const AuthSessionInfo *info)
 {
     AUTH_CHECK_AND_RETURN_RET_LOGE(devInfo != NULL, SOFTBUS_INVALID_PARAM, AUTH_FSM, "devInfo is NULL");

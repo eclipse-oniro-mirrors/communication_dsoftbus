@@ -315,6 +315,7 @@ static int32_t ConnGattTransSend(ConnBleConnection *connection, const uint8_t *d
     return SOFTBUS_OK;
 }
 
+SOFTBUS_VISIBILITY
 int32_t ConnBlePostBytesInner(uint32_t connectionId, uint8_t *data, uint32_t dataLen, int32_t pid, int32_t flag,
     int32_t module, int64_t seq, PostBytesFinishAction postBytesFinishAction)
 {
@@ -465,6 +466,7 @@ static int64_t ConnBlePackCtrlMsgHeader(ConnPktHead *header, uint32_t dataLen)
     return seq;
 }
 
+SOFTBUS_VISIBILITY
 int64_t ConnBlePackCtlMessage(BleCtlMessageSerializationContext ctx, uint8_t **outData, uint32_t *outDataLen)
 {
     char *data = NULL;

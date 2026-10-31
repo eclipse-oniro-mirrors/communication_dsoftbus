@@ -262,7 +262,7 @@ int32_t TransPagingUpdatePagingChannelInfo(ProxyChannelInfo *info)
     return SOFTBUS_TRANS_NODE_NOT_FOUND;
 }
 
-int32_t TransPagingUpdatePidAndData(int32_t channelId, int32_t pid, char *data, uint32_t len)
+SOFTBUS_VISIBILITY int32_t TransPagingUpdatePidAndData(int32_t channelId, int32_t pid, char *data, uint32_t len)
 {
     TRANS_CHECK_AND_RETURN_RET_LOGE((g_proxyChannelList != NULL && data != NULL && len <= EXTRA_DATA_MAX_LEN),
         SOFTBUS_INVALID_PARAM, TRANS_CTRL, "g_proxyChannelList or item is null");
@@ -338,7 +338,7 @@ static void TransOnGenFailed(uint32_t requestId, int32_t reason)
     TRANS_LOGE(TRANS_CTRL, "requestId=%{public}u, reason=%{public}d", requestId, reason);
 }
 
-void TransPagingBadKeyRetry(int32_t channelId)
+SOFTBUS_VISIBILITY void TransPagingBadKeyRetry(int32_t channelId)
 {
     ProxyChannelInfo chan;
     (void)memset_s(&chan, sizeof(ProxyChannelInfo), 0, sizeof(ProxyChannelInfo));
@@ -462,7 +462,7 @@ int32_t TransProxySpecialUpdateChanInfo(ProxyChannelInfo *channelInfo)
     return SOFTBUS_TRANS_NODE_NOT_FOUND;
 }
 
-int32_t TransProxyGetChanByChanId(int32_t chanId, ProxyChannelInfo *chan)
+SOFTBUS_VISIBILITY int32_t TransProxyGetChanByChanId(int32_t chanId, ProxyChannelInfo *chan)
 {
     TRANS_CHECK_AND_RETURN_RET_LOGE((g_proxyChannelList != NULL && chan != NULL), SOFTBUS_INVALID_PARAM, TRANS_CTRL,
         "trans proxy get channel param nullptr!");
@@ -560,7 +560,7 @@ void TransProxyDelChanByReqId(int32_t reqId, int32_t errCode)
     (void)SoftBusMutexUnlock(&g_proxyChannelList->lock);
 }
 
-void TransProxyDelChanByChanId(int32_t chanlId)
+SOFTBUS_SYMBOL_EXPORT void TransProxyDelChanByChanId(int32_t chanlId)
 {
     ProxyChannelInfo *item = NULL;
     ProxyChannelInfo *nextNode = NULL;
@@ -715,7 +715,7 @@ static int32_t TransProxyDelByChannelId(int32_t channelId, ProxyChannelInfo *cha
 }
 
 #ifdef DSOFTBUS_FEATURE_PROXY_CHANNEL
-int32_t TransPagingResetChan(ProxyChannelInfo *chanInfo)
+SOFTBUS_VISIBILITY int32_t TransPagingResetChan(ProxyChannelInfo *chanInfo)
 {
     TRANS_CHECK_AND_RETURN_RET_LOGE(chanInfo != NULL, SOFTBUS_INVALID_PARAM, TRANS_CTRL, "chanInfo is null");
     TRANS_CHECK_AND_RETURN_RET_LOGE(
@@ -835,7 +835,7 @@ static int32_t TransProxyKeepAliveChan(ProxyChannelInfo *chanInfo)
     return SOFTBUS_TRANS_NODE_NOT_FOUND;
 }
 
-int32_t TransProxyGetSendMsgChanInfo(int32_t channelId, ProxyChannelInfo *chanInfo)
+SOFTBUS_VISIBILITY int32_t TransProxyGetSendMsgChanInfo(int32_t channelId, ProxyChannelInfo *chanInfo)
 {
     ProxyChannelInfo *item = NULL;
 
@@ -881,7 +881,7 @@ int32_t TransProxyGetAuthId(int32_t channelId, AuthHandle *authHandle)
     return SOFTBUS_TRANS_NODE_NOT_FOUND;
 }
 
-int32_t TransProxyGetChannelCapaByChanId(int32_t channelId, uint32_t *channelCapability)
+SOFTBUS_VISIBILITY int32_t TransProxyGetChannelCapaByChanId(int32_t channelId, uint32_t *channelCapability)
 {
     TRANS_CHECK_AND_RETURN_RET_LOGE(
         channelCapability != NULL, SOFTBUS_INVALID_PARAM, TRANS_CTRL, "channelCapability is null");
@@ -905,7 +905,7 @@ int32_t TransProxyGetChannelCapaByChanId(int32_t channelId, uint32_t *channelCap
     return SOFTBUS_TRANS_SESSION_INFO_NOT_FOUND;
 }
 
-int32_t TransProxyGetSessionKeyByChanId(int32_t channelId, char *sessionKey, uint32_t sessionKeySize)
+SOFTBUS_VISIBILITY int32_t TransProxyGetSessionKeyByChanId(int32_t channelId, char *sessionKey, uint32_t sessionKeySize)
 {
     TRANS_CHECK_AND_RETURN_RET_LOGE(sessionKey != NULL, SOFTBUS_INVALID_PARAM, TRANS_CTRL, "sessionKey is null");
     ProxyChannelInfo *item = NULL;
@@ -933,7 +933,7 @@ int32_t TransProxyGetSessionKeyByChanId(int32_t channelId, char *sessionKey, uin
     return SOFTBUS_TRANS_SESSION_INFO_NOT_FOUND;
 }
 
-void TransProxyProcessErrMsg(ProxyChannelInfo *info, int32_t errCode)
+SOFTBUS_VISIBILITY void TransProxyProcessErrMsg(ProxyChannelInfo *info, int32_t errCode)
 {
     TRANS_LOGW(TRANS_CTRL, "TransProxyProcessErrMsg errCode=%{public}d", errCode);
     TRANS_CHECK_AND_RETURN_LOGE(
@@ -944,7 +944,7 @@ void TransProxyProcessErrMsg(ProxyChannelInfo *info, int32_t errCode)
     }
 }
 
-int32_t TransProxyGetAppInfoById(int16_t channelId, AppInfo *appInfo)
+SOFTBUS_VISIBILITY int32_t TransProxyGetAppInfoById(int16_t channelId, AppInfo *appInfo)
 {
     ProxyChannelInfo *item = NULL;
 
@@ -1039,6 +1039,7 @@ static void TransProxyReportAuditEvent(ProxyChannelInfo *info, SoftbusAuditType 
 }
 
 #ifdef DSOFTBUS_FEATURE_PROXY_CHANNEL
+SOFTBUS_VISIBILITY
 int32_t TransPagingHandshakeUnPackErrMsg(ProxyChannelInfo *chan, const ProxyMessage *msg, int32_t *errCode)
 {
     if (errCode == NULL || chan == NULL || msg == NULL) {
@@ -1788,7 +1789,7 @@ static int32_t TransHandleD2DProxyChannelOpened(int32_t channelId, int32_t openR
     return OnProxyChannelBind(chan->channelId, &chan->appInfo);
 }
 
-int32_t TransDealProxyChannelOpenResult(
+SOFTBUS_VISIBILITY int32_t TransDealProxyChannelOpenResult(
     int32_t channelId, int32_t openResult, const AccessInfo *accessInfo, pid_t callingPid)
 {
     ProxyChannelInfo chan = { 0 };
@@ -2173,7 +2174,7 @@ int32_t TransProxyCreateChanInfo(ProxyChannelInfo *chan, int32_t channelId, cons
 }
 
 #ifdef DSOFTBUS_FEATURE_PROXY_CHANNEL
-int32_t TransProxyCreatePagingChanInfo(ProxyChannelInfo *chan)
+SOFTBUS_VISIBILITY int32_t TransProxyCreatePagingChanInfo(ProxyChannelInfo *chan)
 {
     TRANS_CHECK_AND_RETURN_RET_LOGE(chan != NULL, SOFTBUS_INVALID_PARAM, TRANS_CTRL, "channel info is null");
     int32_t ret = TransProxyAddChanItem(chan);
@@ -2276,7 +2277,8 @@ void TransProxyOpenProxyChannelFail(int32_t channelId, const AppInfo *appInfo, i
     SoftBusHitraceChainEnd();
 }
 
-int32_t TransProxyOpenProxyChannel(AppInfo *appInfo, const ConnectOption *connInfo, int32_t *channelId)
+SOFTBUS_VISIBILITY int32_t TransProxyOpenProxyChannel(AppInfo *appInfo, const ConnectOption *connInfo,
+    int32_t *channelId)
 {
     if (appInfo == NULL || connInfo == NULL || channelId == NULL) {
         TRANS_LOGE(TRANS_CTRL, "open normal channel: invalid para");
@@ -2287,7 +2289,36 @@ int32_t TransProxyOpenProxyChannel(AppInfo *appInfo, const ConnectOption *connIn
     return TransProxyOpenConnChannel(appInfo, connInfo, channelId);
 }
 
-int32_t TransProxyCloseProxyChannel(int32_t channelId)
+int32_t TransProxySetDisconnectPolicy(int32_t channelId, DisconnectPolicy policy)
+{
+    if (channelId < 0 || policy < DISCONNECT_POLICY_DEFAULT || policy >= DISCONNECT_POLICY_BUTT) {
+        TRANS_LOGE(TRANS_CTRL, "invalid param, channelId=%{public}d, policy=%{public}d", channelId, policy);
+        return SOFTBUS_INVALID_PARAM;
+    }
+    if (g_proxyChannelList == NULL) {
+        TRANS_LOGE(TRANS_CTRL, "g_proxyChannelList is null");
+        return SOFTBUS_NO_INIT;
+    }
+    if (SoftBusMutexLock(&g_proxyChannelList->lock) != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_CTRL, "lock mutex fail!");
+        return SOFTBUS_LOCK_ERR;
+    }
+    ProxyChannelInfo *item = NULL;
+    int32_t ret = SOFTBUS_TRANS_NODE_NOT_FOUND;
+    LIST_FOR_EACH_ENTRY(item, &g_proxyChannelList->list, ProxyChannelInfo, node) {
+        if (item->channelId == channelId) {
+            item->appInfo.disconnectPolicy = policy;
+            ret = SOFTBUS_OK;
+            break;
+        }
+    }
+    (void)SoftBusMutexUnlock(&g_proxyChannelList->lock);
+    TRANS_LOGI(TRANS_CTRL, "set disconnect policy, channelId=%{public}d, policy=%{public}d, ret=%{public}d",
+        channelId, policy, ret);
+    return ret;
+}
+
+SOFTBUS_VISIBILITY int32_t TransProxyCloseProxyChannel(int32_t channelId)
 {
     ProxyChannelInfo *info = (ProxyChannelInfo *)SoftBusCalloc(sizeof(ProxyChannelInfo));
     if (info == NULL) {
@@ -2669,7 +2700,7 @@ void TransProxyDeathCallback(const char *pkgName, int32_t pid)
     TRANS_LOGD(TRANS_CTRL, "ok");
 }
 
-void TransProxyCloseChannelByRequestId(uint32_t requestId)
+SOFTBUS_SYMBOL_EXPORT void TransProxyCloseChannelByRequestId(uint32_t requestId)
 {
     TRANS_LOGI(TRANS_CTRL, "close channel by reqId=%{public}d", requestId);
     TRANS_CHECK_AND_RETURN_LOGE(g_proxyChannelList != NULL, TRANS_CTRL, "g_proxyChannelList is null");
@@ -2696,7 +2727,7 @@ void TransProxyCloseChannelByRequestId(uint32_t requestId)
     TransProxyDestroyChannelList(&destroyList);
 }
 
-int32_t TransProxyGetAppInfoByChanId(int32_t chanId, AppInfo *appInfo)
+SOFTBUS_VISIBILITY int32_t TransProxyGetAppInfoByChanId(int32_t chanId, AppInfo *appInfo)
 {
     TRANS_CHECK_AND_RETURN_RET_LOGE(appInfo != NULL, SOFTBUS_INVALID_PARAM, TRANS_CTRL, "invalid param");
 
@@ -2752,7 +2783,7 @@ int32_t TransProxyGetConnIdByChanId(int32_t channelId, int32_t *connId)
     return SOFTBUS_TRANS_NODE_NOT_FOUND;
 }
 
-int32_t TransProxyGetProxyChannelInfoByChannelId(int32_t channelId, ProxyChannelInfo *chan)
+SOFTBUS_SYMBOL_EXPORT int32_t TransProxyGetProxyChannelInfoByChannelId(int32_t channelId, ProxyChannelInfo *chan)
 {
     if (g_proxyChannelList == NULL) {
         TRANS_LOGE(TRANS_CTRL, "g_proxyChannelList is null");
@@ -2786,7 +2817,7 @@ int32_t TransProxyGetProxyChannelInfoByChannelId(int32_t channelId, ProxyChannel
     return SOFTBUS_TRANS_NODE_NOT_FOUND;
 }
 
-int32_t TransProxyGetProxyChannelIdByAuthReq(uint32_t reqId, int32_t *channelId)
+SOFTBUS_SYMBOL_EXPORT int32_t TransProxyGetProxyChannelIdByAuthReq(uint32_t reqId, int32_t *channelId)
 {
     TRANS_CHECK_AND_RETURN_RET_LOGE(
         g_proxyChannelList != NULL, SOFTBUS_NO_INIT, TRANS_CTRL, "g_proxyChannelList is null");
@@ -2806,7 +2837,7 @@ int32_t TransProxyGetProxyChannelIdByAuthReq(uint32_t reqId, int32_t *channelId)
     return SOFTBUS_TRANS_PROXY_CHANNEL_NOT_FOUND;
 }
 
-int32_t TransProxySetAuthHandleByChanId(int32_t channelId, AuthHandle authHandle)
+SOFTBUS_VISIBILITY int32_t TransProxySetAuthHandleByChanId(int32_t channelId, AuthHandle authHandle)
 {
     ProxyChannelInfo *item = NULL;
     ProxyChannelInfo *nextNode = NULL;
@@ -2830,6 +2861,7 @@ int32_t TransProxySetAuthHandleByChanId(int32_t channelId, AuthHandle authHandle
 }
 
 #ifdef DSOFTBUS_FEATURE_PROXY_CHANNEL
+SOFTBUS_VISIBILITY
 int32_t TransProxyGetChannelByCheckInfo(const PagingListenCheckInfo *checkInfo, ProxyChannelInfo *chan, bool isClient)
 {
     TRANS_CHECK_AND_RETURN_RET_LOGE(
@@ -2943,7 +2975,7 @@ ERR_EXIT:
     return ret;
 }
 
-int32_t TransProxyD2dGetSleMac(int32_t channelId, int32_t pid, char *sleMac, uint32_t macLen)
+SOFTBUS_SYMBOL_EXPORT int32_t TransProxyD2dGetSleMac(int32_t channelId, int32_t pid, char *sleMac, uint32_t macLen)
 {
     TRANS_CHECK_AND_RETURN_RET_LOGE(
         sleMac != NULL && macLen > 0 && macLen <= MAC_LEN, SOFTBUS_INVALID_PARAM, TRANS_CTRL, "invalid param");

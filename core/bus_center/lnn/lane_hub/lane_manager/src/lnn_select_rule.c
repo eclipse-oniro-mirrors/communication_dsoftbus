@@ -26,6 +26,7 @@
 #include "lnn_lane_link.h"
 #include "lnn_lane_link_ledger.h"
 #include "softbus_adapter_mem.h"
+#include "softbus_def.h"
 #include "softbus_wifi_api_adapter.h"
 
 #define LNN_LINK_DEFAULT_SCORE 60    /* Indicates that scoring is not supported */
@@ -515,7 +516,7 @@ static int32_t CheckFeature(const char *networkId, LaneLinkType linkType)
     return linkAttr->linkFeatureCheck(networkId);
 }
 
-int32_t LaneCheckLinkValid(const char *networkId, LaneLinkType linkType, LaneTransType transType)
+SOFTBUS_VISIBILITY int32_t LaneCheckLinkValid(const char *networkId, LaneLinkType linkType, LaneTransType transType)
 {
     if (networkId == NULL) {
         LNN_LOGE(LNN_LANE, "invalid param, linkType=%{public}d", linkType);
@@ -626,7 +627,7 @@ static bool IsDeviceTypeExist(const char *networkId, int32_t deviceType)
     return false;
 }
 
-bool IsEnhancedWifiDirectSupported(const char *networkId)
+SOFTBUS_VISIBILITY bool IsEnhancedWifiDirectSupported(const char *networkId)
 {
     uint64_t localFeature = 0;
     uint64_t remoteFeature = 0;

@@ -17,10 +17,11 @@
 #include "softbus_init_common.h"
 
 #include <dlfcn.h>
+#include "softbus_def.h"
 
 ClientEnhanceFuncList g_clientEnhanceFuncList = { NULL };
 
-ClientEnhanceFuncList *ClientEnhanceFuncListGet(void)
+SOFTBUS_VISIBILITY ClientEnhanceFuncList *ClientEnhanceFuncListGet(void)
 {
     return &g_clientEnhanceFuncList;
 }

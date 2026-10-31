@@ -43,6 +43,7 @@
 #include "lnn_ohos_account_adapter.h"
 #include "softbus_adapter_bt_common.h"
 #include "softbus_adapter_mem.h"
+#include "softbus_def.h"
 #include "wifi_direct_manager.h"
 
 #define AUTH_TIMEOUT_MS            (10 * 1000)
@@ -2139,7 +2140,7 @@ int32_t AuthSessionGetAuthVersion(int64_t authSeq, int32_t *version)
     return SOFTBUS_OK;
 }
 
-bool AuthSessionGetIsSameAccount(int64_t authSeq)
+SOFTBUS_VISIBILITY bool AuthSessionGetIsSameAccount(int64_t authSeq)
 {
     AuthSessionInfo info = { 0 };
     if (GetSessionInfoFromAuthFsm(authSeq, &info) != SOFTBUS_OK) {
@@ -2383,7 +2384,7 @@ void AuthSessionSetReSyncDeviceName(void)
     ReleaseAuthLock();
 }
 
-int32_t AuthSessionGetUserId(int64_t authSeq)
+SOFTBUS_VISIBILITY int32_t AuthSessionGetUserId(int64_t authSeq)
 {
     AuthSessionInfo info = { 0 };
     if (GetSessionInfoFromAuthFsm(authSeq, &info) != SOFTBUS_OK) {
@@ -2401,7 +2402,7 @@ int32_t AuthSessionGetUserId(int64_t authSeq)
     return info.peerUserId;
 }
 
-int32_t AuthSessionGetSourceUserId(int64_t authSeq)
+SOFTBUS_VISIBILITY int32_t AuthSessionGetSourceUserId(int64_t authSeq)
 {
     if (!RequireAuthLock()) {
         return DEFAULT_USERID;

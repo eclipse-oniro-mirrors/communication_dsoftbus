@@ -54,11 +54,17 @@ config("softbus_connection_br_test_config") {
 
 ohos_unittest("BrConnTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   public_configs = [ ":softbus_connection_br_test_config" ]
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
   deps += dsoftbus_log_label_deps
 
@@ -70,9 +76,9 @@ ohos_unittest("BrConnTest") {
     "hilog:libhilog",
   ]
   sources = [
+    "$dsoftbus_root_path/core/frame/common/src/softbus_init_common.c",
     "$dsoftbus_root_path/tests/core/connection/br/unittest/mock/softbus_conn_br_manager_mock.cpp",
     "$dsoftbus_root_path/tests/core/connection/br/unittest/softbus_conn_br_manager_test.cpp",
-    "$dsoftbus_root_path/core/frame/common/src/softbus_init_common.c",
   ]
   include_dirs = [
     "$dsoftbus_dfx_path/interface/include/form",
@@ -82,11 +88,17 @@ ohos_unittest("BrConnTest") {
 
 ohos_unittest("ConnectionBrTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   public_configs = [ ":softbus_connection_br_test_config" ]
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -104,6 +116,11 @@ ohos_unittest("ConnectionBrTest") {
 
 ohos_unittest("BrConnectionTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   include_dirs = [
     "$dsoftbus_dfx_path/interface/include/form",
@@ -150,6 +167,11 @@ ohos_unittest("BrConnectionTest") {
 
 ohos_unittest("SoftbusBrConnectionTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   include_dirs = [
     "$dsoftbus_dfx_path/interface/include/form",
@@ -189,13 +211,18 @@ ohos_unittest("SoftbusBrConnectionTest") {
   sources = [
     "$dsoftbus_root_path/core/connection/br/src/softbus_conn_br_connection.c",
     "$dsoftbus_root_path/core/connection/br/src/softbus_conn_br_trans.c",
-    "$dsoftbus_root_path/tests/core/connection/br/unittest/softbus_conn_br_test/mock/br_connection_mock.cpp",
     "$dsoftbus_root_path/tests/core/connection/br/unittest/softbus_conn_br_test/br_connection_test.cpp",
+    "$dsoftbus_root_path/tests/core/connection/br/unittest/softbus_conn_br_test/mock/br_connection_mock.cpp",
   ]
 }
 
 ohos_unittest("BrHidumperTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   public_configs = [ ":softbus_connection_br_test_config" ]
 
@@ -219,7 +246,8 @@ ohos_unittest("BrHidumperTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
   deps += dsoftbus_log_label_deps
 
@@ -235,13 +263,18 @@ ohos_unittest("BrHidumperTest") {
     "$dsoftbus_root_path/core/connection/br/src/softbus_conn_br_manager.c",
     "$dsoftbus_root_path/core/connection/br/src/softbus_conn_br_snapshot.c",
     "$dsoftbus_root_path/core/connection/br/src/softbus_conn_br_trans.c",
-    "$dsoftbus_root_path/tests/core/connection/br/unittest/mock/softbus_conn_br_connection_mock.cpp",
     "$dsoftbus_root_path/tests/core/connection/br/unittest/connection_br_hidumper_test.cpp",
+    "$dsoftbus_root_path/tests/core/connection/br/unittest/mock/softbus_conn_br_connection_mock.cpp",
   ]
 }
 
 ohos_unittest("ConnBrPendingPacketTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   include_dirs = [
     "$dsoftbus_dfx_path/interface/include/form",
@@ -276,13 +309,19 @@ ohos_unittest("ConnBrPendingPacketTest") {
   ]
   sources = [
     "$dsoftbus_root_path/core/connection/br/src/softbus_conn_br_pending_packet.c",
-    "$dsoftbus_root_path/tests/core/connection/br/unittest/connbrpendingpacket_test/softbus_conn_br_pending_packet_test.cpp",
     "$dsoftbus_root_path/tests/core/connection/br/unittest/connbrpendingpacket_test/mock/softbus_conn_br_pending_packet_mock.cpp",
+    "$dsoftbus_root_path/tests/core/connection/br/unittest/connbrpendingpacket_test/" +
+        "softbus_conn_br_pending_packet_test.cpp",
   ]
 }
 
 ohos_unittest("ConnBrTransTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   include_dirs = [
     "$dsoftbus_dfx_path/interface/include/form",
@@ -311,7 +350,8 @@ ohos_unittest("ConnBrTransTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
   deps += dsoftbus_log_label_deps
 
@@ -331,6 +371,11 @@ ohos_unittest("ConnBrTransTest") {
 
 ohos_unittest("ConnBrSendQueueTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   include_dirs = [
     "$dsoftbus_dfx_path/interface/include/form",
@@ -365,13 +410,18 @@ ohos_unittest("ConnBrSendQueueTest") {
   ]
   sources = [
     "$dsoftbus_root_path/core/connection/br/src/softbus_conn_br_send_queue.c",
-    "$dsoftbus_root_path/tests/core/connection/br/unittest/connbrsendqueue_test/softbus_conn_br_send_queue_test.cpp",
     "$dsoftbus_root_path/tests/core/connection/br/unittest/connbrsendqueue_test/mock/softbus_conn_br_send_queue_mock.cpp",
+    "$dsoftbus_root_path/tests/core/connection/br/unittest/connbrsendqueue_test/softbus_conn_br_send_queue_test.cpp",
   ]
 }
 
 ohos_unittest("ConnBrTransUnitTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   include_dirs = [
     "$dsoftbus_dfx_path/interface/include/form",
@@ -400,7 +450,8 @@ ohos_unittest("ConnBrTransUnitTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
   deps += dsoftbus_log_label_deps
 
@@ -413,8 +464,8 @@ ohos_unittest("ConnBrTransUnitTest") {
   ]
 
   sources = [
-    "$dsoftbus_root_path/tests/core/connection/br/unittest/conn_br_trans_test/mock/br_trans_mock.cpp",
     "$dsoftbus_root_path/tests/core/connection/br/unittest/conn_br_trans_test/br_trans_test.cpp",
+    "$dsoftbus_root_path/tests/core/connection/br/unittest/conn_br_trans_test/mock/br_trans_mock.cpp",
   ]
 }
 
@@ -423,8 +474,8 @@ group("unittest") {
   deps = [
     ":BrConnectionTest",
     ":ConnBrPendingPacketTest",
-    ":ConnBrTransTest",
     ":ConnBrSendQueueTest",
+    ":ConnBrTransTest",
     ":ConnBrTransUnitTest",
   ]
 }

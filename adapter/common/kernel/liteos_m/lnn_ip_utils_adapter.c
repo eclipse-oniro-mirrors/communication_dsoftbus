@@ -17,8 +17,9 @@
 
 #include "comm_log.h"
 #include "lwip/netif.h"
+#include "softbus_def.h"
 
-int32_t GetNetworkIpByIfName(const char *ifName, char *ip, char *netmask, uint32_t len)
+SOFTBUS_SYMBOL_EXPORT int32_t GetNetworkIpByIfName(const char *ifName, char *ip, char *netmask, uint32_t len)
 {
     if (ifName == NULL || ip == NULL) {
         COMM_LOGE(COMM_ADAPTER, "ifName or ip buffer is NULL!");

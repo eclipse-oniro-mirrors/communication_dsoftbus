@@ -21,6 +21,7 @@
 #include "lnn_log.h"
 #include "softbus_adapter_mem.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 #define CHUNK 4096
 #define GZIP_ENCODING 16
@@ -124,7 +125,7 @@ static int32_t PerformInflate(z_stream *strm, uint8_t *in, uint32_t inLen, uint8
 }
 
 /* decompress data by GZIP */
-int32_t DataDecompress(uint8_t *in, uint32_t inLen, uint8_t **out, uint32_t *outLen)
+SOFTBUS_VISIBILITY int32_t DataDecompress(uint8_t *in, uint32_t inLen, uint8_t **out, uint32_t *outLen)
 {
     if ((in == NULL) || (inLen == 0) || (out == NULL) || (outLen == NULL)) {
         LNN_LOGE(LNN_STATE, "param invalid");

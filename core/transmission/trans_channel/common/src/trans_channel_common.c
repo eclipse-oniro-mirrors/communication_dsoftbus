@@ -20,6 +20,7 @@
 #include "access_control.h"
 #include "bus_center_manager.h"
 #include "g_enhance_auth_func_pack.h"
+#include "g_enhance_lnn_func_pack.h"
 #include "g_enhance_trans_func.h"
 #include "g_enhance_trans_func_pack.h"
 #include "legacy/softbus_hisysevt_transreporter.h"
@@ -33,6 +34,7 @@
 #include "softbus_error_code.h"
 #include "softbus_feature_config.h"
 #include "softbus_init_common.h"
+#include "softbus_def.h"
 #include "softbus_proxychannel_manager.h"
 #include "softbus_wifi_api_adapter.h"
 #include "trans_auth_manager.h"
@@ -107,7 +109,7 @@ static void BuildTransCloseChannelEventExtra(
     extra->result = (ret == SOFTBUS_OK) ? EVENT_STAGE_RESULT_OK : EVENT_STAGE_RESULT_FAILED;
 }
 
-LaneTransType TransGetLaneTransTypeBySession(const SessionParam *param)
+SOFTBUS_VISIBILITY LaneTransType TransGetLaneTransTypeBySession(const SessionParam *param)
 {
     if (param == NULL || param->attr == NULL) {
         return LANE_T_BUTT;
@@ -132,7 +134,7 @@ LaneTransType TransGetLaneTransTypeBySession(const SessionParam *param)
     return LANE_T_BUTT;
 }
 
-int32_t TransCommonGetLocalConfig(int32_t channelType, int32_t businessType, uint32_t *len)
+SOFTBUS_VISIBILITY int32_t TransCommonGetLocalConfig(int32_t channelType, int32_t businessType, uint32_t *len)
 {
     if (len == NULL) {
         TRANS_LOGE(TRANS_CTRL, "len is null");
@@ -233,7 +235,7 @@ void FillAppInfo(AppInfo *appInfo, const SessionParam *param, TransInfo *transIn
     }
 }
 
-void GetOsTypeByNetworkId(const char *networkId, int32_t *osType)
+SOFTBUS_VISIBILITY void GetOsTypeByNetworkId(const char *networkId, int32_t *osType)
 {
     int32_t errCode = LnnGetOsTypeByNetworkId(networkId, osType);
     if (errCode != SOFTBUS_OK) {
@@ -349,7 +351,7 @@ static void SetUdpChannelCapability(bool flagBit, uint32_t *value, int32_t offse
     }
 }
 
-int32_t TransCommonGetAppInfo(const SessionParam *param, AppInfo *appInfo)
+SOFTBUS_VISIBILITY int32_t TransCommonGetAppInfo(const SessionParam *param, AppInfo *appInfo)
 {
     TRANS_CHECK_AND_RETURN_RET_LOGE(param != NULL, SOFTBUS_INVALID_PARAM, TRANS_CTRL, "Invalid param");
     TRANS_CHECK_AND_RETURN_RET_LOGE(appInfo != NULL, SOFTBUS_INVALID_PARAM, TRANS_CTRL, "Invalid appInfo");
@@ -417,6 +419,7 @@ void TransOpenChannelSetModule(int32_t channelType, ConnectOption *connOpt)
     TRANS_LOGI(TRANS_CTRL, "set nip moduleId=%{public}d", connOpt->socketOption.moduleId);
 }
 
+SOFTBUS_VISIBILITY
 int32_t TransOpenChannelProc(ChannelType type, AppInfo *appInfo, const ConnectOption *connOpt, int32_t *channelId)
 {
     if (appInfo == NULL || connOpt == NULL) {
@@ -478,7 +481,22 @@ static int32_t CancelWaitLaneState(const char *sessionName, int32_t sessionId)
     return SOFTBUS_OK;
 }
 
-int32_t TransCommonCloseChannel(const char *sessionName, int32_t channelId, int32_t channelType)
+static void CancelWifiDirectExclusive(int32_t channelId)
+{
+    TcpChannelInfo channelInfo;
+    (void)memset_s(&channelInfo, sizeof(channelInfo), 0, sizeof(channelInfo));
+    int32_t ret = TransGetTdcChannelById(channelId, &channelInfo);
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_CTRL, "get tdc channel by id failed, skip exclusive cancel, channelId=%{public}d", channelId);
+        return;
+    }
+    ret = DcWifiDirectExclusiveCancelBySessionNamePacked(channelInfo.mySessionName);
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGW(TRANS_CTRL, "dc wifi direct exclusive cancel failed, ret=%{public}d", ret);
+    }
+}
+
+SOFTBUS_SYMBOL_EXPORT int32_t TransCommonCloseChannel(const char *sessionName, int32_t channelId, int32_t channelType)
 {
     TRANS_LOGI(TRANS_CTRL, "close channel: channelId=%{public}d, channelType=%{public}d", channelId, channelType);
     int32_t ret = SOFTBUS_TRANS_INVALID_CHANNEL_TYPE;
@@ -502,6 +520,7 @@ int32_t TransCommonCloseChannel(const char *sessionName, int32_t channelId, int3
                 break;
             case CHANNEL_TYPE_TCP_DIRECT:
                 CloseHtpChannelPacked(channelId);
+                CancelWifiDirectExclusive(channelId);
                 (void)TransDelTcpChannelInfoByChannelId(channelId);
                 (void)TransDelSessionConnById(channelId); // socket Fd will be shutdown when recv peer reply
                 (void)TransLaneMgrDelLane(channelId, channelType, false);
@@ -679,7 +698,7 @@ static bool TransGetNetCapability(const char *networkId, uint32_t *local, uint32
     return true;
 }
 
-TransDeviceState TransGetDeviceState(const char *networkId)
+SOFTBUS_VISIBILITY TransDeviceState TransGetDeviceState(const char *networkId)
 {
     if (networkId == NULL) {
         TRANS_LOGE(TRANS_CTRL, "networkId err.");
@@ -794,7 +813,7 @@ int32_t CheckSourceCollabRelation(const char *sinkNetworkId, int32_t sourcePid, 
     return SOFTBUS_OK;
 }
 
-int32_t CheckCollabRelation(const AppInfo *appInfo, int32_t channelId, int32_t channelType)
+SOFTBUS_VISIBILITY int32_t CheckCollabRelation(const AppInfo *appInfo, int32_t channelId, int32_t channelType)
 {
     if (appInfo == NULL) {
         TRANS_LOGE(TRANS_CTRL, "invalid param.");

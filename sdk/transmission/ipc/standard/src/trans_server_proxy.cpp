@@ -20,6 +20,7 @@
 #include "ipc_skeleton.h"
 #include "softbus_adapter_timer.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 #include "softbus_server_ipc_interface_code.h"
 #include "trans_log.h"
 #include "trans_server_proxy_standard.h"
@@ -93,7 +94,7 @@ static sptr<TransServerProxy> RetryGetProxy()
     return nullptr;
 }
 
-int32_t TransServerProxyInit(void)
+SOFTBUS_VISIBILITY int32_t TransServerProxyInit(void)
 {
     mallopt(M_DELAYED_FREE, M_DELAYED_FREE_ENABLE);
     TRANS_CHECK_AND_RETURN_RET_LOGE(
@@ -324,7 +325,7 @@ int32_t ServerIpcEvaluateQos(const char *peerNetworkId, TransDataType dataType, 
     return proxy->EvaluateQos(peerNetworkId, dataType, qos, qosCount);
 }
 
-int32_t ServerIpcProcessInnerEvent(int32_t eventType, uint8_t *buf, uint32_t len)
+SOFTBUS_VISIBILITY int32_t ServerIpcProcessInnerEvent(int32_t eventType, uint8_t *buf, uint32_t len)
 {
     sptr<TransServerProxy> proxy = GetProxy();
     TRANS_CHECK_AND_RETURN_RET_LOGE(

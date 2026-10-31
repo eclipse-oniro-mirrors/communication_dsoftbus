@@ -48,8 +48,17 @@ ohos_shared_library("ability_adapter") {
   cflags = [
     "-fPIC",
     "-std=c99",
+    "-fvisibility=hidden",
+    "-Oz",
+    "-fmerge-all-constants",
   ]
   cflags_cc = cflags
+
+  ldflags = [
+    "-Wl,--exclude-libs,ALL",
+    "-Wl,--hash-style=gnu",
+  ]
+  version_script = rebase_path("ability_adapter_map")
 
   sanitize = {
     cfi = true

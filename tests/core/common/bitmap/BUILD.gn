@@ -38,6 +38,11 @@ if (defined(ohos_lite)) {
   module_output_path = "dsoftbus/soft_bus/common"
   ohos_unittest("CommonCoreBitMapTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = [ "bitmap_test.cpp" ]
     include_dirs = [
       "$dsoftbus_root_path/core/common/include",

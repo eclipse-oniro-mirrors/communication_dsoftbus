@@ -42,3 +42,13 @@ int32_t AuthMetaPostTransData(int64_t authId, const AuthTransData *dataInfo)
 }
 }
 }
+
+extern "C" int32_t RegHichainSaStatusListener(void)
+{
+    return 0;
+}
+
+extern "C" int32_t LnnSubcribeKvStoreService(void)
+{
+    return 0;
+}

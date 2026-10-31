@@ -20,6 +20,11 @@ module_output_path = "dsoftbus/soft_bus/discovery"
 
 ohos_unittest("VirlinkLinklessAdapterTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_core_path/discovery/virlink/adapter/disc_virLink_adapter.c",
     "virlink_linkless_adapter_mock.c",
@@ -45,7 +50,7 @@ ohos_unittest("VirlinkLinklessAdapterTest") {
     "$dsoftbus_root_path/interfaces/kits/discovery",
     "$dsoftbus_core_path/discovery/virlink/adapter",
     "$dsoftbus_core_path/discovery/manager/include",
-    "$dsoftbus_core_path/authentication/interface/"
+    "$dsoftbus_core_path/authentication/interface/",
   ]
 
   deps = [
@@ -62,7 +67,5 @@ ohos_unittest("VirlinkLinklessAdapterTest") {
 
 group("unittest") {
   testonly = true
-  deps = [
-    ":VirlinkLinklessAdapterTest",
-  ]
+  deps = [ ":VirlinkLinklessAdapterTest" ]
 }

@@ -23,6 +23,7 @@
 #include "lnn_distributed_net_ledger.h"
 #include "lnn_net_builder.h"
 #include "softbus_adapter_mem.h"
+#include "softbus_def.h"
 #include "softbus_utils.h"
 
 #define HCI_ERR_BR_CONN_PAGE_TIMEOUT 0x04
@@ -128,7 +129,7 @@ static void ClearBrConnectException(const ConnectOption *option)
     }
 }
 
-void LnnDCReportConnectException(const ConnectOption *option, int32_t errorCode)
+SOFTBUS_VISIBILITY void LnnDCReportConnectException(const ConnectOption *option, int32_t errorCode)
 {
     LNN_CHECK_AND_RETURN_LOGW(option != NULL, LNN_STATE, "option is NULL");
     LNN_CHECK_AND_RETURN_LOGE(g_exceptionConnMgr.initFlag && g_exceptionConnMgr.connections != NULL,
@@ -150,7 +151,7 @@ void LnnDCReportConnectException(const ConnectOption *option, int32_t errorCode)
     SoftBusMutexUnlock(&g_exceptionConnMgr.connections->lock);
 }
 
-void LnnDCClearConnectException(const ConnectOption *option)
+SOFTBUS_VISIBILITY void LnnDCClearConnectException(const ConnectOption *option)
 {
     LNN_CHECK_AND_RETURN_LOGW(option != NULL, LNN_STATE, "option is NULL");
     LNN_CHECK_AND_RETURN_LOGE(g_exceptionConnMgr.initFlag && g_exceptionConnMgr.connections != NULL,
@@ -171,7 +172,7 @@ void LnnDCClearConnectException(const ConnectOption *option)
     SoftBusMutexUnlock(&g_exceptionConnMgr.connections->lock);
 }
 
-void LnnDCProcessOnlineState(bool isOnline, const NodeBasicInfo *info)
+SOFTBUS_VISIBILITY void LnnDCProcessOnlineState(bool isOnline, const NodeBasicInfo *info)
 {
     LNN_CHECK_AND_RETURN_LOGW(info != NULL, LNN_STATE, " info is NULL");
     char *anonyNetworkId = NULL;
@@ -199,7 +200,7 @@ void LnnDCProcessOnlineState(bool isOnline, const NodeBasicInfo *info)
     }
 }
 
-int32_t InitDecisionCenter(void)
+SOFTBUS_VISIBILITY int32_t InitDecisionCenter(void)
 {
     g_exceptionConnMgr.connections = CreateSoftBusList();
     if (g_exceptionConnMgr.connections == NULL) {

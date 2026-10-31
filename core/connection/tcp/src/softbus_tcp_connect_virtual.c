@@ -16,6 +16,7 @@
 #include "softbus_error_code.h"
 #include "softbus_tcp_connect_manager.h"
 #include "softbus_adapter_mem.h"
+#include "softbus_def.h"
 
 uint32_t CalTcpConnectionId(int32_t fd)
 {
@@ -85,7 +86,7 @@ int32_t TcpConnSetKeepalive(int32_t fd, bool needKeepalive)
     return SOFTBUS_OK;
 }
 
-ConnectFuncInterface *ConnInitTcp(const ConnectCallback *callback)
+SOFTBUS_VISIBILITY ConnectFuncInterface *ConnInitTcp(const ConnectCallback *callback)
 {
     (void)callback;
     return NULL;

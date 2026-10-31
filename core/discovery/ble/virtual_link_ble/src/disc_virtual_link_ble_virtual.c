@@ -17,6 +17,7 @@
 
 #include "disc_manager.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 static bool IsConcern(uint32_t capability)
 {
@@ -107,15 +108,15 @@ DiscoveryBleDispatcherInterface *DiscVLinkBleInit(DiscInnerCallback *discInnerCb
     return &g_vLinkBleInterface;
 }
 
-void DiscVLinkBleDeinit(void)
+SOFTBUS_SYMBOL_EXPORT void DiscVLinkBleDeinit(void)
 {
 }
 
-int32_t DiscVLinkBleEventInit(void)
+SOFTBUS_SYMBOL_EXPORT int32_t DiscVLinkBleEventInit(void)
 {
     return SOFTBUS_OK;
 }
 
-void DiscVLinkBleEventDeinit(void)
+SOFTBUS_SYMBOL_EXPORT void DiscVLinkBleEventDeinit(void)
 {
 }

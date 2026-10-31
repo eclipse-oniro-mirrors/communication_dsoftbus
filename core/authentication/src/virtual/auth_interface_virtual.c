@@ -16,22 +16,23 @@
 #include "auth_interface.h"
 #include "auth_log.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
-int32_t RegAuthVerifyListener(const AuthVerifyListener *listener)
+SOFTBUS_VISIBILITY int32_t RegAuthVerifyListener(const AuthVerifyListener *listener)
 {
     (void)listener;
     AUTH_LOGW(AUTH_INIT, "not implement");
     return SOFTBUS_OK;
 }
 
-void UnregAuthVerifyListener(void) { }
+SOFTBUS_VISIBILITY void UnregAuthVerifyListener(void) { }
 
-uint32_t AuthGenRequestId(void)
+SOFTBUS_VISIBILITY uint32_t AuthGenRequestId(void)
 {
     return 0;
 }
 
-int32_t AuthStartVerify(const AuthConnInfo *connInfo, const AuthVerifyParam *authVerifyParam,
+SOFTBUS_VISIBILITY int32_t AuthStartVerify(const AuthConnInfo *connInfo, const AuthVerifyParam *authVerifyParam,
     const AuthVerifyCallback *callback)
 {
     (void)connInfo;
@@ -41,31 +42,31 @@ int32_t AuthStartVerify(const AuthConnInfo *connInfo, const AuthVerifyParam *aut
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-void AuthHandleLeaveLNN(AuthHandle authHandle)
+SOFTBUS_VISIBILITY void AuthHandleLeaveLNN(AuthHandle authHandle)
 {
     (void)authHandle;
     return;
 }
 
-int32_t AuthFlushDevice(const char *uuid, AuthLinkType type)
+SOFTBUS_VISIBILITY int32_t AuthFlushDevice(const char *uuid, AuthLinkType type)
 {
     (void)uuid;
     (void)type;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t RegGroupChangeListener(const GroupChangeListener *listener)
+SOFTBUS_VISIBILITY int32_t RegGroupChangeListener(const GroupChangeListener *listener)
 {
     (void)listener;
     return SOFTBUS_OK;
 }
 
-void UnregGroupChangeListener(void)
+SOFTBUS_VISIBILITY void UnregGroupChangeListener(void)
 {
     return;
 }
 
-int32_t AuthStartListening(AuthLinkType type, const char *ip, int32_t port)
+SOFTBUS_VISIBILITY int32_t AuthStartListening(AuthLinkType type, const char *ip, int32_t port)
 {
     (void)type;
     (void)ip;
@@ -73,23 +74,24 @@ int32_t AuthStartListening(AuthLinkType type, const char *ip, int32_t port)
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-void AuthStopListening(AuthLinkType type)
+SOFTBUS_VISIBILITY void AuthStopListening(AuthLinkType type)
 {
     return;
 }
 
-int32_t RegAuthTransListener(int32_t module, const AuthTransListener *listener)
+SOFTBUS_VISIBILITY int32_t RegAuthTransListener(int32_t module, const AuthTransListener *listener)
 {
     (void)module;
     (void)listener;
     return SOFTBUS_OK;
 }
 
-void UnregAuthTransListener(int32_t module)
+SOFTBUS_VISIBILITY void UnregAuthTransListener(int32_t module)
 {
     return;
 }
 
+SOFTBUS_VISIBILITY
 int32_t AuthOpenConn(const AuthConnInfo *info, uint32_t requestId, const AuthConnCallback *callback, bool isMeta)
 {
     (void)info;
@@ -109,19 +111,20 @@ int32_t AuthOpenConnWithOtherOsType(const AuthConnInfo *info, const char *networ
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t AuthPostTransData(AuthHandle authHandle, const AuthTransData *dataInfo)
+SOFTBUS_VISIBILITY int32_t AuthPostTransData(AuthHandle authHandle, const AuthTransData *dataInfo)
 {
     (void)authHandle;
     (void)dataInfo;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-void AuthCloseConn(AuthHandle authHandle)
+SOFTBUS_VISIBILITY void AuthCloseConn(AuthHandle authHandle)
 {
     (void)authHandle;
     return;
 }
 
+SOFTBUS_VISIBILITY
 int32_t AuthGetPreferConnInfo(const char *uuid, const char *networkId, AuthConnInfo *connInfo, bool isMeta)
 {
     (void)uuid;
@@ -140,7 +143,7 @@ int32_t AuthGetPreferConnInfoWithoutSle(const char *uuid, const char *networkId,
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t AuthGetP2pConnInfo(const char *uuid, AuthConnInfo *connInfo, bool isMeta)
+SOFTBUS_VISIBILITY int32_t AuthGetP2pConnInfo(const char *uuid, AuthConnInfo *connInfo, bool isMeta)
 {
     (void)uuid;
     (void)connInfo;
@@ -148,7 +151,7 @@ int32_t AuthGetP2pConnInfo(const char *uuid, AuthConnInfo *connInfo, bool isMeta
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t AuthGetHmlConnInfo(const char *uuid, AuthConnInfo *connInfo, bool isMeta)
+SOFTBUS_VISIBILITY int32_t AuthGetHmlConnInfo(const char *uuid, AuthConnInfo *connInfo, bool isMeta)
 {
     (void)uuid;
     (void)connInfo;
@@ -156,7 +159,7 @@ int32_t AuthGetHmlConnInfo(const char *uuid, AuthConnInfo *connInfo, bool isMeta
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-void AuthGetLatestIdByUuid(const char *uuid, AuthLinkType type, bool isMeta, AuthHandle *authHandle)
+SOFTBUS_VISIBILITY void AuthGetLatestIdByUuid(const char *uuid, AuthLinkType type, bool isMeta, AuthHandle *authHandle)
 {
     (void)uuid;
     (void)type;
@@ -164,7 +167,7 @@ void AuthGetLatestIdByUuid(const char *uuid, AuthLinkType type, bool isMeta, Aut
     (void)authHandle;
 }
 
-int64_t AuthGetIdByConnInfo(const AuthConnInfo *connInfo, bool isServer, bool isMeta)
+SOFTBUS_VISIBILITY int64_t AuthGetIdByConnInfo(const AuthConnInfo *connInfo, bool isServer, bool isMeta)
 {
     (void)connInfo;
     (void)isServer;
@@ -181,16 +184,17 @@ int64_t AuthGetIdByUuid(const char *uuid, AuthLinkType type, bool isServer, bool
     return AUTH_INVALID_ID;
 }
 
-uint32_t AuthGetEncryptSize(int64_t authId, uint32_t inLen)
+SOFTBUS_VISIBILITY uint32_t AuthGetEncryptSize(int64_t authId, uint32_t inLen)
 {
     return 0;
 }
 
-uint32_t AuthGetDecryptSize(uint32_t inLen)
+SOFTBUS_VISIBILITY uint32_t AuthGetDecryptSize(uint32_t inLen)
 {
     return 0;
 }
 
+SOFTBUS_VISIBILITY
 int32_t AuthEncrypt(AuthHandle *authHandle, const uint8_t *inData, uint32_t inLen, uint8_t *outData, uint32_t *outLen)
 {
     (void)authHandle;
@@ -201,6 +205,7 @@ int32_t AuthEncrypt(AuthHandle *authHandle, const uint8_t *inData, uint32_t inLe
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
+SOFTBUS_VISIBILITY
 int32_t AuthDecrypt(AuthHandle *authHandle, const uint8_t *inData, uint32_t inLen, uint8_t *outData, uint32_t *outLen)
 {
     (void)authHandle;
@@ -211,28 +216,28 @@ int32_t AuthDecrypt(AuthHandle *authHandle, const uint8_t *inData, uint32_t inLe
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t AuthSetP2pMac(int64_t authId, const char *p2pMac)
+SOFTBUS_VISIBILITY int32_t AuthSetP2pMac(int64_t authId, const char *p2pMac)
 {
     (void)authId;
     (void)p2pMac;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t AuthGetConnInfo(AuthHandle authHandle, AuthConnInfo *connInfo)
+SOFTBUS_VISIBILITY int32_t AuthGetConnInfo(AuthHandle authHandle, AuthConnInfo *connInfo)
 {
     (void)authHandle;
     (void)connInfo;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t AuthGetServerSide(int64_t authId, bool *isServer)
+SOFTBUS_VISIBILITY int32_t AuthGetServerSide(int64_t authId, bool *isServer)
 {
     (void)authId;
     (void)isServer;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t AuthGetDeviceUuid(int64_t authId, char *uuid, uint16_t size)
+SOFTBUS_VISIBILITY int32_t AuthGetDeviceUuid(int64_t authId, char *uuid, uint16_t size)
 {
     (void)authId;
     (void)uuid;
@@ -240,27 +245,27 @@ int32_t AuthGetDeviceUuid(int64_t authId, char *uuid, uint16_t size)
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t AuthGetVersion(int64_t authId, SoftBusVersion *version)
+SOFTBUS_VISIBILITY int32_t AuthGetVersion(int64_t authId, SoftBusVersion *version)
 {
     (void)authId;
     (void)version;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t AuthGetMetaType(int64_t authId, bool *isMetaAuth)
+SOFTBUS_VISIBILITY int32_t AuthGetMetaType(int64_t authId, bool *isMetaAuth)
 {
     (void)authId;
     (void)isMetaAuth;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t AuthInit(void)
+SOFTBUS_VISIBILITY int32_t AuthInit(void)
 {
     AUTH_LOGW(AUTH_FSM, "not implement");
     return SOFTBUS_OK;
 }
 
-void AuthDeinit(void)
+SOFTBUS_VISIBILITY void AuthDeinit(void)
 {
     return;
 }
@@ -282,7 +287,7 @@ bool AuthIsPotentialTrusted(const DeviceInfo *device, bool isOnlyPointToPoint)
     return false;
 }
 
-int32_t AuthCheckMetaExist(const AuthConnInfo *connInfo, bool *isExist)
+SOFTBUS_VISIBILITY int32_t AuthCheckMetaExist(const AuthConnInfo *connInfo, bool *isExist)
 {
     (void)connInfo;
     (void)isExist;
@@ -295,13 +300,14 @@ int32_t AuthCheckSessionKeyValidByAuthHandle(const AuthHandle *authHandle)
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t AuthCheckSessionKeyValidByConnInfo(const char *networkId, const AuthConnInfo *connInfo)
+SOFTBUS_VISIBILITY int32_t AuthCheckSessionKeyValidByConnInfo(const char *networkId, const AuthConnInfo *connInfo)
 {
     (void)networkId;
     (void)connInfo;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
+SOFTBUS_VISIBILITY
 int32_t AuthGetAuthHandleByIndex(const AuthConnInfo *connInfo, bool isServer, int32_t index, AuthHandle *authHandle)
 {
     (void)connInfo;
@@ -330,7 +336,8 @@ int32_t AuthGetConnInfoBySide(
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t AuthGetConnInfoByType(const char *uuid, AuthLinkType type, AuthConnInfo *connInfo, bool isMeta)
+SOFTBUS_VISIBILITY int32_t AuthGetConnInfoByType(const char *uuid, AuthLinkType type, AuthConnInfo *connInfo,
+    bool isMeta)
 {
     (void)uuid;
     (void)type;
@@ -346,13 +353,13 @@ uint32_t AuthGetGroupType(const char *udid, const char *uuid)
     return 0;
 }
 
-int64_t AuthGetIdByIp(const char *ip)
+SOFTBUS_VISIBILITY int64_t AuthGetIdByIp(const char *ip)
 {
     (void)ip;
     return AUTH_INVALID_ID;
 }
 
-int32_t AuthGetLatestAuthSeqList(const char *udid, int64_t *seqList, uint32_t num)
+SOFTBUS_VISIBILITY int32_t AuthGetLatestAuthSeqList(const char *udid, int64_t *seqList, uint32_t num)
 {
     (void)udid;
     (void)seqList;
@@ -360,6 +367,7 @@ int32_t AuthGetLatestAuthSeqList(const char *udid, int64_t *seqList, uint32_t nu
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
+SOFTBUS_VISIBILITY
 int32_t AuthGetLatestAuthSeqListByType(const char *udid, int64_t *seqList, uint64_t *authVerifyTime, DiscoveryType type)
 {
     (void)udid;
@@ -369,7 +377,7 @@ int32_t AuthGetLatestAuthSeqListByType(const char *udid, int64_t *seqList, uint6
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t AuthGetUsbConnInfo(const char *uuid, AuthConnInfo *connInfo, bool isMeta)
+SOFTBUS_VISIBILITY int32_t AuthGetUsbConnInfo(const char *uuid, AuthConnInfo *connInfo, bool isMeta)
 {
     (void)uuid;
     (void)connInfo;
@@ -382,7 +390,7 @@ bool AuthHasSameAccountGroup(void)
     return false;
 }
 
-TrustedReturnType AuthHasTrustedRelation(void)
+SOFTBUS_VISIBILITY TrustedReturnType AuthHasTrustedRelation(void)
 {
     return TRUSTED_RELATION_NOT;
 }
@@ -403,12 +411,13 @@ int32_t AuthMetaStartVerify(uint32_t connectionId, const AuthKeyInfo *authKeyInf
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-void AuthRemoveAuthManagerByAuthHandle(AuthHandle authHandle)
+SOFTBUS_VISIBILITY void AuthRemoveAuthManagerByAuthHandle(AuthHandle authHandle)
 {
     (void)authHandle;
 }
 
-int32_t AuthRestoreAuthManager(const char *udidHash, const AuthConnInfo *connInfo, uint32_t requestId,
+SOFTBUS_VISIBILITY int32_t AuthRestoreAuthManager(const char *udidHash, const AuthConnInfo *connInfo,
+    uint32_t requestId,
     NodeInfo *nodeInfo, int64_t *authId)
 {
     (void)udidHash;
@@ -419,7 +428,7 @@ int32_t AuthRestoreAuthManager(const char *udidHash, const AuthConnInfo *connInf
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t AuthSendKeepaliveOption(const char *uuid, ModeCycle cycle)
+SOFTBUS_VISIBILITY int32_t AuthSendKeepaliveOption(const char *uuid, ModeCycle cycle)
 {
     (void)uuid;
     (void)cycle;
@@ -464,13 +473,13 @@ bool IsSameAccountDevice(const DeviceInfo *device)
     return false;
 }
 
-bool IsSameAccountId(int64_t accountId)
+SOFTBUS_VISIBILITY bool IsSameAccountId(int64_t accountId)
 {
     (void)accountId;
     return false;
 }
 
-bool IsSupportFeatureByCapaBit(uint32_t feature, AuthCapability capaBit)
+SOFTBUS_VISIBILITY bool IsSupportFeatureByCapaBit(uint32_t feature, AuthCapability capaBit)
 {
     (void)feature;
     (void)capaBit;

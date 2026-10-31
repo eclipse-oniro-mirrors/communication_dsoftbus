@@ -17,14 +17,15 @@
 
 #include "lnn_log.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
-int32_t LnnInitNetworkManager(void)
+SOFTBUS_VISIBILITY int32_t LnnInitNetworkManager(void)
 {
     LNN_LOGI(LNN_INIT, "init virtual lnn network manager");
     return SOFTBUS_OK;
 }
 
-int32_t LnnInitNetworkManagerDelay(void)
+SOFTBUS_VISIBILITY int32_t LnnInitNetworkManagerDelay(void)
 {
     return SOFTBUS_OK;
 }
@@ -33,46 +34,46 @@ void LnnDeinitNetworkManager(void)
 {
 }
 
-void RestartCoapDiscovery(void)
+SOFTBUS_VISIBILITY void RestartCoapDiscovery(void)
 {
     return;
 }
 
-int32_t LnnGetNetIfTypeByName(const char *ifName, LnnNetIfType *type)
+SOFTBUS_VISIBILITY int32_t LnnGetNetIfTypeByName(const char *ifName, LnnNetIfType *type)
 {
     (void)ifName;
     (void)type;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnGetAddrTypeByIfName(const char *ifName, ConnectionAddrType *type)
+SOFTBUS_VISIBILITY int32_t LnnGetAddrTypeByIfName(const char *ifName, ConnectionAddrType *type)
 {
     (void)ifName;
     (void)type;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-void LnnGetDataShareInitResult(bool *isDataShareInit)
+SOFTBUS_VISIBILITY void LnnGetDataShareInitResult(bool *isDataShareInit)
 {
     (void)isDataShareInit;
 }
 
-void LnnSetUnlockState(void) {}
+SOFTBUS_VISIBILITY void LnnSetUnlockState(void) {}
 
-bool LnnVisitNetif(VisitNetifCallback callback, void *data)
+SOFTBUS_VISIBILITY bool LnnVisitNetif(VisitNetifCallback callback, void *data)
 {
     (void)callback;
     (void)data;
     return false;
 }
 
-int32_t LnnRegistProtocol(LnnProtocolManager *impl)
+SOFTBUS_SYMBOL_EXPORT int32_t LnnRegistProtocol(LnnProtocolManager *impl)
 {
     (void)impl;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-ListenerModule LnnGetProtocolListenerModule(ProtocolType protocol, ListenerMode mode)
+SOFTBUS_VISIBILITY ListenerModule LnnGetProtocolListenerModule(ProtocolType protocol, ListenerMode mode)
 {
     (void)protocol;
     (void)mode;

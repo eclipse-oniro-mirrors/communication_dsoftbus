@@ -22,6 +22,7 @@
 #include "softbus_adapter_crypto.h"
 #include "softbus_error_code.h"
 #include "softbus_utils.h"
+#include "softbus_def.h"
 
 #define JSON_WLAN_IP             "wifiIpAddr"
 #define JSON_HW_ACCOUNT          "hwAccountHashVal"
@@ -72,7 +73,8 @@ void DiscCoapParseWifiIpAddr(const cJSON *data, DeviceInfo *device)
     AnonymizeFree(anonymizedStr);
 }
 
-int32_t DiscCoapParseKeyValueStr(const char *src, const char *key, char *outValue, uint32_t outLen)
+SOFTBUS_SYMBOL_EXPORT int32_t DiscCoapParseKeyValueStr(const char *src, const char *key, char *outValue,
+    uint32_t outLen)
 {
     DISC_CHECK_AND_RETURN_RET_LOGE(src != NULL, SOFTBUS_INVALID_PARAM, DISC_COAP, "src is NULL");
     DISC_CHECK_AND_RETURN_RET_LOGE(key != NULL, SOFTBUS_INVALID_PARAM, DISC_COAP, "key is NULL");

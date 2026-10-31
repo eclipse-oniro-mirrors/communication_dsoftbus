@@ -30,6 +30,7 @@
 #include "lnn_select_rule.h"
 #include "lnn_trans_lane.h"
 #include "softbus_adapter_mem.h"
+#include "softbus_def.h"
 #include "wifi_direct_manager.h"
 
 #define ID_SHIFT_STEP 5
@@ -143,7 +144,7 @@ static bool CheckListener(const ILaneIdStateListener *listener)
     return true;
 }
 
-void RegisterLaneIdListener(const ILaneIdStateListener *listener)
+SOFTBUS_SYMBOL_EXPORT void RegisterLaneIdListener(const ILaneIdStateListener *listener)
 {
     if (CheckListener(listener) == false) {
         LNN_LOGE(LNN_LANE, "register fail");
@@ -278,12 +279,12 @@ static bool AllocInfoCheck(const LaneAllocInfo *allocInfo, const LaneAllocListen
 }
 
 /* return laneReqId if the operation is successful, return 0 otherwise. */
-uint32_t ApplyLaneReqId(LaneType type)
+SOFTBUS_VISIBILITY uint32_t ApplyLaneReqId(LaneType type)
 {
     return AllocLaneReqId(type);
 }
 
-void FreeLaneReqId(uint32_t laneReqId)
+SOFTBUS_VISIBILITY void FreeLaneReqId(uint32_t laneReqId)
 {
     return DestroyLaneReqId(laneReqId);
 }
@@ -481,12 +482,12 @@ static LnnLaneManager g_laneManager = {
     .unRegisterLaneListener = UnRegisterLaneListener,
 };
 
-LnnLaneManager *GetLaneManager(void)
+SOFTBUS_VISIBILITY LnnLaneManager *GetLaneManager(void)
 {
     return &g_laneManager;
 }
 
-int32_t LnnRequestLane(uint32_t laneReqId, const LaneRequestOption *request,
+SOFTBUS_VISIBILITY int32_t LnnRequestLane(uint32_t laneReqId, const LaneRequestOption *request,
     const ILaneListener *listener)
 {
     if (RequestInfoCheck(request, listener) == false) {
@@ -512,7 +513,7 @@ int32_t LnnRequestLane(uint32_t laneReqId, const LaneRequestOption *request,
     return result;
 }
 
-int32_t LnnFreeLane(uint32_t laneReqId)
+SOFTBUS_VISIBILITY int32_t LnnFreeLane(uint32_t laneReqId)
 {
     LaneType type;
     if (CheckLaneObject(laneReqId, &type) != SOFTBUS_OK) {

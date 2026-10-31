@@ -15,8 +15,9 @@
 #include "lnn_physical_subnet_manager.h"
 
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
-int32_t LnnRegistPhysicalSubnet(LnnPhysicalSubnet *manager)
+SOFTBUS_VISIBILITY int32_t LnnRegistPhysicalSubnet(LnnPhysicalSubnet *manager)
 {
     (void)manager;
     return SOFTBUS_NOT_IMPLEMENT;
@@ -28,21 +29,21 @@ int32_t LnnUnregistPhysicalSubnetByType(ProtocolType type)
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-void LnnNotifyPhysicalSubnetStatusChanged(const char *ifName, ProtocolType type, void *status)
+SOFTBUS_VISIBILITY void LnnNotifyPhysicalSubnetStatusChanged(const char *ifName, ProtocolType type, void *status)
 {
     (void)ifName;
     (void)type;
     (void)status;
 }
 
-bool LnnVisitPhysicalSubnet(LnnVisitPhysicalSubnetCallback callback, void *data)
+SOFTBUS_VISIBILITY bool LnnVisitPhysicalSubnet(LnnVisitPhysicalSubnetCallback callback, void *data)
 {
     (void)callback;
     (void)data;
     return false;
 }
 
-void LnnNotifyAllTypeOffline(ConnectionAddrType type)
+SOFTBUS_VISIBILITY void LnnNotifyAllTypeOffline(ConnectionAddrType type)
 {
     (void)type;
 }

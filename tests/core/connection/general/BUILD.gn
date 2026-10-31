@@ -19,6 +19,11 @@ module_output_path = "dsoftbus/soft_bus/connection/general"
 
 ohos_unittest("GeneralConnectionTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   include_dirs = [
     "$dsoftbus_root_path/core/adapter/bus_center/include",
     "$dsoftbus_root_path/core/bus_center/service/include",
@@ -50,8 +55,9 @@ ohos_unittest("GeneralConnectionTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
     "$dsoftbus_root_path/dfx:softbus_dfx",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -81,6 +87,11 @@ ohos_unittest("GeneralConnectionTest") {
 
 ohos_unittest("GeneralConnectionConstraintTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   defines += [ "ENABLE_OS_ACCOUNT_CONSTRAINT" ]
   include_dirs = [
     "$dsoftbus_root_path/core/adapter/bus_center/include",
@@ -113,8 +124,9 @@ ohos_unittest("GeneralConnectionConstraintTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
     "$dsoftbus_root_path/dfx:softbus_dfx",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -143,6 +155,11 @@ ohos_unittest("GeneralConnectionConstraintTest") {
 
 ohos_unittest("GeneralNegotiationTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   include_dirs = [
     "$dsoftbus_root_path/core/connection/general",
     "$dsoftbus_root_path/core/connection/interface",

@@ -17,8 +17,9 @@
 
 #include "lnn_log.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
-int32_t LnnInitEventMonitor(void)
+SOFTBUS_VISIBILITY int32_t LnnInitEventMonitor(void)
 {
     LNN_LOGI(LNN_INIT, "init virtual event monitor");
     return SOFTBUS_OK;

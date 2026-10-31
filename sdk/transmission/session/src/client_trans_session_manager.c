@@ -527,7 +527,7 @@ int32_t GetServerBySessionName(const char *sessionName, ClientSessionServer **se
     return SOFTBUS_TRANS_SESSION_INFO_NOT_FOUND;
 }
 
-bool IsContainServiceBySocket(int32_t socket)
+SOFTBUS_VISIBILITY bool IsContainServiceBySocket(int32_t socket)
 {
     if (socket <= 0) {
         TRANS_LOGE(TRANS_SDK, "Invalid param");
@@ -723,7 +723,7 @@ int32_t ClientDeleteSessionServer(SoftBusSecType type, const char *sessionName)
     return SOFTBUS_OK;
 }
 
-int32_t ClientDeleteSession(int32_t sessionId)
+SOFTBUS_VISIBILITY int32_t ClientDeleteSession(int32_t sessionId)
 {
     TRANS_LOGI(TRANS_SDK, "sessionId=%{public}d", sessionId);
     if (sessionId < 0) {
@@ -767,7 +767,7 @@ int32_t ClientDeleteSession(int32_t sessionId)
     return SOFTBUS_TRANS_SESSION_INFO_NOT_FOUND;
 }
 
-int32_t ClientGetSessionDataById(int32_t sessionId, char *data, uint16_t len, TransSessionKey key)
+SOFTBUS_VISIBILITY int32_t ClientGetSessionDataById(int32_t sessionId, char *data, uint16_t len, TransSessionKey key)
 {
     if ((sessionId < 0) || (data == NULL) || (len == 0)) {
         TRANS_LOGW(TRANS_SDK, "Invalid param");
@@ -856,7 +856,7 @@ int32_t ClientGetSessionIntegerDataById(int32_t sessionId, int32_t *data, TransS
     return SOFTBUS_OK;
 }
 
-int32_t ClientGetChannelBySessionId(
+SOFTBUS_VISIBILITY int32_t ClientGetChannelBySessionId(
     int32_t sessionId, int32_t *channelId, int32_t *type, SessionEnableStatus *enableStatus)
 {
     if (sessionId < 0) {
@@ -942,7 +942,7 @@ int32_t ClientSetStatusClosingReserveBySocket(int32_t socket, bool isClosingRese
     return SOFTBUS_OK;
 }
 
-int32_t ClientSetEnableStatusBySocket(int32_t socket, SessionEnableStatus enableStatus)
+SOFTBUS_VISIBILITY int32_t ClientSetEnableStatusBySocket(int32_t socket, SessionEnableStatus enableStatus)
 {
     if (socket < 0) {
         TRANS_LOGE(TRANS_INIT, "invalid socket=%{public}d", socket);
@@ -998,7 +998,7 @@ int32_t ClientGetDataTypeBySocket(int32_t socket, int32_t *dataType)
     return SOFTBUS_OK;
 }
 
-int32_t ClientGetChannelBusinessTypeBySessionId(int32_t sessionId, int32_t *businessType)
+SOFTBUS_VISIBILITY int32_t ClientGetChannelBusinessTypeBySessionId(int32_t sessionId, int32_t *businessType)
 {
     if ((sessionId < 0) || (businessType == NULL)) {
         return SOFTBUS_INVALID_PARAM;
@@ -1023,6 +1023,7 @@ int32_t ClientGetChannelBusinessTypeBySessionId(int32_t sessionId, int32_t *busi
     return SOFTBUS_OK;
 }
 
+SOFTBUS_VISIBILITY
 int32_t GetSupportTlvAndNeedAckById(int32_t channelId, int32_t channelType, bool *supportTlv, bool *needAck)
 {
     if (channelId <= 0 || (supportTlv == NULL && needAck == NULL)) { // supportTlv and needAck is an optional param
@@ -1153,6 +1154,7 @@ int32_t ClientGetSessionStateByChannelId(int32_t channelId, int32_t channelType,
     return SOFTBUS_TRANS_SESSION_INFO_NOT_FOUND;
 }
 
+SOFTBUS_VISIBILITY
 int32_t ClientGetSessionIdByChannelId(int32_t channelId, int32_t channelType, int32_t *sessionId, bool isClosing)
 {
     if ((channelId < 0) || (sessionId == NULL)) {
@@ -1194,7 +1196,7 @@ int32_t ClientGetSessionIdByChannelId(int32_t channelId, int32_t channelType, in
     return SOFTBUS_TRANS_SESSION_INFO_NOT_FOUND;
 }
 
-int32_t ClientGetSessionIdByChannelIdReserve(
+SOFTBUS_VISIBILITY int32_t ClientGetSessionIdByChannelIdReserve(
     int32_t channelIdReserve, int32_t channelTypeReserve, int32_t *sessionId, bool isClosingReserve)
 {
     if ((channelIdReserve < 0) || (sessionId == NULL)) {
@@ -1232,7 +1234,7 @@ int32_t ClientGetSessionIdByChannelIdReserve(
     return SOFTBUS_TRANS_SESSION_INFO_NOT_FOUND;
 }
 
-int32_t ClientGetSessionIsD2DByChannelId(int32_t channelId, int32_t channelType, bool *isD2D)
+SOFTBUS_VISIBILITY int32_t ClientGetSessionIsD2DByChannelId(int32_t channelId, int32_t channelType, bool *isD2D)
 {
     if ((channelId < 0) || (isD2D == NULL)) {
         TRANS_LOGW(TRANS_SDK, "Invalid param");
@@ -1262,7 +1264,7 @@ int32_t ClientGetSessionIsD2DByChannelId(int32_t channelId, int32_t channelType,
     return SOFTBUS_TRANS_SESSION_INFO_NOT_FOUND;
 }
 
-int32_t ClientGetSessionIsAsyncBySessionId(int32_t sessionId, bool *isAsync)
+SOFTBUS_VISIBILITY int32_t ClientGetSessionIsAsyncBySessionId(int32_t sessionId, bool *isAsync)
 {
     if ((sessionId < 0) || (isAsync == NULL)) {
         TRANS_LOGW(TRANS_SDK, "Invalid param");
@@ -1295,7 +1297,7 @@ int32_t ClientGetSessionIsAsyncBySessionId(int32_t sessionId, bool *isAsync)
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t GetIsAsyncAndTokenTypeBySessionId(int32_t sessionId, bool *isAsync, int32_t *tokenType)
+SOFTBUS_VISIBILITY int32_t GetIsAsyncAndTokenTypeBySessionId(int32_t sessionId, bool *isAsync, int32_t *tokenType)
 {
     if ((sessionId < 0) || (isAsync == NULL) || (tokenType == NULL)) {
         TRANS_LOGW(TRANS_SDK, "Invalid param");
@@ -1369,7 +1371,7 @@ int32_t ClientGetRouteTypeByChannelId(int32_t channelId, int32_t channelType, in
     return SOFTBUS_TRANS_SESSION_INFO_NOT_FOUND;
 }
 
-int32_t ClientGetDataConfigByChannelId(int32_t channelId, int32_t channelType, uint32_t *dataConfig)
+SOFTBUS_VISIBILITY int32_t ClientGetDataConfigByChannelId(int32_t channelId, int32_t channelType, uint32_t *dataConfig)
 {
     if ((channelId < 0) || (dataConfig == NULL)) {
         TRANS_LOGW(TRANS_SDK, "Invalid param");
@@ -2282,7 +2284,7 @@ int32_t ClientSetActionIdBySessionId(int32_t sessionId, uint32_t actionId)
     return SOFTBUS_OK;
 }
 
-int32_t ClientHandleBindWaitTimer(int32_t socket, uint32_t maxWaitTime, TimerAction action)
+SOFTBUS_VISIBILITY int32_t ClientHandleBindWaitTimer(int32_t socket, uint32_t maxWaitTime, TimerAction action)
 {
     if (socket <= 0) {
         TRANS_LOGE(TRANS_SDK, "Invalid socket=%{public}d", socket);
@@ -2453,6 +2455,7 @@ int32_t ClientGetSessionCallbackAdapterByName(const char *sessionName, SessionLi
     return SOFTBUS_NOT_FIND;
 }
 
+SOFTBUS_VISIBILITY
 int32_t ClientGetSessionCallbackAdapterById(int32_t sessionId, SessionListenerAdapter *callbackAdapter, bool *isServer)
 {
     if (sessionId < 0 || callbackAdapter == NULL || isServer == NULL) {
@@ -2486,7 +2489,7 @@ int32_t ClientGetSessionCallbackAdapterById(int32_t sessionId, SessionListenerAd
     return SOFTBUS_OK;
 }
 
-int32_t ClientGetPeerSocketInfoById(int32_t socket, PeerSocketInfo *peerSocketInfo)
+SOFTBUS_VISIBILITY int32_t ClientGetPeerSocketInfoById(int32_t socket, PeerSocketInfo *peerSocketInfo)
 {
     if (socket < 0 || peerSocketInfo == NULL) {
         TRANS_LOGE(TRANS_SDK, "Invalid param");
@@ -2522,7 +2525,7 @@ int32_t ClientGetPeerSocketInfoById(int32_t socket, PeerSocketInfo *peerSocketIn
     return SOFTBUS_OK;
 }
 
-int32_t ClientGetServiceSocketInfoById(int32_t socket, ServiceSocketInfo *socketInfo)
+SOFTBUS_VISIBILITY int32_t ClientGetServiceSocketInfoById(int32_t socket, ServiceSocketInfo *socketInfo)
 {
     if (socket <= 0 || socketInfo == NULL) {
         TRANS_LOGE(TRANS_SDK, "Invalid param");
@@ -2606,7 +2609,7 @@ static void ClientTransAsyncSendBytesTimerProc(void)
     return TransAsyncSendBytesTimeoutProc();
 }
 
-int32_t ClientResetIdleTimeoutById(int32_t sessionId)
+SOFTBUS_VISIBILITY int32_t ClientResetIdleTimeoutById(int32_t sessionId)
 {
     if (sessionId <= 0) {
         TRANS_LOGE(TRANS_SDK, "invalid sessionId");
@@ -2640,6 +2643,7 @@ int32_t ClientResetIdleTimeoutById(int32_t sessionId)
     return SOFTBUS_TRANS_SESSION_INFO_NOT_FOUND;
 }
 
+SOFTBUS_VISIBILITY
 int32_t ClientGetSessionNameByChannelId(int32_t channelId, int32_t channelType, char *sessionName, int32_t len)
 {
     if (channelId < 0 || sessionName == NULL || len <= 0 || len > SESSION_NAME_SIZE_MAX) {
@@ -2819,7 +2823,7 @@ int32_t ClientTransSetChannelInfo(const char *sessionName, int32_t sessionId, in
     return TransMultipathSetChannel(sessionId, channelId, channelType);
 }
 
-int32_t GetSocketLifecycleAndSessionNameBySessionId(
+SOFTBUS_VISIBILITY int32_t GetSocketLifecycleAndSessionNameBySessionId(
     int32_t sessionId, char *sessionName, SocketLifecycleData *lifecycle)
 {
     if (sessionId <= 0 || lifecycle == NULL) {
@@ -2906,7 +2910,7 @@ void AbnormalDataLenAudit(int32_t sessionId, int32_t len)
     TRANS_EVENT(EVENT_SCENE_TRANS_SEND_DATA, EVENT_STAGE_ABNORMAL_DATA_SEND, extra);
 }
  
-void SessionInfoReport(int32_t sessionId)
+SOFTBUS_VISIBILITY void SessionInfoReport(int32_t sessionId)
 {
     if (sessionId <= 0) {
         TRANS_LOGE(TRANS_SDK, "invalid sessionId =%{public}d", sessionId);
@@ -2938,7 +2942,7 @@ void SessionInfoReport(int32_t sessionId)
     TRANS_EVENT(EVENT_SCENE_SESSION_INFO, EVENT_STAGE_GENERAL_SESSION_INFO, extra);
 }
  
-int32_t SetStartTimestampBySessionId(int32_t sessionId)
+SOFTBUS_VISIBILITY int32_t SetStartTimestampBySessionId(int32_t sessionId)
 {
     if (sessionId <= 0) {
         TRANS_LOGE(TRANS_SDK, "invalid sessionId =%{public}d", sessionId);
@@ -2962,7 +2966,7 @@ int32_t SetStartTimestampBySessionId(int32_t sessionId)
     return SOFTBUS_OK;
 }
 
-int32_t SetSessionStateBySessionId(int32_t sessionId, SessionState sessionState, int32_t optional)
+SOFTBUS_VISIBILITY int32_t SetSessionStateBySessionId(int32_t sessionId, SessionState sessionState, int32_t optional)
 {
     if (sessionId <= 0) {
         TRANS_LOGE(TRANS_SDK, "invalid sessionId =%{public}d", sessionId);
@@ -3103,7 +3107,7 @@ static void TransWaitForBindReturn(int32_t socket)
     }
 }
 
-int32_t ClientSignalSyncBind(int32_t socket, int32_t errCode)
+SOFTBUS_VISIBILITY int32_t ClientSignalSyncBind(int32_t socket, int32_t errCode)
 {
     if (socket <= 0) {
         TRANS_LOGE(TRANS_SDK, "invalid param sessionId =%{public}d", socket);
@@ -3192,7 +3196,7 @@ int32_t ClientCancelAuthSessionTimer(int32_t sessionId)
     return SOFTBUS_TRANS_SESSION_INFO_NOT_FOUND;
 }
 
-int32_t ClientGetChannelOsTypeBySessionId(int32_t sessionId, int32_t *osType)
+SOFTBUS_VISIBILITY int32_t ClientGetChannelOsTypeBySessionId(int32_t sessionId, int32_t *osType)
 {
     if ((sessionId < 0) || (osType == NULL)) {
         return SOFTBUS_INVALID_PARAM;
@@ -3234,7 +3238,7 @@ void ClientTransOnPrivilegeClose(const char *peerNetworkId)
     (void)ClientDestroySession(&destroyList, SHUTDOWN_REASON_PRIVILEGE_SHUTDOWN);
 }
 
-int32_t ClientCacheQosEvent(int32_t socket, QoSEvent event, const QosTV *qos, uint32_t count)
+SOFTBUS_VISIBILITY int32_t ClientCacheQosEvent(int32_t socket, QoSEvent event, const QosTV *qos, uint32_t count)
 {
     if (socket <= 0 || qos == NULL || count == 0) {
         TRANS_LOGE(TRANS_SDK, "invalid param");
@@ -3268,7 +3272,7 @@ int32_t ClientCacheQosEvent(int32_t socket, QoSEvent event, const QosTV *qos, ui
     return SOFTBUS_OK;
 }
 
-int32_t ClientGetCachedQosEventBySocket(int32_t socket, CachedQosEvent *cachedQosEvent)
+SOFTBUS_VISIBILITY int32_t ClientGetCachedQosEventBySocket(int32_t socket, CachedQosEvent *cachedQosEvent)
 {
     if (socket <= 0 || cachedQosEvent == NULL) {
         TRANS_LOGE(TRANS_SDK, "invalid param");
@@ -3540,7 +3544,7 @@ bool IsRawAuthSession(const char *sessionName)
     return false;
 }
 
-int32_t ClientGetSessionNameBySessionId(int32_t sessionId, char *sessionName)
+SOFTBUS_VISIBILITY int32_t ClientGetSessionNameBySessionId(int32_t sessionId, char *sessionName)
 {
     if (sessionId < 0 || sessionName == NULL) {
         TRANS_LOGE(TRANS_SDK, "Invalid param");
@@ -3632,7 +3636,7 @@ int32_t ClientGetChannelBusinessTypeByChannelId(int32_t channelId, int32_t *busi
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t ClientCheckIsD2DBySessionId(int32_t sessionId, bool *isD2D)
+SOFTBUS_VISIBILITY int32_t ClientCheckIsD2DBySessionId(int32_t sessionId, bool *isD2D)
 {
     if ((sessionId < 0) || (isD2D == NULL)) {
         return SOFTBUS_INVALID_PARAM;
@@ -3732,7 +3736,7 @@ int32_t GetChannelTypeBySessionId(int32_t sessionId, int32_t channelId, int32_t 
     return SOFTBUS_OK;
 }
 
-int32_t CheckChannelIsReserveByChannelId(int32_t sessionId, int32_t channelId, int32_t *useType)
+SOFTBUS_VISIBILITY int32_t CheckChannelIsReserveByChannelId(int32_t sessionId, int32_t channelId, int32_t *useType)
 {
     if (useType == NULL) {
         TRANS_LOGE(TRANS_SDK, "invalid param");

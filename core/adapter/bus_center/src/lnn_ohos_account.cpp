@@ -28,13 +28,14 @@
 #include "lnn_connection_fsm.h"
 #include "lnn_init_monitor.h"
 #include "softbus_adapter_mem.h"
+#include "softbus_def.h"
 
 static const std::string DEFAULT_USER_ID = "0";
 static const std::string DEFAULT_ACCOUNT_UID = "ohosAnonymousUid";
 static bool g_accountIdInited = false;
 static const int32_t ACCOUNT_STRTOLL_BASE = 10;
 
-int32_t LnnJudgeDeviceTypeAndGetOsAccountInfo(uint8_t *accountHash, uint32_t len)
+SOFTBUS_VISIBILITY int32_t LnnJudgeDeviceTypeAndGetOsAccountInfo(uint8_t *accountHash, uint32_t len)
 {
     int32_t userId = 0;
     int32_t localDevTypeId = 0;
@@ -59,7 +60,7 @@ int32_t LnnJudgeDeviceTypeAndGetOsAccountInfo(uint8_t *accountHash, uint32_t len
     return SOFTBUS_OK;
 }
 
-int32_t LnnGetOhosAccountInfo(uint8_t *accountHash, uint32_t len)
+SOFTBUS_VISIBILITY int32_t LnnGetOhosAccountInfo(uint8_t *accountHash, uint32_t len)
 {
     if (accountHash == nullptr || len != SHA_256_HASH_LEN) {
         LNN_LOGE(LNN_STATE, "GetOhosAccount get invalid param");
@@ -95,7 +96,7 @@ int32_t LnnGetOhosAccountInfo(uint8_t *accountHash, uint32_t len)
     return SOFTBUS_OK;
 }
 
-int32_t LnnGetOhosAccountInfoByUserId(int32_t userId, uint8_t *accountHash, uint32_t len)
+SOFTBUS_VISIBILITY int32_t LnnGetOhosAccountInfoByUserId(int32_t userId, uint8_t *accountHash, uint32_t len)
 {
     if (accountHash == nullptr || len != SHA_256_HASH_LEN || userId <= 0) {
         LNN_LOGE(LNN_STATE, "GetOhosAccount get invalid param");
@@ -119,7 +120,8 @@ int32_t LnnGetOhosAccountInfoByUserId(int32_t userId, uint8_t *accountHash, uint
     return SOFTBUS_OK;
 }
 
-int32_t LnnGetAccountIdByUserId(int32_t userId, int64_t *accountId, uint8_t *accountHash, uint32_t len)
+SOFTBUS_VISIBILITY int32_t LnnGetAccountIdByUserId(int32_t userId, int64_t *accountId, uint8_t *accountHash,
+    uint32_t len)
 {
     if (userId < 0 || accountId == nullptr || accountHash == nullptr || len != SHA_256_HASH_LEN) {
         LNN_LOGE(LNN_STATE, "GetOhosAccount get invalid param");
@@ -156,7 +158,7 @@ void LnnAccoutIdStatusSet(int64_t accountId)
     }
 }
 
-int32_t LnnInitOhosAccount(void)
+SOFTBUS_VISIBILITY int32_t LnnInitOhosAccount(void)
 {
     int64_t accountId = 0;
     uint8_t accountHash[SHA_256_HASH_LEN] = {0};
@@ -233,7 +235,7 @@ static int32_t GenerateDefaultAccountStrHash(unsigned char *accountHash, uint32_
     return SOFTBUS_OK;
 }
 
-void LnnUpdateOhosAccount(UpdateAccountReason reason)
+SOFTBUS_VISIBILITY void LnnUpdateOhosAccount(UpdateAccountReason reason)
 {
     int64_t accountId = 0;
     uint8_t accountHash[SHA_256_HASH_LEN] = {0};
@@ -271,7 +273,7 @@ void LnnUpdateOhosAccount(UpdateAccountReason reason)
     AccountUpdateProcess(localAccountHash, accountHash, accountId, reason);
 }
 
-void LnnOnOhosAccountLogout(void)
+SOFTBUS_VISIBILITY void LnnOnOhosAccountLogout(void)
 {
     uint8_t accountHash[SHA_256_HASH_LEN] = {0};
     char accountUid[ACCOUNT_UID_STR_LEN] = {0};
@@ -295,7 +297,7 @@ void LnnOnOhosAccountLogout(void)
     LnnUpdateHeartbeatInfo(UPDATE_HB_ACCOUNT_INFO);
 }
 
-bool LnnIsDefaultOhosAccount(void)
+SOFTBUS_VISIBILITY bool LnnIsDefaultOhosAccount(void)
 {
     uint8_t localAccountHash[SHA_256_HASH_LEN] = {0};
     uint8_t defaultAccountHash[SHA_256_HASH_LEN] = {0};

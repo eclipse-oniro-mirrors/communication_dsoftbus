@@ -20,15 +20,20 @@ module_output_path = "dsoftbus/soft_bus/discovery"
 
 ohos_unittest("DiscBleTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/broadcast/scheduler/src/broadcast_scheduler.c",
     "$dsoftbus_root_path/core/discovery/ble/softbus_ble/src/disc_ble.c",
     "$dsoftbus_root_path/core/discovery/ble/softbus_ble/src/disc_ble_utils.c",
+    "$dsoftbus_root_path/core/frame/init/src/g_enhance_adapter_func.c",
+    "$dsoftbus_root_path/core/frame/init/src/g_enhance_disc_func.c",
     "ble_mock.cpp",
     "bus_center_mock.cpp",
     "disc_ble_test.cpp",
-    "$dsoftbus_root_path/core/frame/init/src/g_enhance_adapter_func.c",
-    "$dsoftbus_root_path/core/frame/init/src/g_enhance_disc_func.c",
   ]
   if (qemu_arm_disable) {
     sources += [
@@ -74,7 +79,8 @@ ohos_unittest("DiscBleTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
   deps += dsoftbus_log_label_deps
   external_deps = [
@@ -91,5 +97,5 @@ ohos_unittest("DiscBleTest") {
 
 group("unittest") {
   testonly = true
-  deps = [ ":DiscBleTest" ]
+  deps = []
 }

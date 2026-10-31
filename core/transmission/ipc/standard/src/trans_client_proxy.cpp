@@ -18,6 +18,7 @@
 #include "br_proxy_server_manager.h"
 #include "softbus_access_token_adapter.h"
 #include "softbus_client_info_manager.h"
+#include "softbus_def.h"
 #include "trans_client_proxy_standard.h"
 #include "trans_log.h"
 
@@ -90,7 +91,7 @@ int32_t ClientIpcOnChannelBind(ChannelMsg *data)
     return clientProxy->OnChannelBind(data->msgChannelId, data->msgChannelType);
 }
 
-int32_t ClientIpcOnChannelOpenFailed(ChannelMsg *data, int32_t errCode)
+SOFTBUS_VISIBILITY int32_t ClientIpcOnChannelOpenFailed(ChannelMsg *data, int32_t errCode)
 {
     if (data == nullptr) {
         TRANS_LOGE(TRANS_CTRL, "ClientIpcOnChannelOpenFailed data is nullptr!");
@@ -138,7 +139,7 @@ int32_t ClientIpcOnChannelLinkDown(ChannelMsg *data, const char *networkId, cons
     return SOFTBUS_OK;
 }
 
-int32_t ClientIpcOnChannelClosed(ChannelMsg *data)
+SOFTBUS_VISIBILITY int32_t ClientIpcOnChannelClosed(ChannelMsg *data)
 {
     if (data == nullptr) {
         TRANS_LOGE(TRANS_CTRL, "ClientIpcOnChannelClosed data is nullptr!");
@@ -165,7 +166,7 @@ int32_t ClientIpcOnChannelClosed(ChannelMsg *data)
     return SOFTBUS_OK;
 }
 
-int32_t ClientIpcSetChannelInfo(
+SOFTBUS_VISIBILITY int32_t ClientIpcSetChannelInfo(
     const char *pkgName, const char *sessionName, int32_t sessionId, const TransInfo *transInfo, int32_t pid)
 {
     if (pkgName == nullptr || sessionName == nullptr || transInfo == nullptr) {
@@ -297,7 +298,7 @@ int32_t ClientIpcCheckCollabRelation(const char *pkgName, int32_t pid,
 }
 
 #define COMM_PKGNAME_BRPROXY "BrProxyPkgName"
-int32_t ClientIpcBrProxyOpened(int32_t pid, int32_t channelId,
+SOFTBUS_VISIBILITY int32_t ClientIpcBrProxyOpened(int32_t pid, int32_t channelId,
     const char *brMac, const char *uuid, int32_t reason)
 {
     if (uuid == nullptr || brMac == nullptr) {

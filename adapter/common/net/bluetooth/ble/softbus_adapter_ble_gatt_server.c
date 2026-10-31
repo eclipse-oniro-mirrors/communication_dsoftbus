@@ -87,7 +87,7 @@ int CheckGattsStatus(void)
     return SOFTBUS_OK;
 }
 
-int SoftBusGattsAddService(SoftBusBtUuid srvcUuid, bool isPrimary, int number)
+SOFTBUS_VISIBILITY int SoftBusGattsAddService(SoftBusBtUuid srvcUuid, bool isPrimary, int number)
 {
     if ((srvcUuid.uuidLen == 0) || (srvcUuid.uuid == NULL) || (number <= 0)) {
         CONN_LOGE(CONN_BLE, "invalid param");
@@ -109,7 +109,8 @@ int SoftBusGattsAddService(SoftBusBtUuid srvcUuid, bool isPrimary, int number)
     return SOFTBUS_OK;
 }
 
-int SoftBusGattsAddCharacteristic(int srvcHandle, SoftBusBtUuid characUuid, int properties, int permissions)
+SOFTBUS_SYMBOL_EXPORT int SoftBusGattsAddCharacteristic(int srvcHandle, SoftBusBtUuid characUuid, int properties,
+    int permissions)
 {
     if ((characUuid.uuidLen == 0) || (characUuid.uuid == NULL)) {
         CONN_LOGE(CONN_BLE, "invalid param");
@@ -130,7 +131,7 @@ int SoftBusGattsAddCharacteristic(int srvcHandle, SoftBusBtUuid characUuid, int 
     return SOFTBUS_OK;
 }
 
-int SoftBusGattsAddDescriptor(int srvcHandle, SoftBusBtUuid descUuid, int permissions)
+SOFTBUS_SYMBOL_EXPORT int SoftBusGattsAddDescriptor(int srvcHandle, SoftBusBtUuid descUuid, int permissions)
 {
     if ((descUuid.uuidLen == 0) || (descUuid.uuid == NULL)) {
         CONN_LOGE(CONN_BLE, "invalid param");
@@ -151,7 +152,7 @@ int SoftBusGattsAddDescriptor(int srvcHandle, SoftBusBtUuid descUuid, int permis
     return SOFTBUS_OK;
 }
 
-int SoftBusGattsStartService(int srvcHandle)
+SOFTBUS_SYMBOL_EXPORT int SoftBusGattsStartService(int srvcHandle)
 {
     if (CheckGattsStatus() != SOFTBUS_OK) {
         CONN_LOGE(CONN_BLE, "CheckGattsStatus return err");
@@ -165,7 +166,7 @@ int SoftBusGattsStartService(int srvcHandle)
     return SOFTBUS_OK;
 }
 
-int SoftBusGattsStopService(int srvcHandle)
+SOFTBUS_VISIBILITY int SoftBusGattsStopService(int srvcHandle)
 {
     if (CheckGattsStatus() != SOFTBUS_OK) {
         CONN_LOGE(CONN_BLE, "CheckGattsStatus err");
@@ -179,7 +180,7 @@ int SoftBusGattsStopService(int srvcHandle)
     return SOFTBUS_OK;
 }
 
-int SoftBusGattsDeleteService(int srvcHandle)
+SOFTBUS_SYMBOL_EXPORT int SoftBusGattsDeleteService(int srvcHandle)
 {
     if (CheckGattsStatus() != SOFTBUS_OK) {
         CONN_LOGE(CONN_BLE, "CheckGattsStatus return err");
@@ -192,7 +193,7 @@ int SoftBusGattsDeleteService(int srvcHandle)
     return SOFTBUS_OK;
 }
 
-int SoftBusGattsConnect(SoftBusBtAddr btAddr)
+SOFTBUS_SYMBOL_EXPORT int SoftBusGattsConnect(SoftBusBtAddr btAddr)
 {
     if (CheckGattsStatus() != SOFTBUS_OK) {
         CONN_LOGE(CONN_BLE, "CheckGattsStatus return err");
@@ -211,7 +212,7 @@ int SoftBusGattsConnect(SoftBusBtAddr btAddr)
     return SOFTBUS_OK;
 }
 
-int SoftBusGattsDisconnect(SoftBusBtAddr btAddr, int connId)
+SOFTBUS_VISIBILITY int SoftBusGattsDisconnect(SoftBusBtAddr btAddr, int connId)
 {
     if (CheckGattsStatus() != SOFTBUS_OK) {
         CONN_LOGE(CONN_BLE, "CheckGattsStatus return err");
@@ -230,7 +231,7 @@ int SoftBusGattsDisconnect(SoftBusBtAddr btAddr, int connId)
     return SOFTBUS_OK;
 }
 
-int SoftBusGattsSendResponse(SoftBusGattsResponse *param)
+SOFTBUS_SYMBOL_EXPORT int SoftBusGattsSendResponse(SoftBusGattsResponse *param)
 {
     if (param == NULL) {
         CONN_LOGE(CONN_BLE, "invalid param");
@@ -254,7 +255,7 @@ int SoftBusGattsSendResponse(SoftBusGattsResponse *param)
     return SOFTBUS_OK;
 }
 
-int SoftBusGattsSendNotify(SoftBusGattsNotify *param)
+SOFTBUS_SYMBOL_EXPORT int SoftBusGattsSendNotify(SoftBusGattsNotify *param)
 {
     if (param == NULL) {
         CONN_LOGE(CONN_BLE, "invalid param");
@@ -342,7 +343,7 @@ static void BleConnectServerCallback(int connId, int serverId, const BdAddr *bdA
     (void)SetConnIdAndAddr(connId, serverId, (SoftBusBtAddr *)bdAddr);
 }
 
-void RemoveConnId(int32_t connId)
+SOFTBUS_SYMBOL_EXPORT void RemoveConnId(int32_t connId)
 {
     CONN_CHECK_AND_RETURN_LOGE(SoftBusMutexLock(&g_softBusGattsManager.lock) == SOFTBUS_OK,
         CONN_BLE, "lock fail, connId=%{public}d", connId);
@@ -791,7 +792,7 @@ static void RemoveGattsManager(SoftBusBtUuid serviceUuid)
     (void)SoftBusMutexUnlock(&g_softBusGattsManager.lock);
 }
 
-int SoftBusRegisterGattsCallbacks(SoftBusGattsCallback *callback, SoftBusBtUuid serviceUuid)
+SOFTBUS_VISIBILITY int SoftBusRegisterGattsCallbacks(SoftBusGattsCallback *callback, SoftBusBtUuid serviceUuid)
 {
     if (callback == NULL) {
         CONN_LOGE(CONN_BLE, "callback is null");
@@ -828,7 +829,7 @@ int SoftBusRegisterGattsCallbacks(SoftBusGattsCallback *callback, SoftBusBtUuid 
     return SOFTBUS_OK;
 }
 
-void SoftBusUnRegisterGattsCallbacks(SoftBusBtUuid serviceUuid)
+SOFTBUS_SYMBOL_EXPORT void SoftBusUnRegisterGattsCallbacks(SoftBusBtUuid serviceUuid)
 {
     RemoveGattsManager(serviceUuid);
     if (g_halRegFlag == -1 || !IsGattsManagerEmpty()) {

@@ -36,6 +36,7 @@
 #include "softbus_adapter_mem.h"
 #include "softbus_error_code.h"
 #include "auth_hichain_adapter.h"
+#include "softbus_def.h"
 
 static const int32_t ACCOUNT_STRTOLL_BASE = 10;
 static const uint64_t CONTROL_PANEL_DISPLAY_ID = 0;
@@ -57,7 +58,7 @@ static std::mutex g_subscriberMutex;
 static std::shared_ptr<OHOS::AccountSA::OsAccountConstraintSubscriber> g_subscriber;
 static constexpr const char *DISTRIBUTED_TRANSMISSION_OUTGOING_CONSTRAINT = "constraint.distributed.transmission";
 
-int32_t GetOsAccountId(char *id, uint32_t idLen, uint32_t *len)
+SOFTBUS_VISIBILITY int32_t GetOsAccountId(char *id, uint32_t idLen, uint32_t *len)
 {
     if (id == nullptr || len == nullptr || idLen == 0) {
         LNN_LOGE(LNN_STATE, "invalid parameter");
@@ -92,7 +93,7 @@ int32_t GetOsAccountId(char *id, uint32_t idLen, uint32_t *len)
     return SOFTBUS_OK;
 }
 
-int32_t GetOsAccountIdByUserId(int32_t userId, char **id, uint32_t *len)
+SOFTBUS_VISIBILITY int32_t GetOsAccountIdByUserId(int32_t userId, char **id, uint32_t *len)
 {
     if (id == nullptr || len == nullptr || userId <= 0) {
         LNN_LOGE(LNN_STATE, "invalid parameter");
@@ -134,7 +135,7 @@ int32_t GetOsAccountIdByUserId(int32_t userId, char **id, uint32_t *len)
     return SOFTBUS_OK;
 }
 
-int32_t GetCurrentAccount(int64_t *account)
+SOFTBUS_VISIBILITY int32_t GetCurrentAccount(int64_t *account)
 {
     if (account == nullptr) {
         LNN_LOGE(LNN_STATE, "invalid param");
@@ -187,7 +188,7 @@ static int32_t GetActiveOsAccountIdsByDisplayId(int32_t *userId)
     return SOFTBUS_OK;
 }
 
-int32_t GetActiveOsAccountIds(void)
+SOFTBUS_VISIBILITY int32_t GetActiveOsAccountIds(void)
 {
     std::vector<int32_t> accountId;
     int32_t ret = OHOS::AccountSA::OsAccountManager::QueryActiveOsAccountIds(accountId);
@@ -209,7 +210,7 @@ static bool JudgeDeviceType(int32_t expectedDevTypeId)
     return localDevTypeId == expectedDevTypeId;
 }
 
-int32_t JudgeDeviceTypeAndGetOsAccountIds(void)
+SOFTBUS_VISIBILITY int32_t JudgeDeviceTypeAndGetOsAccountIds(void)
 {
     int32_t userId = 0;
     if (!JudgeDeviceType(TYPE_CAR_ID)) {
@@ -221,7 +222,7 @@ int32_t JudgeDeviceTypeAndGetOsAccountIds(void)
     return userId;
 }
 
-int32_t GetAllForegroundAccountIds(int32_t **userIds, uint32_t *userIdsLen)
+SOFTBUS_VISIBILITY int32_t GetAllForegroundAccountIds(int32_t **userIds, uint32_t *userIdsLen)
 {
     if (userIds == nullptr || userIdsLen == nullptr) {
         LNN_LOGE(LNN_STATE, "invalid param");
@@ -251,7 +252,7 @@ int32_t GetAllForegroundAccountIds(int32_t **userIds, uint32_t *userIdsLen)
     return SOFTBUS_OK;
 }
 
-bool IsForegroundUserId(int32_t userId)
+SOFTBUS_VISIBILITY bool IsForegroundUserId(int32_t userId)
 {
     std::vector<OHOS::AccountSA::ForegroundOsAccount> foregroundAccountIds;
     OHOS::ErrCode errCode = OHOS::AccountSA::OsAccountManager::GetForegroundOsAccounts(foregroundAccountIds);
@@ -268,7 +269,7 @@ bool IsForegroundUserId(int32_t userId)
     return false;
 }
 
-bool IsActiveOsAccountUnlocked(void)
+SOFTBUS_VISIBILITY bool IsActiveOsAccountUnlocked(void)
 {
     int32_t osAccountId = JudgeDeviceTypeAndGetOsAccountIds();
     if (osAccountId == SOFTBUS_NETWORK_QUERY_ACCOUNT_ID_FAILED) {
@@ -287,7 +288,7 @@ bool IsActiveOsAccountUnlocked(void)
     return isUnlocked;
 }
 
-int32_t GetOsAccountUid(char *id, uint32_t idLen, uint32_t *len)
+SOFTBUS_VISIBILITY int32_t GetOsAccountUid(char *id, uint32_t idLen, uint32_t *len)
 {
     if (id == nullptr || len == nullptr || idLen == 0) {
         LNN_LOGE(LNN_STATE, "invalid parameter");
@@ -573,7 +574,7 @@ static bool LnnIsOsAccountConstraintByLocalId(int32_t localId)
     return it->second;
 }
 
-bool LnnIsOsAccountConstraint(void)
+SOFTBUS_VISIBILITY bool LnnIsOsAccountConstraint(void)
 {
     int32_t currentId = GetActiveOsAccountIds();
     if (currentId < 0) {

@@ -42,6 +42,7 @@
 #include "softbus_feature_config.h"
 #include "softbus_json_utils.h"
 #include "softbus_message_open_channel.h"
+#include "softbus_def.h"
 #include "softbus_socket.h"
 #include "softbus_tcp_socket.h"
 #include "softbus_utils.h"
@@ -187,7 +188,7 @@ void TransSrvDataListDeinit(void)
     g_tcpSrvDataList = NULL;
 }
 
-int32_t TransSrvAddDataBufNode(int32_t channelId, int32_t fd)
+SOFTBUS_VISIBILITY int32_t TransSrvAddDataBufNode(int32_t channelId, int32_t fd)
 {
 #define MAX_DATA_BUF 4096
     DataBuf *node = (DataBuf *)SoftBusCalloc(sizeof(DataBuf));
@@ -369,7 +370,7 @@ static int32_t TransSrvGetSeqAndFlagsByChannelId(uint64_t *seq, uint32_t *flags,
     return SOFTBUS_OK;
 }
 
-int32_t TransTdcPostBytes(int32_t channelId, TdcPacketHead *packetHead, const char *data)
+SOFTBUS_VISIBILITY int32_t TransTdcPostBytes(int32_t channelId, TdcPacketHead *packetHead, const char *data)
 {
     if (data == NULL || packetHead == NULL || packetHead->dataLen == 0) {
         TRANS_LOGE(TRANS_BYTES, "Invalid para.");
@@ -418,6 +419,7 @@ int32_t TransTdcPostBytes(int32_t channelId, TdcPacketHead *packetHead, const ch
     return SOFTBUS_OK;
 }
 
+SOFTBUS_VISIBILITY
 int32_t TransTdcPostExternalBytes(int32_t channelId, TdcExternalPacketHead *packetHead, const char *data)
 {
     if (data == NULL || packetHead == NULL || packetHead->dataLen == 0) {
@@ -698,7 +700,7 @@ int32_t NotifyChannelOpenFailedBySessionConn(const SessionConn *conn, int32_t er
     return SOFTBUS_OK;
 }
 
-int32_t NotifyChannelOpenFailed(int32_t channelId, int32_t errCode)
+SOFTBUS_VISIBILITY int32_t NotifyChannelOpenFailed(int32_t channelId, int32_t errCode)
 {
     SessionConn conn;
     if (GetSessionConnById(channelId, &conn) != SOFTBUS_OK) {
@@ -1986,7 +1988,7 @@ static int32_t TransCheckTdcOpenBlock(
     return SOFTBUS_OK;
 }
 
-int32_t TransDealTdcChannelOpenResult(
+SOFTBUS_VISIBILITY int32_t TransDealTdcChannelOpenResult(
     int32_t channelId, int32_t openResult, const AccessInfo *accessInfo, pid_t callingPid)
 {
     SessionConn conn = { 0 };

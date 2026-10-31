@@ -22,13 +22,14 @@
 #include "lnn_log.h"
 #include "trans_channel_manager.h"
 #include "auth_tcp_connection.h"
+#include "softbus_def.h"
 
 #define LNN_MAX_PRINT_ADDR_LEN 100
 #define SHORT_UDID_HASH_LEN    8
 
 static __thread char g_printAddr[LNN_MAX_PRINT_ADDR_LEN] = { 0 };
 
-bool LnnIsSameConnectionAddr(const ConnectionAddr *addr1, const ConnectionAddr *addr2, bool isShort)
+SOFTBUS_VISIBILITY bool LnnIsSameConnectionAddr(const ConnectionAddr *addr1, const ConnectionAddr *addr2, bool isShort)
 {
     if (addr1 == NULL || addr2 == NULL) {
         LNN_LOGD(LNN_STATE, "addr1 or addr2 is null");
@@ -63,7 +64,7 @@ bool LnnIsSameConnectionAddr(const ConnectionAddr *addr1, const ConnectionAddr *
     return false;
 }
 
-bool LnnConvertAddrToOption(const ConnectionAddr *addr, ConnectOption *option)
+SOFTBUS_VISIBILITY bool LnnConvertAddrToOption(const ConnectionAddr *addr, ConnectOption *option)
 {
     if (addr == NULL || option == NULL) {
         LNN_LOGW(LNN_STATE, "addr or option is null");
@@ -156,7 +157,7 @@ bool LnnConvertOptionToAddr(ConnectionAddr *addr, const ConnectOption *option,
     return false;
 }
 
-DiscoveryType LnnConvAddrTypeToDiscType(ConnectionAddrType type)
+SOFTBUS_VISIBILITY DiscoveryType LnnConvAddrTypeToDiscType(ConnectionAddrType type)
 {
     if (type == CONNECTION_ADDR_WLAN || type == CONNECTION_ADDR_ETH) {
         return DISCOVERY_TYPE_WIFI;
@@ -175,7 +176,7 @@ DiscoveryType LnnConvAddrTypeToDiscType(ConnectionAddrType type)
     }
 }
 
-ConnectionAddrType LnnDiscTypeToConnAddrType(DiscoveryType type)
+SOFTBUS_VISIBILITY ConnectionAddrType LnnDiscTypeToConnAddrType(DiscoveryType type)
 {
     switch (type) {
         case DISCOVERY_TYPE_WIFI:
@@ -214,7 +215,7 @@ static bool ConvertAddrToAuthConnInfoForSession(const ConnectionAddr *addr, Auth
     return true;
 }
 
-bool LnnConvertAddrToAuthConnInfo(const ConnectionAddr *addr, AuthConnInfo *connInfo)
+SOFTBUS_VISIBILITY bool LnnConvertAddrToAuthConnInfo(const ConnectionAddr *addr, AuthConnInfo *connInfo)
 {
     if (addr == NULL || connInfo == NULL) {
         LNN_LOGW(LNN_STATE, "addr or connInfo is null");
@@ -257,7 +258,7 @@ bool LnnConvertAddrToAuthConnInfo(const ConnectionAddr *addr, AuthConnInfo *conn
     return false;
 }
 
-bool LnnConvertAuthConnInfoToAddr(ConnectionAddr *addr, const AuthConnInfo *connInfo,
+SOFTBUS_VISIBILITY bool LnnConvertAuthConnInfoToAddr(ConnectionAddr *addr, const AuthConnInfo *connInfo,
     ConnectionAddrType hintType)
 {
     if (addr == NULL || connInfo == NULL) {
@@ -346,7 +347,7 @@ bool LnnIsConnectionAddrInvalid(const ConnectionAddr *addr)
     return false;
 }
 
-const char *LnnPrintConnectionAddr(const ConnectionAddr *addr)
+SOFTBUS_VISIBILITY const char *LnnPrintConnectionAddr(const ConnectionAddr *addr)
 {
     int32_t ret = 0;
     char *anonyIp = NULL;

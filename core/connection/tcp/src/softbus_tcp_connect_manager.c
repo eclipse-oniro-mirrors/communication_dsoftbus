@@ -841,7 +841,7 @@ static void InitTcpInterface(void)
     g_tcpInterface.PreventConnection = NULL;
 }
 
-ConnectFuncInterface *ConnInitTcp(const ConnectCallback *callback)
+SOFTBUS_VISIBILITY ConnectFuncInterface *ConnInitTcp(const ConnectCallback *callback)
 {
     if (callback == NULL) {
         CONN_LOGW(CONN_INIT, "callback is NULL.");

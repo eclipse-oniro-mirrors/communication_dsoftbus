@@ -24,6 +24,7 @@
 #include "message_handler.h"
 #include "softbus_adapter_crypto.h"
 #include "softbus_adapter_mem.h"
+#include "softbus_def.h"
 #include "softbus_utils.h"
 
 #define CONFLICT_INFO_TIMELINESS 30000
@@ -126,7 +127,7 @@ static int32_t RemoveConflictInfoTimeliness(const SoftBusMessage *msg, void *dat
     return SOFTBUS_INVALID_PARAM;
 }
 
-void RemoveConflictInfoTimelinessMsg(const DevIdentifyInfo *inputInfo, LinkConflictType conflictType)
+SOFTBUS_VISIBILITY void RemoveConflictInfoTimelinessMsg(const DevIdentifyInfo *inputInfo, LinkConflictType conflictType)
 {
     if (inputInfo == NULL) {
         LNN_LOGE(LNN_LANE, "invalid param");
@@ -149,7 +150,7 @@ void RemoveConflictInfoTimelinessMsg(const DevIdentifyInfo *inputInfo, LinkConfl
         &g_linkConflictLoopHandler, RemoveConflictInfoTimeliness, &conflictItem);
 }
 
-LinkConflictType GetConflictTypeWithErrcode(int32_t conflictErrcode)
+SOFTBUS_VISIBILITY LinkConflictType GetConflictTypeWithErrcode(int32_t conflictErrcode)
 {
     if (conflictErrcode == SOFTBUS_CONN_ACTIVE_TYPE_P2P_GO_GC_CONFLICT ||
         conflictErrcode == SOFTBUS_CONN_PV1_BOTH_GO_ERR ||
@@ -279,7 +280,7 @@ static int32_t CreateNewLinkConflictInfo(const LinkConflictInfo *inputInfo)
     return SOFTBUS_OK;
 }
 
-int32_t DelLinkConflictInfo(const DevIdentifyInfo *inputInfo, LinkConflictType conflictType)
+SOFTBUS_VISIBILITY int32_t DelLinkConflictInfo(const DevIdentifyInfo *inputInfo, LinkConflictType conflictType)
 {
     if (inputInfo == NULL) {
         LNN_LOGE(LNN_LANE, "invalid param");
@@ -374,7 +375,7 @@ static void GenerateConflictInfoWithDevIdHash(const DevIdentifyInfo *inputInfo, 
     }
 }
 
-int32_t FindLinkConflictInfoByDevId(const DevIdentifyInfo *inputInfo, LinkConflictType conflictType,
+SOFTBUS_VISIBILITY int32_t FindLinkConflictInfoByDevId(const DevIdentifyInfo *inputInfo, LinkConflictType conflictType,
     LinkConflictInfo *outputInfo)
 {
     if (inputInfo == NULL || outputInfo == NULL) {
@@ -421,7 +422,7 @@ int32_t FindLinkConflictInfoByDevId(const DevIdentifyInfo *inputInfo, LinkConfli
     return SOFTBUS_LANE_NOT_FOUND;
 }
 
-int32_t CheckLinkConflictByReleaseLink(LaneLinkType releaseLink)
+SOFTBUS_VISIBILITY int32_t CheckLinkConflictByReleaseLink(LaneLinkType releaseLink)
 {
     if (releaseLink != LANE_HML) {
         LNN_LOGE(LNN_LANE, "invalid releaseLink=%{public}d", releaseLink);

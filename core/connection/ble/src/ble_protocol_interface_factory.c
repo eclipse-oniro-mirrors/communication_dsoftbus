@@ -21,9 +21,10 @@
 #include "softbus_conn_ble_connection.h"
 #include "softbus_conn_ble_client.h"
 #include "softbus_conn_ble_server.h"
+#include "softbus_def.h"
 
 #ifdef DSOFTBUS_FEATURE_CONN_COC
-static int32_t ConnCocClientConnect(ConnBleConnection *connection)
+static SOFTBUS_SYMBOL_EXPORT int32_t ConnCocClientConnect(ConnBleConnection *connection)
 {
     ConnEnhanceFuncList *pfnConnEnhanceFuncList = ConnEnhanceFuncListGet();
     if (pfnConnEnhanceFuncList->connCocClientConnect == NULL) {
@@ -33,7 +34,7 @@ static int32_t ConnCocClientConnect(ConnBleConnection *connection)
     return pfnConnEnhanceFuncList->connCocClientConnect(connection);
 }
 
-static int32_t ConnCocClientDisconnect(ConnBleConnection *connection, bool ignore1, bool ignore2)
+static SOFTBUS_SYMBOL_EXPORT int32_t ConnCocClientDisconnect(ConnBleConnection *connection, bool ignore1, bool ignore2)
 {
     ConnEnhanceFuncList *pfnConnEnhanceFuncList = ConnEnhanceFuncListGet();
     if (pfnConnEnhanceFuncList->connCocClientDisconnect == NULL) {
@@ -43,7 +44,8 @@ static int32_t ConnCocClientDisconnect(ConnBleConnection *connection, bool ignor
     return pfnConnEnhanceFuncList->connCocClientDisconnect(connection, ignore1, ignore2);
 }
 
-static int32_t ConnCocClientSend(ConnBleConnection *connection, const uint8_t *data, uint32_t dataLen, int32_t module)
+static SOFTBUS_SYMBOL_EXPORT int32_t ConnCocClientSend(ConnBleConnection *connection, const uint8_t *data,
+    uint32_t dataLen, int32_t module)
 {
     ConnEnhanceFuncList *pfnConnEnhanceFuncList = ConnEnhanceFuncListGet();
     if (pfnConnEnhanceFuncList->connCocClientSend == NULL) {
@@ -53,7 +55,8 @@ static int32_t ConnCocClientSend(ConnBleConnection *connection, const uint8_t *d
     return pfnConnEnhanceFuncList->connCocClientSend(connection, data, dataLen, module);
 }
 
-static int32_t ConnCocClientUpdatePriority(ConnBleConnection *connection, ConnectBlePriority priority)
+static SOFTBUS_SYMBOL_EXPORT int32_t ConnCocClientUpdatePriority(ConnBleConnection *connection,
+    ConnectBlePriority priority)
 {
     ConnEnhanceFuncList *pfnConnEnhanceFuncList = ConnEnhanceFuncListGet();
     if (pfnConnEnhanceFuncList->connCocClientUpdatePriority == NULL) {
@@ -63,7 +66,7 @@ static int32_t ConnCocClientUpdatePriority(ConnBleConnection *connection, Connec
     return pfnConnEnhanceFuncList->connCocClientUpdatePriority(connection, priority);
 }
 
-static int32_t ConnCocServerStartService(void)
+static SOFTBUS_SYMBOL_EXPORT int32_t ConnCocServerStartService(void)
 {
     ConnEnhanceFuncList *pfnConnEnhanceFuncList = ConnEnhanceFuncListGet();
     if (pfnConnEnhanceFuncList->connCocServerStartService == NULL) {
@@ -73,7 +76,7 @@ static int32_t ConnCocServerStartService(void)
     return pfnConnEnhanceFuncList->connCocServerStartService();
 }
 
-static int32_t ConnCocServerStopService(void)
+static SOFTBUS_SYMBOL_EXPORT int32_t ConnCocServerStopService(void)
 {
     ConnEnhanceFuncList *pfnConnEnhanceFuncList = ConnEnhanceFuncListGet();
     if (pfnConnEnhanceFuncList->connCocServerStopService == NULL) {
@@ -83,7 +86,8 @@ static int32_t ConnCocServerStopService(void)
     return pfnConnEnhanceFuncList->connCocServerStopService();
 }
 
-static int32_t ConnCocServerSend(ConnBleConnection *connection, const uint8_t *data, uint32_t dataLen, int32_t module)
+static SOFTBUS_SYMBOL_EXPORT int32_t ConnCocServerSend(ConnBleConnection *connection, const uint8_t *data,
+    uint32_t dataLen, int32_t module)
 {
     ConnEnhanceFuncList *pfnConnEnhanceFuncList = ConnEnhanceFuncListGet();
     if (pfnConnEnhanceFuncList->connCocServerSend == NULL) {
@@ -93,7 +97,7 @@ static int32_t ConnCocServerSend(ConnBleConnection *connection, const uint8_t *d
     return pfnConnEnhanceFuncList->connCocServerSend(connection, data, dataLen, module);
 }
 
-static int32_t ConnCocServerDisconnect(ConnBleConnection *connection)
+static SOFTBUS_SYMBOL_EXPORT int32_t ConnCocServerDisconnect(ConnBleConnection *connection)
 {
     ConnEnhanceFuncList *pfnConnEnhanceFuncList = ConnEnhanceFuncListGet();
     if (pfnConnEnhanceFuncList->connCocServerDisconnect == NULL) {
@@ -103,7 +107,7 @@ static int32_t ConnCocServerDisconnect(ConnBleConnection *connection)
     return pfnConnEnhanceFuncList->connCocServerDisconnect(connection);
 }
 
-static int32_t ConnCocServerConnect(ConnBleConnection *connection)
+static SOFTBUS_SYMBOL_EXPORT int32_t ConnCocServerConnect(ConnBleConnection *connection)
 {
     ConnEnhanceFuncList *pfnConnEnhanceFuncList = ConnEnhanceFuncListGet();
     if (pfnConnEnhanceFuncList->connCocServerConnect == NULL) {
@@ -113,7 +117,8 @@ static int32_t ConnCocServerConnect(ConnBleConnection *connection)
     return pfnConnEnhanceFuncList->connCocServerConnect(connection);
 }
 
-static int32_t ConnCocInitClientModule(SoftBusLooper *looper, const ConnBleClientEventListener *cListener)
+static SOFTBUS_SYMBOL_EXPORT int32_t ConnCocInitClientModule(SoftBusLooper *looper,
+    const ConnBleClientEventListener *cListener)
 {
     ConnEnhanceFuncList *pfnConnEnhanceFuncList = ConnEnhanceFuncListGet();
     if (pfnConnEnhanceFuncList->connCocInitClientModule == NULL) {
@@ -124,7 +129,8 @@ static int32_t ConnCocInitClientModule(SoftBusLooper *looper, const ConnBleClien
     return pfnConnEnhanceFuncList->connCocInitClientModule(looper, cListener);
 }
 
-static int32_t ConnCocInitServerModule(SoftBusLooper *looper, const ConnBleServerEventListener *sListener)
+static SOFTBUS_SYMBOL_EXPORT int32_t ConnCocInitServerModule(SoftBusLooper *looper,
+    const ConnBleServerEventListener *sListener)
 {
     ConnEnhanceFuncList *pfnConnEnhanceFuncList = ConnEnhanceFuncListGet();
     if (pfnConnEnhanceFuncList->connCocInitServerModule == NULL) {
@@ -172,7 +178,7 @@ static void ConnCocInit(void)
     return;
 }
 
-const BleUnifyInterface *ConnBleGetUnifyInterface(BleProtocolType type)
+SOFTBUS_VISIBILITY const BleUnifyInterface *ConnBleGetUnifyInterface(BleProtocolType type)
 {
     if (type != BLE_GATT && type != BLE_COC) {
         CONN_LOGE(CONN_BLE, "fail to return type.");

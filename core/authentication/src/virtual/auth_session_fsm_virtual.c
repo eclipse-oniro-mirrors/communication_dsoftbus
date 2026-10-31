@@ -14,6 +14,7 @@
  */
 
 #include "auth_session_fsm.h"
+#include "softbus_def.h"
 
 void AuthSessionSetReSyncDeviceName(void) { }
 
@@ -32,7 +33,7 @@ int32_t AuthSessionGetAuthVersion(int64_t authSeq, int32_t *version)
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-bool AuthSessionGetIsSameAccount(int64_t authSeq)
+SOFTBUS_VISIBILITY bool AuthSessionGetIsSameAccount(int64_t authSeq)
 {
     (void)authSeq;
     return false;
@@ -46,7 +47,7 @@ int32_t AuthSessionGetUdid(int64_t authSeq, char *udid, uint32_t size)
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t AuthSessionGetUserId(int64_t authSeq)
+SOFTBUS_VISIBILITY int32_t AuthSessionGetUserId(int64_t authSeq)
 {
     (void)authSeq;
     return SOFTBUS_NOT_IMPLEMENT;

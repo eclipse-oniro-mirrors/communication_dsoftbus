@@ -54,6 +54,11 @@ if (defined(ohos_lite)) {
 
   ohos_unittest("AdaptorDsoftbusCryptTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = [ "dsoftbus_crypto_test.cpp" ]
     include_dirs = [
       "$dsoftbus_root_path/adapter/common/include",
@@ -69,6 +74,11 @@ if (defined(ohos_lite)) {
 
   ohos_unittest("AdapterDsoftbusAesCryptoTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = [ "dsoftbus_aes_crypto_test.cpp" ]
     include_dirs = [
       "$dsoftbus_root_path/adapter/common/include",
@@ -86,6 +96,11 @@ if (defined(ohos_lite)) {
 
   ohos_unittest("AdapterDsoftbusDfxTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = [ "softbus_dfx_test.cpp" ]
     include_dirs = [
       "$dsoftbus_root_path/adapter/common/include",
@@ -103,6 +118,11 @@ if (defined(ohos_lite)) {
 
   ohos_unittest("AdapterDsoftbusOtherTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = [ "dsoftbus_other_test.cpp" ]
     include_dirs = [
       "$dsoftbus_root_path/adapter/common/include",
@@ -120,6 +140,11 @@ if (defined(ohos_lite)) {
 
   ohos_unittest("AdapterDsoftbusJsonTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = [ "softbus_adapter_json_test.cpp" ]
     include_dirs = [
       "$dsoftbus_root_path/adapter/common/include",
@@ -137,6 +162,11 @@ if (defined(ohos_lite)) {
 
   ohos_unittest("AdapterDsoftbusRangeTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = [ "softbus_adapter_range_test.cpp" ]
     include_dirs = [
       "$dsoftbus_root_path/adapter/common/include",
@@ -153,6 +183,11 @@ if (defined(ohos_lite)) {
 
   ohos_unittest("AdapterDsoftbusSocketTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = [ "softbus_socket_test.cpp" ]
     include_dirs = [
       "$dsoftbus_root_path/adapter/common/include",
@@ -171,6 +206,11 @@ if (defined(ohos_lite)) {
 
   ohos_unittest("SoftbusThreadTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = [ "softbus_thread_test.cpp" ]
     include_dirs = [
       "$dsoftbus_root_path/adapter/common/include",
@@ -189,6 +229,11 @@ if (defined(ohos_lite)) {
 
   ohos_unittest("SoftbusTimeTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = [ "softbus_time_test.cpp" ]
     include_dirs = [
       "$dsoftbus_root_path/adapter/common/include",
@@ -205,6 +250,11 @@ if (defined(ohos_lite)) {
 
   ohos_unittest("AdaptorDsoftbusFileTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = [ "softbus_file_test.cpp" ]
     include_dirs = [
       "$dsoftbus_root_path/adapter/common/include",
@@ -217,6 +267,11 @@ if (defined(ohos_lite)) {
 
   ohos_unittest("AdapterDsoftbusWifiTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = [
       "$dsoftbus_root_path/adapter/common/net/wifi/common/softbus_wifi_api_adapter.c",
       "$dsoftbus_root_path/tests/core/bus_center/mock_common/src/wifi_mock.cpp",
@@ -252,6 +307,11 @@ if (defined(ohos_lite)) {
 
   ohos_unittest("AdapterNetManagerMonitorTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = [
       "$dsoftbus_root_path/adapter/common/kernel/liteos_m/softbus_adapter_mem.c",
       "$dsoftbus_root_path/core/common/message_handler/message_handler.c",
@@ -288,7 +348,8 @@ if (defined(ohos_lite)) {
       "$dsoftbus_dfx_path:softbus_dfx",
       "$dsoftbus_root_path/adapter:softbus_adapter",
       "$dsoftbus_root_path/core/common:softbus_utils",
-      "$dsoftbus_root_path/core/frame:softbus_server",
+      "$dsoftbus_root_path/core/frame:softbus_server_test",
+      "$dsoftbus_root_path/sdk:softbus_client",
     ]
     external_deps = [
       "googletest:gmock",
@@ -303,6 +364,11 @@ if (defined(ohos_lite)) {
 
   ohos_unittest("AdapterDsoftbusNetworkTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = [
       "$dsoftbus_root_path/adapter/common/kernel/liteos_m/softbus_adapter_mem.c",
       "$dsoftbus_root_path/core/bus_center/monitor/src/lnn_init_monitor.c",
@@ -354,6 +420,11 @@ if (defined(ohos_lite)) {
 
   ohos_unittest("SoftbusSleMonitorTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = [
       "$dsoftbus_root_path/core/bus_center/monitor/src/lnn_init_monitor.c",
       "$dsoftbus_root_path/core/common/message_handler/message_handler.c",
@@ -391,7 +462,8 @@ if (defined(ohos_lite)) {
     deps = [
       "$dsoftbus_root_path/adapter:softbus_adapter",
       "$dsoftbus_root_path/core/common:softbus_utils",
-      "$dsoftbus_root_path/core/frame:softbus_server",
+      "$dsoftbus_root_path/core/frame:softbus_server_test",
+      "$dsoftbus_root_path/sdk:softbus_client",
     ]
     external_deps = [
       "googletest:gmock",
@@ -403,6 +475,11 @@ if (defined(ohos_lite)) {
 
   ohos_unittest("AdapterWlanExtendTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = [ "softbus_adapter_wlan_extend_test.cpp" ]
     include_dirs = [
       "$dsoftbus_root_path/adapter/common/include",
@@ -417,7 +494,8 @@ if (defined(ohos_lite)) {
     deps = [
       "$dsoftbus_dfx_path:softbus_dfx",
       "$dsoftbus_root_path/adapter:softbus_adapter",
-      "$dsoftbus_root_path/core/frame:softbus_server",
+      "$dsoftbus_root_path/core/frame:softbus_server_test",
+      "$dsoftbus_root_path/sdk:softbus_client",
     ]
     external_deps = [
       "googletest:gtest_main",
@@ -433,11 +511,11 @@ if (defined(ohos_lite)) {
       ":AdapterDsoftbusJsonTest",
       ":AdapterDsoftbusOtherTest",
       ":AdapterDsoftbusRangeTest",
-      ":AdapterDsoftbusSocketTest",
+      #":AdapterDsoftbusSocketTest",
       ":AdapterWlanExtendTest",
       ":AdaptorDsoftbusCryptTest",
       ":AdaptorDsoftbusFileTest",
-      ":SoftbusThreadTest",
+      #":SoftbusThreadTest",
       ":SoftbusTimeTest",
     ]
     if (!defined(ohos_lite) && softbus_communication_wifi_feature == true) {

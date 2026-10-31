@@ -20,6 +20,7 @@
 #include "lnn_event.h"
 #include "lnn_log.h"
 #include "softbus_adapter_perf.h"
+#include "softbus_def.h"
 #include "softbus_utils.h"
 
 static void DfxRecordLnnDiscServiceEnd(int32_t serverType, const char *packageName, int32_t reason)
@@ -42,6 +43,7 @@ static void DfxRecordLnnDiscServiceEnd(int32_t serverType, const char *packageNa
     LNN_EVENT(EVENT_SCENE_LNN, EVENT_STAGE_LNN_DISC_SERVICE, extra);
 }
 
+SOFTBUS_VISIBILITY
 int32_t LnnPublishService(const char *pkgName, const PublishInfo *info, bool isInnerRequest, int32_t callingPid)
 {
     LNN_CHECK_AND_RETURN_RET_LOGE(
@@ -63,6 +65,7 @@ int32_t LnnPublishService(const char *pkgName, const PublishInfo *info, bool isI
     return SOFTBUS_OK;
 }
 
+SOFTBUS_VISIBILITY
 int32_t LnnUnPublishService(const char *pkgName, int32_t publishId, bool isInnerRequest, int32_t callingPid)
 {
     int32_t ret;
@@ -82,7 +85,7 @@ int32_t LnnUnPublishService(const char *pkgName, int32_t publishId, bool isInner
     return SOFTBUS_OK;
 }
 
-int32_t LnnStartDiscDevice(const char *pkgName, const SubscribeInfo *info, const InnerCallback *cb,
+SOFTBUS_VISIBILITY int32_t LnnStartDiscDevice(const char *pkgName, const SubscribeInfo *info, const InnerCallback *cb,
     bool isInnerRequest, int32_t callingPid)
 {
     LNN_CHECK_AND_RETURN_RET_LOGE(
@@ -109,6 +112,7 @@ int32_t LnnStartDiscDevice(const char *pkgName, const SubscribeInfo *info, const
     return SOFTBUS_OK;
 }
 
+SOFTBUS_VISIBILITY
 int32_t LnnStopDiscDevice(const char *pkgName, int32_t subscribeId, bool isInnerRequest, int32_t callingPid)
 {
     int32_t ret;

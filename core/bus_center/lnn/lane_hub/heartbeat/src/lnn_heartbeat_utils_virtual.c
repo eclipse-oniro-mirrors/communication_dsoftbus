@@ -16,8 +16,9 @@
 #include "lnn_heartbeat_utils.h"
 #include "lnn_log.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
-int32_t LnnGenerateBtMacHash(const char *btMac, int32_t brMacLen, char *brMacHash, int32_t hashLen)
+SOFTBUS_VISIBILITY int32_t LnnGenerateBtMacHash(const char *btMac, int32_t brMacLen, char *brMacHash, int32_t hashLen)
 {
     (void)btMac;
     (void)brMacLen;
@@ -28,7 +29,7 @@ int32_t LnnGenerateBtMacHash(const char *btMac, int32_t brMacLen, char *brMacHas
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-void LnnDumpLocalBasicInfo(void)
+SOFTBUS_VISIBILITY void LnnDumpLocalBasicInfo(void)
 {
     LNN_LOGI(LNN_HEART_BEAT, "heartbeat dump loacl basic info");
 }
@@ -38,7 +39,7 @@ void LnnDumpOnlineDeviceInfo(void)
     LNN_LOGI(LNN_HEART_BEAT, "heartbeat dump online device info");
 }
 
-int32_t LnnGenerateHexStringHash(const unsigned char *str, char *hashStr, uint32_t len)
+SOFTBUS_SYMBOL_EXPORT int32_t LnnGenerateHexStringHash(const unsigned char *str, char *hashStr, uint32_t len)
 {
     (void)str;
     (void)hashStr;
@@ -48,7 +49,7 @@ int32_t LnnGenerateHexStringHash(const unsigned char *str, char *hashStr, uint32
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-bool LnnIsSupportHeartbeatCap(uint32_t hbCapacity, HeartbeatCapability capaBit)
+SOFTBUS_SYMBOL_EXPORT bool LnnIsSupportHeartbeatCap(uint32_t hbCapacity, HeartbeatCapability capaBit)
 {
     (void)hbCapacity;
     (void)capaBit;
@@ -56,12 +57,12 @@ bool LnnIsSupportHeartbeatCap(uint32_t hbCapacity, HeartbeatCapability capaBit)
     return false;
 }
 
-bool LnnIsLocalSupportBurstFeature(void)
+SOFTBUS_VISIBILITY bool LnnIsLocalSupportBurstFeature(void)
 {
     return false;
 }
 
-int32_t LnnGetShortAccountHash(uint8_t *accountHash, uint32_t len)
+SOFTBUS_SYMBOL_EXPORT int32_t LnnGetShortAccountHash(uint8_t *accountHash, uint32_t len)
 {
     (void)accountHash;
     (void)len;
@@ -88,19 +89,19 @@ LnnHeartbeatType LnnConvertConnAddrTypeToHbType(ConnectionAddrType addrType)
     return HEARTBEAT_TYPE_MAX;
 }
 
-ConnectionAddrType LnnConvertHbTypeToConnAddrType(LnnHeartbeatType type)
+SOFTBUS_VISIBILITY ConnectionAddrType LnnConvertHbTypeToConnAddrType(LnnHeartbeatType type)
 {
     (void)type;
     return CONNECTION_ADDR_MAX;
 }
 
-int32_t LnnConvertHbTypeToId(LnnHeartbeatType type)
+SOFTBUS_VISIBILITY int32_t LnnConvertHbTypeToId(LnnHeartbeatType type)
 {
     (void)type;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-bool LnnHasActiveConnection(const char *networkId, ConnectionAddrType addrType)
+SOFTBUS_SYMBOL_EXPORT bool LnnHasActiveConnection(const char *networkId, ConnectionAddrType addrType)
 {
     (void)networkId;
     (void)addrType;
@@ -118,7 +119,7 @@ bool LnnIsSupportBurstFeature(const char *networkId)
     return false;
 }
 
-bool LnnVisitHbTypeSet(VisitHbTypeCb callback, LnnHeartbeatType *typeSet, void *data)
+SOFTBUS_VISIBILITY bool LnnVisitHbTypeSet(VisitHbTypeCb callback, LnnHeartbeatType *typeSet, void *data)
 {
     (void)callback;
     (void)typeSet;

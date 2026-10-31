@@ -140,7 +140,7 @@ static int32_t GenerateProxyChannelId()
     return INVALID_CHANNEL_ID;
 }
 
-void ReleaseProxyChannelId(int32_t channelId)
+SOFTBUS_SYMBOL_EXPORT void ReleaseProxyChannelId(int32_t channelId)
 {
     if (channelId < MIN_FD_ID || channelId > MAX_FD_ID) {
         return;
@@ -161,7 +161,7 @@ void ReleaseProxyChannelId(int32_t channelId)
     SoftBusMutexUnlock(&g_myIdLock);
 }
 
-int32_t GenerateChannelId(bool isTdcChannel)
+SOFTBUS_VISIBILITY int32_t GenerateChannelId(bool isTdcChannel)
 {
     return isTdcChannel ? GenerateTdcChannelId() : GenerateProxyChannelId();
 }
@@ -253,7 +253,7 @@ static int32_t RemoveMessageDestroy(const SoftBusMessage *msg, void *data)
     return SOFTBUS_INVALID_PARAM;
 }
 
-void TransCheckChannelOpenRemoveFromLooper(int32_t channelId)
+SOFTBUS_VISIBILITY void TransCheckChannelOpenRemoveFromLooper(int32_t channelId)
 {
     g_channelResultHandler.looper->RemoveMessageCustom(
         g_channelResultHandler.looper, &g_channelResultHandler, RemoveMessageDestroy, &channelId);
@@ -440,7 +440,7 @@ int32_t TransMultipathInitFirstChannel(const SessionParam *param, AppInfo *appIn
     return SOFTBUS_OK;
 }
 
-int32_t TransOpenChannel(const SessionParam *param, TransInfo *transInfo)
+SOFTBUS_VISIBILITY int32_t TransOpenChannel(const SessionParam *param, TransInfo *transInfo)
 {
     SoftBusHitraceChainBegin("TransOpenChannel");
     int32_t ret = TransCheckBlockStatus(param, transInfo);
@@ -911,7 +911,7 @@ int32_t TransNotifyAuthSuccess(int32_t channelId, int32_t channelType)
     return TransNotifyAuthDataSuccess(channelId, &connOpt);
 }
 
-int32_t TransReleaseUdpResources(int32_t channelId)
+SOFTBUS_VISIBILITY int32_t TransReleaseUdpResources(int32_t channelId)
 {
     TRANS_LOGI(TRANS_CTRL, "release Udp channel resources: channelId=%{public}d", channelId);
     NotifyQosChannelClosedPacked(channelId, CHANNEL_TYPE_UDP);
@@ -920,7 +920,7 @@ int32_t TransReleaseUdpResources(int32_t channelId)
     return SOFTBUS_OK;
 }
 
-int32_t TransCloseChannel(const char *sessionName, int32_t channelId, int32_t channelType)
+SOFTBUS_SYMBOL_EXPORT int32_t TransCloseChannel(const char *sessionName, int32_t channelId, int32_t channelType)
 {
     SoftBusHitraceChainBegin("TransCloseChannel");
     int32_t ret = TransCommonCloseChannel(sessionName, channelId, channelType);
@@ -935,7 +935,8 @@ int32_t TransCloseChannelWithStatistics(int32_t channelId, int32_t channelType, 
     return SOFTBUS_OK;
 }
 
-int32_t TransSendMsg(int32_t channelId, int32_t channelType, const void *data, uint32_t len, int32_t msgType)
+SOFTBUS_SYMBOL_EXPORT int32_t TransSendMsg(int32_t channelId, int32_t channelType, const void *data, uint32_t len,
+    int32_t msgType)
 {
     int32_t ret = SOFTBUS_OK;
     switch (channelType) {
@@ -970,7 +971,7 @@ void TransChannelDeathCallback(const char *pkgName, int32_t pid)
     TransAuthDeathCallback(pkgName, pid);
 }
 
-int32_t TransGetNameByChanId(const TransInfo *info, char *pkgName, char *sessionName,
+SOFTBUS_VISIBILITY int32_t TransGetNameByChanId(const TransInfo *info, char *pkgName, char *sessionName,
     uint16_t pkgLen, uint16_t sessionNameLen)
 {
     if (info == NULL || pkgName == NULL || sessionName == NULL) {
@@ -989,7 +990,7 @@ int32_t TransGetNameByChanId(const TransInfo *info, char *pkgName, char *session
     }
 }
 
-int32_t TransGetAndComparePid(pid_t pid, int32_t channelId, int32_t channelType)
+SOFTBUS_VISIBILITY int32_t TransGetAndComparePid(pid_t pid, int32_t channelId, int32_t channelType)
 {
     int32_t curChannelPid = 0;
     int32_t ret = SOFTBUS_OK;
@@ -1015,7 +1016,7 @@ int32_t TransGetAndComparePid(pid_t pid, int32_t channelId, int32_t channelType)
     return SOFTBUS_OK;
 }
 
-int32_t TransGetAndComparePidBySession(pid_t pid, const char *sessionName, int32_t sessionlId)
+SOFTBUS_VISIBILITY int32_t TransGetAndComparePidBySession(pid_t pid, const char *sessionName, int32_t sessionlId)
 {
     pid_t curSessionPid;
     int32_t ret = TransGetPidFromSocketChannelInfoBySession(sessionName, sessionlId, &curSessionPid);
@@ -1030,7 +1031,7 @@ int32_t TransGetAndComparePidBySession(pid_t pid, const char *sessionName, int32
     return SOFTBUS_OK;
 }
 
-int32_t TransGetAppInfoByChanId(int32_t channelId, int32_t channelType, AppInfo* appInfo)
+SOFTBUS_VISIBILITY int32_t TransGetAppInfoByChanId(int32_t channelId, int32_t channelType, AppInfo* appInfo)
 {
     if (appInfo == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -1049,7 +1050,7 @@ int32_t TransGetAppInfoByChanId(int32_t channelId, int32_t channelType, AppInfo*
     }
 }
 
-int32_t TransGetConnByChanId(int32_t channelId, int32_t channelType, int32_t *connId)
+SOFTBUS_VISIBILITY int32_t TransGetConnByChanId(int32_t channelId, int32_t channelType, int32_t *connId)
 {
     int32_t ret;
 
@@ -1072,7 +1073,7 @@ int32_t TransGetConnByChanId(int32_t channelId, int32_t channelType, int32_t *co
     return ret;
 }
 
-int32_t CheckAuthChannelIsExit(ConnectOption *connInfo)
+SOFTBUS_VISIBILITY int32_t CheckAuthChannelIsExit(ConnectOption *connInfo)
 {
     if (connInfo == NULL) {
         TRANS_LOGE(TRANS_CTRL, "invalid param");

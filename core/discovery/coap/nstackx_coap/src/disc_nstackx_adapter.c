@@ -150,7 +150,7 @@ EXIT:
 }
 #endif /* DSOFTBUS_FEATURE_DISC_LNN_COAP || DSOFTBUS_FEATURE_DISC_SHARE_COAP */
 
-int32_t DiscCoapSendRsp(const DeviceInfo *deviceInfo, uint8_t bType, bool isRemoveShareCap)
+SOFTBUS_SYMBOL_EXPORT int32_t DiscCoapSendRsp(const DeviceInfo *deviceInfo, uint8_t bType, bool isRemoveShareCap)
 {
 #if defined(DSOFTBUS_FEATURE_DISC_LNN_COAP) || defined(DSOFTBUS_FEATURE_DISC_SHARE_COAP)
     DISC_CHECK_AND_RETURN_RET_LOGE(deviceInfo, SOFTBUS_INVALID_PARAM, DISC_COAP, "DiscRsp devInfo is null");

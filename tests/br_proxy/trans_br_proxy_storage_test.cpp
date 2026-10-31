@@ -27,7 +27,7 @@ namespace OHOS::SoftBus {
 
 class TransBrProxyStorageTest : public testing::Test {
 public:
-    static constexpr char const *testFilePath = "./trans_br_proxy_storage_test.txt";
+    static constexpr char const *testFilePath = "/data/local/tmp/trans_br_proxy_storage_test.txt";
 
     static void SetUpTestCase() { }
     static void TearDownTestCase() { }

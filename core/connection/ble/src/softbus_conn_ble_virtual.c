@@ -15,25 +15,27 @@
 
 #include "softbus_adapter_bt_common.h"
 #include "softbus_conn_ble_manager.h"
+#include "softbus_def.h"
 
-ConnectFuncInterface *ConnInitBle(const ConnectCallback *callback)
+SOFTBUS_VISIBILITY ConnectFuncInterface *ConnInitBle(const ConnectCallback *callback)
 {
     (void)callback;
     return NULL;
 }
 
-int SoftBusGetBtState(void)
+SOFTBUS_VISIBILITY int SoftBusGetBtState(void)
 {
     return BLE_DISABLE;
 }
 
-ConnBleConnection *ConnBleGetClientConnectionByUdid(const char *udid, BleProtocolType protocol)
+SOFTBUS_VISIBILITY ConnBleConnection *ConnBleGetClientConnectionByUdid(const char *udid, BleProtocolType protocol)
 {
     (void)udid;
     (void)protocol;
     return NULL;
 }
 
+SOFTBUS_VISIBILITY
 ConnBleConnection *ConnBleGetConnectionByUdid(const char *addr, const char *udid, BleProtocolType protocol)
 {
     (void)addr;
@@ -42,23 +44,23 @@ ConnBleConnection *ConnBleGetConnectionByUdid(const char *addr, const char *udid
     return NULL;
 }
 
-void ConnBleReturnConnection(ConnBleConnection **connection)
+SOFTBUS_VISIBILITY void ConnBleReturnConnection(ConnBleConnection **connection)
 {
     (void)connection;
 }
 
-ConnBleConnection *ConnBleGetConnectionById(uint32_t connectionId)
+SOFTBUS_VISIBILITY ConnBleConnection *ConnBleGetConnectionById(uint32_t connectionId)
 {
     (void)connectionId;
     return NULL;
 }
 
-void ConnBleCancelIdleTimeout(ConnBleConnection *connection)
+SOFTBUS_VISIBILITY void ConnBleCancelIdleTimeout(ConnBleConnection *connection)
 {
     (void)connection;
 }
 
-const BleUnifyInterface *ConnBleGetUnifyInterface(BleProtocolType type)
+SOFTBUS_VISIBILITY const BleUnifyInterface *ConnBleGetUnifyInterface(BleProtocolType type)
 {
     (void)type;
     return NULL;

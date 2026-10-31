@@ -19,14 +19,14 @@
 
 #include "softbus_error_code.h"
 
-int32_t GetAllForegroundAccountIds(int32_t **userIds, uint32_t *userIdsLen)
+int GetAllForegroundAccountIds(int **userIds, unsigned int *userIdsLen)
 {
     (void)userIds;
     (void)userIdsLen;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnGetAccountIdByUserId(int32_t userId, int64_t *accountId, uint8_t *accountHash, uint32_t len)
+int LnnGetAccountIdByUserId(int userId, int64_t *accountId, uint8_t *accountHash, unsigned int len)
 {
     (void)userId;
     (void)accountId;
@@ -35,7 +35,7 @@ int32_t LnnGetAccountIdByUserId(int32_t userId, int64_t *accountId, uint8_t *acc
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnFindUserByUserIdAndUdid(const char *udid, int32_t userId, UserInfo *userInfo)
+int LnnFindUserByUserIdAndUdid(const char *udid, int userId, UserInfo *userInfo)
 {
     (void)udid;
     (void)userId;

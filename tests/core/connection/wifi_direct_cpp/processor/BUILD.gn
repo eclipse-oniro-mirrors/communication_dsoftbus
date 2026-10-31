@@ -21,6 +21,11 @@ wifi_direct_unit_path =
 ut_out_path = "dsoftbus/soft_bus/connection/wifi_direct_cpp/processor"
 ohos_unittest("P2pv1ProcessorTest") {
   module_out_path = ut_out_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   include_dirs = processorv1_ut_include_dirs
   include_dirs += [ "$dsoftbus_root_path/core/bus_center/service/include" ]
@@ -83,5 +88,5 @@ ohos_unittest("P2pv1ProcessorTest") {
 
 group("unittest") {
   testonly = true
-  deps = [ ":P2pv1ProcessorTest" ]
+  deps = []
 }

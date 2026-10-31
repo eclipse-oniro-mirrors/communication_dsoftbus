@@ -34,6 +34,7 @@
 #include "lnn_net_builder.h"
 #include "softbus_adapter_mem.h"
 #include "softbus_adapter_bt_common.h"
+#include "softbus_def.h"
 
 #define INVALID_BR_MAC_ADDR "00:00:00:00:00:00"
 
@@ -1193,7 +1194,7 @@ static bool IsNeedTriggerSparkGroup(const NodeInfo *remoteInfo, LnnHeartbeatRecv
     return true;
 }
 
-int32_t LnnCleanTriggerSparkInfo(const char *udid, ConnectionAddrType addrType)
+SOFTBUS_VISIBILITY int32_t LnnCleanTriggerSparkInfo(const char *udid, ConnectionAddrType addrType)
 {
     LNN_CHECK_AND_RETURN_RET_LOGE(udid != NULL, SOFTBUS_INVALID_PARAM, LNN_HEART_BEAT, "invalid param");
     LNN_CHECK_AND_RETURN_RET_LOGW(addrType == CONNECTION_ADDR_BLE, SOFTBUS_OK, LNN_HEART_BEAT, "no need handle");
@@ -1574,7 +1575,7 @@ static void HbDeinitRecvList(void)
     g_hbRecvList = NULL;
 }
 
-void LnnHbClearRecvList(void)
+SOFTBUS_VISIBILITY void LnnHbClearRecvList(void)
 {
     LnnHeartbeatRecvInfo *item = NULL;
     LnnHeartbeatRecvInfo *nextItem = NULL;
@@ -1678,7 +1679,7 @@ void LnnDumpHbOnlineNodeList(void)
     SoftBusFree(info);
 }
 
-int32_t LnnHbMediumMgrInit(void)
+SOFTBUS_VISIBILITY int32_t LnnHbMediumMgrInit(void)
 {
     if (LnnRegistBleHeartbeatMediumMgrPacked() != SOFTBUS_OK) {
         LNN_LOGE(LNN_HEART_BEAT, "regist ble heartbeat manager fail");
@@ -1841,7 +1842,7 @@ void LnnHbMediumMgrDeinit(void)
     HbDeinitRecvList();
 }
 
-int32_t LnnHbMediumMgrSetParam(void *param)
+SOFTBUS_VISIBILITY int32_t LnnHbMediumMgrSetParam(void *param)
 {
     int32_t id, ret;
 

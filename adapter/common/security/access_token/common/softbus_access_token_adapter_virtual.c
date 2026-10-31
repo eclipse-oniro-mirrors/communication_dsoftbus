@@ -16,6 +16,7 @@
 #include "softbus_access_token_adapter.h"
 
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 bool SoftBusCheckIsSystemService(uint64_t tokenId)
 {
@@ -37,7 +38,7 @@ bool SoftBusCheckIsNormalApp(uint64_t fullTokenId, const char *sessionName)
     return false;
 }
 
-bool SoftBusCheckIsAccessAndRecordAccessToken(uint64_t tokenId, const char *permission)
+SOFTBUS_VISIBILITY bool SoftBusCheckIsAccessAndRecordAccessToken(uint64_t tokenId, const char *permission)
 {
     (void)tokenId;
     (void)permission;

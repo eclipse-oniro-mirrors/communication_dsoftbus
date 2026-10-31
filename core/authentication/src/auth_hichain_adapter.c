@@ -25,6 +25,7 @@
 #include "lnn_ohos_account_adapter.h"
 #include "softbus_adapter_mem.h"
 #include "softbus_json_utils.h"
+#include "softbus_def.h"
 
 #define AUTH_APPID "softbus_auth"
 #define GROUP_ID "groupId"
@@ -125,7 +126,7 @@ int32_t RegChangeListener(const char *appId, DataChangeListener *listener)
     return SOFTBUS_OK;
 }
 
-int32_t UnregChangeListener(const char *appId)
+SOFTBUS_VISIBILITY int32_t UnregChangeListener(const char *appId)
 {
     AUTH_CHECK_AND_RETURN_RET_LOGE(appId != NULL, SOFTBUS_INVALID_PARAM, AUTH_HICHAIN,
         "appId is null");
@@ -139,7 +140,8 @@ int32_t UnregChangeListener(const char *appId)
     return SOFTBUS_OK;
 }
 
-int32_t AuthDevice(int32_t userId, int64_t authReqId, const char *authParams, const DeviceAuthCallback *cb)
+SOFTBUS_SYMBOL_EXPORT int32_t AuthDevice(int32_t userId, int64_t authReqId, const char *authParams,
+    const DeviceAuthCallback *cb)
 {
     (void)userId;
 
@@ -171,7 +173,8 @@ int32_t AuthDevice(int32_t userId, int64_t authReqId, const char *authParams, co
     return authErrCode;
 }
 
-int32_t ProcessAuthData(int64_t authSeq, const uint8_t *data, uint32_t len, DeviceAuthCallback *cb)
+SOFTBUS_SYMBOL_EXPORT int32_t ProcessAuthData(int64_t authSeq, const uint8_t *data, uint32_t len,
+    DeviceAuthCallback *cb)
 {
     AUTH_CHECK_AND_RETURN_RET_LOGE(data != NULL && cb != NULL, SOFTBUS_INVALID_PARAM, AUTH_HICHAIN,
         "data or cb is null");
@@ -319,6 +322,7 @@ static bool HasTrustedRelationWithLocalDevice(const DeviceGroupManager *gmInstan
     return false;
 }
 
+SOFTBUS_VISIBILITY
 bool IsPotentialTrustedDevice(TrustedRelationIdType idType, const char *deviceId, bool isPrecise, bool isPointToPoint)
 {
     (void)idType;
@@ -365,7 +369,7 @@ uint32_t HichainGetJoinedGroups(int32_t groupType)
     return groupCnt;
 }
 
-bool IsSameAccountGroupDevice(void)
+SOFTBUS_VISIBILITY bool IsSameAccountGroupDevice(void)
 {
     int32_t accountId = JudgeDeviceTypeAndGetOsAccountIds();
     return IsSameAccountGroupDeviceByUserId(accountId);

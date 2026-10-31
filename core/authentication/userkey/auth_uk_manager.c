@@ -38,6 +38,7 @@
 #include "softbus_adapter_mem.h"
 #include "softbus_error_code.h"
 #include "softbus_json_utils.h"
+#include "softbus_def.h"
 #include "softbus_transmission_interface.h"
 
 #define AUTH_APPID              "softbus_auth"
@@ -1174,7 +1175,10 @@ static int32_t ProcessUkDeviceId(int32_t channelId, uint32_t requestId, const vo
         }
     } else {
         ret = UpdateExistAclInfo(channelId, requestId, info, &instance);
-        AUTH_LOGW(AUTH_CONN, "update acl fail, ret=%{public}d", ret);
+        if (ret != SOFTBUS_OK) {
+            AUTH_LOGE(AUTH_CONN, "update acl fail, ret=%{public}d", ret);
+            return ret;
+        }
     }
     ret = ProcessUkNegoState(&info, &isLocalUdidGreater);
     if (ret != SOFTBUS_OK || GetSameUkInstanceNum(&info) > 0) {
@@ -1333,7 +1337,7 @@ static int32_t DefaultUserIdFindUk(AuthACLInfo *aclInfo, int32_t *ukId, uint64_t
     return SOFTBUS_OK;
 }
 
-int32_t AuthFindUkIdByAclInfo(const AuthACLInfo *acl, int32_t *ukId)
+SOFTBUS_VISIBILITY int32_t AuthFindUkIdByAclInfo(const AuthACLInfo *acl, int32_t *ukId)
 {
     if (acl == NULL || ukId == NULL) {
         AUTH_LOGE(AUTH_CONN, "find uknego info is invalid param");
@@ -1380,6 +1384,7 @@ uint32_t AuthGetUkDecryptSize(uint32_t inLen)
     return inLen - OVERHEAD_LEN;
 }
 
+SOFTBUS_VISIBILITY
 int32_t AuthEncryptByUkId(int32_t ukId, const uint8_t *inData, uint32_t inLen, uint8_t *outData, uint32_t *outLen)
 {
     if (inData == NULL || inLen == 0 || outData == NULL || outLen == NULL || *outLen < (inLen + OVERHEAD_LEN)) {
@@ -1418,6 +1423,7 @@ int32_t AuthEncryptByUkId(int32_t ukId, const uint8_t *inData, uint32_t inLen, u
     return SOFTBUS_OK;
 }
 
+SOFTBUS_VISIBILITY
 int32_t AuthDecryptByUkId(int32_t ukId, const uint8_t *inData, uint32_t inLen, uint8_t *outData, uint32_t *outLen)
 {
     if (inData == NULL || inLen < OVERHEAD_LEN || outData == NULL || outLen == NULL ||
@@ -1610,6 +1616,7 @@ static int32_t CheckAclWithLocalUdid(const AuthACLInfo *oldAcl, AuthACLInfo *new
     return SOFTBUS_AUTH_NOT_FIND_LARGER_UDID;
 }
 
+SOFTBUS_VISIBILITY
 int32_t AuthGenUkIdByAclInfo(const AuthACLInfo *acl, uint32_t requestId, const AuthGenUkCallback *genCb)
 {
     if (acl == NULL || genCb == NULL) {

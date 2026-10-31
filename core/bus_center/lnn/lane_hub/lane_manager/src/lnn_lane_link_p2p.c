@@ -30,6 +30,7 @@
 #include "lnn_trans_free_lane.h"
 #include "lnn_trans_lane.h"
 #include "softbus_adapter_mem.h"
+#include "softbus_def.h"
 #include "softbus_proxychannel_pipeline.h"
 #include "wifi_direct_manager.h"
 
@@ -222,7 +223,7 @@ static int32_t AddAuthSessionFlag(const char *peerIp, bool isServer)
     return SOFTBUS_OK;
 }
 
-int32_t CheckIsAuthSessionServer(const char *peerIp, bool *isServer)
+SOFTBUS_SYMBOL_EXPORT int32_t CheckIsAuthSessionServer(const char *peerIp, bool *isServer)
 {
     if (peerIp == NULL || isServer == NULL) {
         LNN_LOGE(LNN_LANE, "invalid param");
@@ -249,7 +250,7 @@ int32_t CheckIsAuthSessionServer(const char *peerIp, bool *isServer)
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t RemoveAuthSessionServer(const char *peerIp)
+SOFTBUS_VISIBILITY int32_t RemoveAuthSessionServer(const char *peerIp)
 {
     if (peerIp == NULL) {
         LNN_LOGE(LNN_LANE, "invalid param");
@@ -3092,7 +3093,7 @@ static void DumpHmlPreferChannel(const LinkRequest *request)
     LNN_LOGI(LNN_LANE, "[HML]prefer channel=%{public}d", preferChannel);
 }
 
-int32_t LnnConnectP2p(const LinkRequest *request, uint32_t laneReqId, const LaneLinkCb *callback)
+SOFTBUS_VISIBILITY int32_t LnnConnectP2p(const LinkRequest *request, uint32_t laneReqId, const LaneLinkCb *callback)
 {
     if (request == NULL || callback == NULL) {
         LNN_LOGE(LNN_LANE, "invalid null request or callback");
@@ -3133,7 +3134,7 @@ static void DelP2pLinkedByLinkId(int32_t linkId)
     LinkUnlock();
 }
 
-void LnnDisconnectP2pWithoutLnn(uint32_t laneReqId)
+SOFTBUS_VISIBILITY void LnnDisconnectP2pWithoutLnn(uint32_t laneReqId)
 {
     if (g_p2pLinkedList == NULL) {
         LNN_LOGE(LNN_LANE, "lane link p2p not init, disconn request ignore");
@@ -3172,7 +3173,7 @@ void LnnDisconnectP2pWithoutLnn(uint32_t laneReqId)
     DelP2pLinkedByLinkId(linkId);
 }
 
-int32_t LnnDisconnectP2p(const char *networkId, uint32_t laneReqId)
+SOFTBUS_VISIBILITY int32_t LnnDisconnectP2p(const char *networkId, uint32_t laneReqId)
 {
     if (networkId == NULL || g_p2pLinkedList == NULL || g_p2pLinkList == NULL) {
         LNN_LOGE(LNN_LANE, "invalid param or not init");
@@ -3297,13 +3298,13 @@ static void LnnDestroyWifiDirectInfo(void)
     (void)SoftBusMutexDestroy(&g_rawLinkLock);
 }
 
-void LnnDestroyP2p(void)
+SOFTBUS_VISIBILITY void LnnDestroyP2p(void)
 {
     LnnDestroyP2pLinkInfo();
     LnnDestroyWifiDirectInfo();
 }
 
-void LnnCancelWifiDirect(uint32_t laneReqId)
+SOFTBUS_VISIBILITY void LnnCancelWifiDirect(uint32_t laneReqId)
 {
     if (LinkLock() != 0) {
         LNN_LOGE(LNN_LANE, "link lock fail");

@@ -147,7 +147,7 @@ SessionConn *GetSessionConnByReq(int64_t req)
     return NULL;
 }
 
-SessionConn *CreateNewSessinConn(ListenerModule module, bool isServerSid)
+SOFTBUS_VISIBILITY SessionConn *CreateNewSessinConn(ListenerModule module, bool isServerSid)
 {
     SessionConn *conn = (SessionConn *)SoftBusCalloc(sizeof(SessionConn));
     if (conn == NULL) {
@@ -210,7 +210,7 @@ int32_t GetSessionConnById(int32_t channelId, SessionConn *conn)
     return SOFTBUS_TRANS_GET_SESSION_CONN_FAILED;
 }
 
-int32_t SetAppInfoById(int32_t channelId, const AppInfo *appInfo)
+SOFTBUS_VISIBILITY int32_t SetAppInfoById(int32_t channelId, const AppInfo *appInfo)
 {
     if (appInfo == NULL) {
         TRANS_LOGE(TRANS_CTRL, "invalid accessInfo.");
@@ -291,7 +291,7 @@ int32_t UpdateAccessInfoById(int32_t channelId, const AccessInfo *accessInfo)
     return SOFTBUS_TRANS_SET_APP_INFO_FAILED;
 }
 
-int32_t GetAppInfoById(int32_t channelId, AppInfo *appInfo)
+SOFTBUS_VISIBILITY int32_t GetAppInfoById(int32_t channelId, AppInfo *appInfo)
 {
     SessionConn *conn = NULL;
     if (GetSessionConnLock() != SOFTBUS_OK) {
@@ -309,7 +309,7 @@ int32_t GetAppInfoById(int32_t channelId, AppInfo *appInfo)
     return SOFTBUS_TRANS_GET_APP_INFO_FAILED;
 }
 
-int32_t SetAuthHandleByChanId(int32_t channelId, AuthHandle *authHandle)
+SOFTBUS_VISIBILITY int32_t SetAuthHandleByChanId(int32_t channelId, AuthHandle *authHandle)
 {
     SessionConn *conn = NULL;
     if (GetSessionConnLock() != SOFTBUS_OK) {
@@ -326,7 +326,7 @@ int32_t SetAuthHandleByChanId(int32_t channelId, AuthHandle *authHandle)
     return SOFTBUS_TRANS_SET_AUTH_HANDLE_FAILED;
 }
 
-int64_t GetAuthIdByChanId(int32_t channelId)
+SOFTBUS_VISIBILITY int64_t GetAuthIdByChanId(int32_t channelId)
 {
     int64_t authId;
     SessionConn *conn = NULL;
@@ -344,7 +344,7 @@ int64_t GetAuthIdByChanId(int32_t channelId)
     return AUTH_INVALID_ID;
 }
 
-int32_t GetAuthHandleByChanId(int32_t channelId, AuthHandle *authHandle)
+SOFTBUS_VISIBILITY int32_t GetAuthHandleByChanId(int32_t channelId, AuthHandle *authHandle)
 {
     if (authHandle == NULL) {
         TRANS_LOGE(TRANS_CTRL, "authHandle is null");
@@ -474,6 +474,11 @@ TcpChannelInfo *CreateTcpChannelInfo(const ChannelInfo *channel)
     tcpChannelInfo->callingTokenId = conn.appInfo.callingTokenId;
     tcpChannelInfo->fdProtocol = conn.appInfo.fdProtocol;
     tcpChannelInfo->osType = conn.appInfo.osType;
+    if (strcpy_s(tcpChannelInfo->mySessionName, SESSION_NAME_SIZE_MAX, conn.appInfo.myData.sessionName) != EOK) {
+        TRANS_LOGE(TRANS_CTRL, "failed to strcpy mySessionName, channelId=%{public}d", channel->channelId);
+        SoftBusFree(tcpChannelInfo);
+        return NULL;
+    }
     return tcpChannelInfo;
 }
 
@@ -500,7 +505,8 @@ int32_t TransAddTcpChannelInfo(TcpChannelInfo *info)
     return SOFTBUS_OK;
 }
 
-int32_t TransTdcGetIpAndConnectTypeById(int32_t channelId, char *localIp, char *remoteIp, uint32_t maxIpLen,
+SOFTBUS_SYMBOL_EXPORT int32_t TransTdcGetIpAndConnectTypeById(int32_t channelId, char *localIp, char *remoteIp,
+    uint32_t maxIpLen,
     int32_t *connectType)
 {
     if (localIp == NULL || remoteIp == NULL || maxIpLen < IP_LEN || connectType == NULL) {
@@ -542,7 +548,7 @@ int32_t TransTdcGetIpAndConnectTypeById(int32_t channelId, char *localIp, char *
     return SOFTBUS_TRANS_TDC_CHANNEL_NOT_FOUND;
 }
 
-int32_t TransDelTcpChannelInfoByChannelId(int32_t channelId)
+SOFTBUS_VISIBILITY int32_t TransDelTcpChannelInfoByChannelId(int32_t channelId)
 {
     if (g_tcpChannelInfoList == NULL) {
         TRANS_LOGE(TRANS_CTRL, "g_tcpChannelInfoList is null.");
@@ -630,7 +636,7 @@ void SetSessionKeyByChanId(int32_t chanId, const char *sessionKey, int32_t keyLe
     ReleaseSessionConnLock();
 }
 
-int32_t SetSessionConnStatusById(int32_t channelId, uint32_t status)
+SOFTBUS_VISIBILITY int32_t SetSessionConnStatusById(int32_t channelId, uint32_t status)
 {
     if (GetSessionConnLock() != SOFTBUS_OK) {
         return SOFTBUS_LOCK_ERR;
@@ -908,7 +914,7 @@ int32_t TransGetTdcChannelById(int32_t channelId, TcpChannelInfo *channel)
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t TransTdcGetWakeUpInfo(int32_t channelId, char *uuid, int32_t uuidLen, bool *needFastWakeUp)
+SOFTBUS_VISIBILITY int32_t TransTdcGetWakeUpInfo(int32_t channelId, char *uuid, int32_t uuidLen, bool *needFastWakeUp)
 {
     TcpChannelInfo channelInfo;
     (void)memset_s(&channelInfo, sizeof(channelInfo), 0, sizeof(channelInfo));
@@ -934,7 +940,7 @@ int32_t TransTdcGetWakeUpInfo(int32_t channelId, char *uuid, int32_t uuidLen, bo
     return SOFTBUS_OK;
 }
 
-int32_t TransTdcSetWakeUpInfo(int32_t channelId, bool needFastWakeUp)
+SOFTBUS_VISIBILITY int32_t TransTdcSetWakeUpInfo(int32_t channelId, bool needFastWakeUp)
 {
     if (g_tcpChannelInfoList == NULL) {
         TRANS_LOGE(TRANS_CTRL, "tcp channel info list hasn't init");

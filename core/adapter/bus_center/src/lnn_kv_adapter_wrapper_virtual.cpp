@@ -15,6 +15,7 @@
 
 #include "lnn_kv_adapter_wrapper.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 int32_t LnnCreateKvAdapter(int32_t *dbId, const char *appId, int32_t appIdLen, const char *storeId, int32_t storeIdLen)
 {
@@ -32,6 +33,7 @@ int32_t LnnDestroyKvAdapter(int32_t dbId)
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
+SOFTBUS_VISIBILITY
 int32_t LnnPutDBData(int32_t dbId, const char *key, int32_t keyLen, const char *value, int32_t valueLen)
 {
     (void)dbId;
@@ -67,7 +69,7 @@ int32_t LnnDeleteDBDataByPrefix(int32_t dbId, const char *keyPrefix, int32_t key
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnCloudSync(int32_t dbId)
+SOFTBUS_VISIBILITY int32_t LnnCloudSync(int32_t dbId)
 {
     (void)dbId;
     return SOFTBUS_NOT_IMPLEMENT;
@@ -89,7 +91,7 @@ void LnnUnRegisterDataChangeListener(int32_t dbId)
     (void)dbId;
 }
 
-int32_t LnnSubcribeKvStoreService(void)
+SOFTBUS_VISIBILITY int32_t LnnSubcribeKvStoreService(void)
 {
     return SOFTBUS_NOT_IMPLEMENT;
 }

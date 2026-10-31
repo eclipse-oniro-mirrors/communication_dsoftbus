@@ -16,6 +16,7 @@
 #include "trans_udp_channel_manager.h"
 
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 int32_t TransGetUdpAppInfoByChannelId(int32_t channelId, AppInfo *appInfo)
 {
@@ -42,7 +43,7 @@ int32_t UdpChannelFileTransRecoveryLimit(uint8_t tos)
     return SOFTBUS_FUNC_NOT_SUPPORT;
 }
 
-int32_t TransDelUdpChannel(int32_t channelId)
+SOFTBUS_VISIBILITY int32_t TransDelUdpChannel(int32_t channelId)
 {
     (void)channelId;
     return SOFTBUS_FUNC_NOT_SUPPORT;
@@ -62,7 +63,7 @@ void ReleaseUdpChannelLock(void)
 {
 }
 
-int32_t TransGetUdpChannelById(int32_t channelId, UdpChannelInfo *channel)
+SOFTBUS_VISIBILITY int32_t TransGetUdpChannelById(int32_t channelId, UdpChannelInfo *channel)
 {
     (void)channelId;
     (void)channel;
@@ -101,14 +102,14 @@ int32_t TransUdpGetPrivilegeCloseList(ListNode *privilegeCloseList, uint64_t tok
     return SOFTBUS_FUNC_NOT_SUPPORT;
 }
 
-int32_t TransUdpSetWakeUpInfo(int32_t channelId, bool needFastWakeUp)
+SOFTBUS_VISIBILITY int32_t TransUdpSetWakeUpInfo(int32_t channelId, bool needFastWakeUp)
 {
     (void)channelId;
     (void)needFastWakeUp;
     return SOFTBUS_FUNC_NOT_SUPPORT;
 }
 
-int32_t TransUdpGetWakeUpInfo(int32_t channelId, char *uuid, int32_t uuidLen, bool *needFastWakeUp)
+SOFTBUS_VISIBILITY int32_t TransUdpGetWakeUpInfo(int32_t channelId, char *uuid, int32_t uuidLen, bool *needFastWakeUp)
 {
     (void)channelId;
     (void)uuid;

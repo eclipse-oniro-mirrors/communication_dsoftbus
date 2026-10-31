@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include "softbus_def.h"
 #include "softbus_scenario_manager.h"
 
 int32_t ScenarioManagerInit(void)
@@ -21,7 +22,8 @@ int32_t ScenarioManagerInit(void)
 }
 
 // update scenarios based on the command and determine whether to deliver the driver.
-int32_t AddScenario(const char *localMac, const char *peerMac, int32_t localPid, int32_t businessType)
+SOFTBUS_VISIBILITY int32_t AddScenario(const char *localMac, const char *peerMac, int32_t localPid,
+    int32_t businessType)
 {
     (void)localMac;
     (void)peerMac;
@@ -30,7 +32,8 @@ int32_t AddScenario(const char *localMac, const char *peerMac, int32_t localPid,
     return 0;
 }
 
-int32_t DelScenario(const char *localMac, const char *peerMac, int32_t localPid, int32_t businessType)
+SOFTBUS_VISIBILITY int32_t DelScenario(const char *localMac, const char *peerMac, int32_t localPid,
+    int32_t businessType)
 {
     (void)localMac;
     (void)peerMac;

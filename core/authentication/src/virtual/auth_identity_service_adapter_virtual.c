@@ -16,8 +16,9 @@
 #include "auth_identity_service_adapter.h"
 #include "auth_log.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
-int32_t IdServiceQueryCredential(int32_t userId, const char *udidHash, const char *accountidHash,
+SOFTBUS_VISIBILITY int32_t IdServiceQueryCredential(int32_t userId, const char *udidHash, const char *accountidHash,
     bool isSameAccount, char **credList)
 {
     (void)userId;
@@ -28,7 +29,8 @@ int32_t IdServiceQueryCredential(int32_t userId, const char *udidHash, const cha
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t AuthIdServiceQueryCredential(int32_t peerUserId, const char *udidHash, const char *accountidHash,
+SOFTBUS_VISIBILITY int32_t AuthIdServiceQueryCredential(int32_t peerUserId, const char *udidHash,
+    const char *accountidHash,
     bool isSameAccount, char **credList)
 {
     (void)peerUserId;
@@ -39,13 +41,13 @@ int32_t AuthIdServiceQueryCredential(int32_t peerUserId, const char *udidHash, c
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-void IdServiceDestroyCredentialList(char **returnData)
+SOFTBUS_VISIBILITY void IdServiceDestroyCredentialList(char **returnData)
 {
     (void)returnData;
     return;
 }
 
-char *IdServiceGetCredIdFromCredList(int32_t userId, const char *credList)
+SOFTBUS_VISIBILITY char *IdServiceGetCredIdFromCredList(int32_t userId, const char *credList)
 {
     (void)userId;
     (void)credList;
@@ -76,6 +78,7 @@ int32_t IdServiceProcessCredData(int64_t authSeq, const uint8_t *data, uint32_t 
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
+SOFTBUS_VISIBILITY
 bool IdServiceIsPotentialTrustedDevice(const char *udidHash, const char *accountIdHash, bool isSameAccount)
 {
     (void)udidHash;
@@ -111,7 +114,7 @@ int32_t IdServiceGetCredTypeByCredId(int32_t userId, const char *credId, int32_t
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-char *IdServiceGetCredIdByCredType(int32_t localUserId, int32_t peerUserId, int32_t credType,
+SOFTBUS_VISIBILITY char *IdServiceGetCredIdByCredType(int32_t localUserId, int32_t peerUserId, int32_t credType,
     const char *udidHash)
 {
     (void)localUserId;

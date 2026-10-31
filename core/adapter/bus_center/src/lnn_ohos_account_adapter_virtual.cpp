@@ -17,8 +17,9 @@
 #include "softbus_adapter_mem.h"
 #include "softbus_error_code.h"
 #define ACCOUNT_ID 0
+#include "softbus_def.h"
 
-int32_t GetOsAccountId(char *id, uint32_t idLen, uint32_t *len)
+SOFTBUS_VISIBILITY int32_t GetOsAccountId(char *id, uint32_t idLen, uint32_t *len)
 {
     (void)id;
     (void)idLen;
@@ -26,7 +27,7 @@ int32_t GetOsAccountId(char *id, uint32_t idLen, uint32_t *len)
     return SOFTBUS_OK;
 }
 
-int32_t GetOsAccountIdByUserId(int32_t userId, char **id, uint32_t *len)
+SOFTBUS_VISIBILITY int32_t GetOsAccountIdByUserId(int32_t userId, char **id, uint32_t *len)
 {
     (void)userId;
     (void)id;
@@ -34,23 +35,23 @@ int32_t GetOsAccountIdByUserId(int32_t userId, char **id, uint32_t *len)
     return SOFTBUS_OK;
 }
 
-int32_t GetCurrentAccount(int64_t *account)
+SOFTBUS_VISIBILITY int32_t GetCurrentAccount(int64_t *account)
 {
     (void)account;
     return SOFTBUS_OK;
 }
 
-int32_t GetActiveOsAccountIds(void)
+SOFTBUS_VISIBILITY int32_t GetActiveOsAccountIds(void)
 {
     return ACCOUNT_ID;
 }
 
-bool IsActiveOsAccountUnlocked(void)
+SOFTBUS_VISIBILITY bool IsActiveOsAccountUnlocked(void)
 {
     return true;
 }
 
-int32_t GetOsAccountUid(char *id, uint32_t idLen, uint32_t *len)
+SOFTBUS_VISIBILITY int32_t GetOsAccountUid(char *id, uint32_t idLen, uint32_t *len)
 {
     (void)id;
     (void)idLen;
@@ -67,7 +68,7 @@ int32_t GetOsAccountUidByUserId(char *id, uint32_t idLen, uint32_t *len, int32_t
     return SOFTBUS_OK;
 }
 
-int32_t JudgeDeviceTypeAndGetOsAccountIds(void)
+SOFTBUS_VISIBILITY int32_t JudgeDeviceTypeAndGetOsAccountIds(void)
 {
     return ACCOUNT_ID;
 }
@@ -92,7 +93,7 @@ void LnnClearOsAccountAdapterStatus(void)
 }
 
 #ifndef ENABLE_OS_ACCOUNT_CONSTRAINT
-bool LnnIsOsAccountConstraint(void)
+SOFTBUS_VISIBILITY bool LnnIsOsAccountConstraint(void)
 {
     return false;
 }
@@ -102,7 +103,7 @@ void LnnUpdateConstraintMapForCurrentAccount(void)
 {
 }
 
-int32_t GetAllForegroundAccountIds(int32_t **userIds, uint32_t *userIdsLen)
+SOFTBUS_VISIBILITY int32_t GetAllForegroundAccountIds(int32_t **userIds, uint32_t *userIdsLen)
 {
     if (userIds == nullptr || userIdsLen == nullptr) {
         return SOFTBUS_INVALID_PARAM;

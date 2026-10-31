@@ -18,6 +18,11 @@ module_output_path = "dsoftbus/soft_bus/transmission"
 
 ohos_unittest("TransSessionManagerTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "trans_session_manager_test.cpp" ]
 
   include_dirs = [
@@ -41,7 +46,7 @@ ohos_unittest("TransSessionManagerTest") {
 
   deps = [
     "$dsoftbus_core_path/common:softbus_utils",
-    "$dsoftbus_core_path/frame:softbus_server",
+    "$dsoftbus_core_path/frame:softbus_server_test",
     "$dsoftbus_root_path/adapter:softbus_adapter",
   ]
 
@@ -55,6 +60,11 @@ ohos_unittest("TransSessionManagerTest") {
 
 ohos_unittest("TransSessionServiceTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "trans_session_service_test.cpp" ]
 
   include_dirs = [
@@ -72,7 +82,7 @@ ohos_unittest("TransSessionServiceTest") {
 
   deps = [
     "$dsoftbus_core_path/common:softbus_utils",
-    "$dsoftbus_core_path/frame:softbus_server",
+    "$dsoftbus_core_path/frame:softbus_server_test",
     "$dsoftbus_root_path/adapter:softbus_adapter",
   ]
 
@@ -87,6 +97,11 @@ ohos_unittest("TransSessionServiceTest") {
 if (support_jsapi) {
   ohos_unittest("TransScenarioManagerTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = [ "softbus_scenario_manager_test.cpp" ]
 
     include_dirs = [
@@ -97,7 +112,7 @@ if (support_jsapi) {
 
     deps = [
       "$dsoftbus_core_path/common:softbus_utils",
-      "$dsoftbus_core_path/frame:softbus_server",
+      "$dsoftbus_core_path/frame:softbus_server_test",
       "$dsoftbus_root_path/adapter:softbus_adapter",
     ]
 

@@ -17,8 +17,9 @@
 #include "g_enhance_adapter_func.h"
 #include "softbus_init_common.h"
 #include "softbus_adapter_range.h"
+#include "softbus_def.h"
 
-void RegisterRadarCbForOpenSrcPacked(void *callback)
+SOFTBUS_VISIBILITY void RegisterRadarCbForOpenSrcPacked(void *callback)
 {
     AdapterEnhanceFuncList *pfnAdapterEnhanceFuncList = AdapterEnhanceFuncListGet();
     if (AdapterCheckFuncPointer((void *)pfnAdapterEnhanceFuncList->registerRadarCbForOpenSrc) != SOFTBUS_OK) {
@@ -28,7 +29,7 @@ void RegisterRadarCbForOpenSrcPacked(void *callback)
 }
 
 #ifdef DISC_COMMUNITY
-int SoftBusGetBlePowerPacked(int8_t *power)
+SOFTBUS_VISIBILITY int SoftBusGetBlePowerPacked(int8_t *power)
 {
     AdapterEnhanceFuncList *pfnAdapterEnhanceFuncList = AdapterEnhanceFuncListGet();
     if (AdapterCheckFuncPointer((void *)pfnAdapterEnhanceFuncList->softBusGetBlePower) != SOFTBUS_OK) {
@@ -38,7 +39,7 @@ int SoftBusGetBlePowerPacked(int8_t *power)
 }
 #endif /* DISC_COMMUNITY */
 
-int SoftBusBleRangePacked(SoftBusRangeParam *param, int32_t *range)
+SOFTBUS_VISIBILITY int SoftBusBleRangePacked(SoftBusRangeParam *param, int32_t *range)
 {
     AdapterEnhanceFuncList *pfnAdapterEnhanceFuncList = AdapterEnhanceFuncListGet();
     if (AdapterCheckFuncPointer((void *)pfnAdapterEnhanceFuncList->softBusBleRange) != SOFTBUS_OK) {
@@ -47,7 +48,7 @@ int SoftBusBleRangePacked(SoftBusRangeParam *param, int32_t *range)
     return pfnAdapterEnhanceFuncList->softBusBleRange(param, range);
 }
 
-int32_t SoftBusRegRangeCbPacked(SoftBusRangeModule module, const SoftBusRangeCallback *callback)
+SOFTBUS_VISIBILITY int32_t SoftBusRegRangeCbPacked(SoftBusRangeModule module, const SoftBusRangeCallback *callback)
 {
     AdapterEnhanceFuncList *pfnAdapterEnhanceFuncList = AdapterEnhanceFuncListGet();
     if (AdapterCheckFuncPointer((void *)pfnAdapterEnhanceFuncList->softBusRegRangeCb) != SOFTBUS_OK) {
@@ -56,7 +57,7 @@ int32_t SoftBusRegRangeCbPacked(SoftBusRangeModule module, const SoftBusRangeCal
     return pfnAdapterEnhanceFuncList->softBusRegRangeCb(module, callback);
 }
 
-void SoftBusUnregRangeCbPacked(SoftBusRangeModule module)
+SOFTBUS_VISIBILITY void SoftBusUnregRangeCbPacked(SoftBusRangeModule module)
 {
     AdapterEnhanceFuncList *pfnAdapterEnhanceFuncList = AdapterEnhanceFuncListGet();
     if (AdapterCheckFuncPointer((void *)pfnAdapterEnhanceFuncList->softBusUnregRangeCb) != SOFTBUS_OK) {
@@ -65,7 +66,7 @@ void SoftBusUnregRangeCbPacked(SoftBusRangeModule module)
     return pfnAdapterEnhanceFuncList->softBusUnregRangeCb(module);
 }
 
-int32_t SoftBusAddSleStateListenerPacked(const SoftBusSleStateListener *listener, int32_t *listenerId)
+SOFTBUS_VISIBILITY int32_t SoftBusAddSleStateListenerPacked(const SoftBusSleStateListener *listener, int32_t *listenerId)
 {
     AdapterEnhanceFuncList *pfnAdapterEnhanceFuncList = AdapterEnhanceFuncListGet();
     if (AdapterCheckFuncPointer((void *)pfnAdapterEnhanceFuncList->softBusAddSleStateListener) != SOFTBUS_OK) {
@@ -74,7 +75,7 @@ int32_t SoftBusAddSleStateListenerPacked(const SoftBusSleStateListener *listener
     return pfnAdapterEnhanceFuncList->softBusAddSleStateListener(listener, listenerId);
 }
 
-bool IsSleEnabledPacked(void)
+SOFTBUS_VISIBILITY bool IsSleEnabledPacked(void)
 {
     AdapterEnhanceFuncList *pfnAdapterEnhanceFuncList = AdapterEnhanceFuncListGet();
     if (AdapterCheckFuncPointer((void *)pfnAdapterEnhanceFuncList->isSleEnabled) != SOFTBUS_OK) {
@@ -83,7 +84,7 @@ bool IsSleEnabledPacked(void)
     return pfnAdapterEnhanceFuncList->isSleEnabled();
 }
 
-void SoftBusRemoveSleStateListenerPacked(int listenerId)
+SOFTBUS_VISIBILITY void SoftBusRemoveSleStateListenerPacked(int listenerId)
 {
     AdapterEnhanceFuncList *pfnAdapterEnhanceFuncList = AdapterEnhanceFuncListGet();
     if (AdapterCheckFuncPointer((void *)pfnAdapterEnhanceFuncList->softBusRemoveSleStateListener) != SOFTBUS_OK) {
@@ -92,7 +93,7 @@ void SoftBusRemoveSleStateListenerPacked(int listenerId)
     return pfnAdapterEnhanceFuncList->softBusRemoveSleStateListener(listenerId);
 }
 
-int32_t GetSleRangeCapacityPacked(void)
+SOFTBUS_VISIBILITY int32_t GetSleRangeCapacityPacked(void)
 {
     AdapterEnhanceFuncList *pfnAdapterEnhanceFuncList = AdapterEnhanceFuncListGet();
     if (AdapterCheckFuncPointer((void *)pfnAdapterEnhanceFuncList->getSleRangeCapacity) != SOFTBUS_OK) {
@@ -101,7 +102,7 @@ int32_t GetSleRangeCapacityPacked(void)
     return pfnAdapterEnhanceFuncList->getSleRangeCapacity();
 }
 
-int32_t GetLocalSleAddrPacked(char *sleAddr, uint32_t sleAddrLen)
+SOFTBUS_VISIBILITY int32_t GetLocalSleAddrPacked(char *sleAddr, uint32_t sleAddrLen)
 {
     AdapterEnhanceFuncList *pfnAdapterEnhanceFuncList = AdapterEnhanceFuncListGet();
     if (AdapterCheckFuncPointer((void *)pfnAdapterEnhanceFuncList->getLocalSleAddr) != SOFTBUS_OK) {
@@ -110,7 +111,7 @@ int32_t GetLocalSleAddrPacked(char *sleAddr, uint32_t sleAddrLen)
     return pfnAdapterEnhanceFuncList->getLocalSleAddr(sleAddr, sleAddrLen);
 }
 
-void SoftbusSleAdapterInitPacked(void)
+SOFTBUS_VISIBILITY void SoftbusSleAdapterInitPacked(void)
 {
     AdapterEnhanceFuncList *pfnAdapterEnhanceFuncList = AdapterEnhanceFuncListGet();
     if (AdapterCheckFuncPointer((void *)pfnAdapterEnhanceFuncList->softbusSleAdapterInit) != SOFTBUS_OK) {
@@ -119,7 +120,7 @@ void SoftbusSleAdapterInitPacked(void)
     return pfnAdapterEnhanceFuncList->softbusSleAdapterInit();
 }
 
-void SoftbusSleAdapterDeInitPacked(void)
+SOFTBUS_VISIBILITY void SoftbusSleAdapterDeInitPacked(void)
 {
     AdapterEnhanceFuncList *pfnAdapterEnhanceFuncList = AdapterEnhanceFuncListGet();
     if (AdapterCheckFuncPointer((void *)pfnAdapterEnhanceFuncList->softbusSleAdapterDeInit) != SOFTBUS_OK) {
@@ -128,7 +129,7 @@ void SoftbusSleAdapterDeInitPacked(void)
     return pfnAdapterEnhanceFuncList->softbusSleAdapterDeInit();
 }
 
-int32_t SoftbusMcuTimerInitPacked(void)
+SOFTBUS_VISIBILITY int32_t SoftbusMcuTimerInitPacked(void)
 {
     AdapterEnhanceFuncList *pfnAdapterEnhanceFuncList = AdapterEnhanceFuncListGet();
     if (AdapterCheckFuncPointer((void *)pfnAdapterEnhanceFuncList->softbusMcuTimerInit) != SOFTBUS_OK) {
@@ -137,7 +138,7 @@ int32_t SoftbusMcuTimerInitPacked(void)
     return pfnAdapterEnhanceFuncList->softbusMcuTimerInit();
 }
 
-void SoftbusMcuTimerDeinitPacked(void)
+SOFTBUS_VISIBILITY void SoftbusMcuTimerDeinitPacked(void)
 {
     AdapterEnhanceFuncList *pfnAdapterEnhanceFuncList = AdapterEnhanceFuncListGet();
     if (AdapterCheckFuncPointer((void *)pfnAdapterEnhanceFuncList->softbusMcuTimerDeinit) != SOFTBUS_OK) {
@@ -146,7 +147,7 @@ void SoftbusMcuTimerDeinitPacked(void)
     return pfnAdapterEnhanceFuncList->softbusMcuTimerDeinit();
 }
 
-void AntiSleepHoldRunningLockPacked(int32_t timeOutMs)
+SOFTBUS_VISIBILITY void AntiSleepHoldRunningLockPacked(int32_t timeOutMs)
 {
     AdapterEnhanceFuncList *pfnAdapterEnhanceFuncList = AdapterEnhanceFuncListGet();
     if (AdapterCheckFuncPointer((void *)pfnAdapterEnhanceFuncList->antiSleepHoldRunningLock) != SOFTBUS_OK) {
@@ -155,7 +156,7 @@ void AntiSleepHoldRunningLockPacked(int32_t timeOutMs)
     return pfnAdapterEnhanceFuncList->antiSleepHoldRunningLock(timeOutMs);
 }
 
-void AntiSleepUnHoldRunningLockPacked(void)
+SOFTBUS_VISIBILITY void AntiSleepUnHoldRunningLockPacked(void)
 {
     AdapterEnhanceFuncList *pfnAdapterEnhanceFuncList = AdapterEnhanceFuncListGet();
     if (AdapterCheckFuncPointer((void *)pfnAdapterEnhanceFuncList->antiSleepUnHoldRunningLock) != SOFTBUS_OK) {

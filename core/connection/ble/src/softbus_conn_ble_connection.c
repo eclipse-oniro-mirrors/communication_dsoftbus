@@ -28,6 +28,7 @@
 #include "softbus_datahead_transform.h"
 #include "softbus_json_utils.h"
 #include "ble_protocol_interface_factory.h"
+#include "softbus_def.h"
 #include "softbus_utils.h"
 
 // basic info json key definition
@@ -158,7 +159,7 @@ ConnBleConnection *ConnBleCreateConnection(
     return connection;
 }
 
-void ConnBleFreeConnection(ConnBleConnection *connection)
+SOFTBUS_SYMBOL_EXPORT void ConnBleFreeConnection(ConnBleConnection *connection)
 {
     SoftBusMutexDestroy(&connection->lock);
     ConnBlePacket *it = NULL;
@@ -532,7 +533,7 @@ void ConnBleRefreshIdleTimeout(ConnBleConnection *connection)
         0, NULL, CONNECTION_IDLE_DISCONNECT_TIMEOUT_MILLIS);
 }
 
-void ConnBleCancelIdleTimeout(ConnBleConnection *connection)
+SOFTBUS_VISIBILITY void ConnBleCancelIdleTimeout(ConnBleConnection *connection)
 {
     CONN_CHECK_AND_RETURN_LOGE(connection != NULL, CONN_BLE, "cancel fail, connection is null");
     ConnRemoveMsgFromLooper(
