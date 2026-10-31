@@ -103,7 +103,7 @@ int32_t SoftBusServerStub::CheckOpenSessionPermission(const SessionParam *param)
         return SOFTBUS_INVALID_PARAM;
     }
 
-    pid_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
+    pid_t callingUid = OHOS::IPCSkeleton::GetCallingAppUid();
     pid_t callingPid = OHOS::IPCSkeleton::GetCallingPid();
     if (CheckTransPermission(callingUid, callingPid, pkgName, param->sessionName, ACTION_OPEN) != SOFTBUS_OK) {
         COMM_LOGE(COMM_SVC, "OpenSession no permission");
@@ -139,7 +139,7 @@ int32_t SoftBusServerStub::CheckChannelPermission(int32_t channelId, int32_t cha
         return ret;
     }
 
-    pid_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
+    pid_t callingUid = OHOS::IPCSkeleton::GetCallingAppUid();
     pid_t callingPid = OHOS::IPCSkeleton::GetCallingPid();
     if (CheckTransPermission(callingUid, callingPid, pkgName, sessionName, ACTION_OPEN) != SOFTBUS_OK) {
         return SOFTBUS_PERMISSION_DENIED;
@@ -615,7 +615,7 @@ int32_t SoftBusServerStub::CreateSessionServerInner(MessageParcel &data, Message
 {
     COMM_LOGD(COMM_SVC, "enter");
     int32_t retReply;
-    pid_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
+    pid_t callingUid = OHOS::IPCSkeleton::GetCallingAppUid();
     pid_t callingPid = OHOS::IPCSkeleton::GetCallingPid();
 #ifdef SUPPORT_BUNDLENAME
     uint64_t callingFullTokenId = IPCSkeleton::GetCallingFullTokenID();
@@ -683,7 +683,7 @@ int32_t SoftBusServerStub::RemoveSessionServerInner(MessageParcel &data, Message
         retReply = SOFTBUS_TRANS_PROXY_READCSTRING_FAILED;
         goto EXIT;
     }
-    callingUid = OHOS::IPCSkeleton::GetCallingUid();
+    callingUid = OHOS::IPCSkeleton::GetCallingAppUid();
     callingPid = OHOS::IPCSkeleton::GetCallingPid();
     if (!CheckNameContainServiceId(sessionName)) {
         if (CheckTransPermission(callingUid, callingPid, pkgName, sessionName, ACTION_CREATE) != SOFTBUS_OK) {
@@ -827,7 +827,7 @@ static bool CancelEncryptionPermissionCheck(void)
         return true;
     }
     pid_t callingPid = OHOS::IPCSkeleton::GetCallingPid();
-    pid_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
+    pid_t callingUid = OHOS::IPCSkeleton::GetCallingAppUid();
     uint32_t tokenId = IPCSkeleton::GetCallingTokenID();
     auto tokenType = OHOS::Security::AccessToken::AccessTokenKit::GetTokenTypeFlag(
         static_cast<OHOS::Security::AccessToken::AccessTokenID>(tokenId));
@@ -879,7 +879,7 @@ int32_t SoftBusServerStub::OpenSessionInner(MessageParcel &data, MessageParcel &
             goto EXIT;
         }
         if (!CheckUidAndPid(
-            param.sessionName, OHOS::IPCSkeleton::GetCallingUid(), OHOS::IPCSkeleton::GetCallingPid())) {
+            param.sessionName, OHOS::IPCSkeleton::GetCallingAppUid(), OHOS::IPCSkeleton::GetCallingPid())) {
             char *tmpName = NULL;
             Anonymize(param.sessionName, &tmpName);
             COMM_LOGE(COMM_SVC, "Check Uid and Pid failed, sessionName=%{public}s", AnonymizeWrapper(tmpName));
@@ -901,7 +901,7 @@ int32_t SoftBusServerStub::OpenSessionInner(MessageParcel &data, MessageParcel &
     if (strncmp(param.sessionName, DMS_COLLABATION_NAME_PREFIX, strlen(DMS_COLLABATION_NAME_PREFIX)) == 0) {
         COMM_LOGI(COMM_SVC, "DMS bind request, need check collaboration relationship");
         if (CheckSourceCollabRelation(param.peerDeviceId,
-            OHOS::IPCSkeleton::GetCallingPid(), OHOS::IPCSkeleton::GetCallingUid()) != SOFTBUS_OK) {
+            OHOS::IPCSkeleton::GetCallingPid(), OHOS::IPCSkeleton::GetCallingAppUid()) != SOFTBUS_OK) {
             COMM_LOGE(COMM_SVC, "DMS check collaboration relationship failed, reject binding request");
             retReply = SOFTBUS_TRANS_CHECK_RELATION_FAIL;
             goto EXIT;
@@ -2273,7 +2273,7 @@ int32_t SoftBusServerStub::SetDisconnectPolicyInner(MessageParcel &data, Message
 int32_t SoftBusServerStub::PrivilegeCloseChannelInner(MessageParcel &data, MessageParcel &reply)
 {
     COMM_LOGD(COMM_SVC, "enter");
-    int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
+    int32_t callingUid = OHOS::IPCSkeleton::GetCallingAppUid();
     if (callingUid != DMS_CALLING_UID) {
         COMM_LOGE(COMM_PERM, "uid check failed");
         return SOFTBUS_PERMISSION_DENIED;

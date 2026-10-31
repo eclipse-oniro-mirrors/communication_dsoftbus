@@ -50,7 +50,7 @@ class ClientTransSocketTest : public testing::Test { };
 HWTEST_F(ClientTransSocketTest, DBinderGrantPermissionTest001, TestSize.Level1)
 {
     CounterfeitProcess("samgr");
-    int32_t uid = getuid();
+    int32_t uid = getappuid();
     ASSERT_GE(uid, 0);
     int32_t pid = getpid();
     ASSERT_GT(pid, 0);
@@ -70,7 +70,7 @@ HWTEST_F(ClientTransSocketTest, DBinderGrantPermissionTest001, TestSize.Level1)
 HWTEST_F(ClientTransSocketTest, DBinderGrantPermissionTest002, TestSize.Level1)
 {
     CounterfeitProcess("msdp");
-    int32_t uid = getuid();
+    int32_t uid = getappuid();
     ASSERT_GE(uid, 0);
     int32_t pid = getpid();
     ASSERT_GT(pid, 0);
@@ -88,7 +88,7 @@ HWTEST_F(ClientTransSocketTest, DBinderGrantPermissionTest002, TestSize.Level1)
 HWTEST_F(ClientTransSocketTest, DBinderRemovePermissionTest001, TestSize.Level1)
 {
     CounterfeitProcess("samgr");
-    int32_t uid = getuid();
+    int32_t uid = getappuid();
     ASSERT_GE(uid, 0);
     int32_t pid = getpid();
     ASSERT_GT(pid, 0);

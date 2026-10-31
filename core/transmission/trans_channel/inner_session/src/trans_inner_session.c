@@ -201,7 +201,7 @@ int32_t TransCreateSessionServerInner(
         return SOFTBUS_MEM_ERR;
     }
     TransClientSetInnerListener(pkgName, sessionName, &g_innerSessionListener);
-    ret = TransCreateSessionServer(pkgName, sessionName, getuid(), getpid());
+    ret = TransCreateSessionServer(pkgName, sessionName, getappuid(), getpid());
     TRANS_LOGI(TRANS_CTRL, "create session inner server ret=%{public}d", ret);
     return ret;
 }

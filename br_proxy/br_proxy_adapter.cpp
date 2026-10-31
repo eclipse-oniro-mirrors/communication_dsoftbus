@@ -151,7 +151,7 @@ extern "C" int32_t ProxyChannelMgrGetAbilityName(char *abilityName, int32_t user
     if (strcpy_s(abilityName, abilityNameLen, abilityInfos[0].name.c_str()) != EOK) {
         return SOFTBUS_STRCPY_ERR;
     }
-    pid_t callerUid = IPCSkeleton::GetCallingUid();
+    pid_t callerUid = IPCSkeleton::GetCallingAppUid();
     std::string name;
     ret = bundleMgr->GetNameAndIndexForUid(callerUid, name, *appIndex);
     if (ret != SOFTBUS_OK) {

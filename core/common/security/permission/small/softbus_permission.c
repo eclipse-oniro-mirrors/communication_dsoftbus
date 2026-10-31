@@ -46,7 +46,7 @@ static int32_t CheckSoftBusSysPermission(int32_t callingUid)
 static int32_t GetPermType(pid_t callingUid, pid_t callingPid, const char *pkgName)
 {
     (void)pkgName;
-    if (callingUid == (pid_t)getuid() && callingPid == getpid()) {
+    if (callingUid == (pid_t)getappuid() && callingPid == getpid()) {
         COMM_LOGI(COMM_PERM, "self app");
         return SELF_APP;
     }

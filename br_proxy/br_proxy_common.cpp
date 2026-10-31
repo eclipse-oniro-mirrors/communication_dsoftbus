@@ -194,7 +194,7 @@ extern "C" pid_t GetCallerPid()
 
 extern "C" pid_t GetCallerUid()
 {
-    return IPCSkeleton::GetCallingUid();
+    return IPCSkeleton::GetCallingAppUid();
 }
 
 extern "C" uint32_t GetCallerTokenId()
