@@ -62,12 +62,6 @@ public:
     virtual int32_t InitLinkLedger(void) = 0;
     virtual void DeinitLinkLedger(void) = 0;
     virtual bool ExistsLaneLinkByType(LaneLinkType linkType) = 0;
-    virtual int32_t CreateWDLinkInfo(uint32_t p2pRequestId, const struct WifiDirectLink *link,
-        LaneLinkInfo *linkInfo) = 0;
-    virtual void TryDelPreLinkByConnReqId(uint32_t connReqId) = 0;
-    virtual int32_t CheckTransReqInfo(const LinkRequest *request, uint32_t laneReqId) = 0;
-    virtual int32_t GetWifiDirectParamWithReuse(const LinkRequest *request, uint32_t laneReqId,
-        struct WifiDirectConnectInfo *wifiDirectInfo) = 0;
 };
 
 class LaneLinkDepsInterfaceMock : public LaneLinkDepsInterface {
@@ -107,11 +101,6 @@ public:
     MOCK_METHOD0(InitLinkLedger, int32_t (void));
     MOCK_METHOD0(DeinitLinkLedger, void (void));
     MOCK_METHOD1(ExistsLaneLinkByType, bool (LaneLinkType linkType));
-    MOCK_METHOD3(CreateWDLinkInfo, int32_t (uint32_t, const struct WifiDirectLink *, LaneLinkInfo *));
-    MOCK_METHOD1(TryDelPreLinkByConnReqId, void (uint32_t));
-    MOCK_METHOD2(CheckTransReqInfo, int32_t (const LinkRequest *, uint32_t));
-    MOCK_METHOD3(GetWifiDirectParamWithReuse, int32_t (const LinkRequest *, uint32_t,
-        struct WifiDirectConnectInfo *));
 
     static int32_t ActionOfChannelOpenFailed(int32_t requestId, const char *networkId,
         const TransProxyPipelineChannelOption *option, const ITransProxyPipelineCallback *callback);

@@ -1489,3 +1489,13 @@ int32_t TransProcessWirelessLinkCtrl(int32_t socket)
     TransHandleReallocLnnInner(true);
     return SOFTBUS_OK;
 }
+
+int32_t TransProcessDisconnectPolicy(int32_t channelId, DisconnectPolicy policy)
+{
+    if (channelId < 0 || policy < DISCONNECT_POLICY_DEFAULT || policy >= DISCONNECT_POLICY_BUTT) {
+        TRANS_LOGE(TRANS_CTRL, "invalid param, channelId=%{public}d, policy=%{public}d", channelId, policy);
+        return SOFTBUS_INVALID_PARAM;
+    }
+    TRANS_LOGI(TRANS_CTRL, "set disconnect policy, channelId=%{public}d, policy=%{public}d", channelId, policy);
+    return TransProxySetDisconnectPolicy(channelId, policy);
+}

@@ -605,7 +605,7 @@ static int32_t ProcessSessionKey(SessionKeyList *list, int64_t *index, const Ses
 {
     if (info->normalizedType == NORMALIZED_SUPPORT) {
         if (SetSessionKeyAuthLinkType(list, info->normalizedIndex, info->connInfo.type) == SOFTBUS_OK) {
-            AUTH_LOGI(AUTH_FSM, "index is alread exist");
+            AUTH_LOGD(AUTH_FSM, "index is alread exist");
             return SOFTBUS_OK;
         }
         *index = info->normalizedIndex;
@@ -685,7 +685,7 @@ AuthManager *GetDeviceAuthManager(int64_t authSeq, const AuthSessionInfo *info, 
     auth->lastVerifyTime = GetCurrentTimeMs();
     auth->lastActiveTime = GetCurrentTimeMs();
 
-    AUTH_LOGI(AUTH_FSM, "auth manager exist.");
+    AUTH_LOGD(AUTH_FSM, "auth manager exist.");
     return auth;
 }
 
@@ -717,7 +717,7 @@ static int32_t ProcessEmptySessionKey(const AuthSessionInfo *info, int32_t index
 static int32_t AuthProcessEmptySessionKey(const AuthSessionInfo *info, int32_t index)
 {
     if (info->module != AUTH_MODULE_TRANS) {
-        AUTH_LOGI(AUTH_FSM, "no need AuthProcessEmptySessionKey");
+        AUTH_LOGD(AUTH_FSM, "no need AuthProcessEmptySessionKey");
         return SOFTBUS_OK;
     }
     AuthManager *auth = FindAuthManagerByUdid(info->udid, info->connInfo.type, info->isServer);
@@ -1877,7 +1877,7 @@ SOFTBUS_VISIBILITY int32_t AuthFlushDevice(const char *uuid, AuthLinkType type)
         return SOFTBUS_INVALID_PARAM;
     }
     if (uuid == NULL || uuid[0] == '\0') {
-        AUTH_LOGE(AUTH_CONN, "uuid is empty");
+        AUTH_LOGD(AUTH_CONN, "uuid is empty");
         return SOFTBUS_INVALID_PARAM;
     }
     if (PostDeviceMessageByUuid(uuid, CODE_VERIFY_DEVICE, DEFAULT_FREQ_CYCLE) != SOFTBUS_OK) {

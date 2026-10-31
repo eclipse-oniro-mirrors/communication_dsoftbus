@@ -786,7 +786,7 @@ SOFTBUS_VISIBILITY TrustedReturnType AuthHasTrustedRelation(void)
         return TRUSTED_RELATION_IGNORE;
     }
     SoftBusFree(udidArray);
-    AUTH_LOGI(AUTH_CONN, "auth get trusted relation num=%{public}u", num);
+    AUTH_LOGD(AUTH_CONN, "auth get trusted relation num=%{public}u", num);
     return (num != 0) ? TRUSTED_RELATION_YES : TRUSTED_RELATION_NO;
 }
 

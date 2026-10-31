@@ -178,3 +178,10 @@ int32_t ServerIpcSetWirelessLinkCtrl(int32_t socket)
     (void)socket;
     return SOFTBUS_NOT_IMPLEMENT;
 }
+
+int32_t ServerIpcSetDisconnectPolicy(int32_t channelId, DisconnectPolicy policy)
+{
+    (void)channelId;
+    (void)policy;
+    return SOFTBUS_NOT_IMPLEMENT;
+}

@@ -426,7 +426,7 @@ SOFTBUS_SYMBOL_EXPORT bool CompareConnInfo(const AuthConnInfo *info1, const Auth
             }
         }
     }
-    AUTH_LOGE(AUTH_CONN, "link type not support, info1Type=%{public}d", info1->type);
+    AUTH_LOGD(AUTH_CONN, "link type not support, info1Type=%{public}d", info1->type);
     return false;
 }
 

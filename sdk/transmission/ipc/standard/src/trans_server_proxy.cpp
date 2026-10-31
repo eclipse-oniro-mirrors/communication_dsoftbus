@@ -346,6 +346,14 @@ int32_t ServerIpcSetWirelessLinkCtrl(int32_t socket)
     return proxy->SetWirelessLinkCtrl(socket);
 }
 
+int32_t ServerIpcSetDisconnectPolicy(int32_t channelId, DisconnectPolicy policy)
+{
+    sptr<TransServerProxy> proxy = RetryGetProxy();
+    TRANS_CHECK_AND_RETURN_RET_LOGE(
+        proxy != nullptr, SOFTBUS_NO_INIT, TRANS_SDK, "softbus server g_serverProxy is nullptr");
+    return proxy->SetDisconnectPolicy(channelId, policy);
+}
+
 int32_t ServerIpcPrivilegeCloseChannel(uint64_t tokenId, int32_t pid, const char *peerNetworkId)
 {
     if (peerNetworkId == nullptr) {

@@ -1312,7 +1312,6 @@ int32_t StopPublishLNNInner(const char *pkgName, int32_t publishId)
 {
     int32_t ret = ServerIpcStopPublishLNN(pkgName, publishId);
     if (ret != SOFTBUS_OK) {
-        LNN_LOGE(LNN_STATE, "Server StopPublishLNNInner failed, ret=%{public}d", ret);
         return ret;
     }
     if (DeleteDiscPublishMsg(pkgName, publishId) != SOFTBUS_OK) {
@@ -1604,7 +1603,7 @@ int32_t LnnOnNodeOnlineStateChanged(const char *pkgName, bool isOnline, void *in
         return SOFTBUS_INVALID_PARAM;
     }
     if (!g_busCenterClient.isInit) {
-        LNN_LOGE(LNN_STATE, "buscenter client not init");
+        LNN_LOGD(LNN_STATE, "buscenter client not init");
         return SOFTBUS_NETWORK_CLIENT_NOT_INIT;
     }
 
@@ -1683,7 +1682,7 @@ int32_t LnnOnNodeStatusChanged(const char *pkgName, void *info, int32_t type)
     NodeStatus *nodeStatus = (NodeStatus *)info;
     ListNode dupList;
     if (!g_busCenterClient.isInit) {
-        LNN_LOGE(LNN_STATE, "buscenter client not init");
+        LNN_LOGD(LNN_STATE, "buscenter client not init");
         return SOFTBUS_NO_INIT;
     }
 
@@ -1703,7 +1702,7 @@ int32_t LnnOnNodeStatusChanged(const char *pkgName, void *info, int32_t type)
     }
     char *anonyPkgName = NULL;
     Anonymize(pkgName, &anonyPkgName);
-    LNN_LOGI(LNN_STATE, "LnnOnNodeStatusChanged, pkgName=%{public}s, type=%{public}d, screen=%{public}d",
+    LNN_LOGD(LNN_STATE, "LnnOnNodeStatusChanged, pkgName=%{public}s, type=%{public}d, screen=%{public}d",
         AnonymizeWrapper(anonyPkgName), type, nodeStatus->reserved[0]);
     LIST_FOR_EACH_ENTRY(item, &dupList, NodeStateCallbackItem, node) {
         if (((strcmp(item->pkgName, pkgName) == 0) || (strlen(pkgName) == 0)) &&

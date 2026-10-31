@@ -1358,7 +1358,7 @@ static int32_t HbNotifyReceiveDevice(DeviceInfo *device, const LnnHeartbeatWeigh
     bool needReAuth = HbIsNeedReAuthForOnlineNode(&nodeInfo, device, hbResp, isDirectlyHb);
     bool isRepeatedReAuth = needReAuth && device->isOnline && HbIsRepeatedReAuthRequest(storedInfo, nowTime);
     (void)SoftBusMutexUnlock(&g_hbRecvList->lock);
-    LNN_LOGI(LNN_HEART_BEAT, "needReAuth=%{public}d, isRepeatedReAuth=%{public}d", needReAuth, isRepeatedReAuth);
+    LNN_LOGD(LNN_HEART_BEAT, "needReAuth=%{public}d, isRepeatedReAuth=%{public}d", needReAuth, isRepeatedReAuth);
     if (needReAuth || !device->isOnline) {
         if (!needReAuth) {
             (void)HbCheckAndAuthPeerUserId(device, &nodeInfo, hbResp);

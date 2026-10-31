@@ -265,6 +265,23 @@ ohos_unittest("BrProxyErrorCodeTest") {
   ]
 }
 
+ohos_unittest("BrProxyAdapterTest") {
+  module_out_path = module_output_path
+  include_dirs = [
+    "$dsoftbus_root_path/br_proxy",
+    "$dsoftbus_root_path/br_proxy/common/include",
+    "$dsoftbus_root_path/interfaces/kits/common",
+  ]
+  sources = [
+    "br_proxy_adapter_test.cpp",
+    "$dsoftbus_root_path/br_proxy/br_proxy_adapter_virtual.cpp",
+  ]
+  external_deps = [
+    "googletest:gtest_main",
+    "hilog:libhilog",
+  ]
+}
+
 group("unittest") {
   testonly = true
   deps = []
@@ -275,6 +292,7 @@ group("unittest") {
       ":BrProxyServerManagerExtTest",
       ":BrProxyServerManagerTest",
       ":BrProxyErrorCodeTest",
+      ":BrProxyAdapterTest",
     ]
   }
 }

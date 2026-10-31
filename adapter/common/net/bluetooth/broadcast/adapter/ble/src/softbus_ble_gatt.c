@@ -740,6 +740,7 @@ static int32_t SoftbusSetAdvData(int32_t advId, const SoftbusBroadcastData *data
     }
     SoftBusMutexUnlock(&g_advLock);
     StartAdvRawData advRawData = {};
+    advRawData.rspIncludeDeviceName = data->isIncludeDeviceName;
     advRawData.advData = (unsigned char *)AssembleAdvData(data, (uint16_t *)&advRawData.advDataLen);
     if (advRawData.advData == NULL) {
         DISC_LOGE(DISC_BLE_ADAPTER, "assemble adv data failed, advId=%{public}d, bt-advId=%{public}d",

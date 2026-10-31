@@ -284,7 +284,9 @@ SOFTBUS_VISIBILITY bool IsActiveOsAccountUnlocked(void)
             osAccountId);
         return false;
     }
-    LNN_LOGI(LNN_STATE, "account verified status=%{public}d, accountId=%{public}d", isUnlocked, osAccountId);
+    if (!isUnlocked) {
+        LNN_LOGI(LNN_STATE, "account verified status=%{public}d, accountId=%{public}d", isUnlocked, osAccountId);
+    }
     return isUnlocked;
 }
 

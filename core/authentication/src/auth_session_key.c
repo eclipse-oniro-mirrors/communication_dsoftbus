@@ -238,7 +238,7 @@ SOFTBUS_VISIBILITY int32_t SetSessionKeyAvailable(SessionKeyList *list, int32_t 
         }
         if (!item->isAvailable) {
             item->isAvailable = true;
-            AUTH_LOGI(AUTH_FSM, "index=%{public}d, set available", index);
+            AUTH_LOGD(AUTH_FSM, "index=%{public}d, set available", index);
         }
         return SOFTBUS_OK;
     }

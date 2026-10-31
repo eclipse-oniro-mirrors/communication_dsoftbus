@@ -1932,6 +1932,7 @@ static void ConvertBcParams(BroadcastProtocol protocol,
     dstParam->linkRole = srcParam->linkRole;
     dstParam->frameType = srcParam->frameType;
     dstParam->businessType = srcParam->businessType;
+    dstParam->isIncludeDeviceName = srcParam->isIncludeDeviceName;
     if (memcpy_s(dstParam->ownIrk, SOFTBUS_IRK_LEN, srcParam->ownIrk, BC_IRK_LEN) != EOK) {
         DISC_LOGE(DISC_BROADCAST, "memcpy ownIrk failed");
         return;
@@ -2014,6 +2015,7 @@ static int32_t BuildSoftbusBroadcastData(BroadcastProtocol protocol,
 {
     softbusBcData->isSupportFlag = packet->isSupportFlag;
     softbusBcData->flag = packet->flag;
+    softbusBcData->isIncludeDeviceName = packet->isIncludeDeviceName;
 
     // 1. Build broadcast paylod.
     int32_t ret = BuildSoftbusBcPayload(&(packet->bcData), &(softbusBcData->bcData));
@@ -2142,7 +2144,7 @@ SOFTBUS_VISIBILITY int32_t StartBroadcasting(int32_t bcId, const BroadcastParam 
         SoftBusMutexUnlock(&g_bcLock);
         return ret;
     }
-    SoftbusBroadcastParam adapterParam;
+    SoftbusBroadcastParam adapterParam = {0};
     ConvertBcParams(protocol, param, &adapterParam);
     DISC_LOGI(DISC_BROADCAST, "start bc srvType=%{public}s, bcId=%{public}d, "
         "c=%{public}u", GetSrvType(g_bcManager[bcId].srvType), bcId, callCount++);

@@ -487,7 +487,7 @@ static bool CompareAclFields(const AuthACLInfo *oldAcl, const AuthACLInfo *newAc
     if ((flags & ACL_COMPARE_UDID) &&
         (strcmp(oldMapped.srcUdid, newMapped.srcUdid) != 0 ||
         strcmp(oldMapped.sinkUdid, newMapped.sinkUdid) != 0)) {
-        AUTH_LOGE(AUTH_CONN, "udid compare fail");
+        AUTH_LOGD(AUTH_CONN, "udid not match");
         return false;
     }
     if ((flags & ACL_COMPARE_USER_ID) &&

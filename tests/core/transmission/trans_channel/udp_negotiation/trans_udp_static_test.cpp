@@ -16,6 +16,7 @@
 #include "gtest/gtest.h"
 #include <securec.h>
 
+#include "g_enhance_lnn_func.h"
 #include "softbus_adapter_mem.h"
 #include "softbus_app_info.h"
 #include "trans_channel_callback.h"
@@ -26,10 +27,8 @@ using namespace testing::ext;
 namespace {
 int32_t g_cancelWifiDirectRet = SOFTBUS_OK;
 const char *g_cancelWifiDirectSessionName = nullptr; // NOLINT
-}
 
-extern "C" {
-int32_t DcWifiDirectExclusiveCancelBySessionNamePacked(const char *sessionName)
+int32_t DcWifiDirectExclusiveCancelBySessionNameStub(const char *sessionName)
 {
     g_cancelWifiDirectSessionName = sessionName;
     return g_cancelWifiDirectRet;
@@ -62,9 +61,24 @@ public:
     {}
 };
 
-void TransUdpStaticTest::SetUpTestCase(void) { }
+static DcWifiDirectExclusiveCancelBySessionNameFunc g_oldCancelBySessionNameFunc = nullptr;
 
-void TransUdpStaticTest::TearDownTestCase(void) { }
+void TransUdpStaticTest::SetUpTestCase(void)
+{
+    LnnEnhanceFuncList *funcList = LnnEnhanceFuncListGet();
+    if (funcList != nullptr) {
+        g_oldCancelBySessionNameFunc = funcList->dcWifiDirectExclusiveCancelBySessionName;
+        funcList->dcWifiDirectExclusiveCancelBySessionName = DcWifiDirectExclusiveCancelBySessionNameStub;
+    }
+}
+
+void TransUdpStaticTest::TearDownTestCase(void)
+{
+    LnnEnhanceFuncList *funcList = LnnEnhanceFuncListGet();
+    if (funcList != nullptr) {
+        funcList->dcWifiDirectExclusiveCancelBySessionName = g_oldCancelBySessionNameFunc;
+    }
+}
 
 static int32_t TransServerOnChannelClosed(
     const char *pkgName, int32_t pid, int32_t channelId, int32_t channelType, int32_t messageType)

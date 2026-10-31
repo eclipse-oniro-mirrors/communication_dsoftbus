@@ -439,7 +439,7 @@ SOFTBUS_VISIBILITY SoftBusWifiDetailState SoftBusGetWifiState(void)
         LNN_LOGE(LNN_STATE, "GetWifiDetailState failed");
         return SOFTBUS_WIFI_STATE_UNKNOWN;
     }
-    LNN_LOGI(LNN_STATE, "wifiState=%{public}d", wifiState);
+    LNN_LOGD(LNN_STATE, "wifiState=%{public}d", wifiState);
     switch (wifiState) {
         case STATE_INACTIVE:
             return SOFTBUS_WIFI_STATE_INACTIVE;

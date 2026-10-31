@@ -196,6 +196,23 @@ SOFTBUS_SYMBOL_EXPORT int32_t TransAddConnRefByConnId(uint32_t connId, bool isSe
 
 static int32_t TransProxyResetAndCloseConn(ProxyChannelInfo *chan)
 {
+    if (chan->type == CONNECT_BLE &&
+        chan->appInfo.disconnectPolicy == DISCONNECT_POLICY_FORCE) {
+        TRANS_LOGI(TRANS_CTRL, "force disconnect, channelId=%{public}d, connId=%{public}u",
+            chan->channelId, chan->connId);
+        ConnectOption connOpt;
+        (void)memset_s(&connOpt, sizeof(ConnectOption), 0, sizeof(ConnectOption));
+        int32_t ret = TransProxyGetConnInfoByConnId(chan->connId, &connOpt);
+        if (ret == SOFTBUS_OK) {
+            (void)ConnDisconnectDeviceAllConn(&connOpt);
+        } else {
+            TRANS_LOGE(TRANS_CTRL, "get conn option fail, fallback, connId=%{public}u, ret=%{public}d",
+                chan->connId, ret);
+            (void)ConnDisconnectDevice(chan->connId);
+        }
+        return SOFTBUS_OK;
+    }
+
     int32_t ret = TransProxyResetPeer(chan);
     if (ret != SOFTBUS_OK) {
         TRANS_LOGW(TRANS_CTRL, "reset to peer msg send failed.");
