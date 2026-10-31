@@ -711,6 +711,12 @@ static int32_t SetLocalDeviceInfo(LinkStatus status, int32_t ifnameIdx)
     g_localDeviceInfo->deviceType = (uint32_t)deviceType;
     g_localDeviceInfo->businessType = (uint8_t)NSTACKX_BUSINESS_TYPE_NULL;
     g_localDeviceInfo->hasDeviceHash = true;
+    if (LnnGetLocalStrInfo(STRING_KEY_HICE_VERSION, g_localDeviceInfo->version,
+        sizeof(g_localDeviceInfo->version)) != SOFTBUS_OK) {
+        DISC_LOGE(DISC_COAP, "get local device version fail.");
+        (void)SoftBusMutexUnlock(&g_localDeviceInfoLock);
+        return SOFTBUS_DISCOVER_GET_LOCAL_STR_FAILED;
+    }
     (void)SoftBusMutexUnlock(&g_localDeviceInfoLock);
 
     ret = SetLocalLinkInfo(status, ifnameIdx);
@@ -802,6 +808,7 @@ static NSTACKX_LocalDeviceInfoV2 *DupLocalDeviceInfo(NSTACKX_LocalDeviceInfoV2 *
     dup->deviceHash = info->deviceHash;
     dup->hasDeviceHash = info->hasDeviceHash;
     dup->businessType = info->businessType;
+    dup->version = info->version;
     return dup;
 }
 
@@ -1012,6 +1019,7 @@ static int32_t NstackxLocalDevInfoDump(int fd)
     AnonymizeFree(anonymizedInfo);
     SOFTBUS_DPRINTF(fd, "ifNums                              : %d\n", g_localDeviceInfo->ifNums);
     SOFTBUS_DPRINTF(fd, "deviceType                          : %d\n", g_localDeviceInfo->deviceType);
+    SOFTBUS_DPRINTF(fd, "version                             : %s\n", g_localDeviceInfo->version);
     SOFTBUS_DPRINTF(fd, "businessType                        : %d\n", g_localDeviceInfo->businessType);
     (void)SoftBusMutexUnlock(&g_localDeviceInfoLock);
 
