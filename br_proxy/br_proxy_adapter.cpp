@@ -17,14 +17,18 @@
 #include "ability_manager_client.h"
 #include "app_mgr_constants.h"
 #include "app_mgr_interface.h"
+#ifdef DSOFTBUS_FEATURE_DEVICE_STANDBY
 #include "allow_type.h"
+#endif
 #include "bundle_mgr_interface.h"
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
 #include "res_sched_client.h"
 #include "res_type.h"
 #include "softbus_error_code.h"
+#ifdef DSOFTBUS_FEATURE_DEVICE_STANDBY
 #include "standby_service_client.h"
+#endif
 #include "system_ability_definition.h"
 #include "trans_log.h"
 
@@ -168,6 +172,7 @@ extern "C" int32_t Unrestricted(const char *bundleName, pid_t pid, pid_t uid, bo
         TRANS_LOGE(TRANS_SVC, "[br_proxy] bundleName is null");
         return SOFTBUS_INVALID_PARAM;
     }
+#ifdef DSOFTBUS_FEATURE_DEVICE_STANDBY
     #define SOFTBUS_SERVER_SA_ID 4700
     uint32_t type = OHOS::ResourceSchedule::ResType::RES_TYPE_SA_CONTROL_APP_EVENT;
     int64_t status = isThaw ? OHOS::ResourceSchedule::ResType::SaControlAppStatus::SA_START_APP:
@@ -197,4 +202,11 @@ extern "C" int32_t Unrestricted(const char *bundleName, pid_t pid, pid_t uid, bo
         return ret;
     }
     return SOFTBUS_OK;
+#else
+    (void)pid;
+    (void)uid;
+    (void)isThaw;
+    TRANS_LOGW(TRANS_SVC, "[br_proxy] device standby not supported, Unrestricted unavailable");
+    return SOFTBUS_FUNC_NOT_SUPPORT;
+#endif
 }
