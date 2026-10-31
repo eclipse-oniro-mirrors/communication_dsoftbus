@@ -135,7 +135,7 @@ static MapNode *MapCreateNode(const char *key, uint32_t hash,
  *          valueSize Map value size
  * @return : SOFTBUS_OK or other error
  */
-int32_t LnnMapSet(Map *map, const char *key, const void *value, uint32_t valueSize)
+SOFTBUS_SYMBOL_EXPORT int32_t LnnMapSet(Map *map, const char *key, const void *value, uint32_t valueSize)
 {
     MapNode *node = NULL;
 
@@ -201,7 +201,7 @@ int32_t LnnMapSet(Map *map, const char *key, const void *value, uint32_t valueSi
  *          key Map key
  * @return : value of key or NULL
  */
-void* LnnMapGet(const Map *map, const char *key)
+SOFTBUS_VISIBILITY void* LnnMapGet(const Map *map, const char *key)
 {
     if (map == NULL || key == NULL || map->nodeSize == 0 || map->nodes == NULL) {
         LNN_LOGD(LNN_STATE, "invalid param");
@@ -233,7 +233,7 @@ void* LnnMapGet(const Map *map, const char *key)
  * @param : map Map see details in type Map
  *          key Map key
  */
-int32_t LnnMapErase(Map *map, const char *key)
+SOFTBUS_SYMBOL_EXPORT int32_t LnnMapErase(Map *map, const char *key)
 {
     if (map == NULL || key == NULL || map->nodeSize == 0 || map->nodes == NULL) {
         LNN_LOGD(LNN_STATE, "invalid param");
@@ -282,7 +282,7 @@ uint32_t MapGetSize(Map *map)
  *
  * @param : map Map see details in type Map
  */
-void LnnMapInit(Map *map)
+SOFTBUS_SYMBOL_EXPORT void LnnMapInit(Map *map)
 {
     if (map == NULL) {
         return;
@@ -298,7 +298,7 @@ void LnnMapInit(Map *map)
  *
  * @param : map Map see details in type Map
  */
-void LnnMapDelete(Map *map)
+SOFTBUS_VISIBILITY void LnnMapDelete(Map *map)
 {
     uint32_t i;
     MapNode *node = NULL;
@@ -354,7 +354,7 @@ MapIterator *LnnMapInitIterator(Map *map)
  *
  * @param : it Iterator see details in type Iterator
  */
-bool LnnMapHasNext(MapIterator *it)
+SOFTBUS_SYMBOL_EXPORT bool LnnMapHasNext(MapIterator *it)
 {
     return (it->nodeNum < it->map->nodeSize);
 }
@@ -394,7 +394,7 @@ MapIterator *LnnMapNext(MapIterator *it)
  *
  * @param : it Iterator see details in type Iterator
  */
-void LnnMapDeinitIterator(MapIterator *it)
+SOFTBUS_SYMBOL_EXPORT void LnnMapDeinitIterator(MapIterator *it)
 {
     if (it == NULL) {
         return;

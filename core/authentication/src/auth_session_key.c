@@ -23,6 +23,7 @@
 #include "auth_session_fsm.h"
 #include "softbus_adapter_mem.h"
 #include "softbus_adapter_socket.h"
+#include "softbus_def.h"
 
 #define SESSION_KEY_MAX_NUM   10
 #define LAST_USE_THRESHOLD_MS (30 * 1000L) /* 30s */
@@ -158,7 +159,7 @@ int32_t DupSessionKeyList(const SessionKeyList *srcList, SessionKeyList *dstList
     return SOFTBUS_OK;
 }
 
-void DestroySessionKeyList(SessionKeyList *list)
+SOFTBUS_VISIBILITY void DestroySessionKeyList(SessionKeyList *list)
 {
     AUTH_CHECK_AND_RETURN_LOGE(list != NULL, AUTH_FSM, "list is NULL");
     SessionKeyItem *item = NULL;
@@ -227,7 +228,7 @@ uint64_t GetLatestAvailableSessionKeyTime(const SessionKeyList *list, AuthLinkTy
     return latestTime;
 }
 
-int32_t SetSessionKeyAvailable(SessionKeyList *list, int32_t index)
+SOFTBUS_VISIBILITY int32_t SetSessionKeyAvailable(SessionKeyList *list, int32_t index)
 {
     CHECK_NULL_PTR_RETURN_VALUE(list, SOFTBUS_INVALID_PARAM);
     SessionKeyItem *item = NULL;
@@ -245,7 +246,8 @@ int32_t SetSessionKeyAvailable(SessionKeyList *list, int32_t index)
     return SOFTBUS_AUTH_SESSION_KEY_NOT_FOUND;
 }
 
-int32_t AddSessionKey(SessionKeyList *list, int32_t index, const SessionKey *key, AuthLinkType type, bool isOldKey)
+SOFTBUS_VISIBILITY int32_t AddSessionKey(SessionKeyList *list, int32_t index, const SessionKey *key, AuthLinkType type,
+    bool isOldKey)
 {
     AUTH_CHECK_AND_RETURN_RET_LOGE(key != NULL, SOFTBUS_INVALID_PARAM, AUTH_FSM, "key is NULL");
     AUTH_CHECK_AND_RETURN_RET_LOGE(list != NULL, SOFTBUS_INVALID_PARAM, AUTH_FSM, "list is NULL");
@@ -275,6 +277,7 @@ int32_t AddSessionKey(SessionKeyList *list, int32_t index, const SessionKey *key
     return SOFTBUS_OK;
 }
 
+SOFTBUS_VISIBILITY
 int32_t GetLatestSessionKey(const SessionKeyList *list, AuthLinkType type, int32_t *index, SessionKey *key)
 {
     AUTH_CHECK_AND_RETURN_RET_LOGE(list != NULL, SOFTBUS_INVALID_PARAM, AUTH_FSM, "list is NULL");
@@ -482,7 +485,7 @@ int32_t DecryptData(
     return SOFTBUS_OK;
 }
 
-int32_t EncryptInner(
+SOFTBUS_VISIBILITY int32_t EncryptInner(
     const SessionKeyList *list, AuthLinkType type, const InDataInfo *inDataInfo, uint8_t **outData, uint32_t *outLen)
 {
     if (list == NULL || inDataInfo == NULL || inDataInfo->inData == NULL || inDataInfo->inLen == 0 || outData == NULL ||
@@ -506,7 +509,7 @@ int32_t EncryptInner(
     return SOFTBUS_OK;
 }
 
-int32_t DecryptInner(
+SOFTBUS_VISIBILITY int32_t DecryptInner(
     const SessionKeyList *list, AuthLinkType type, const InDataInfo *inDataInfo, uint8_t **outData, uint32_t *outLen)
 {
     if (list == NULL || inDataInfo == NULL || inDataInfo->inData == NULL ||

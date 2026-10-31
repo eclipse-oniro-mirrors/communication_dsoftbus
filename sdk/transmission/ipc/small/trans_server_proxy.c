@@ -98,7 +98,7 @@ static bool WriteQosInfo(IpcIo *request, const SessionParam *param)
     return true;
 }
 
-int32_t TransServerProxyInit(void)
+SOFTBUS_VISIBILITY int32_t TransServerProxyInit(void)
 {
     if (g_serverProxy != NULL) {
         TRANS_LOGE(TRANS_INIT, "server proxy has init.");
@@ -481,7 +481,7 @@ int32_t ServerIpcEvaluateQos(const char *peerNetworkId, TransDataType dataType, 
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t ServerIpcProcessInnerEvent(int32_t eventType, uint8_t *buf, uint32_t len)
+SOFTBUS_VISIBILITY int32_t ServerIpcProcessInnerEvent(int32_t eventType, uint8_t *buf, uint32_t len)
 {
     TRANS_LOGD(TRANS_SDK, "enter.");
     uint8_t data[MAX_SOFT_BUS_IPC_LEN] = {0};

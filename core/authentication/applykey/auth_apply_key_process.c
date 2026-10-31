@@ -31,6 +31,7 @@
 #include "softbus_adapter_mem.h"
 #include "softbus_error_code.h"
 #include "softbus_json_utils.h"
+#include "softbus_def.h"
 
 #define D2D_ACCOUNT_HASH                "account_auth"
 #define D2D_UDID_HASH                   "udid_auth"
@@ -1210,7 +1211,7 @@ static void RegisterD2DConnectListener(void)
     AUTH_LOGI(AUTH_CONN, "ConnSetConnectCallback, ret=%{public}d", ret);
 }
 
-int32_t AuthFindApplyKey(
+SOFTBUS_VISIBILITY int32_t AuthFindApplyKey(
     const RequestBusinessInfo *info, uint8_t *applyKey, char *accountHash, uint32_t accountHashLen)
 {
     if (info == NULL || applyKey == NULL || accountHash == NULL) {
@@ -1225,7 +1226,7 @@ int32_t AuthFindApplyKey(
     return SOFTBUS_OK;
 }
 
-int32_t AuthGenApplyKey(
+SOFTBUS_VISIBILITY int32_t AuthGenApplyKey(
     const RequestBusinessInfo *info, uint32_t requestId, uint32_t connId, const GenApplyKeyCallback *genCb)
 {
     if (info == NULL || genCb == NULL) {
@@ -1252,7 +1253,7 @@ int32_t AuthGenApplyKey(
     return SOFTBUS_OK;
 }
 
-uint32_t GenApplyKeySeq(void)
+SOFTBUS_SYMBOL_EXPORT uint32_t GenApplyKeySeq(void)
 {
     return GenAuthIdSeq();
 }

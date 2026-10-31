@@ -22,6 +22,7 @@
 #include "softbus_broadcast_utils.h"
 #include "softbus_error_code.h"
 #include "softbus_utils.h"
+#include "softbus_def.h"
 
 #define UUID_LEN                    2
 #define UUID_MASK_LEN               2
@@ -29,7 +30,7 @@
 #define MANUFACTURE_DATA_LEN        1
 #define MANUFACTURE_DATA_ID         0x027D
 
-int32_t BtStatusToSoftBus(BtStatus btStatus)
+SOFTBUS_SYMBOL_EXPORT int32_t BtStatusToSoftBus(BtStatus btStatus)
 {
     switch (btStatus) {
         case OHOS_BT_STATUS_SUCCESS:
@@ -124,7 +125,7 @@ static BleAdvType SoftbusAdvTypeToBt(uint8_t advType)
     }
 }
 
-void SoftbusAdvParamToBt(const SoftbusBroadcastParam *src, BleAdvParams *dst)
+SOFTBUS_SYMBOL_EXPORT void SoftbusAdvParamToBt(const SoftbusBroadcastParam *src, BleAdvParams *dst)
 {
     DISC_CHECK_AND_RETURN_LOGE(src != NULL, DISC_BLE_ADAPTER, "src is null!");
     DISC_CHECK_AND_RETURN_LOGE(dst != NULL, DISC_BLE_ADAPTER, "dst is null!");
@@ -225,7 +226,7 @@ static uint8_t BtScanPhyTypeToSoftbus(unsigned char phyType)
     }
 }
 
-void BtScanResultToSoftbus(const BtScanResultData *src, SoftBusBcScanResult *dst)
+SOFTBUS_SYMBOL_EXPORT void BtScanResultToSoftbus(const BtScanResultData *src, SoftBusBcScanResult *dst)
 {
     DISC_CHECK_AND_RETURN_LOGE(src != NULL, DISC_BLE_ADAPTER, "src is null!");
     DISC_CHECK_AND_RETURN_LOGE(dst != NULL, DISC_BLE_ADAPTER, "dst is null!");
@@ -242,7 +243,8 @@ void BtScanResultToSoftbus(const BtScanResultData *src, SoftBusBcScanResult *dst
     dst->rssi = (int8_t)src->rssi;
 }
 
-void SoftbusFilterToBt(BleScanNativeFilter *nativeFilter, const SoftBusBcScanFilter *filter, uint8_t filterSize)
+SOFTBUS_SYMBOL_EXPORT void SoftbusFilterToBt(BleScanNativeFilter *nativeFilter, const SoftBusBcScanFilter *filter,
+    uint8_t filterSize)
 {
     DISC_CHECK_AND_RETURN_LOGE(nativeFilter != NULL, DISC_BLE_ADAPTER, "ble scan native filter is null!");
     DISC_CHECK_AND_RETURN_LOGE(filter != NULL, DISC_BLE_ADAPTER, "bc scan filter is null!");
@@ -320,7 +322,7 @@ void SoftbusSetManufactureFilter(BleScanNativeFilter *nativeFilter, uint8_t filt
     }
 }
 
-void FreeBtFilter(BleScanNativeFilter *nativeFilter, int32_t filterSize)
+SOFTBUS_SYMBOL_EXPORT void FreeBtFilter(BleScanNativeFilter *nativeFilter, int32_t filterSize)
 {
     DISC_CHECK_AND_RETURN_LOGE(nativeFilter != NULL, DISC_BLE_ADAPTER, "ble scan native filter is null!");
     DISC_CHECK_AND_RETURN_LOGE(filterSize > 0, DISC_BLE_ADAPTER, "filter size is 0 or smaller!");
@@ -331,7 +333,7 @@ void FreeBtFilter(BleScanNativeFilter *nativeFilter, int32_t filterSize)
     SoftBusFree(nativeFilter);
 }
 
-void DumpBleScanFilter(BleScanNativeFilter *nativeFilter, int32_t filterSize)
+SOFTBUS_SYMBOL_EXPORT void DumpBleScanFilter(BleScanNativeFilter *nativeFilter, int32_t filterSize)
 {
     DISC_CHECK_AND_RETURN_LOGE(nativeFilter != NULL, DISC_BLE_ADAPTER, "ble scan native filter is null!");
     DISC_CHECK_AND_RETURN_LOGE(filterSize > 0, DISC_BLE_ADAPTER, "filter size is 0 or smaller!");
@@ -361,7 +363,7 @@ void DumpBleScanFilter(BleScanNativeFilter *nativeFilter, int32_t filterSize)
     }
 }
 
-int GetBtScanMode(uint16_t scanInterval, uint16_t scanWindow)
+SOFTBUS_SYMBOL_EXPORT int GetBtScanMode(uint16_t scanInterval, uint16_t scanWindow)
 {
     if (scanInterval == SOFTBUS_BC_SCAN_INTERVAL_P2 && scanWindow == SOFTBUS_BC_SCAN_WINDOW_P2) {
         return OHOS_BLE_SCAN_MODE_OP_P2_60_3000;
@@ -512,7 +514,7 @@ static int32_t ParsePayload(
     return SOFTBUS_OK;
 }
 
-int32_t ParseScanResult(const uint8_t *advData, uint8_t advLen, SoftBusBcScanResult *dst)
+SOFTBUS_SYMBOL_EXPORT int32_t ParseScanResult(const uint8_t *advData, uint8_t advLen, SoftBusBcScanResult *dst)
 {
     DISC_CHECK_AND_RETURN_RET_LOGE(advData != NULL && dst != NULL && advLen > 0, SOFTBUS_INVALID_PARAM,
         DISC_BLE_ADAPTER, "input is invalid!");

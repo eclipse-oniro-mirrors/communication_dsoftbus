@@ -18,6 +18,11 @@ module_output_path = "dsoftbus/soft_bus/connection"
 
 ohos_unittest("ConnectionClientProxyTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "$dsoftbus_root_path/tests/core/connection/ipc/unittest/connection_client_proxy_test.cpp" ]
 
   include_dirs = [
@@ -31,7 +36,8 @@ ohos_unittest("ConnectionClientProxyTest") {
   deps = [
     "$dsoftbus_core_path/common:softbus_utils",
     "$dsoftbus_root_path/adapter:softbus_adapter",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -44,6 +50,11 @@ ohos_unittest("ConnectionClientProxyTest") {
 
 ohos_unittest("ConnectionClientProxyStandardTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "$dsoftbus_root_path/tests/core/connection/ipc/unittest/connection_client_proxy_standard_test.cpp" ]
 
   include_dirs = [
@@ -54,7 +65,8 @@ ohos_unittest("ConnectionClientProxyStandardTest") {
 
   deps = [
     "$dsoftbus_core_path/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [

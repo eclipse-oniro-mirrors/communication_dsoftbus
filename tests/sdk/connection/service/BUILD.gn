@@ -17,12 +17,12 @@ import("../../../../dsoftbus.gni")
 module_output_path = "dsoftbus/soft_bus/connection"
 
 ohos_unittest("ConnClientConnectionTest") {
+  module_out_path = module_output_path
   sanitize = {
     cfi = true
     cfi_cross_dso = true
-    debug = true
+    debug = false
   }
-  module_out_path = module_output_path
   sources = [ "client_connection_test.cpp" ]
 
   include_dirs = [
@@ -49,6 +49,11 @@ ohos_unittest("ConnClientConnectionTest") {
 
 ohos_unittest("ConnClientConnectionMockTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/sdk/connection/service/src/general_client_connection.c",
     "$dsoftbus_root_path/tests/sdk/connection/mock/src/client_connection_mock_test.cpp",
@@ -68,9 +73,10 @@ ohos_unittest("ConnClientConnectionMockTest") {
 
   deps = [
     "$dsoftbus_dfx_path:softbus_dfx",
-    "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
     "$dsoftbus_root_path/adapter:softbus_adapter",
+    "$dsoftbus_root_path/core/common:softbus_utils",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
   external_deps = [
     "c_utils:utils",

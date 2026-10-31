@@ -17,14 +17,14 @@ group("fuzztest") {
     "authapplykeymanager_fuzzer:AuthApplyKeyManagerFuzzTest",
     "authapplykeyprocess_fuzzer:AuthApplyKeyProcessFuzzTest",
     "authdata_fuzzer:AuthDataFuzzTest",
+    "authidentityserviceadapter_fuzzer:AuthIdentityServiceAdapterFuzzTest",
     "authmanager_fuzzer:AuthManagerFuzzTest",
     "authmanagercrypto_fuzzer:AuthManagerCryptoFuzzTest",
     "authmanagerdevice_fuzzer:AuthManagerDeviceFuzzTest",
     "authmanagerother_fuzzer:AuthManagerOtherFuzzTest",
     "authmanagerstatus_fuzzer:AuthManagerStatusFuzzTest",
     "authukmanager_fuzzer:AuthUkManagerFuzzTest",
-    "unpackauthdata_fuzzer:UnpackAuthDataFuzzTest",
     "authusercommonkey_fuzzer:AuthUserCommonKeyFuzzTest",
-    "authidentityserviceadapter_fuzzer:AuthIdentityServiceAdapterFuzzTest",
+    "unpackauthdata_fuzzer:UnpackAuthDataFuzzTest",
   ]
 }

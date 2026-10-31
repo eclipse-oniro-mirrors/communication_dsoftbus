@@ -19,10 +19,11 @@
 #include <dlfcn.h>
 
 #include "lnn_log.h"
+#include "softbus_def.h"
 
 LnnEnhanceFuncList g_lnnEnhanceFuncList = { NULL };
 
-LnnEnhanceFuncList *LnnEnhanceFuncListGet(void)
+SOFTBUS_VISIBILITY LnnEnhanceFuncList *LnnEnhanceFuncListGet(void)
 {
     return &g_lnnEnhanceFuncList;
 }

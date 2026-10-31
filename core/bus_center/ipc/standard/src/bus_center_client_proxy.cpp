@@ -20,6 +20,7 @@
 #include "bus_center_client_proxy_standard.h"
 #include "lnn_log.h"
 #include "softbus_client_info_manager.h"
+#include "softbus_def.h"
 
 using namespace OHOS;
 
@@ -34,7 +35,7 @@ static sptr<BusCenterClientProxy> GetClientProxy(const char *pkgName, int32_t pi
     return clientProxy;
 }
 
-int32_t ClientOnJoinLNNResult(PkgNameAndPidInfo *info, void *addr, uint32_t addrTypeLen,
+SOFTBUS_VISIBILITY int32_t ClientOnJoinLNNResult(PkgNameAndPidInfo *info, void *addr, uint32_t addrTypeLen,
     const char *networkId, int32_t retCode)
 {
     if (info == nullptr) {
@@ -49,7 +50,7 @@ int32_t ClientOnJoinLNNResult(PkgNameAndPidInfo *info, void *addr, uint32_t addr
     return clientProxy->OnJoinLNNResult(addr, addrTypeLen, networkId, retCode);
 }
 
-int32_t ClientOnLeaveLNNResult(
+SOFTBUS_VISIBILITY int32_t ClientOnLeaveLNNResult(
     const char *pkgName, int32_t pid, const char *networkId, int32_t retCode)
 {
     if (pkgName == nullptr) {
@@ -64,7 +65,7 @@ int32_t ClientOnLeaveLNNResult(
     return clientProxy->OnLeaveLNNResult(networkId, retCode);
 }
 
-int32_t ClinetOnNodeOnlineStateChanged(bool isOnline, void *info, uint32_t infoTypeLen)
+SOFTBUS_VISIBILITY int32_t ClinetOnNodeOnlineStateChanged(bool isOnline, void *info, uint32_t infoTypeLen)
 {
     std::multimap<std::string, sptr<IRemoteObject>> proxyMap;
     SoftbusClientInfoManager::GetInstance().GetSoftbusClientProxyMap(proxyMap);
@@ -79,7 +80,7 @@ int32_t ClinetOnNodeOnlineStateChanged(bool isOnline, void *info, uint32_t infoT
     return SOFTBUS_OK;
 }
 
-int32_t ClinetOnNodeBasicInfoChanged(void *info, uint32_t infoTypeLen, int32_t type)
+SOFTBUS_VISIBILITY int32_t ClinetOnNodeBasicInfoChanged(void *info, uint32_t infoTypeLen, int32_t type)
 {
     std::multimap<std::string, sptr<IRemoteObject>> proxyMap;
     SoftbusClientInfoManager::GetInstance().GetSoftbusClientProxyMap(proxyMap);
@@ -167,7 +168,7 @@ int32_t ClientNotifyHichainProofException(
     return SOFTBUS_OK;
 }
 
-int32_t ClientOnTimeSyncResult(const char *pkgName, int32_t pid, const void *info,
+SOFTBUS_VISIBILITY int32_t ClientOnTimeSyncResult(const char *pkgName, int32_t pid, const void *info,
     uint32_t infoTypeLen, int32_t retCode)
 {
     if (pkgName == nullptr) {
@@ -182,7 +183,7 @@ int32_t ClientOnTimeSyncResult(const char *pkgName, int32_t pid, const void *inf
     return clientProxy->OnTimeSyncResult(info, infoTypeLen, retCode);
 }
 
-int32_t ClientOnPublishLNNResult(const char *pkgName, int32_t pid, int32_t publishId,
+SOFTBUS_VISIBILITY int32_t ClientOnPublishLNNResult(const char *pkgName, int32_t pid, int32_t publishId,
     int32_t reason)
 {
     if (pkgName == nullptr) {
@@ -198,7 +199,7 @@ int32_t ClientOnPublishLNNResult(const char *pkgName, int32_t pid, int32_t publi
     return SOFTBUS_OK;
 }
 
-int32_t ClientOnRefreshLNNResult(const char *pkgName, int32_t pid, int32_t refreshId,
+SOFTBUS_VISIBILITY int32_t ClientOnRefreshLNNResult(const char *pkgName, int32_t pid, int32_t refreshId,
     int32_t reason)
 {
     if (pkgName == nullptr) {
@@ -214,7 +215,7 @@ int32_t ClientOnRefreshLNNResult(const char *pkgName, int32_t pid, int32_t refre
     return SOFTBUS_OK;
 }
 
-int32_t ClientOnRefreshDeviceFound(
+SOFTBUS_VISIBILITY int32_t ClientOnRefreshDeviceFound(
     const char *pkgName, int32_t pid, const void *device, uint32_t deviceLen)
 {
     if (pkgName == nullptr) {
@@ -247,7 +248,7 @@ int32_t ClientOnDataLevelChanged(const char *pkgName, int32_t pid, const char *n
     return SOFTBUS_OK;
 }
 
-int32_t ClientOnRangeResult(const char *pkgName, int32_t pid, const RangeResultInnerInfo *rangeInfo)
+SOFTBUS_VISIBILITY int32_t ClientOnRangeResult(const char *pkgName, int32_t pid, const RangeResultInnerInfo *rangeInfo)
 {
     if (pkgName == nullptr || rangeInfo == nullptr) {
         LNN_LOGE(LNN_EVENT, "param is invalid");
@@ -338,7 +339,7 @@ void ClientOnErrorAuthResult(PkgNameAndPidInfo *info, int64_t requestId, int32_t
     clientProxy->OnErrorAuthResult(info->pkgName, requestId, operationCode, errorCode, returnData);
 }
 
-void ClientOnConversationRecvMsg(int32_t pid, const ConversationBusiness *info, const char *deviceId,
+SOFTBUS_VISIBILITY void ClientOnConversationRecvMsg(int32_t pid, const ConversationBusiness *info, const char *deviceId,
     const char *data, uint32_t length)
 {
     if (info == nullptr || deviceId == nullptr || data == nullptr) {

@@ -26,6 +26,7 @@
 #include "softbus_adapter_socket.h"
 #include "softbus_error_code.h"
 #include "softbus_json_utils.h"
+#include "softbus_def.h"
 #include "softbus_utils.h"
 #include "trans_channel_common.h"
 #include "trans_log.h"
@@ -100,7 +101,7 @@ static int32_t JsonObjectPackRequestEx(const AppInfo *appInfo, cJSON *json, unsi
     return SOFTBUS_OK;
 }
 
-char *PackRequest(const AppInfo *appInfo, int64_t requestId)
+SOFTBUS_VISIBILITY char *PackRequest(const AppInfo *appInfo, int64_t requestId)
 {
     if (appInfo == NULL) {
         TRANS_LOGW(TRANS_CTRL, "invalid param.");
@@ -232,7 +233,7 @@ static int32_t ParseMessageToAppInfo(const cJSON *msg, AppInfo *appInfo)
     return SOFTBUS_OK;
 }
 
-int32_t UnpackRequest(const cJSON *msg, AppInfo *appInfo)
+SOFTBUS_VISIBILITY int32_t UnpackRequest(const cJSON *msg, AppInfo *appInfo)
 {
     if (msg == NULL || appInfo == NULL) {
         TRANS_LOGE(TRANS_CTRL, "invalid param");
@@ -304,7 +305,7 @@ static int32_t AddItemsToJsonObject(const AppInfo *appInfo, cJSON *json)
     return EncryptAndAddSinkSessionKey(json, appInfo);
 }
 
-char *PackReply(const AppInfo *appInfo)
+SOFTBUS_VISIBILITY char *PackReply(const AppInfo *appInfo)
 {
     if (appInfo == NULL) {
         TRANS_LOGE(TRANS_CTRL, "invalid param");
@@ -352,7 +353,7 @@ EXIT_FAIL:
     return NULL;
 }
 
-int32_t UnpackReply(const cJSON *msg, AppInfo *appInfo, uint16_t *fastDataSize)
+SOFTBUS_VISIBILITY int32_t UnpackReply(const cJSON *msg, AppInfo *appInfo, uint16_t *fastDataSize)
 {
     if (msg == NULL || appInfo == NULL) {
         TRANS_LOGW(TRANS_CTRL, "invalid param");
@@ -405,7 +406,7 @@ int32_t UnpackReply(const cJSON *msg, AppInfo *appInfo, uint16_t *fastDataSize)
     return DecryptAndAddSinkSessionKey(msg, appInfo);
 }
 
-int32_t UnpackReplyErrCode(const cJSON *msg, int32_t *errCode)
+SOFTBUS_VISIBILITY int32_t UnpackReplyErrCode(const cJSON *msg, int32_t *errCode)
 {
     if ((msg == NULL) || (errCode == NULL)) {
         TRANS_LOGW(TRANS_CTRL, "invalid param");
@@ -488,7 +489,7 @@ static int32_t TransPackMetaTypeSpecificData(const AppInfo *appInfo, cJSON *msg)
     return SOFTBUS_OK;
 }
 
-char *PackExternalDeviceRequest(const AppInfo *appInfo, int64_t requestId)
+SOFTBUS_VISIBILITY char *PackExternalDeviceRequest(const AppInfo *appInfo, int64_t requestId)
 {
     if (appInfo == NULL) {
         TRANS_LOGW(TRANS_CTRL, "invalid param.");
@@ -568,7 +569,7 @@ static int32_t TransUnpackMetaTypeSpecificData(const cJSON *msg, AppInfo *appInf
     return SOFTBUS_OK;
 }
 
-int32_t UnpackExternalDeviceRequest(const cJSON *msg, AppInfo *appInfo)
+SOFTBUS_VISIBILITY int32_t UnpackExternalDeviceRequest(const cJSON *msg, AppInfo *appInfo)
 {
     if (msg == NULL || appInfo == NULL) {
         TRANS_LOGW(TRANS_CTRL, "invalid param");
@@ -616,7 +617,7 @@ int32_t UnpackExternalDeviceRequest(const cJSON *msg, AppInfo *appInfo)
     return SOFTBUS_OK;
 }
 
-char *PackExternalDeviceReply(const AppInfo *appInfo)
+SOFTBUS_VISIBILITY char *PackExternalDeviceReply(const AppInfo *appInfo)
 {
     TRANS_CHECK_AND_RETURN_RET_LOGE(appInfo != NULL, NULL, TRANS_CTRL, "invalid param.");
     cJSON *json = cJSON_CreateObject();
@@ -641,7 +642,7 @@ char *PackExternalDeviceReply(const AppInfo *appInfo)
     return data;
 }
 
-int32_t UnpackExternalDeviceReply(const cJSON *msg, AppInfo *appInfo)
+SOFTBUS_VISIBILITY int32_t UnpackExternalDeviceReply(const cJSON *msg, AppInfo *appInfo)
 {
     if (msg == NULL || appInfo == NULL) {
         TRANS_LOGW(TRANS_CTRL, "invalid param");

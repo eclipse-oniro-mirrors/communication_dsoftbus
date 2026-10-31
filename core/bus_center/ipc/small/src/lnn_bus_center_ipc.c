@@ -288,7 +288,7 @@ int32_t LnnIpcServerLeave(const char *pkgName, int32_t callingPid, const char *n
     return ret;
 }
 
-int32_t LnnIpcGetAllOnlineNodeInfo(const char *pkgName, void **info, uint32_t infoTypeLen,
+SOFTBUS_VISIBILITY int32_t LnnIpcGetAllOnlineNodeInfo(const char *pkgName, void **info, uint32_t infoTypeLen,
     int32_t *infoNum)
 {
     (void)pkgName;
@@ -299,13 +299,14 @@ int32_t LnnIpcGetAllOnlineNodeInfo(const char *pkgName, void **info, uint32_t in
     return LnnGetAllOnlineNodeInfo((NodeBasicInfo **)info, infoNum);
 }
 
-int32_t LnnIpcGetLocalDeviceInfo(const char *pkgName, void *info, uint32_t infoTypeLen)
+SOFTBUS_VISIBILITY int32_t LnnIpcGetLocalDeviceInfo(const char *pkgName, void *info, uint32_t infoTypeLen)
 {
     (void)pkgName;
     (void)infoTypeLen;
     return LnnGetLocalDeviceInfo((NodeBasicInfo *)info);
 }
 
+SOFTBUS_VISIBILITY
 int32_t LnnIpcGetNodeKeyInfo(const char *pkgName, const char *networkId, int32_t key, unsigned char *buf,
     uint32_t len)
 {
@@ -317,6 +318,7 @@ int32_t LnnIpcGetNodeKeyInfo(const char *pkgName, const char *networkId, int32_t
     return LnnGetNodeKeyInfo(networkId, key, buf, len);
 }
 
+SOFTBUS_VISIBILITY
 int32_t LnnIpcSetNodeKeyInfo(const char *pkgName, const char *networkId, int32_t key, unsigned char *buf,
     uint32_t len)
 {
@@ -375,17 +377,17 @@ int32_t LnnIpcStopRefreshLNN(const char *pkgName, int32_t callingPid, int32_t re
     return LnnStopDiscDevice(pkgName, refreshId, false, callingPid);
 }
 
-int32_t LnnIpcActiveMetaNode(const MetaNodeConfigInfo *info, char *metaNodeId)
+SOFTBUS_VISIBILITY int32_t LnnIpcActiveMetaNode(const MetaNodeConfigInfo *info, char *metaNodeId)
 {
     return LnnActiveMetaNode(info, metaNodeId);
 }
 
-int32_t LnnIpcDeactiveMetaNode(const char *metaNodeId)
+SOFTBUS_VISIBILITY int32_t LnnIpcDeactiveMetaNode(const char *metaNodeId)
 {
     return LnnDeactiveMetaNode(metaNodeId);
 }
 
-int32_t LnnIpcGetAllMetaNodeInfo(MetaNodeInfo *infos, int32_t *infoNum)
+SOFTBUS_VISIBILITY int32_t LnnIpcGetAllMetaNodeInfo(MetaNodeInfo *infos, int32_t *infoNum)
 {
     return LnnGetAllMetaNodeInfo(infos, infoNum);
 }
@@ -413,7 +415,7 @@ int32_t LnnIpcProcessPushMsg(const uint8_t *data, uint32_t len)
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnIpcNotifyJoinResult(void *addr, uint32_t addrTypeLen, const char *networkId,
+SOFTBUS_VISIBILITY int32_t LnnIpcNotifyJoinResult(void *addr, uint32_t addrTypeLen, const char *networkId,
     int32_t retCode)
 {
     if (addr == NULL) {
@@ -443,7 +445,7 @@ int32_t LnnIpcNotifyJoinResult(void *addr, uint32_t addrTypeLen, const char *net
     return SOFTBUS_OK;
 }
 
-int32_t LnnIpcNotifyLeaveResult(const char *networkId, int32_t retCode)
+SOFTBUS_VISIBILITY int32_t LnnIpcNotifyLeaveResult(const char *networkId, int32_t retCode)
 {
     if (networkId == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -472,12 +474,12 @@ int32_t LnnIpcNotifyLeaveResult(const char *networkId, int32_t retCode)
     return SOFTBUS_OK;
 }
 
-int32_t LnnIpcNotifyOnlineState(bool isOnline, void *info, uint32_t infoTypeLen)
+SOFTBUS_VISIBILITY int32_t LnnIpcNotifyOnlineState(bool isOnline, void *info, uint32_t infoTypeLen)
 {
     return ClinetOnNodeOnlineStateChanged(isOnline, info, infoTypeLen);
 }
 
-int32_t LnnIpcNotifyBasicInfoChanged(void *info, uint32_t infoTypeLen, int32_t type)
+SOFTBUS_VISIBILITY int32_t LnnIpcNotifyBasicInfoChanged(void *info, uint32_t infoTypeLen, int32_t type)
 {
     return ClinetOnNodeBasicInfoChanged(info, infoTypeLen, type);
 }
@@ -491,7 +493,7 @@ int32_t LnnIpcNotifyNodeStatusChanged(void *info, uint32_t infoTypeLen, int32_t 
     return SOFTBUS_OK;
 }
 
-int32_t LnnIpcLocalNetworkIdChanged(void)
+SOFTBUS_VISIBILITY int32_t LnnIpcLocalNetworkIdChanged(void)
 {
     LNN_LOGI(LNN_EVENT, "not implement");
     return SOFTBUS_OK;
@@ -517,7 +519,7 @@ int32_t LnnIpcNotifyHichainProofException(
     return SOFTBUS_OK;
 }
 
-int32_t LnnIpcNotifyTimeSyncResult(const char *pkgName, int32_t pid, const void *info,
+SOFTBUS_VISIBILITY int32_t LnnIpcNotifyTimeSyncResult(const char *pkgName, int32_t pid, const void *info,
     uint32_t infoTypeLen, int32_t retCode)
 {
     return ClientOnTimeSyncResult(pkgName, pid, info, infoTypeLen, retCode);
@@ -569,6 +571,7 @@ int32_t LnnIpcAccountAuthInit(void)
     return SOFTBUS_OK;
 }
 
+SOFTBUS_VISIBILITY
 int32_t LnnIpcStartAccountAuth(const char *pkgName, int32_t pid, int64_t requestId, const char *serviceId)
 {
     (void)pkgName;
@@ -579,6 +582,7 @@ int32_t LnnIpcStartAccountAuth(const char *pkgName, int32_t pid, int64_t request
     return SOFTBUS_OK;
 }
 
+SOFTBUS_VISIBILITY
 int32_t LnnIpcProcessAccountAuth(const char *pkgName, int32_t pid, int64_t requestId, const uint8_t *data,
     uint32_t dataLen)
 {

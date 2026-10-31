@@ -32,6 +32,7 @@
 #include "lnn_init_monitor.h"
 #include "softbus_adapter_mem.h"
 #include "softbus_feature_config.h"
+#include "softbus_def.h"
 
 #define LNN_MAX_IF_NAME_LEN   256
 #define LNN_DELIMITER_OUTSIDE ","
@@ -81,8 +82,8 @@ static SoftBusUserState g_backgroundState = SOFTBUS_USER_FOREGROUND;
 
 int32_t RegistIPProtocolManager(void);
 int32_t RegistNewIPProtocolManager(void);
-int32_t LnnInitUsbChannelManager(void);
-void LnnDeinitUsbChannelManager(void);
+SOFTBUS_SYMBOL_EXPORT int32_t LnnInitUsbChannelManager(void);
+SOFTBUS_SYMBOL_EXPORT void LnnDeinitUsbChannelManager(void);
 
 int32_t __attribute__((weak)) RegistNewIPProtocolManager(void)
 {
@@ -504,7 +505,7 @@ static void DataShareStateEventHandler(const LnnEventBasicInfo *info)
     }
 }
 
-void LnnGetDataShareInitResult(bool *isDataShareInit)
+SOFTBUS_VISIBILITY void LnnGetDataShareInitResult(bool *isDataShareInit)
 {
     if (isDataShareInit == NULL) {
         LNN_LOGE(LNN_BUILDER, "Data share get invalid param");
@@ -580,7 +581,7 @@ int32_t UnregistProtocol(LnnProtocolManager *protocolMgr)
     return SOFTBUS_NETWORK_NOT_SUPPORT;
 }
 
-bool LnnVisitNetif(VisitNetifCallback callback, void *data)
+SOFTBUS_VISIBILITY bool LnnVisitNetif(VisitNetifCallback callback, void *data)
 {
     LnnNetIfMgr *item = NULL;
     VisitNextChoice result = CHOICE_VISIT_NEXT;
@@ -609,7 +610,7 @@ bool LnnVisitProtocol(VisitProtocolCallback callback, void *data)
     return true;
 }
 
-void RestartCoapDiscovery(void)
+SOFTBUS_VISIBILITY void RestartCoapDiscovery(void)
 {
     char ifName[NET_IF_NAME_LEN] = {0};
     int32_t authPort = 0;
@@ -937,7 +938,7 @@ static int32_t LnnRegisterEvent(void)
     return SOFTBUS_OK;
 }
 
-int32_t LnnInitNetworkManager(void)
+SOFTBUS_VISIBILITY int32_t LnnInitNetworkManager(void)
 {
     if (SoftBusMutexInit(&g_dataShareLock, NULL) != SOFTBUS_OK) {
         LNN_LOGE(LNN_BUILDER, "softbus mutex init fail");
@@ -991,14 +992,14 @@ int32_t LnnInitNetworkManager(void)
     return LnnRegisterEvent();
 }
 
-void LnnSetUnlockState(void)
+SOFTBUS_VISIBILITY void LnnSetUnlockState(void)
 {
     if (IsActiveOsAccountUnlocked()) {
         g_isUnLock = true;
     }
 }
 
-int32_t LnnInitNetworkManagerDelay(void)
+SOFTBUS_VISIBILITY int32_t LnnInitNetworkManagerDelay(void)
 {
     uint32_t i;
     char udid[UDID_BUF_LEN] = {0};
@@ -1026,7 +1027,7 @@ int32_t LnnInitNetworkManagerDelay(void)
     return SOFTBUS_OK;
 }
 
-bool LnnIsAutoNetWorkingEnabled(void)
+SOFTBUS_VISIBILITY bool LnnIsAutoNetWorkingEnabled(void)
 {
     int32_t localDevTypeId = 0;
     bool isInitCheckSuc = IsLnnInitCheckSucceed(MONITOR_WIFI_NET);
@@ -1092,7 +1093,7 @@ void LnnDeinitNetworkManager(void)
     (void)SoftBusMutexDestroy(&g_dataShareLock);
 }
 
-int32_t LnnGetNetIfTypeByName(const char *ifName, LnnNetIfType *type)
+SOFTBUS_VISIBILITY int32_t LnnGetNetIfTypeByName(const char *ifName, LnnNetIfType *type)
 {
     if (ifName == NULL || type == NULL) {
         LNN_LOGE(LNN_BUILDER, "parameters is NULL");
@@ -1108,7 +1109,7 @@ int32_t LnnGetNetIfTypeByName(const char *ifName, LnnNetIfType *type)
     return SOFTBUS_NETWORK_NOT_FOUND;
 }
 
-int32_t LnnGetAddrTypeByIfName(const char *ifName, ConnectionAddrType *type)
+SOFTBUS_VISIBILITY int32_t LnnGetAddrTypeByIfName(const char *ifName, ConnectionAddrType *type)
 {
     if (type == NULL || ifName == NULL) {
         LNN_LOGE(LNN_BUILDER, "parameters is NULL");
@@ -1157,7 +1158,7 @@ static VisitNextChoice FindProtocolByType(const LnnProtocolManager *manager, voi
     }
 }
 
-ListenerModule LnnGetProtocolListenerModule(ProtocolType protocol, ListenerMode mode)
+SOFTBUS_VISIBILITY ListenerModule LnnGetProtocolListenerModule(ProtocolType protocol, ListenerMode mode)
 {
     struct FindProtocolByTypeRequest request = {.protocol = protocol, .manager = NULL};
     if (LnnVisitProtocol(FindProtocolByType, &request)) {

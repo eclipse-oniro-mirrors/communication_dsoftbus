@@ -15,6 +15,7 @@
 #include "proxy_manager.h"
 
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 static uint32_t GenerateRequestId(void)
 {
@@ -58,7 +59,7 @@ ProxyChannelManager *GetProxyChannelManager(void)
     return &g_proxyChannelManager;
 }
 
-int32_t ProxyChannelManagerInit(void)
+SOFTBUS_VISIBILITY int32_t ProxyChannelManagerInit(void)
 {
     return SOFTBUS_OK;
 }

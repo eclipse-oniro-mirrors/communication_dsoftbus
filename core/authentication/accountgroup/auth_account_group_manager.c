@@ -100,7 +100,7 @@ static int32_t AuthPostMsgToLooper(int64_t requestId, uint64_t delayMillis)
     return SOFTBUS_OK;
 }
 
-static int CompareLooperEventFunc(const SoftBusMessage *msg, void *args)
+static int32_t CompareLooperEventFunc(const SoftBusMessage *msg, void *args)
 {
     if (msg == NULL || args == NULL) {
         AUTH_LOGE(AUTH_INIT, "auth account param is invalid");

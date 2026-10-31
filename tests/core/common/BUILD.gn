@@ -36,6 +36,6 @@ group("fuzztest") {
   deps = [
     "json_utils:fuzztest",
     "message_handler:fuzztest",
-    "utils/fuzztest:fuzztest",
+    "utils/fuzztest",
   ]
 }

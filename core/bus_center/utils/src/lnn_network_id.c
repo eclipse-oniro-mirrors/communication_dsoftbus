@@ -23,6 +23,7 @@
 #include "lnn_node_info.h"
 #include "softbus_adapter_crypto.h"
 #include "softbus_adapter_file.h"
+#include "softbus_def.h"
 #include "softbus_utils.h"
 
 static int32_t GetUuidFromFile(char *id, uint32_t len, bool isUpdate)
@@ -54,7 +55,7 @@ static int32_t GetUuidFromFile(char *id, uint32_t len, bool isUpdate)
     return SOFTBUS_OK;
 }
 
-int32_t LnnGenLocalNetworkId(char *networkId, uint32_t len)
+SOFTBUS_VISIBILITY int32_t LnnGenLocalNetworkId(char *networkId, uint32_t len)
 {
     if (networkId == NULL || len < NETWORK_ID_BUF_LEN) {
         LNN_LOGE(LNN_STATE, "invalid prama");

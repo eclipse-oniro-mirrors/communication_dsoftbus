@@ -168,7 +168,7 @@ int32_t TransDecConnRefByConnId(uint32_t connId, bool isServer, bool isD2d)
     return SOFTBUS_OK;
 }
 
-int32_t TransAddConnRefByConnId(uint32_t connId, bool isServer)
+SOFTBUS_SYMBOL_EXPORT int32_t TransAddConnRefByConnId(uint32_t connId, bool isServer)
 {
     ProxyConnInfo *item = NULL;
 
@@ -436,7 +436,7 @@ void TransProxyPostOpenClosedMsgToLoop(const ProxyChannelInfo *chan)
 }
 
 #ifdef DSOFTBUS_FEATURE_PROXY_CHANNEL
-void TransProxyPagingHandshakeMsgToLoop(int32_t channelId, uint8_t *authKey, uint32_t keyLen)
+SOFTBUS_VISIBILITY void TransProxyPagingHandshakeMsgToLoop(int32_t channelId, uint8_t *authKey, uint32_t keyLen)
 {
     if (authKey == NULL) {
         TRANS_LOGE(TRANS_MSG, "param invalid");
@@ -465,6 +465,7 @@ static int32_t TransProxyLoopInit(void)
     return SOFTBUS_OK;
 }
 
+SOFTBUS_VISIBILITY
 int32_t TransProxyTransSendMsg(uint32_t connectionId, uint8_t *buf, uint32_t len, int32_t priority, int32_t pid)
 {
     ConnPostData data = { 0 };
@@ -545,7 +546,7 @@ static bool CompareConnectOption(const ConnectOption *itemConnInfo, const Connec
     return false;
 }
 
-int32_t TransAddConnItem(ProxyConnInfo *conn)
+SOFTBUS_SYMBOL_EXPORT int32_t TransAddConnItem(ProxyConnInfo *conn)
 {
     if (conn == NULL) {
         TRANS_LOGE(TRANS_CTRL, "param invalid");
@@ -758,7 +759,7 @@ static void TransOnConnectFailed(uint32_t requestId, int32_t reason)
     SoftBusHitraceChainEnd();
 }
 
-int32_t TransProxyCloseConnChannel(uint32_t connectionId, bool isServer, bool isD2d)
+SOFTBUS_VISIBILITY int32_t TransProxyCloseConnChannel(uint32_t connectionId, bool isServer, bool isD2d)
 {
     if (TransDecConnRefByConnId(connectionId, isServer, isD2d) == SOFTBUS_OK) {
         TRANS_LOGI(TRANS_CTRL, "disconnect device connId=%{public}d", connectionId);
@@ -1068,7 +1069,7 @@ static void TransProxyOnDataReceived(uint32_t connectionId, ConnModule moduleId,
     SoftBusFree(msg.data);
 }
 
-int32_t TransProxyTransInit(void)
+SOFTBUS_VISIBILITY int32_t TransProxyTransInit(void)
 {
     ConnectCallback proxyCallback = { 0 };
 
@@ -1100,7 +1101,7 @@ int32_t TransProxyTransInit(void)
     return SOFTBUS_OK;
 }
 
-int32_t TransProxyGetConnInfoByConnId(uint32_t connId, ConnectOption *connInfo)
+SOFTBUS_VISIBILITY int32_t TransProxyGetConnInfoByConnId(uint32_t connId, ConnectOption *connInfo)
 {
     if (connInfo == NULL) {
         TRANS_LOGW(TRANS_CTRL, "invalid param.");
@@ -1192,7 +1193,7 @@ static int32_t TransProxyUdpateNewPeerUdidHash(const char *deviceId, ConnectOpti
     return SOFTBUS_OK;
 }
 
-int32_t TransProxyGetConnOptionByChanId(int32_t channelId, ConnectOption *connOpt)
+SOFTBUS_VISIBILITY int32_t TransProxyGetConnOptionByChanId(int32_t channelId, ConnectOption *connOpt)
 {
     TRANS_CHECK_AND_RETURN_RET_LOGE(connOpt != NULL, SOFTBUS_INVALID_PARAM, TRANS_CTRL, "invalid param");
     ProxyChannelInfo chan;
@@ -1293,7 +1294,7 @@ void TransProxyNegoSessionKeySucc(int32_t channelId)
 }
 
 #ifdef DSOFTBUS_FEATURE_PROXY_CHANNEL
-int32_t TransPagingWaitListenStatus(const uint32_t businessFlag, PagingWaitListenStatus status)
+SOFTBUS_SYMBOL_EXPORT int32_t TransPagingWaitListenStatus(const uint32_t businessFlag, PagingWaitListenStatus status)
 {
     if (status < PAGING_WAIT_LISTEN_DONE || status > PAGING_WAIT_LISTEN_LOAD_SA_FAIL) {
         TRANS_LOGE(TRANS_CTRL, "invalid param! status=%{public}d", status);
@@ -1444,7 +1445,7 @@ EXIT_ERR:
     SoftBusFree(para);
 }
 
-int32_t TransCheckPagingListenState(const PagingListenCheckInfo *checkInfo)
+SOFTBUS_VISIBILITY int32_t TransCheckPagingListenState(const PagingListenCheckInfo *checkInfo)
 {
     if (checkInfo == NULL) {
         TRANS_LOGE(TRANS_CTRL, "invalid param!");

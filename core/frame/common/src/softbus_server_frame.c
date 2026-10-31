@@ -54,6 +54,7 @@
 #include "softbus_trans_init.h"
 #include "softbus_ddos.h"
 #include "softbus_init_common.h"
+#include "softbus_def.h"
 #include "trans_session_service.h"
 #include "wifi_direct_manager.h"
 
@@ -86,7 +87,7 @@ static void ServerModuleDeinit(void)
     LnnDeinitSle();
 }
 
-bool GetServerIsInit(void)
+SOFTBUS_VISIBILITY bool GetServerIsInit(void)
 {
     return g_isInit;
 }

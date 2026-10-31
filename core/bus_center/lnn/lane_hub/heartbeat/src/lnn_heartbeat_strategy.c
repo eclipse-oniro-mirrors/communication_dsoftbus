@@ -242,7 +242,8 @@ static int32_t FirstSetGearModeByCallerId(const char *callerId, int64_t nowTime,
     return SOFTBUS_OK;
 }
 
-int32_t LnnSetGearModeBySpecificType(const char *callerId, const GearMode *mode, LnnHeartbeatType type)
+SOFTBUS_VISIBILITY int32_t LnnSetGearModeBySpecificType(const char *callerId, const GearMode *mode,
+    LnnHeartbeatType type)
 {
     int64_t nowTime;
     SoftBusSysTime times;
@@ -998,7 +999,7 @@ void LnnUnRegistParamMgrByType(LnnHeartbeatType type)
     (void)SoftBusMutexUnlock(&g_hbStrategyMutex);
 }
 
-int32_t LnnSetMediumParamBySpecificType(const LnnHeartbeatMediumParam *param)
+SOFTBUS_VISIBILITY int32_t LnnSetMediumParamBySpecificType(const LnnHeartbeatMediumParam *param)
 {
     LnnHeartbeatParamManager *paramMgr = NULL;
 
@@ -1136,7 +1137,7 @@ static void LnnStartChannelFsmByForegroundUser(void)
 }
 #endif
 
-int32_t LnnStartNewHbStrategyFsm(void)
+SOFTBUS_VISIBILITY int32_t LnnStartNewHbStrategyFsm(void)
 {
     LnnHeartbeatFsm *hbFsm = NULL;
 
@@ -1216,7 +1217,7 @@ LnnHeartbeatFsm *LnnGetChannelFsm(LnnHeartbeatChannel channel)
 }
 #endif
 
-int32_t LnnStartOfflineTimingStrategy(const char *networkId, ConnectionAddrType addrType)
+SOFTBUS_VISIBILITY int32_t LnnStartOfflineTimingStrategy(const char *networkId, ConnectionAddrType addrType)
 {
     GearMode mode;
     (void)memset_s(&mode, sizeof(GearMode), 0, sizeof(GearMode));
@@ -1258,7 +1259,7 @@ int32_t LnnStartOfflineTimingStrategy(const char *networkId, ConnectionAddrType 
     return ret;
 }
 
-int32_t LnnStopOfflineTimingStrategy(const char *networkId, ConnectionAddrType addrType)
+SOFTBUS_VISIBILITY int32_t LnnStopOfflineTimingStrategy(const char *networkId, ConnectionAddrType addrType)
 {
     if (networkId == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -1283,7 +1284,7 @@ int32_t LnnStopOfflineTimingStrategy(const char *networkId, ConnectionAddrType a
     return SOFTBUS_OK;
 }
 
-int32_t LnnStartScreenChangeOfflineTiming(const char *networkId, ConnectionAddrType addrType)
+SOFTBUS_VISIBILITY int32_t LnnStartScreenChangeOfflineTiming(const char *networkId, ConnectionAddrType addrType)
 {
     LNN_LOGI(LNN_HEART_BEAT, "start screen changed offline timing");
     if (networkId == NULL || addrType >= CONNECTION_ADDR_MAX) {
@@ -1315,7 +1316,7 @@ int32_t LnnStartScreenChangeOfflineTiming(const char *networkId, ConnectionAddrT
     return SOFTBUS_OK;
 }
 
-int32_t LnnStopScreenChangeOfflineTiming(const char *networkId, ConnectionAddrType addrType)
+SOFTBUS_VISIBILITY int32_t LnnStopScreenChangeOfflineTiming(const char *networkId, ConnectionAddrType addrType)
 {
     if (networkId == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -1340,7 +1341,7 @@ int32_t LnnStopScreenChangeOfflineTiming(const char *networkId, ConnectionAddrTy
     return SOFTBUS_OK;
 }
 
-int32_t LnnStartSleOfflineTimingStrategy(const char *networkId)
+SOFTBUS_VISIBILITY int32_t LnnStartSleOfflineTimingStrategy(const char *networkId)
 {
     LNN_CHECK_AND_RETURN_RET_LOGE(networkId != NULL, SOFTBUS_INVALID_PARAM, LNN_HEART_BEAT, "invalid param");
 
@@ -1355,7 +1356,7 @@ int32_t LnnStartSleOfflineTimingStrategy(const char *networkId)
     return LnnPostSleCheckDevStatusMsgToHbFsm(g_hbFsm, &msgPara, (uint64_t)HB_SLE_OFFLINE_TIME);
 }
 
-int32_t LnnStopSleOfflineTimingStrategy(const char *networkId)
+SOFTBUS_VISIBILITY int32_t LnnStopSleOfflineTimingStrategy(const char *networkId)
 {
     LNN_CHECK_AND_RETURN_RET_LOGE(networkId != NULL, SOFTBUS_INVALID_PARAM, LNN_HEART_BEAT, "invalid param");
     LnnCheckDevStatusMsgPara msgPara = {
@@ -1371,6 +1372,7 @@ int32_t LnnStopSleOfflineTimingStrategy(const char *networkId)
     return SOFTBUS_OK;
 }
 
+SOFTBUS_VISIBILITY
 int32_t LnnStartHbByTypeAndStrategy(LnnHeartbeatType hbType, LnnHeartbeatStrategyType strategyType, bool isRelay)
 {
     LnnProcessSendOnceMsgPara msgPara = {
@@ -1432,7 +1434,7 @@ int32_t LnnStartHbRelayByChannel(LnnHeartbeatType hbType, LnnHeartbeatChannel ch
 }
 #endif
 
-int32_t LnnStartHbByTypeAndStrategyEx(LnnProcessSendOnceMsgPara *msgPara)
+SOFTBUS_VISIBILITY int32_t LnnStartHbByTypeAndStrategyEx(LnnProcessSendOnceMsgPara *msgPara)
 {
     if (msgPara == NULL) {
         LNN_LOGE(LNN_HEART_BEAT, "invalid param");
@@ -1502,7 +1504,7 @@ int32_t LnnStartHbByTypeAndStrategyDirectly(LnnHeartbeatType hbType, LnnHeartbea
 #endif
 }
 
-int32_t LnnStartHeartbeat(uint64_t delayMillis)
+SOFTBUS_VISIBILITY int32_t LnnStartHeartbeat(uint64_t delayMillis)
 {
     if (LnnIsNeedInterceptBroadcast(true)) {
         LNN_LOGI(LNN_HEART_BEAT, "local heartbeat disable");
@@ -1548,7 +1550,7 @@ static int32_t PostNoneStateToAllChannelFsm(void)
 }
 #endif
 
-int32_t LnnStopHeartbeatByType(LnnHeartbeatType type)
+SOFTBUS_VISIBILITY int32_t LnnStopHeartbeatByType(LnnHeartbeatType type)
 {
     if (LnnPostStopMsgToHbFsm(g_hbFsm, type) != SOFTBUS_OK) {
         LNN_LOGE(LNN_HEART_BEAT, "HB stop heartbeat by type post msg fail");
@@ -1579,7 +1581,7 @@ int32_t LnnStopHeartbeatByType(LnnHeartbeatType type)
     return SOFTBUS_OK;
 }
 
-int32_t LnnStopHeartBeatAdvByTypeNow(LnnHeartbeatType type)
+SOFTBUS_VISIBILITY int32_t LnnStopHeartBeatAdvByTypeNow(LnnHeartbeatType type)
 {
     if (type <= HEARTBEAT_TYPE_MIN || type >= HEARTBEAT_TYPE_MAX) {
         LNN_LOGE(LNN_HEART_BEAT, "HB send once get is not available, hbType=%{public}d", type);
@@ -1622,7 +1624,7 @@ static bool VisitEnableHbType(LnnHeartbeatType *typeSet, LnnHeartbeatType eachTy
     return true;
 }
 
-int32_t LnnEnableHeartbeatByType(LnnHeartbeatType type, bool isEnable)
+SOFTBUS_VISIBILITY int32_t LnnEnableHeartbeatByType(LnnHeartbeatType type, bool isEnable)
 {
     if (SoftBusMutexLock(&g_hbStrategyMutex) != SOFTBUS_OK) {
         LNN_LOGE(LNN_HEART_BEAT, "HB enable hbType lock mutex fail");
@@ -1648,7 +1650,7 @@ bool LnnIsHeartbeatEnable(LnnHeartbeatType type)
     return ret;
 }
 
-int32_t LnnSetHbAsMasterNodeState(bool isMasterNode)
+SOFTBUS_VISIBILITY int32_t LnnSetHbAsMasterNodeState(bool isMasterNode)
 {
     int32_t ret = LnnPostTransStateMsgToHbFsm(
         g_hbFsm, isMasterNode ? EVENT_HB_AS_MASTER_NODE : EVENT_HB_AS_NORMAL_NODE);
@@ -1666,7 +1668,7 @@ int32_t LnnSetHbAsMasterNodeState(bool isMasterNode)
     return ret;
 }
 
-int32_t LnnUpdateSendInfoStrategy(LnnHeartbeatUpdateInfoType type)
+SOFTBUS_VISIBILITY int32_t LnnUpdateSendInfoStrategy(LnnHeartbeatUpdateInfoType type)
 {
     int32_t ret = LnnPostUpdateSendInfoMsgToHbFsm(g_hbFsm, type);
 #ifdef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
@@ -1682,7 +1684,7 @@ int32_t LnnUpdateSendInfoStrategy(LnnHeartbeatUpdateInfoType type)
     return ret;
 }
 
-int32_t LnnHbStrategyInit(void)
+SOFTBUS_VISIBILITY int32_t LnnHbStrategyInit(void)
 {
     if (SoftBusMutexInit(&g_hbStrategyMutex, NULL) != 0) {
         LNN_LOGE(LNN_HEART_BEAT, "HB strategy module init mutex fail!");
@@ -1724,7 +1726,7 @@ void LnnHbStrategyDeinit(void)
     (void)SoftBusMutexDestroy(&g_hbStrategyMutex);
 }
 
-void LnnRemoveV0BroadcastAndCheckDev(void)
+SOFTBUS_VISIBILITY void LnnRemoveV0BroadcastAndCheckDev(void)
 {
     if (g_hbFsm == NULL) {
         LNN_LOGE(LNN_HEART_BEAT, "HB strategy is not init");

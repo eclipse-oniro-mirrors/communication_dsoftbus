@@ -17,13 +17,14 @@
 #include "disc_manager.h"
 #include "disc_share_ble.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 static int32_t Publish(const PublishOption *option)
 {
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-static int32_t StartScan(const PublishOption *option)
+static SOFTBUS_SYMBOL_EXPORT int32_t StartScan(const PublishOption *option)
 {
     return SOFTBUS_NOT_IMPLEMENT;
 }
@@ -33,7 +34,7 @@ static int32_t Unpublish(const PublishOption *option)
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-static int32_t StopScan(const PublishOption *option)
+static SOFTBUS_SYMBOL_EXPORT int32_t StopScan(const PublishOption *option)
 {
     return SOFTBUS_NOT_IMPLEMENT;
 }
@@ -97,7 +98,7 @@ DiscoveryBleDispatcherInterface *DiscShareBleInit(DiscInnerCallback *discInnerCb
     return &g_sharebleInterface;
 }
 
-void DiscShareBleDeinit(void)
+SOFTBUS_SYMBOL_EXPORT void DiscShareBleDeinit(void)
 {
     return;
 }

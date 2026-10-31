@@ -17,9 +17,9 @@ import("../../../dsoftbus.gni")
 group("unittest") {
   testonly = true
   deps = [
-    "manager/unittest:unittest",
-    "virlink/adapter/unittest:unittest",
+    "manager/unittest",
     "nfc/dispatcher:unittest",
+    "virlink/adapter/unittest",
   ]
   if (dsoftbus_feature_disc_ble && dsoftbus_feature_inner_disc_ble) {
     deps += [
@@ -34,8 +34,8 @@ group("unittest") {
   }
   if (dsoftbus_feature_disc_coap && dsoftbus_feature_inner_disc_coap) {
     deps += [
-      "coap/common/unittest:unittest",
-      "coap/unittest:unittest",
+      "coap/common/unittest",
+      "coap/unittest",
     ]
   }
 }

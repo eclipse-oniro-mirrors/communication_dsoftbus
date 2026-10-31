@@ -16,6 +16,7 @@
 #include "softbus_permission.h"
 
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 int32_t TransPermissionInit(void)
 {
@@ -25,21 +26,21 @@ int32_t TransPermissionInit(void)
 void TransPermissionDeinit(void)
 {}
 
-int32_t LnnInitPermission(void)
+SOFTBUS_VISIBILITY int32_t LnnInitPermission(void)
 {
     return SOFTBUS_OK;
 }
 
 void LnnDeinitPermission(void) { }
 
-int32_t CheckLnnPermission(const char *interfaceName, const char *processName)
+SOFTBUS_VISIBILITY int32_t CheckLnnPermission(const char *interfaceName, const char *processName)
 {
     (void)interfaceName;
     (void)processName;
     return SOFTBUS_OK;
 }
 
-int32_t CheckTransPermission(pid_t callingUid, pid_t callingPid,
+SOFTBUS_VISIBILITY int32_t CheckTransPermission(pid_t callingUid, pid_t callingPid,
     const char *pkgName, const char *sessionName, uint32_t actions)
 {
     (void)callingUid;
@@ -50,7 +51,7 @@ int32_t CheckTransPermission(pid_t callingUid, pid_t callingPid,
     return SOFTBUS_OK;
 }
 
-int32_t CheckTransSecLevel(const char *mySessionName, const char *peerSessionName)
+SOFTBUS_VISIBILITY int32_t CheckTransSecLevel(const char *mySessionName, const char *peerSessionName)
 {
     (void)mySessionName;
     (void)peerSessionName;
@@ -71,7 +72,7 @@ bool CheckBusCenterPermission(pid_t callingUid, const char *pkgName)
     return true;
 }
 
-int32_t CompareString(const char *src, const char *dest, bool regexp)
+SOFTBUS_SYMBOL_EXPORT int32_t CompareString(const char *src, const char *dest, bool regexp)
 {
     (void)src;
     (void)dest;

@@ -20,6 +20,7 @@
 #include "auth_common.h"
 #include "auth_log.h"
 #include "softbus_adapter_mem.h"
+#include "softbus_def.h"
 
 static ListNode g_authRequestList = { &g_authRequestList, &g_authRequestList };
 
@@ -100,7 +101,7 @@ uint32_t AddAuthRequest(const AuthRequest *request)
     return waitNum;
 }
 
-int32_t GetAuthRequest(uint32_t requestId, AuthRequest *request)
+SOFTBUS_VISIBILITY int32_t GetAuthRequest(uint32_t requestId, AuthRequest *request)
 {
     AUTH_CHECK_AND_RETURN_RET_LOGE(request != NULL, SOFTBUS_INVALID_PARAM, AUTH_CONN, "request is NULL");
     if (!RequireAuthLock()) {

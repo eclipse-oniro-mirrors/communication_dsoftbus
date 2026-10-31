@@ -29,6 +29,7 @@
 #include "lnn_connection_addr_utils.h"
 #include "message_handler.h"
 #include "softbus_adapter_mem.h"
+#include "softbus_def.h"
 
 typedef struct {
     ListNode node;
@@ -439,7 +440,7 @@ static void NotifyEvent(const LnnEventBasicInfo *info)
     SoftBusFree(handlesArray);
 }
 
-void LnnNotifyDeviceVerified(const char *udid)
+SOFTBUS_VISIBILITY void LnnNotifyDeviceVerified(const char *udid)
 {
     (void)udid;
     LNN_LOGI(LNN_EVENT, "exist device joining LNN, remove networkId update event");
@@ -469,7 +470,7 @@ static uint64_t GetNetworkIdUpdateTime()
     return delayTime;
 }
 
-void LnnNotifyOnlineState(bool isOnline, NodeBasicInfo *info)
+SOFTBUS_VISIBILITY void LnnNotifyOnlineState(bool isOnline, NodeBasicInfo *info)
 {
     LnnOnlineStateEventInfo eventInfo;
 
@@ -524,7 +525,7 @@ void LnnNotifyMigrate(bool isOnline, NodeBasicInfo *info)
     NotifyEvent((LnnEventBasicInfo *)&eventInfo);
 }
 
-void LnnNotifyBasicInfoChanged(NodeBasicInfo *info, NodeBasicInfoType type)
+SOFTBUS_VISIBILITY void LnnNotifyBasicInfoChanged(NodeBasicInfo *info, NodeBasicInfoType type)
 {
     if (info == NULL) {
         LNN_LOGW(LNN_EVENT, "info = null");
@@ -540,7 +541,7 @@ void LnnNotifyBasicInfoChanged(NodeBasicInfo *info, NodeBasicInfoType type)
     (void)PostNotifyMessage(NOTIFY_NODE_BASIC_INFO_CHANGED, (uint64_t)type, info);
 }
 
-void LnnNotifyNodeStatusChanged(NodeStatus *info, NodeStatusType type)
+SOFTBUS_SYMBOL_EXPORT void LnnNotifyNodeStatusChanged(NodeStatus *info, NodeStatusType type)
 {
     if (info == NULL) {
         LNN_LOGW(LNN_EVENT, "info = null");
@@ -549,12 +550,12 @@ void LnnNotifyNodeStatusChanged(NodeStatus *info, NodeStatusType type)
     (void)PostNotifyNodeStatusMessage(NOTIFY_NODE_STATUS_CHANGED, (uint64_t)type, info);
 }
 
-void LnnNotifyLocalNetworkIdChanged(void)
+SOFTBUS_VISIBILITY void LnnNotifyLocalNetworkIdChanged(void)
 {
     (void)PostNotifyMessageDelay(NOTIFY_LOCAL_NETWORKID_UPDATE, 0);
 }
 
-void LnnNotifyStateForSession(char *udid, int32_t retCode)
+SOFTBUS_VISIBILITY void LnnNotifyStateForSession(char *udid, int32_t retCode)
 {
     if (udid == NULL) {
         LNN_LOGE(LNN_EVENT, "udid is null");
@@ -563,7 +564,7 @@ void LnnNotifyStateForSession(char *udid, int32_t retCode)
     (void)PostNotifyMessageWithUdid(NOTIFY_STATE_SESSION, udid, retCode);
 }
 
-void LnnNotifyDeviceTrustedChange(int32_t type, const char *msg, uint32_t msgLen)
+SOFTBUS_VISIBILITY void LnnNotifyDeviceTrustedChange(int32_t type, const char *msg, uint32_t msgLen)
 {
     if (msg == NULL || msgLen == 0) {
         LNN_LOGE(LNN_EVENT, "msg is null");
@@ -572,13 +573,13 @@ void LnnNotifyDeviceTrustedChange(int32_t type, const char *msg, uint32_t msgLen
     PostNotifyDeviceTrustedChangeMessage(NOTIFY_DEVICE_TRUSTED_CHANGED, type, msg, msgLen);
 }
 
-void LnnNotifyHichainProofException(
+SOFTBUS_VISIBILITY void LnnNotifyHichainProofException(
     const char *proofInfo, uint32_t proofLen, uint16_t deviceTypeId, int32_t errCode)
 {
     (void)LnnIpcNotifyHichainProofException(proofInfo, proofLen, deviceTypeId, errCode);
 }
 
-void LnnNotifyJoinResult(ConnectionAddr *addr, const char *networkId, int32_t retCode)
+SOFTBUS_VISIBILITY void LnnNotifyJoinResult(ConnectionAddr *addr, const char *networkId, int32_t retCode)
 {
     if (addr == NULL) {
         LNN_LOGW(LNN_EVENT, "addr or networkId = null!");
@@ -588,7 +589,7 @@ void LnnNotifyJoinResult(ConnectionAddr *addr, const char *networkId, int32_t re
     LnnIpcNotifyJoinResult(addr, sizeof(ConnectionAddr), networkId, retCode);
 }
 
-void LnnNotifyLeaveResult(const char *networkId, int32_t retCode)
+SOFTBUS_VISIBILITY void LnnNotifyLeaveResult(const char *networkId, int32_t retCode)
 {
     if (networkId == NULL) {
         LNN_LOGW(LNN_EVENT, "networkId = null");
@@ -598,7 +599,7 @@ void LnnNotifyLeaveResult(const char *networkId, int32_t retCode)
     LnnIpcNotifyLeaveResult(networkId, retCode);
 }
 
-void LnnNotifyLnnRelationChanged(const char *udid, ConnectionAddrType type, uint8_t relation,
+SOFTBUS_VISIBILITY void LnnNotifyLnnRelationChanged(const char *udid, ConnectionAddrType type, uint8_t relation,
     bool isJoin)
 {
     LnnRelationChanedEventInfo info;
@@ -611,7 +612,7 @@ void LnnNotifyLnnRelationChanged(const char *udid, ConnectionAddrType type, uint
     NotifyEvent((LnnEventBasicInfo *)&info);
 }
 
-void LnnNotifyTimeSyncResult(const char *pkgName, int32_t pid, const TimeSyncResultInfo *info,
+SOFTBUS_VISIBILITY void LnnNotifyTimeSyncResult(const char *pkgName, int32_t pid, const TimeSyncResultInfo *info,
     int32_t retCode)
 {
     if (pkgName == NULL || info == NULL) {
@@ -622,7 +623,7 @@ void LnnNotifyTimeSyncResult(const char *pkgName, int32_t pid, const TimeSyncRes
     LnnIpcNotifyTimeSyncResult(pkgName, pid, info, sizeof(TimeSyncResultInfo), retCode);
 }
 
-void LnnNotifyWlanStateChangeEvent(void *state)
+SOFTBUS_VISIBILITY void LnnNotifyWlanStateChangeEvent(void *state)
 {
     if (state == NULL) {
         LNN_LOGE(LNN_EVENT, "state is empty");
@@ -661,7 +662,7 @@ void LnnNotifyMultiScreenStateChangeEvent(SoftBusMultiScreenState state, int64_t
     NotifyEvent((const LnnEventBasicInfo *)&event);
 }
 
-void LnnNotifyBtStateChangeEvent(void *state)
+SOFTBUS_VISIBILITY void LnnNotifyBtStateChangeEvent(void *state)
 {
     SoftBusBtState *btState = (SoftBusBtState *)state;
     if (*btState < SOFTBUS_BLE_TURN_ON || *btState >= SOFTBUS_BT_UNKNOWN) {
@@ -674,7 +675,7 @@ void LnnNotifyBtStateChangeEvent(void *state)
     SoftBusFree(btState);
 }
 
-void LnnNotifySleStateChangeEvent(void *state)
+SOFTBUS_VISIBILITY void LnnNotifySleStateChangeEvent(void *state)
 {
     if (state  == NULL) {
         LNN_LOGE(LNN_EVENT, "invalid state param");
@@ -730,7 +731,7 @@ void LnnNotifyDataShareStateChangeEvent(SoftBusDataShareState state)
     NotifyEvent((const LnnEventBasicInfo *)&event);
 }
 
-void LnnNotifyAccountStateChangeEvent(SoftBusAccountState state, int32_t userId)
+SOFTBUS_VISIBILITY void LnnNotifyAccountStateChangeEvent(SoftBusAccountState state, int32_t userId)
 {
     if (state < SOFTBUS_ACCOUNT_LOG_IN || state >= SOFTBUS_ACCOUNT_UNKNOWN) {
         LNN_LOGE(LNN_EVENT, "bad accountState=%{public}d", state);
@@ -837,7 +838,7 @@ void LnnNotifyNightModeStateChangeEvent(void *state)
     SoftBusFree(nightModeState);
 }
 
-void LnnNotifyOOBEStateChangeEvent(SoftBusOOBEState state)
+SOFTBUS_VISIBILITY void LnnNotifyOOBEStateChangeEvent(SoftBusOOBEState state)
 {
     LNN_LOGI(LNN_EVENT, "notify OOBE state change");
     if (state < SOFTBUS_OOBE_RUNNING || state >= SOFTBUS_OOBE_UNKNOWN) {
@@ -848,7 +849,7 @@ void LnnNotifyOOBEStateChangeEvent(SoftBusOOBEState state)
     NotifyEvent((const LnnEventBasicInfo *)&event);
 }
 
-void LnnNotifyBtAclStateChangeEvent(const char *btMac, SoftBusBtAclState state)
+SOFTBUS_VISIBILITY void LnnNotifyBtAclStateChangeEvent(const char *btMac, SoftBusBtAclState state)
 {
     if (btMac == NULL) {
         LNN_LOGW(LNN_EVENT, "invalid btMac, state=%{public}d", state);
@@ -867,7 +868,7 @@ void LnnNotifyBtAclStateChangeEvent(const char *btMac, SoftBusBtAclState state)
     NotifyEvent((const LnnEventBasicInfo *)&event);
 }
 
-void LnnNotifyAddressChangedEvent(const char *ifName)
+SOFTBUS_VISIBILITY void LnnNotifyAddressChangedEvent(const char *ifName)
 {
     LnnMonitorAddressChangedEvent event = {.basic.event = LNN_EVENT_IP_ADDR_CHANGED, .ifName = {0}};
     if (ifName != NULL) {
@@ -880,7 +881,7 @@ void LnnNotifyAddressChangedEvent(const char *ifName)
     NotifyEvent((const LnnEventBasicInfo *)&event);
 }
 
-void LnnNotifyMasterNodeChanged(bool isMaster, const char *masterNodeUdid, int32_t weight)
+SOFTBUS_VISIBILITY void LnnNotifyMasterNodeChanged(bool isMaster, const char *masterNodeUdid, int32_t weight)
 {
     LnnMasterNodeChangedEvent event = {.basic.event = LNN_EVENT_NODE_MASTER_STATE_CHANGED,
         .isMasterNode = isMaster,
@@ -890,7 +891,7 @@ void LnnNotifyMasterNodeChanged(bool isMaster, const char *masterNodeUdid, int32
     NotifyEvent((const LnnEventBasicInfo *)&event);
 }
 
-void LnnNotifyNodeAddressChanged(const char *addr, const char *networkId, bool isLocal)
+SOFTBUS_VISIBILITY void LnnNotifyNodeAddressChanged(const char *addr, const char *networkId, bool isLocal)
 {
     if (addr == NULL) {
         return;
@@ -912,7 +913,7 @@ void LnnNotifyNodeAddressChanged(const char *addr, const char *networkId, bool i
     NotifyEvent((LnnEventBasicInfo *)&eventInfo);
 }
 
-void LnnNotifyHBRepeat(void)
+SOFTBUS_VISIBILITY void LnnNotifyHBRepeat(void)
 {
     LnnEventBasicInfo event;
     event.event = LNN_EVENT_NODE_HB_REPEAT_CYCLE;
@@ -920,7 +921,7 @@ void LnnNotifyHBRepeat(void)
     NotifyEvent(&event);
 }
 
-void LnnNotifyNetworkStateChanged(SoftBusNetworkState state)
+SOFTBUS_VISIBILITY void LnnNotifyNetworkStateChanged(SoftBusNetworkState state)
 {
     if (state < SOFTBUS_WIFI_NETWORKD_ENABLE || state >= SOFTBUS_NETWORKD_UNKNOWN) {
         LNN_LOGW(LNN_EVENT, "bad network state=%{public}d", state);
@@ -946,7 +947,7 @@ void LnnNotifyLpMcuUpdateHbInfo(int32_t type)
     NotifyEvent((const LnnEventBasicInfo *)&event);
 }
 
-void LnnNotifySingleOffLineEvent(const ConnectionAddr *addr, NodeBasicInfo *basicInfo)
+SOFTBUS_VISIBILITY void LnnNotifySingleOffLineEvent(const ConnectionAddr *addr, NodeBasicInfo *basicInfo)
 {
     if (addr == NULL || basicInfo == NULL) {
         LNN_LOGW(LNN_EVENT, "addr or basicInfo is null");
@@ -997,7 +998,7 @@ void LnnNotifyNetworkIdChangeEvent(const char *networkId)
     NotifyEvent((LnnEventBasicInfo *)&eventInfo);
 }
 
-void LnnNotifyHaLeaveMetaNodeEvent(const char *metaNodeId)
+SOFTBUS_SYMBOL_EXPORT void LnnNotifyHaLeaveMetaNodeEvent(const char *metaNodeId)
 {
     if (metaNodeId == NULL) {
         LNN_LOGW(LNN_EVENT, "networkId is null");
@@ -1012,14 +1013,14 @@ void LnnNotifyHaLeaveMetaNodeEvent(const char *metaNodeId)
     NotifyEvent((LnnEventBasicInfo *)&eventInfo);
 }
 
-void LnnNotifyConstraintStateChangeEvent(bool isConstraint)
+SOFTBUS_VISIBILITY void LnnNotifyConstraintStateChangeEvent(bool isConstraint)
 {
     LnnConstraintChangeEvent event = {
         .basic.event = LNN_EVENT_CONSTRAINT_ENABLE, .isConstraint = isConstraint};
     NotifyEvent((const LnnEventBasicInfo *)&event);
 }
 
-void LnnNotifyOnlineNetType(const char *networkId, ConnectionAddrType addrType)
+SOFTBUS_VISIBILITY void LnnNotifyOnlineNetType(const char *networkId, ConnectionAddrType addrType)
 {
     if (networkId == NULL) {
         LNN_LOGW(LNN_EVENT, "networkId is null");
@@ -1037,7 +1038,7 @@ void LnnNotifyOnlineNetType(const char *networkId, ConnectionAddrType addrType)
     NotifyEvent((LnnEventBasicInfo *)&eventInfo);
 }
 
-void LnnNotifyDeviceInfoChanged(SoftBusDeviceInfoState state)
+SOFTBUS_VISIBILITY void LnnNotifyDeviceInfoChanged(SoftBusDeviceInfoState state)
 {
     if (state < SOFTBUS_LOCAL_DEVICE_INFO_ACOUNT_CHANGED || state >= SOFTBUS_LOCAL_DEVICE_INFO_UNKNOWN) {
         LNN_LOGW(LNN_EVENT, "bad deviceInfo state=%{public}d", state);
@@ -1048,7 +1049,7 @@ void LnnNotifyDeviceInfoChanged(SoftBusDeviceInfoState state)
     NotifyEvent((const LnnEventBasicInfo *)&event);
 }
 
-void LnnNotifyNetlinkStateChangeEvent(NetManagerIfNameState state, const char *ifName)
+SOFTBUS_VISIBILITY void LnnNotifyNetlinkStateChangeEvent(NetManagerIfNameState state, const char *ifName)
 {
     LNN_LOGD(LNN_EVENT, "notify net link state change");
     if (state < SOFTBUS_NETMANAGER_IFNAME_START || state >= SOFTBUS_NETMANAGER_IFNAME_UNKNOWN) {
@@ -1074,7 +1075,7 @@ void LnnNotifyWifiServiceStart(void *para)
     NotifyEvent((const LnnEventBasicInfo *)&event);
 }
 
-int32_t LnnInitBusCenterEvent(void)
+SOFTBUS_VISIBILITY int32_t LnnInitBusCenterEvent(void)
 {
     int32_t i;
     SoftBusLooper *looper = CreateNewLooper("Notify_Lp");
@@ -1095,7 +1096,7 @@ int32_t LnnInitBusCenterEvent(void)
     return SOFTBUS_OK;
 }
 
-void LnnDeinitBusCenterEvent(void)
+SOFTBUS_VISIBILITY void LnnDeinitBusCenterEvent(void)
 {
     if (g_notifyHandler.looper != NULL) {
         DestroyLooper(g_notifyHandler.looper);
@@ -1105,7 +1106,7 @@ void LnnDeinitBusCenterEvent(void)
     SoftBusMutexDestroy(&g_eventCtrl.lock);
 }
 
-int32_t LnnRegisterEventHandler(LnnEventType event, LnnEventHandler handler)
+SOFTBUS_VISIBILITY int32_t LnnRegisterEventHandler(LnnEventType event, LnnEventHandler handler)
 {
     LnnEventHandlerItem *item = NULL;
 
@@ -1134,7 +1135,7 @@ int32_t LnnRegisterEventHandler(LnnEventType event, LnnEventHandler handler)
     return SOFTBUS_OK;
 }
 
-void LnnUnregisterEventHandler(LnnEventType event, LnnEventHandler handler)
+SOFTBUS_VISIBILITY void LnnUnregisterEventHandler(LnnEventType event, LnnEventHandler handler)
 {
     LnnEventHandlerItem *item = NULL;
     LnnEventHandlerItem *next = NULL;
@@ -1160,7 +1161,7 @@ void LnnUnregisterEventHandler(LnnEventType event, LnnEventHandler handler)
     (void)SoftBusMutexUnlock(&g_eventCtrl.lock);
 }
 
-void LnnNotifyAddRawEnhanceP2pEvent(LnnNotifyRawEnhanceP2pEvent *event)
+SOFTBUS_VISIBILITY void LnnNotifyAddRawEnhanceP2pEvent(LnnNotifyRawEnhanceP2pEvent *event)
 {
     if (event == NULL) {
         LNN_LOGE(LNN_EVENT, "event is null");

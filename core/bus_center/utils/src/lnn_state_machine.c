@@ -341,7 +341,7 @@ int32_t LnnFsmPostMessageDelay(FsmStateMachine *fsm, uint32_t msgType,
     return SOFTBUS_OK;
 }
 
-int32_t LnnFsmRemoveMessageByType(FsmStateMachine *fsm, int32_t what)
+SOFTBUS_VISIBILITY int32_t LnnFsmRemoveMessageByType(FsmStateMachine *fsm, int32_t what)
 {
     if (fsm == NULL || fsm->looper == NULL || fsm->looper->RemoveMessage == NULL) {
         return SOFTBUS_INVALID_PARAM;

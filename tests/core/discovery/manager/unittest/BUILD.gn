@@ -20,9 +20,14 @@ module_output_path = "dsoftbus/soft_bus/discovery"
 
 ohos_unittest("DiscManagerTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
-    "disc_manager_test.cpp",
     "$dsoftbus_core_path/discovery/manager/src/disc_mgr_config.c",
+    "disc_manager_test.cpp",
   ]
 
   include_dirs = [
@@ -41,8 +46,9 @@ ohos_unittest("DiscManagerTest") {
 
   deps = [
     "$dsoftbus_dfx_path:softbus_dfx",
-    "$dsoftbus_root_path/components/nstackx/nstackx_ctrl:nstackx_ctrl",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/components/nstackx/nstackx_ctrl",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -54,17 +60,22 @@ ohos_unittest("DiscManagerTest") {
 
 ohos_unittest("DiscManagerMockTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   defines += [ "ENABLE_OS_ACCOUNT_CONSTRAINT" ]
   sources = [
     "$dsoftbus_core_path/discovery/manager/src/disc_manager.c",
     "$dsoftbus_core_path/discovery/manager/src/disc_mgr_config.c",
-    "ble_mock.cpp",
-    "constraint_mock.cpp",
-    "coap_mock.cpp",
-    "disc_manager_mock_test.cpp",
-    "usb_mock.cpp",
-    "nfc_mock.cpp",
     "$dsoftbus_root_path/core/adapter/bus_center/src/lnn_ohos_account_adapter_virtual.cpp",
+    "ble_mock.cpp",
+    "coap_mock.cpp",
+    "constraint_mock.cpp",
+    "disc_manager_mock_test.cpp",
+    "nfc_mock.cpp",
+    "usb_mock.cpp",
   ]
 
   include_dirs = [
@@ -105,6 +116,11 @@ ohos_unittest("DiscManagerMockTest") {
 
 ohos_unittest("DiscManagerScreenTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   defines += [
     "DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER",
     "ENABLE_OS_ACCOUNT_CONSTRAINT",

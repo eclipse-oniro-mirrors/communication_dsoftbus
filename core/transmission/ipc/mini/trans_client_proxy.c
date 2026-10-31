@@ -32,7 +32,7 @@ int32_t ClientIpcOnChannelBind(ChannelMsg *data)
     return TransOnChannelBind(data->msgChannelId, data->msgChannelType);
 }
 
-int32_t ClientIpcOnChannelOpenFailed(ChannelMsg *data, int32_t errCode)
+SOFTBUS_VISIBILITY int32_t ClientIpcOnChannelOpenFailed(ChannelMsg *data, int32_t errCode)
 {
     return TransOnChannelOpenFailed(data->msgChannelId, data->msgChannelType, errCode);
 }
@@ -44,7 +44,7 @@ int32_t ClientIpcOnChannelLinkDown(ChannelMsg *data, const char *networkId, cons
     return TransOnChannelLinkDown(networkId, routeType);
 }
 
-int32_t ClientIpcOnChannelClosed(ChannelMsg *data)
+SOFTBUS_VISIBILITY int32_t ClientIpcOnChannelClosed(ChannelMsg *data)
 {
     return TransOnChannelClosed(
         data->msgChannelId, data->msgChannelType, data->msgMessageType, SHUTDOWN_REASON_UNKNOWN);
@@ -63,7 +63,7 @@ int32_t ClientIpcOnChannelQosEvent(const char *pkgName, const QosParam *param)
     return SOFTBUS_FUNC_NOT_SUPPORT;
 }
 
-int32_t ClientIpcSetChannelInfo(
+SOFTBUS_VISIBILITY int32_t ClientIpcSetChannelInfo(
     const char *pkgName, const char *sessionName, int32_t sessionId, const TransInfo *transInfo, int32_t pid)
 {
     (void)pkgName;

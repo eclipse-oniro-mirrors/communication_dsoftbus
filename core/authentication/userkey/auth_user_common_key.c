@@ -26,6 +26,7 @@
 #include "softbus_adapter_mem.h"
 #include "softbus_adapter_thread.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 #include "softbus_utils.h"
 
 #ifndef UDID_SHORT_HASH_HEX_STR
@@ -190,7 +191,7 @@ int32_t AuthInsertUserKey(
     return SOFTBUS_OK;
 }
 
-void DelUserKeyByNetworkId(const char *networkId)
+SOFTBUS_VISIBILITY void DelUserKeyByNetworkId(const char *networkId)
 {
     if (g_userKeyList == NULL || networkId == NULL) {
         AUTH_LOGE(AUTH_KEY, "invalid param");

@@ -1026,7 +1026,7 @@ static bool IsSameNodeStateCb(const INodeStateCb *callback1, const INodeStateCb 
     return true;
 }
 
-int32_t RegNodeDeviceStateCbInner(const char *pkgName, INodeStateCb *callback)
+SOFTBUS_VISIBILITY int32_t RegNodeDeviceStateCbInner(const char *pkgName, INodeStateCb *callback)
 {
     if (callback == NULL) {
         LNN_LOGE(LNN_STATE, "callback is null");

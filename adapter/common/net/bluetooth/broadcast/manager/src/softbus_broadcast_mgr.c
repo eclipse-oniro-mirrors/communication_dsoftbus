@@ -34,6 +34,7 @@
 #include "legacy/softbus_hidumper_bc_mgr.h"
 #include "softbus_utils.h"
 #include "softbus_conn_async_helper.h"
+#include "softbus_def.h"
 
 
 #define BC_WAIT_TIME_MS                  50
@@ -147,7 +148,8 @@ static inline bool CheckProtocolIsValid(BroadcastProtocol interfaceId)
     return interfaceId >= 0 && interfaceId < BROADCAST_PROTOCOL_BUTT;
 }
 
-int32_t RegisterBroadcastMediumFunction(BroadcastProtocol type, const SoftbusBroadcastMediumInterface *interface)
+SOFTBUS_SYMBOL_EXPORT int32_t RegisterBroadcastMediumFunction(BroadcastProtocol type,
+    const SoftbusBroadcastMediumInterface *interface)
 {
     DISC_LOGI(DISC_BROADCAST, "register type=%{public}d", type);
     DISC_CHECK_AND_RETURN_RET_LOGE(type >= 0 && type < BROADCAST_PROTOCOL_BUTT, SOFTBUS_INVALID_PARAM,
@@ -324,7 +326,7 @@ void SoftbusBleAdapterInitPacked(void)
     return pfnAdapterEnhanceFuncList->softbusBleAdapterInit();
 }
 
-int32_t InitBroadcastMgr(void)
+SOFTBUS_VISIBILITY int32_t InitBroadcastMgr(void)
 {
     DISC_LOGI(DISC_BROADCAST, "init enter");
     if (g_mgrInit) {
@@ -378,7 +380,7 @@ static int32_t CheckBroadcastingParam(const BroadcastParam *param, const Broadca
     return SOFTBUS_OK;
 }
 
-int32_t DeInitBroadcastMgr(void)
+SOFTBUS_VISIBILITY int32_t DeInitBroadcastMgr(void)
 {
     DISC_LOGI(DISC_BROADCAST, "deinit enter");
 
@@ -1111,7 +1113,7 @@ static int32_t InitializeBroadcaster(int32_t *bcId, BroadcastOptions *options, c
     return SOFTBUS_OK;
 }
 
-int32_t RegisterBroadcaster(BroadcastProtocol protocol,
+SOFTBUS_VISIBILITY int32_t RegisterBroadcaster(BroadcastProtocol protocol,
     BaseServiceType srvType, int32_t *bcId, const BroadcastCallback *cb)
 {
     static uint32_t callCount = 0;
@@ -1158,7 +1160,7 @@ static bool CheckBcIdIsValid(int32_t bcId)
     return true;
 }
 
-int32_t UnRegisterBroadcaster(int32_t bcId)
+SOFTBUS_VISIBILITY int32_t UnRegisterBroadcaster(int32_t bcId)
 {
     DISC_LOGI(DISC_BROADCAST, "enter unRegister bc");
     int32_t ret = SoftBusMutexLock(&g_bcLock);
@@ -1302,7 +1304,7 @@ static bool CheckSrvRegistered(BaseServiceType srvType)
     return false;
 }
 
-int32_t RegisterScanListener(BroadcastProtocol protocol,
+SOFTBUS_VISIBILITY int32_t RegisterScanListener(BroadcastProtocol protocol,
     BaseServiceType srvType, int32_t *listenerId, const ScanCallback *cb)
 {
     static uint32_t callCount = 0;
@@ -1857,7 +1859,7 @@ static int32_t CheckAndStopScan(BroadcastProtocol protocol, int32_t listenerId)
     return SOFTBUS_OK;
 }
 
-int32_t UnRegisterScanListener(int32_t listenerId)
+SOFTBUS_VISIBILITY int32_t UnRegisterScanListener(int32_t listenerId)
 {
     DISC_LOGI(DISC_BROADCAST, "enter unregister scan, listenerId=%{public}d", listenerId);
 
@@ -2109,7 +2111,7 @@ static int32_t CheckInterface(BroadcastProtocol protocol, bool isStart)
     return SOFTBUS_OK;
 }
 
-int32_t StartBroadcasting(int32_t bcId, const BroadcastParam *param, const BroadcastPacket *packet)
+SOFTBUS_VISIBILITY int32_t StartBroadcasting(int32_t bcId, const BroadcastParam *param, const BroadcastPacket *packet)
 {
     static uint32_t callCount = 0;
 
@@ -2176,7 +2178,7 @@ int32_t StartBroadcasting(int32_t bcId, const BroadcastParam *param, const Broad
     return SOFTBUS_OK;
 }
 
-int32_t UpdateBroadcasting(int32_t bcId, const BroadcastParam *param, const BroadcastPacket *packet)
+SOFTBUS_VISIBILITY int32_t UpdateBroadcasting(int32_t bcId, const BroadcastParam *param, const BroadcastPacket *packet)
 {
     DISC_CHECK_AND_RETURN_RET_LOGE(param != NULL, SOFTBUS_INVALID_PARAM, DISC_BROADCAST, "invald param");
     DISC_CHECK_AND_RETURN_RET_LOGE(packet != NULL, SOFTBUS_INVALID_PARAM, DISC_BROADCAST, "invald packet");
@@ -2190,7 +2192,7 @@ int32_t UpdateBroadcasting(int32_t bcId, const BroadcastParam *param, const Broa
     return SOFTBUS_OK;
 }
 
-int32_t SetBroadcastingData(int32_t bcId, const BroadcastPacket *packet)
+SOFTBUS_VISIBILITY int32_t SetBroadcastingData(int32_t bcId, const BroadcastPacket *packet)
 {
     DISC_CHECK_AND_RETURN_RET_LOGE(packet != NULL, SOFTBUS_INVALID_PARAM, DISC_BROADCAST, "invalid param packet");
 
@@ -2357,7 +2359,7 @@ int32_t PerformSetBroadcastingParam(int32_t bcId, SoftbusBroadcastParam *softbus
     return SOFTBUS_OK;
 }
 
-int32_t SetBroadcastingParam(int32_t bcId, const BroadcastParam *param)
+SOFTBUS_SYMBOL_EXPORT int32_t SetBroadcastingParam(int32_t bcId, const BroadcastParam *param)
 {
     DISC_CHECK_AND_RETURN_RET_LOGE(param != NULL, SOFTBUS_INVALID_PARAM, DISC_BROADCAST, "invalid param");
 
@@ -2404,7 +2406,7 @@ static void LogStopSrvType(int32_t bcId)
     }
 }
 
-int32_t StopBroadcasting(int32_t bcId)
+SOFTBUS_VISIBILITY int32_t StopBroadcasting(int32_t bcId)
 {
     int32_t ret = SoftBusMutexLock(&g_bcLock);
     DISC_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, SOFTBUS_LOCK_ERR,
@@ -2654,7 +2656,7 @@ static int32_t GetFilterIndex(uint8_t *index)
     return SOFTBUS_INVALID_PARAM;
 }
 
-int32_t StartScan(int32_t listenerId, const BcScanParams *param)
+SOFTBUS_VISIBILITY int32_t StartScan(int32_t listenerId, const BcScanParams *param)
 {
     static uint32_t callCount = 0;
     DISC_CHECK_AND_RETURN_RET_LOGE(param != NULL, SOFTBUS_INVALID_PARAM, DISC_BROADCAST, "invalid param!");
@@ -2712,7 +2714,7 @@ int32_t StartScan(int32_t listenerId, const BcScanParams *param)
     return SOFTBUS_OK;
 }
 
-int32_t StopScan(int32_t listenerId)
+SOFTBUS_VISIBILITY int32_t StopScan(int32_t listenerId)
 {
     static uint32_t callCount = 0;
     DISC_LOGD(DISC_BROADCAST, "enter stop scan, listenerId=%{public}d, c=%{public}u", listenerId, callCount++);
@@ -2858,7 +2860,7 @@ static int32_t CompareFilterAndGetIndex(int32_t listenerId, BcScanFilter *filter
     return SOFTBUS_OK;
 }
 
-int32_t SetScanFilter(int32_t listenerId, const BcScanFilter *scanFilter, uint8_t filterNum)
+SOFTBUS_VISIBILITY int32_t SetScanFilter(int32_t listenerId, const BcScanFilter *scanFilter, uint8_t filterNum)
 {
     DISC_LOGD(DISC_BROADCAST, "set scan filter, filterNum=%{public}d", filterNum);
     DISC_CHECK_AND_RETURN_RET_LOGE(scanFilter != NULL, SOFTBUS_INVALID_PARAM, DISC_BROADCAST, "param is nullptr");
@@ -2910,7 +2912,7 @@ int32_t SetScanFilter(int32_t listenerId, const BcScanFilter *scanFilter, uint8_
     return SOFTBUS_OK;
 }
 
-int32_t GetScanFilter(int32_t listenerId, BcScanFilter **scanFilter, uint8_t *filterNum)
+SOFTBUS_SYMBOL_EXPORT int32_t GetScanFilter(int32_t listenerId, BcScanFilter **scanFilter, uint8_t *filterNum)
 {
     DISC_LOGD(DISC_BROADCAST, "enter get scan filter");
     DISC_CHECK_AND_RETURN_RET_LOGE(scanFilter != NULL, SOFTBUS_INVALID_PARAM, DISC_BROADCAST, "invalid scanFilter");
@@ -2931,7 +2933,7 @@ int32_t GetScanFilter(int32_t listenerId, BcScanFilter **scanFilter, uint8_t *fi
     return SOFTBUS_OK;
 }
 
-int32_t QueryBroadcastStatus(int32_t bcId, int32_t *status)
+SOFTBUS_SYMBOL_EXPORT int32_t QueryBroadcastStatus(int32_t bcId, int32_t *status)
 {
     DISC_LOGI(DISC_BROADCAST, "enter query bc status");
     (void)bcId;
@@ -2939,7 +2941,7 @@ int32_t QueryBroadcastStatus(int32_t bcId, int32_t *status)
     return SOFTBUS_OK;
 }
 
-bool BroadcastIsLpDeviceAvailable(void)
+SOFTBUS_VISIBILITY bool BroadcastIsLpDeviceAvailable(void)
 {
     DISC_LOGI(DISC_BROADCAST, "enter lp available");
     DISC_CHECK_AND_RETURN_RET_LOGE(g_interface[BROADCAST_PROTOCOL_BLE] != NULL,
@@ -3012,7 +3014,7 @@ bool BroadcastSetScanParam(LpServerType type, const LpScanParam *scanParam)
     return true;
 }
 
-bool BroadcastSetAdvDeviceParam(LpServerType type, const LpBroadcastParam *bcParam,
+SOFTBUS_VISIBILITY bool BroadcastSetAdvDeviceParam(LpServerType type, const LpBroadcastParam *bcParam,
     const LpScanParam *scanParam)
 {
     DISC_LOGD(DISC_BROADCAST, "enter set adv dev param");
@@ -3051,7 +3053,7 @@ bool BroadcastSetAdvDeviceParam(LpServerType type, const LpBroadcastParam *bcPar
     return true;
 }
 
-int32_t BroadcastGetBroadcastHandle(int32_t bcId, int32_t *bcHandle)
+SOFTBUS_VISIBILITY int32_t BroadcastGetBroadcastHandle(int32_t bcId, int32_t *bcHandle)
 {
     DISC_LOGD(DISC_BROADCAST, "enter get bc handle");
     int32_t ret = SoftBusMutexLock(&g_bcLock);
@@ -3076,7 +3078,7 @@ int32_t BroadcastGetBroadcastHandle(int32_t bcId, int32_t *bcHandle)
     return SOFTBUS_OK;
 }
 
-int32_t BroadcastEnableSyncDataToLpDevice(void)
+SOFTBUS_VISIBILITY int32_t BroadcastEnableSyncDataToLpDevice(void)
 {
     DISC_LOGI(DISC_BROADCAST, "enter enable sync");
     DISC_CHECK_AND_RETURN_RET_LOGE(g_interface[BROADCAST_PROTOCOL_BLE] != NULL, SOFTBUS_BC_MGR_NO_FUNC_REGISTERED,
@@ -3090,7 +3092,7 @@ int32_t BroadcastEnableSyncDataToLpDevice(void)
     return SOFTBUS_OK;
 }
 
-int32_t BroadcastDisableSyncDataToLpDevice(void)
+SOFTBUS_VISIBILITY int32_t BroadcastDisableSyncDataToLpDevice(void)
 {
     DISC_CHECK_AND_RETURN_RET_LOGE(g_interface[BROADCAST_PROTOCOL_BLE] != NULL, SOFTBUS_BC_MGR_NO_FUNC_REGISTERED,
         DISC_BROADCAST, "interface is nullptr");
@@ -3103,7 +3105,7 @@ int32_t BroadcastDisableSyncDataToLpDevice(void)
     return SOFTBUS_OK;
 }
 
-int32_t BroadcastSetScanReportChannelToLpDevice(int32_t listenerId, bool enable)
+SOFTBUS_VISIBILITY int32_t BroadcastSetScanReportChannelToLpDevice(int32_t listenerId, bool enable)
 {
     DISC_CHECK_AND_RETURN_RET_LOGE(g_interface[BROADCAST_PROTOCOL_BLE] != NULL, SOFTBUS_BC_MGR_NO_FUNC_REGISTERED,
         DISC_BROADCAST, "interface is nullptr");
@@ -3130,7 +3132,7 @@ int32_t BroadcastSetScanReportChannelToLpDevice(int32_t listenerId, bool enable)
     return SOFTBUS_OK;
 }
 
-int32_t BroadcastSetLpAdvParam(int32_t duration, int32_t maxExtAdvEvents, int32_t window,
+SOFTBUS_VISIBILITY int32_t BroadcastSetLpAdvParam(int32_t duration, int32_t maxExtAdvEvents, int32_t window,
     int32_t interval, int32_t bcHandle)
 {
     DISC_LOGI(DISC_BROADCAST, "enter set lp adv param");

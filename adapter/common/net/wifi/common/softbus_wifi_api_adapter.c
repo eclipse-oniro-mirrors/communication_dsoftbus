@@ -26,6 +26,7 @@
 #include "securec.h"
 #include "softbus_adapter_mem.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 static int32_t ConvertSoftBusWifiConfFromWifiDev(const WifiDeviceConfig *sourceWifiConf, SoftBusWifiDevConf *wifiConf)
 {
@@ -77,7 +78,7 @@ static int32_t ConvertWifiDevConfFromSoftBusWifiConf(const SoftBusWifiDevConf *r
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusGetWifiDeviceConfig(SoftBusWifiDevConf *configList, uint32_t *num)
+SOFTBUS_VISIBILITY int32_t SoftBusGetWifiDeviceConfig(SoftBusWifiDevConf *configList, uint32_t *num)
 {
     WifiDeviceConfig *result = NULL;
     uint32_t wifiConfigSize;
@@ -131,7 +132,7 @@ int32_t SoftBusGetWifiDeviceConfig(SoftBusWifiDevConf *configList, uint32_t *num
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusConnectToDevice(const SoftBusWifiDevConf *wifiConfig)
+SOFTBUS_VISIBILITY int32_t SoftBusConnectToDevice(const SoftBusWifiDevConf *wifiConfig)
 {
     if (wifiConfig == NULL) {
         LNN_LOGE(LNN_STATE, "para wifiConfig is NULL");
@@ -152,7 +153,7 @@ int32_t SoftBusConnectToDevice(const SoftBusWifiDevConf *wifiConfig)
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusDisconnectDevice(void)
+SOFTBUS_VISIBILITY int32_t SoftBusDisconnectDevice(void)
 {
     return Disconnect();
 }
@@ -197,7 +198,7 @@ static int32_t FindFreeCallbackIndex(void)
     return i;
 }
 
-int32_t SoftBusRegisterWifiEvent(ISoftBusScanResult *cb)
+SOFTBUS_VISIBILITY int32_t SoftBusRegisterWifiEvent(ISoftBusScanResult *cb)
 {
     if (cb == NULL) {
         LNN_LOGE(LNN_STATE, "invalid para");
@@ -301,7 +302,7 @@ static bool IsScanResultCbEmpty(void)
     return true;
 }
 
-int32_t SoftBusUnRegisterWifiEvent(ISoftBusScanResult *cb)
+SOFTBUS_VISIBILITY int32_t SoftBusUnRegisterWifiEvent(ISoftBusScanResult *cb)
 {
     if (cb == NULL) {
         LNN_LOGE(LNN_STATE, "invalid para");
@@ -327,7 +328,7 @@ int32_t SoftBusUnRegisterWifiEvent(ISoftBusScanResult *cb)
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusGetChannelListFor5G(int32_t *channelList, int32_t num)
+SOFTBUS_VISIBILITY int32_t SoftBusGetChannelListFor5G(int32_t *channelList, int32_t num)
 {
     if (channelList == NULL) {
         LNN_LOGW(LNN_STATE, "para channelList is NULL");
@@ -341,7 +342,7 @@ int32_t SoftBusGetChannelListFor5G(int32_t *channelList, int32_t num)
     return SOFTBUS_OK;
 }
 
-SoftBusBand SoftBusGetLinkBand(void)
+SOFTBUS_VISIBILITY SoftBusBand SoftBusGetLinkBand(void)
 {
     WifiLinkedInfo result;
     if (GetLinkedInfo(&result) != WIFI_SUCCESS) {
@@ -358,7 +359,7 @@ SoftBusBand SoftBusGetLinkBand(void)
     }
 }
 
-int32_t SoftBusGetLinkedInfo(SoftBusWifiLinkedInfo *info)
+SOFTBUS_VISIBILITY int32_t SoftBusGetLinkedInfo(SoftBusWifiLinkedInfo *info)
 {
     if (info == NULL) {
         LNN_LOGE(LNN_STATE, "invalid para");
@@ -378,7 +379,7 @@ int32_t SoftBusGetLinkedInfo(SoftBusWifiLinkedInfo *info)
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusGetCurrentGroup(SoftBusWifiP2pGroupInfo *groupInfo)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusGetCurrentGroup(SoftBusWifiP2pGroupInfo *groupInfo)
 {
     if (groupInfo == NULL) {
         LNN_LOGE(LNN_STATE, "invalid para");
@@ -396,22 +397,22 @@ int32_t SoftBusGetCurrentGroup(SoftBusWifiP2pGroupInfo *groupInfo)
     return SOFTBUS_OK;
 }
 
-bool SoftBusHasWifiDirectCapability(void)
+SOFTBUS_VISIBILITY bool SoftBusHasWifiDirectCapability(void)
 {
     return true;
 }
 
-bool SoftBusIsWifiTripleMode(void)
+SOFTBUS_VISIBILITY bool SoftBusIsWifiTripleMode(void)
 {
     return false;
 }
 
-char* SoftBusGetWifiInterfaceCoexistCap(void)
+SOFTBUS_VISIBILITY char* SoftBusGetWifiInterfaceCoexistCap(void)
 {
     return NULL;
 }
 
-bool SoftBusIsWifiActive(void)
+SOFTBUS_VISIBILITY bool SoftBusIsWifiActive(void)
 {
     int wifiState = IsWifiActive();
     LNN_LOGI(LNN_STATE, "wifiState=%{public}d", wifiState);
@@ -421,7 +422,7 @@ bool SoftBusIsWifiActive(void)
     return false;
 }
 
-bool SoftBusIsHotspotActive(void)
+SOFTBUS_SYMBOL_EXPORT bool SoftBusIsHotspotActive(void)
 {
     int hotspotState = IsHotspotActive();
     LNN_LOGI(LNN_STATE, "hotspotState=%{public}d", hotspotState);
@@ -431,7 +432,7 @@ bool SoftBusIsHotspotActive(void)
     return false;
 }
 
-SoftBusWifiDetailState SoftBusGetWifiState(void)
+SOFTBUS_VISIBILITY SoftBusWifiDetailState SoftBusGetWifiState(void)
 {
     WifiDetailState wifiState;
     if (GetWifiDetailState(&wifiState) != WIFI_SUCCESS) {
@@ -471,7 +472,7 @@ bool SoftBusIsWifiP2pEnabled(void)
     return state == P2P_STATE_STARTED;
 }
 
-int32_t SoftBusGetHotspotConfig(int32_t *apChannel)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusGetHotspotConfig(int32_t *apChannel)
 {
     if (apChannel == NULL) {
         LNN_LOGE(LNN_STATE, "para apChannel is NULL");

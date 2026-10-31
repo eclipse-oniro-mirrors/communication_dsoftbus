@@ -142,7 +142,7 @@ static int32_t GetRtAttr(struct rtattr *rta, int32_t len, uint16_t type, uint8_t
     return SOFTBUS_NETWORK_NETLINK_GET_ATTR_FAILED;
 }
 
-bool LnnIsLinkReady(const char *iface)
+SOFTBUS_SYMBOL_EXPORT bool LnnIsLinkReady(const char *iface)
 {
     if (iface == NULL) {
         return false;

@@ -25,7 +25,7 @@
 #include "trans_session_manager.h"
 #include "trans_session_service.h"
 
-int32_t TransServerProxyInit(void)
+SOFTBUS_VISIBILITY int32_t TransServerProxyInit(void)
 {
     return SOFTBUS_OK;
 }
@@ -160,7 +160,7 @@ int32_t ServerIpcEvaluateQos(const char *peerNetworkId, TransDataType dataType, 
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t ServerIpcProcessInnerEvent(int32_t eventType, uint8_t *buf, uint32_t len)
+SOFTBUS_VISIBILITY int32_t ServerIpcProcessInnerEvent(int32_t eventType, uint8_t *buf, uint32_t len)
 {
     return TransProcessInnerEvent(eventType, buf, len);
 }

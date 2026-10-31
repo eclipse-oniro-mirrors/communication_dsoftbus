@@ -33,6 +33,7 @@
 #include "softbus_adapter_mem.h"
 #include "softbus_utils.h"
 #include "auth_common.h"
+#include "softbus_def.h"
 
 #define DEFAULT_ACCOUNT_UID         "ohosAnonymousUid"
 #define DEFAULT_ACCOUNT_VALUE       "0"
@@ -293,7 +294,7 @@ static bool CompareAclWithPeerDeviceInfo(const OHOS::DistributedDeviceProfile::A
     return IsMatchAnyForegroundUserId(aclProfile, peerUdid, localUdid, peerUserId);
 }
 
-bool IsTrustedDeviceFromAccess(const char *peerAccountHash, const char *peerUdid, int32_t peerUserId)
+SOFTBUS_VISIBILITY bool IsTrustedDeviceFromAccess(const char *peerAccountHash, const char *peerUdid, int32_t peerUserId)
 {
     if (peerAccountHash == nullptr || peerUdid == nullptr) {
         LNN_LOGE(LNN_STATE, "peerUdid is null");
@@ -324,7 +325,7 @@ bool IsTrustedDeviceFromAccess(const char *peerAccountHash, const char *peerUdid
     return false;
 }
 
-bool IsPotentialTrustedDeviceDp(const char *deviceIdHash, bool isOnlyPointToPoint)
+SOFTBUS_VISIBILITY bool IsPotentialTrustedDeviceDp(const char *deviceIdHash, bool isOnlyPointToPoint)
 {
     if (deviceIdHash == nullptr) {
         LNN_LOGE(LNN_STATE, "deviceIdHash is null");
@@ -649,7 +650,7 @@ static UpdateDpAclResult PutDpAclUkByUserId(
     return UPDATE_ACL_SUCC;
 }
 
-void UpdateDpSameAccount(UpdateDpAclParams *aclParams, SessionKey sessionKey, bool isNeedUpdateDk,
+SOFTBUS_VISIBILITY void UpdateDpSameAccount(UpdateDpAclParams *aclParams, SessionKey sessionKey, bool isNeedUpdateDk,
     AclWriteState aclState, bool *isNeedUpdateAclState)
 {
     if (aclParams == nullptr || aclParams->deviceId == nullptr ||
@@ -684,7 +685,7 @@ void UpdateDpSameAccount(UpdateDpAclParams *aclParams, SessionKey sessionKey, bo
     }
 }
 
-void UpdateDpSameAccountWithoutUserKey(UpdateDpAclParams *aclParams, AclWriteState aclState,
+SOFTBUS_VISIBILITY void UpdateDpSameAccountWithoutUserKey(UpdateDpAclParams *aclParams, AclWriteState aclState,
     bool *isNeedUpdateAclState)
 {
     if (aclParams == nullptr || aclParams->deviceId == nullptr ||
@@ -919,7 +920,7 @@ void UpdateGroupShareToDp(
     (void)memset_s(&sessionKey, sizeof(SessionKey), 0, sizeof(SessionKey));
 }
 
-bool GetSessionKeyProfile(int32_t sessionKeyId, uint8_t *sessionKey, uint32_t *length)
+SOFTBUS_VISIBILITY bool GetSessionKeyProfile(int32_t sessionKeyId, uint8_t *sessionKey, uint32_t *length)
 {
     LNN_CHECK_AND_RETURN_RET_LOGE(sessionKey != nullptr, false, LNN_EVENT, "sessionKey is null");
     LNN_CHECK_AND_RETURN_RET_LOGE(length != nullptr, false, LNN_EVENT, "length is null");
@@ -939,7 +940,7 @@ bool GetSessionKeyProfile(int32_t sessionKeyId, uint8_t *sessionKey, uint32_t *l
     return true;
 }
 
-void DelSessionKeyProfile(int32_t sessionKeyId)
+SOFTBUS_VISIBILITY void DelSessionKeyProfile(int32_t sessionKeyId)
 {
     int32_t localUserId = JudgeDeviceTypeAndGetOsAccountIds();
     if (localUserId < 0) {
@@ -1598,7 +1599,7 @@ static int32_t IsSKIdAclInfoInner(int32_t sessionKeyId, char *peerUdid,
     return SOFTBUS_AUTH_ACL_NOT_FOUND;
 }
 
-int32_t IsSKIdFindAclInfo(int32_t sessionKeyId, char *peerUdid)
+SOFTBUS_VISIBILITY int32_t IsSKIdFindAclInfo(int32_t sessionKeyId, char *peerUdid)
 {
     if (peerUdid == nullptr) {
         LNN_LOGE(LNN_STATE, "param error");

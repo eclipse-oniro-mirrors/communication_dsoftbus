@@ -220,7 +220,7 @@ void TransUdpChannelMgrDeinit(void)
     g_udpChannelMgr = NULL;
 }
 
-int32_t TransAddUdpChannel(UdpChannelInfo *channel)
+SOFTBUS_VISIBILITY int32_t TransAddUdpChannel(UdpChannelInfo *channel)
 {
     if (g_udpChannelMgr == NULL) {
         TRANS_LOGE(TRANS_INIT, "udp channel manager hasn't init.");
@@ -257,7 +257,7 @@ int32_t TransAddUdpChannel(UdpChannelInfo *channel)
     return SOFTBUS_OK;
 }
 
-int32_t TransDelUdpChannel(int32_t channelId)
+SOFTBUS_VISIBILITY int32_t TransDelUdpChannel(int32_t channelId)
 {
     if (g_udpChannelMgr == NULL) {
         TRANS_LOGE(TRANS_INIT, "udp channel manager hasn't init.");
@@ -292,7 +292,7 @@ int32_t TransDelUdpChannel(int32_t channelId)
     return SOFTBUS_TRANS_UDP_CHANNEL_NOT_FOUND;
 }
 
-int32_t TransGetUdpChannelBySeq(int64_t seq, UdpChannelInfo *channel, bool isReply)
+SOFTBUS_VISIBILITY int32_t TransGetUdpChannelBySeq(int64_t seq, UdpChannelInfo *channel, bool isReply)
 {
     if (g_udpChannelMgr == NULL) {
         TRANS_LOGE(TRANS_INIT, "udp channel manager hasn't init.");
@@ -326,7 +326,7 @@ int32_t TransGetUdpChannelBySeq(int64_t seq, UdpChannelInfo *channel, bool isRep
     return SOFTBUS_TRANS_UDP_CHANNEL_NOT_FOUND;
 }
 
-int32_t TransGetUdpChannelById(int32_t channelId, UdpChannelInfo *channel)
+SOFTBUS_VISIBILITY int32_t TransGetUdpChannelById(int32_t channelId, UdpChannelInfo *channel)
 {
     if (g_udpChannelMgr == NULL) {
         TRANS_LOGE(TRANS_CTRL, "udp channel manager hasn't init.");
@@ -426,7 +426,7 @@ int32_t TransUdpGetNameByChanId(int32_t channelId, char *pkgName, char *sessionN
     return SOFTBUS_TRANS_UDP_CHANNEL_NOT_FOUND;
 }
 
-int32_t TransSetUdpChannelStatus(int64_t seq, UdpChannelStatus status, bool isReply)
+SOFTBUS_VISIBILITY int32_t TransSetUdpChannelStatus(int64_t seq, UdpChannelStatus status, bool isReply)
 {
     if (g_udpChannelMgr == NULL) {
         TRANS_LOGE(TRANS_INIT, "udp channel manager hasn't init.");
@@ -540,7 +540,7 @@ void TransSetUdpChannelMsgType(uint32_t requestId)
     return;
 }
 
-int32_t TransGetUdpChannelByRequestId(uint32_t requestId, UdpChannelInfo *channel)
+SOFTBUS_VISIBILITY int32_t TransGetUdpChannelByRequestId(uint32_t requestId, UdpChannelInfo *channel)
 {
     if (g_udpChannelMgr == NULL) {
         TRANS_LOGE(TRANS_INIT, "udp channel manager hasn't init.");
@@ -729,7 +729,8 @@ bool IsUdpRecoveryTransLimit(void)
     return true;
 }
 
-int32_t TransUdpGetIpAndConnectTypeById(int32_t channelId, char *localIp, char *remoteIp, uint32_t maxIpLen,
+SOFTBUS_SYMBOL_EXPORT int32_t TransUdpGetIpAndConnectTypeById(int32_t channelId, char *localIp, char *remoteIp,
+    uint32_t maxIpLen,
     int32_t *connectType)
 {
     if (localIp == NULL || remoteIp == NULL || maxIpLen < IP_LEN || connectType == NULL) {
@@ -770,7 +771,7 @@ int32_t TransUdpGetIpAndConnectTypeById(int32_t channelId, char *localIp, char *
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t TransUdpUpdateReplyCnt(int32_t channelId)
+SOFTBUS_VISIBILITY int32_t TransUdpUpdateReplyCnt(int32_t channelId)
 {
     if (g_udpChannelMgr == NULL) {
         TRANS_LOGE(TRANS_CTRL, "udp channel manager not initialized.");
@@ -817,7 +818,7 @@ int32_t TransUdpResetReplyCnt(int32_t channelId)
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t TransUdpUpdateUdpPort(int32_t channelId, int32_t udpPort)
+SOFTBUS_VISIBILITY int32_t TransUdpUpdateUdpPort(int32_t channelId, int32_t udpPort)
 {
     if (g_udpChannelMgr == NULL) {
         TRANS_LOGE(TRANS_CTRL, "udp channel manager not initialized.");
@@ -1007,7 +1008,7 @@ bool CompareSessionName(const char *dstSessionName, const char *srcSessionName)
     return compare;
 }
 
-int32_t TransUdpGetWakeUpInfo(int32_t channelId, char *uuid, int32_t uuidLen, bool *needFastWakeUp)
+SOFTBUS_VISIBILITY int32_t TransUdpGetWakeUpInfo(int32_t channelId, char *uuid, int32_t uuidLen, bool *needFastWakeUp)
 {
     UdpChannelInfo channelInfo;
     (void)memset_s(&channelInfo, sizeof(channelInfo), 0, sizeof(channelInfo));
@@ -1033,7 +1034,7 @@ int32_t TransUdpGetWakeUpInfo(int32_t channelId, char *uuid, int32_t uuidLen, bo
     return SOFTBUS_OK;
 }
 
-int32_t TransUdpSetWakeUpInfo(int32_t channelId, bool needFastWakeUp)
+SOFTBUS_VISIBILITY int32_t TransUdpSetWakeUpInfo(int32_t channelId, bool needFastWakeUp)
 {
     if (g_udpChannelMgr == NULL) {
         TRANS_LOGE(TRANS_CTRL, "udp channel manager not initialized.");

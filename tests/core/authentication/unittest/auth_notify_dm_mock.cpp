@@ -22,3 +22,11 @@ extern "C" int32_t LnnNotifyCommandToDmAuthPassed(const char *peerUdid, int32_t 
     (void)credId;
     return 0;
 }
+
+#include "softbus_def.h"
+SOFTBUS_VISIBILITY void GetSoftbusHichainAuthErrorCode(unsigned int hichainErrCode, unsigned int *softbusErrCode)
+{
+    if (softbusErrCode != nullptr) {
+        *softbusErrCode = hichainErrCode;
+    }
+}

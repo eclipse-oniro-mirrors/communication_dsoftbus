@@ -26,6 +26,7 @@
 #include "lnn_ohos_account_adapter.h"
 #include "softbus_adapter_json.h"
 #include "softbus_adapter_mem.h"
+#include "softbus_def.h"
 
 #define FIELD_AUTHORIZED_SCOPE "authorizedScope"
 #define AUTH_APPID "softbus_auth"
@@ -132,7 +133,7 @@ static const CredAuthManager *IdServiceGetCredAuthInstance()
     return GetCredAuthInstance();
 }
 
-int32_t IdServiceQueryCredential(int32_t userId, const char *udidHash, const char *accountidHash,
+SOFTBUS_VISIBILITY int32_t IdServiceQueryCredential(int32_t userId, const char *udidHash, const char *accountidHash,
     bool isSameAccount, char **credList)
 {
     const CredManager *credManger = IdServiceGetCredMgrInstance();
@@ -190,7 +191,8 @@ static int32_t QueryCredentialFailedLog(int32_t errorRet)
     return authErrCode;
 }
 
-int32_t AuthIdServiceQueryCredential(int32_t peerUserId, const char *udidHash, const char *accountidHash,
+SOFTBUS_VISIBILITY int32_t AuthIdServiceQueryCredential(int32_t peerUserId, const char *udidHash,
+    const char *accountidHash,
     bool isSameAccount, char **credList)
 {
     AUTH_CHECK_AND_RETURN_RET_LOGE(udidHash != NULL && accountidHash != NULL && credList != NULL,
@@ -241,7 +243,7 @@ int32_t AuthIdServiceQueryCredential(int32_t peerUserId, const char *udidHash, c
     return SOFTBUS_OK;
 }
 
-char *IdServiceGetCredIdByCredType(int32_t localUserId, int32_t peerUserId, int32_t credType,
+SOFTBUS_VISIBILITY char *IdServiceGetCredIdByCredType(int32_t localUserId, int32_t peerUserId, int32_t credType,
     const char *udidHash)
 {
     AUTH_CHECK_AND_RETURN_RET_LOGE(udidHash != NULL, NULL, AUTH_HICHAIN, "invalid param");
@@ -265,7 +267,7 @@ char *IdServiceGetCredIdByCredType(int32_t localUserId, int32_t peerUserId, int3
     return credId;
 }
 
-void IdServiceDestroyCredentialList(char **returnData)
+SOFTBUS_VISIBILITY void IdServiceDestroyCredentialList(char **returnData)
 {
     if (returnData == NULL) {
         AUTH_LOGE(AUTH_HICHAIN, "parameter is null");
@@ -348,7 +350,7 @@ int32_t IdServiceGetCredTypeByCredId(int32_t userId, const char *credId, int32_t
     return SOFTBUS_OK;
 }
 
-char *IdServiceGetCredIdFromCredList(int32_t userId, const char *credList)
+SOFTBUS_VISIBILITY char *IdServiceGetCredIdFromCredList(int32_t userId, const char *credList)
 {
     if (credList == NULL) {
         AUTH_LOGE(AUTH_HICHAIN, "parameter is null");
@@ -530,6 +532,7 @@ static int32_t GetCredInfoByUserIdAndCredId(int32_t userId, const char *credId, 
     return SOFTBUS_OK;
 }
 
+SOFTBUS_VISIBILITY
 bool IdServiceIsPotentialTrustedDevice(const char *shortUdidHash, const char *shortAccountIdHash, bool isSameAccount)
 {
     if (shortUdidHash == NULL || shortAccountIdHash == NULL) {

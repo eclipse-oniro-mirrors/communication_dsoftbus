@@ -26,6 +26,7 @@
 #include "lnn_trans_lane.h"
 #include "softbus_adapter_mem.h"
 #include "wifi_direct_manager.h"
+#include "softbus_def.h"
 
 static SoftBusMutex g_linkWifiDirectMutex;
 static ListNode *g_forceDownList = NULL;
@@ -661,7 +662,7 @@ int32_t HandleForceDownWifiDirectTrans(const char *udidhashStr, LinkConflictType
     return SOFTBUS_LANE_NOT_FOUND;
 }
 
-bool CheckVirtualLinkOnly(void)
+SOFTBUS_SYMBOL_EXPORT bool CheckVirtualLinkOnly(void)
 {
     struct WifiDirectManager *wifiDirectMgr = GetWifiDirectManager();
     if (wifiDirectMgr == NULL || wifiDirectMgr->checkOnlyVirtualLink == NULL) {
@@ -673,7 +674,7 @@ bool CheckVirtualLinkOnly(void)
     return ret;
 }
 
-int32_t HandleForceDownVirtualLink(void)
+SOFTBUS_SYMBOL_EXPORT int32_t HandleForceDownVirtualLink(void)
 {
     enum WifiDirectLinkType linkType = WIFI_DIRECT_LINK_TYPE_HML;
     LNN_LOGI(LNN_LANE, "force disconnect virtual link sync, linkType=%{public}d", linkType);

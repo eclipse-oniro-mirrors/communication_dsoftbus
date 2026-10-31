@@ -19,6 +19,11 @@ dsoftbus_root_path = "../../../../.."
 
 ohos_unittest("SoftbusConnCommonTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   #ldflags = [ "-lstdc++" ]
   include_dirs = [
@@ -37,7 +42,8 @@ ohos_unittest("SoftbusConnCommonTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
   external_deps = [
     "bounds_checking_function:libsec_static",
@@ -49,6 +55,11 @@ ohos_unittest("SoftbusConnCommonTest") {
 
 ohos_unittest("SoftbusRcTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   include_dirs = [
     "$dsoftbus_root_path/core/connection/common/include",
@@ -78,6 +89,11 @@ ohos_unittest("SoftbusRcTest") {
 
 ohos_unittest("SoftbusConnAsyncHelperTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   include_dirs = [
     "$dsoftbus_root_path/core/connection/common/include",
@@ -106,6 +122,11 @@ ohos_unittest("SoftbusConnAsyncHelperTest") {
 
 ohos_unittest("SoftbusConnQueueTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   include_dirs = [
     "$dsoftbus_root_path/core/connection/common/include",
@@ -136,6 +157,11 @@ ohos_unittest("SoftbusConnQueueTest") {
 
 ohos_unittest("DataheadTransformTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   include_dirs = [ "$dsoftbus_root_path/core/connection/common/include" ]
 
@@ -157,6 +183,11 @@ ohos_unittest("DataheadTransformTest") {
 
 ohos_unittest("SoftbusSocketTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   include_dirs = [
     "$dsoftbus_root_path/core/common/include",
@@ -169,11 +200,11 @@ ohos_unittest("SoftbusSocketTest") {
   ]
 
   sources = [
+    "$dsoftbus_root_path/core/connection/common/src/softbus_htp_socket.c",
+    "$dsoftbus_root_path/core/connection/common/src/softbus_mintp_socket.c",
     "$dsoftbus_root_path/core/connection/common/src/softbus_socket.c",
     "$dsoftbus_root_path/core/connection/common/src/softbus_tcp_socket.c",
     "$dsoftbus_root_path/core/connection/common/src/softbus_usb_tcp_socket.c",
-    "$dsoftbus_root_path/core/connection/common/src/softbus_mintp_socket.c",
-    "$dsoftbus_root_path/core/connection/common/src/softbus_htp_socket.c",
     "$dsoftbus_root_path/tests/core/connection/common/unittest/mock/softbus_socket_mock.cpp",
     "softbus_socket_test.cpp",
   ]

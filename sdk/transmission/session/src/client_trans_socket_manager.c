@@ -36,6 +36,8 @@
 #include "g_enhance_sdk_func.h"
 #include "trans_server_proxy.h"
 
+#include "trans_split_serviceid.h"
+
 #define NETWORK_ID_LEN       7
 #define GET_ROUTE_TYPE(type) ((uint32_t)(type)&0xff)
 #define GET_CONN_TYPE(type)  (((uint32_t)(type) >> 8) & 0xff)
@@ -63,7 +65,7 @@ void UnlockClientDataSeqInfoList()
     (void)SoftBusMutexUnlock(&(g_clientDataSeqInfoList->lock));
 }
 
-int TransDataSeqInfoListInit(void)
+SOFTBUS_VISIBILITY int TransDataSeqInfoListInit(void)
 {
     g_clientDataSeqInfoList = CreateSoftBusList();
     if (g_clientDataSeqInfoList == NULL) {
@@ -173,7 +175,7 @@ DestroySessionInfo *CreateDestroySessionNode(
     return destroyNode;
 }
 
-void ClientDestroySession(const ListNode *destroyList, ShutdownReason reason)
+SOFTBUS_VISIBILITY void ClientDestroySession(const ListNode *destroyList, ShutdownReason reason)
 {
     if (destroyList == NULL) {
         TRANS_LOGE(TRANS_SDK, "invalid param.");
@@ -476,7 +478,7 @@ void DestroyAllClientSession(const ClientSessionServer *server, ListNode *destro
     }
 }
 
-void DestroyClientSessionByNetworkId(
+SOFTBUS_VISIBILITY void DestroyClientSessionByNetworkId(
     const ClientSessionServer *server, const char *networkId, int32_t type, ListNode *destroyList)
 {
     if (server == NULL || networkId == NULL || destroyList == NULL) {
@@ -527,7 +529,7 @@ void DestroyClientSessionByNetworkId(
     }
 }
 
-void DestroyClientSessionByServiceIds(
+SOFTBUS_VISIBILITY void DestroyClientSessionByServiceIds(
     SessionInfo *sessionNode, const ClientSessionServer *server, ListNode *destroyList)
 {
     if (sessionNode == NULL || server == NULL || destroyList == NULL) {
@@ -792,7 +794,7 @@ void ClientConvertRetVal(int32_t socket, int32_t *retOut)
     *retOut = lifecycle.bindErrCode;
 }
 
-void ClientCleanUpIdleTimeoutSocket(const ListNode *destroyList)
+SOFTBUS_VISIBILITY void ClientCleanUpIdleTimeoutSocket(const ListNode *destroyList)
 {
     if (destroyList == NULL || IsListEmpty(destroyList)) {
         TRANS_LOGD(TRANS_SDK, "destroyList is empty.");
@@ -817,6 +819,7 @@ void ClientCleanUpIdleTimeoutSocket(const ListNode *destroyList)
     TRANS_LOGD(TRANS_SDK, "ok");
 }
 
+SOFTBUS_VISIBILITY
 void ClientCheckWaitTimeOut(const ClientSessionServer *serverNode, SessionInfo *sessionNode, int32_t waitOutSocket[],
     uint32_t capacity, uint32_t *num)
 {
@@ -868,7 +871,7 @@ static bool CleanUpTimeoutAuthSession(int32_t sessionId)
     return true;
 }
 
-void ClientCleanUpWaitTimeoutSocket(int32_t waitOutSocket[], uint32_t waitOutNum)
+SOFTBUS_VISIBILITY void ClientCleanUpWaitTimeoutSocket(int32_t waitOutSocket[], uint32_t waitOutNum)
 {
     if (waitOutSocket == NULL) {
         TRANS_LOGE(TRANS_SDK, "invalid param.");
@@ -899,6 +902,7 @@ void ClientCleanUpWaitTimeoutSocket(int32_t waitOutSocket[], uint32_t waitOutNum
     }
 }
 
+SOFTBUS_VISIBILITY
 void ClientUpdateIdleTimeout(const ClientSessionServer *serverNode, SessionInfo *sessionNode, ListNode *destroyList)
 {
     if (serverNode == NULL || sessionNode == NULL || destroyList == NULL) {
@@ -977,7 +981,8 @@ void FillDfsSocketParam(
     param->isAsync = false;
 }
 
-int32_t GetQosValue(const QosTV *qos, uint32_t qosCount, QosType type, int32_t *value, int32_t defVal)
+SOFTBUS_VISIBILITY int32_t GetQosValue(const QosTV *qos, uint32_t qosCount, QosType type, int32_t *value,
+    int32_t defVal)
 {
     if (!IsValidQosInfo(qos, qosCount) || value == NULL) {
         TRANS_LOGE(TRANS_SDK, "invalid param");
@@ -1054,7 +1059,7 @@ int32_t ClientDeletePagingSession(int32_t sessionId)
     return SOFTBUS_OK;
 }
 
-int32_t ClientDeleteSocketSession(int32_t sessionId)
+SOFTBUS_VISIBILITY int32_t ClientDeleteSocketSession(int32_t sessionId)
 {
     if (sessionId <= 0) {
         TRANS_LOGE(TRANS_SDK, "Invalid sessionId=%{public}d", sessionId);
@@ -1288,7 +1293,7 @@ static void TransOnBindSentProc(ListNode *timeoutItemList)
     }
 }
 
-void TransAsyncSendBytesTimeoutProc(void)
+SOFTBUS_VISIBILITY void TransAsyncSendBytesTimeoutProc(void)
 {
     if (LockClientDataSeqInfoList() != SOFTBUS_OK) {
         TRANS_LOGE(TRANS_SDK, "lock failed");

@@ -47,6 +47,15 @@ void AuthCloseChannel(int32_t channelId, int32_t moduleId)
     (void)moduleId;
 }
 
+int32_t AuthOpenChannelWithAllIp(const char *localIp, const char *remoteIp, int32_t port)
+{
+    (void)localIp;
+    (void)remoteIp;
+    (void)port;
+    AUTH_LOGW(AUTH_CONN, "not implement.");
+    return INVALID_CHANNEL_ID;
+}
+
 int32_t AuthPostChannelData(int32_t channelId, const AuthChannelData *data)
 {
     (void)channelId;
@@ -54,15 +63,15 @@ int32_t AuthPostChannelData(int32_t channelId, const AuthChannelData *data)
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t SetSocketCallback(const SocketCallback *cb)
+SOFTBUS_VISIBILITY int32_t SetSocketCallback(const SocketCallback *cb)
 {
     (void)cb;
     return SOFTBUS_OK;
 }
 
-void UnsetSocketCallback(void) { }
+SOFTBUS_VISIBILITY void UnsetSocketCallback(void) { }
 
-int32_t SocketConnectDevice(const char *ip, int32_t port, bool isBlockMode, int32_t ifnameIdx)
+SOFTBUS_VISIBILITY int32_t SocketConnectDevice(const char *ip, int32_t port, bool isBlockMode, int32_t ifnameIdx)
 {
     (void)ip;
     (void)port;
@@ -72,13 +81,13 @@ int32_t SocketConnectDevice(const char *ip, int32_t port, bool isBlockMode, int3
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-void SocketDisconnectDevice(ListenerModule module, int32_t fd)
+SOFTBUS_VISIBILITY void SocketDisconnectDevice(ListenerModule module, int32_t fd)
 {
     (void)module;
     (void)fd;
 }
 
-int32_t SocketPostBytes(int32_t fd, const AuthDataHead *head, const uint8_t *data)
+SOFTBUS_VISIBILITY int32_t SocketPostBytes(int32_t fd, const AuthDataHead *head, const uint8_t *data)
 {
     (void)fd;
     (void)head;
@@ -86,7 +95,7 @@ int32_t SocketPostBytes(int32_t fd, const AuthDataHead *head, const uint8_t *dat
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t SocketGetConnInfo(int32_t fd, AuthConnInfo *connInfo, bool *isServer, int32_t ifnameIdx)
+SOFTBUS_VISIBILITY int32_t SocketGetConnInfo(int32_t fd, AuthConnInfo *connInfo, bool *isServer, int32_t ifnameIdx)
 {
     (void)fd;
     (void)connInfo;
@@ -95,7 +104,7 @@ int32_t SocketGetConnInfo(int32_t fd, AuthConnInfo *connInfo, bool *isServer, in
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t StartSocketListening(ListenerModule module, const LocalListenerInfo *info)
+SOFTBUS_VISIBILITY int32_t StartSocketListening(ListenerModule module, const LocalListenerInfo *info)
 {
     (void)module;
     (void)info;
@@ -103,38 +112,39 @@ int32_t StartSocketListening(ListenerModule module, const LocalListenerInfo *inf
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-void StopSocketListening(ListenerModule moduleId)
+SOFTBUS_VISIBILITY void StopSocketListening(ListenerModule moduleId)
 {
     (void)moduleId;
 }
 
-int32_t AuthSetTcpKeepaliveOption(int32_t fd, ModeCycle cycle)
+SOFTBUS_VISIBILITY int32_t AuthSetTcpKeepaliveOption(int32_t fd, ModeCycle cycle)
 {
     (void)fd;
     (void)cycle;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-void AuthTcpConnFdLockDeinit(void) { }
+SOFTBUS_VISIBILITY void AuthTcpConnFdLockDeinit(void) { }
 
-int32_t AuthTcpConnFdLockInit(void)
+SOFTBUS_VISIBILITY int32_t AuthTcpConnFdLockInit(void)
 {
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-void DeleteAuthTcpConnFdItemByConnId(int32_t fd)
+SOFTBUS_VISIBILITY void DeleteAuthTcpConnFdItemByConnId(int32_t fd)
 {
     (void)fd;
     return;
 }
 
-bool IsExistAuthTcpConnFdItemByConnId(int32_t fd)
+SOFTBUS_VISIBILITY bool IsExistAuthTcpConnFdItemByConnId(int32_t fd)
 {
     (void)fd;
     return false;
 }
 
-int32_t NipSocketConnectDevice(ListenerModule module, const char *addr, int32_t port, bool isBlockMode)
+SOFTBUS_VISIBILITY int32_t NipSocketConnectDevice(ListenerModule module, const char *addr, int32_t port,
+    bool isBlockMode)
 {
     (void)module;
     (void)addr;
@@ -143,13 +153,14 @@ int32_t NipSocketConnectDevice(ListenerModule module, const char *addr, int32_t 
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-void ReleaseAuthTcpConnFdListLock(void) { }
+SOFTBUS_VISIBILITY void ReleaseAuthTcpConnFdListLock(void) { }
 
-bool RequireAuthTcpConnFdListLock(void)
+SOFTBUS_VISIBILITY bool RequireAuthTcpConnFdListLock(void)
 {
     return false;
 }
 
+SOFTBUS_VISIBILITY
 int32_t SocketConnectDeviceWithAllIp(const char *localIp, const char *remoteIp, int32_t port, bool isBlockMode)
 {
     (void)localIp;
@@ -159,19 +170,19 @@ int32_t SocketConnectDeviceWithAllIp(const char *localIp, const char *remoteIp, 
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t SocketSetDevice(int32_t fd, bool isBlockMode)
+SOFTBUS_VISIBILITY int32_t SocketSetDevice(int32_t fd, bool isBlockMode)
 {
     (void)fd;
     (void)isBlockMode;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-void StopSessionKeyListening(int32_t fd)
+SOFTBUS_VISIBILITY void StopSessionKeyListening(int32_t fd)
 {
     (void)fd;
 }
 
-int32_t TryDeleteAuthTcpConnFdItemByConnId(int32_t fd)
+SOFTBUS_VISIBILITY int32_t TryDeleteAuthTcpConnFdItemByConnId(int32_t fd)
 {
     (void)fd;
     return SOFTBUS_NOT_IMPLEMENT;

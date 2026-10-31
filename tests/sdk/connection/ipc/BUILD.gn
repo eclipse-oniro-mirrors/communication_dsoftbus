@@ -17,12 +17,12 @@ import("../../../../dsoftbus.gni")
 module_output_path = "dsoftbus/soft_bus/connection"
 
 ohos_unittest("ConnServerProxyTest") {
+  module_out_path = module_output_path
   sanitize = {
     cfi = true
     cfi_cross_dso = true
-    debug = true
+    debug = false
   }
-  module_out_path = module_output_path
   sources = [ "connection_server_proxy_test.cpp" ]
 
   include_dirs = [
@@ -42,12 +42,12 @@ ohos_unittest("ConnServerProxyTest") {
 }
 
 ohos_unittest("ConnServerProxyStandardTest") {
+  module_out_path = module_output_path
   sanitize = {
     cfi = true
     cfi_cross_dso = true
-    debug = true
+    debug = false
   }
-  module_out_path = module_output_path
   sources = [ "connection_server_proxy_standard_test.cpp" ]
 
   include_dirs = [

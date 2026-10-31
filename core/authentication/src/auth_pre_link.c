@@ -21,6 +21,7 @@
 #include "auth_log.h"
 #include "g_enhance_lnn_func_pack.h"
 #include "softbus_adapter_mem.h"
+#include "softbus_def.h"
 
 
 #define AUTH_GEN_CERT_PARA_EXPIRE_TIME 500
@@ -144,7 +145,7 @@ int32_t UpdateAuthGenCertParaNode(int32_t requestId, bool isValid, SoftbusCertCh
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t FindAndWaitAuthGenCertParaNodeById(int32_t requestId, AuthGenCertNode **genCertParaNode)
+SOFTBUS_VISIBILITY int32_t FindAndWaitAuthGenCertParaNodeById(int32_t requestId, AuthGenCertNode **genCertParaNode)
 {
     AUTH_CHECK_AND_RETURN_RET_LOGE(genCertParaNode != NULL, SOFTBUS_INVALID_PARAM, AUTH_CONN, "CertParaNode is NULL");
     int32_t totalSleepMs = 0;
@@ -249,7 +250,7 @@ int32_t InitAuthPreLinkList(void)
     return SOFTBUS_OK;
 }
 
-bool IsAuthPreLinkNodeExist(uint32_t requestId)
+SOFTBUS_VISIBILITY bool IsAuthPreLinkNodeExist(uint32_t requestId)
 {
     if (AuthPreLinkLock() != SOFTBUS_OK) {
         AUTH_LOGE(AUTH_CONN, "auth pre link lock fail");
@@ -266,7 +267,7 @@ bool IsAuthPreLinkNodeExist(uint32_t requestId)
     return false;
 }
 
-int32_t AddToAuthPreLinkList(uint32_t requestId, int32_t fd, ConnectionAddr *connAddr)
+SOFTBUS_VISIBILITY int32_t AddToAuthPreLinkList(uint32_t requestId, int32_t fd, ConnectionAddr *connAddr)
 {
     if (IsAuthPreLinkNodeExist(requestId)) {
         AUTH_LOGE(AUTH_CONN, "auth pre link exists");
@@ -298,7 +299,7 @@ int32_t AddToAuthPreLinkList(uint32_t requestId, int32_t fd, ConnectionAddr *con
     return SOFTBUS_OK;
 }
 
-int32_t FindAuthPreLinkNodeById(uint32_t requestId, AuthPreLinkNode *reuseNode)
+SOFTBUS_VISIBILITY int32_t FindAuthPreLinkNodeById(uint32_t requestId, AuthPreLinkNode *reuseNode)
 {
     AUTH_CHECK_AND_RETURN_RET_LOGE(reuseNode != NULL, SOFTBUS_INVALID_PARAM, AUTH_CONN, "reuseNode is NULL");
     if (AuthPreLinkLock() != SOFTBUS_OK) {
@@ -368,7 +369,7 @@ int32_t UpdateAuthPreLinkUuidById(uint32_t requestId, const char *uuid)
     return SOFTBUS_NOT_FIND;
 }
 
-void DelAuthPreLinkById(uint32_t requestId)
+SOFTBUS_VISIBILITY void DelAuthPreLinkById(uint32_t requestId)
 {
     if (AuthPreLinkLock() != SOFTBUS_OK) {
         AUTH_LOGE(AUTH_CONN, "auth pre link lock fail");

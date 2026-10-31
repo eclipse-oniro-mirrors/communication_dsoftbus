@@ -50,6 +50,7 @@
 #include "lnn_feature_capability.h"
 #include "lnn_local_net_ledger.h"
 #include "lnn_device_cloud_convergence_struct.h"
+#include "softbus_def.h"
 
 #define CAPABILITY_ISACKMAG 0x01
 #define CAPABILITY_ISCOMPRESS 0x02
@@ -1546,7 +1547,7 @@ int32_t LnnGetTrustedDevices(DeviceNodeInfo **info, int32_t *nums)
     return SOFTBUS_OK;
 }
 
-int32_t LnnRegisterConversationListener(const ConversationBusiness *info)
+SOFTBUS_VISIBILITY int32_t LnnRegisterConversationListener(const ConversationBusiness *info)
 {
     LNN_LOGI(LNN_EVENT, "enter");
     if (info == nullptr) {
@@ -1594,7 +1595,7 @@ int32_t LnnRegisterConversationListener(const ConversationBusiness *info)
     return SOFTBUS_OK;
 }
 
-int32_t LnnUnregisterConversationListener(const ConversationBusiness *info)
+SOFTBUS_VISIBILITY int32_t LnnUnregisterConversationListener(const ConversationBusiness *info)
 {
     LNN_LOGI(LNN_EVENT, "enter");
     if (info == nullptr) {

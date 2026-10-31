@@ -330,3 +330,11 @@ int32_t RegisterBroadcastMediumFunction(BroadcastProtocol type, const SoftbusBro
     DISC_LOGI(DISC_TEST, "end to register func");
     return ret;
 }
+
+
+#include "softbus_adapter_bt_common.h"
+int32_t SoftBusRemoveBtStateListener(int listenerId)
+{
+    (void)listenerId;
+    return SOFTBUS_OK;
+}

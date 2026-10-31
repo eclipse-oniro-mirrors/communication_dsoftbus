@@ -32,6 +32,7 @@
 #include "lnn_ohos_account_adapter.h"
 #include "softbus_adapter_mem.h"
 #include "softbus_json_utils.h"
+#include "softbus_def.h"
 #include "softbus_utils.h"
 
 #define DEFAULT_FILE_PATH     "/data/service/el1/public/dsoftbus/applykey"
@@ -176,7 +177,7 @@ static void PrintfRequestBusinessInfo(const RequestBusinessInfo *info, int32_t u
     AnonymizeFree(anonyUdidHash);
 }
 
-int32_t GetApplyKeyByBusinessInfo(
+SOFTBUS_VISIBILITY int32_t GetApplyKeyByBusinessInfo(
     const RequestBusinessInfo *info, uint8_t *uk, uint32_t ukLen, char *accountHash, uint32_t accountHashLen)
 {
     if (!g_isInit) {
@@ -392,7 +393,7 @@ void AuthRecoveryApplyKey(void)
     SoftBusFree(applyKey);
 }
 
-int32_t AuthInsertApplyKey(
+SOFTBUS_VISIBILITY int32_t AuthInsertApplyKey(
     const RequestBusinessInfo *info, const uint8_t *uk, uint32_t ukLen, uint64_t time, char *accountHash)
 {
     if (!g_isInit) {
@@ -457,7 +458,7 @@ static int32_t AuthRemoveApplyKeyFile()
     return remove(filename);
 }
 
-void AuthClearAccountApplyKey(void)
+SOFTBUS_SYMBOL_EXPORT void AuthClearAccountApplyKey(void)
 {
     if (!g_isInit) {
         AUTH_LOGE(AUTH_INIT, "apply map init fail");

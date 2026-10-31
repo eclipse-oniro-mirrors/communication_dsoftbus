@@ -328,7 +328,7 @@ static void PostMessageWithFfrt(const SoftBusLooper *looper, SoftBusMessage *msg
 }
 
 static void RemoveMessageWithFfrt(const SoftBusLooper *looper, const SoftBusHandler *handler,
-    int (*customFunc)(const SoftBusMessage*, void*), void *args)
+    int32_t (*customFunc)(const SoftBusMessage*, void*), void *args)
 {
     SoftBusLooperContext *context = looper->context;
     context->mtx->lock();
@@ -434,7 +434,7 @@ static void LooperPostMessageDelay(const SoftBusLooper *looper, SoftBusMessage *
     PostMessageWithFfrt(looper, msg, delayMillis * TIME_THOUSANDS_MULTIPLIER);
 }
 
-static int WhatRemoveFunc(const SoftBusMessage *msg, void *args)
+static int32_t WhatRemoveFunc(const SoftBusMessage *msg, void *args)
 {
     int32_t what = static_cast<int32_t>(reinterpret_cast<intptr_t>(args));
     if (msg->what == what) {
@@ -444,7 +444,7 @@ static int WhatRemoveFunc(const SoftBusMessage *msg, void *args)
 }
 
 static void LoopRemoveMessageCustom(const SoftBusLooper *looper, const SoftBusHandler *handler,
-    int (*customFunc)(const SoftBusMessage*, void*), void *args)
+    int32_t (*customFunc)(const SoftBusMessage*, void*), void *args)
 {
     if (looper == nullptr || looper->context == nullptr) {
         COMM_LOGE(COMM_UTILS, "LooperRemoveMessage with nulllopper");

@@ -19,6 +19,11 @@ dsoftbus_root_path = "../../../../../../../.."
 
 ohos_unittest("VtpStreamSocketTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "softbus_stream_test_mock.cpp",
     "vtp_stream_socket_test.cpp",
@@ -38,14 +43,15 @@ ohos_unittest("VtpStreamSocketTest") {
   ]
 
   deps = [
-    "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
-    "$dsoftbus_root_path/tests/sdk:softbus_client_static",
     "$dsoftbus_root_path/adapter:softbus_adapter",
+    "$dsoftbus_root_path/core/common:softbus_utils",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
+    "$dsoftbus_root_path/tests/sdk:softbus_client_static",
   ]
 
   if (!defined(global_parts_info) ||
-    defined(global_parts_info.communication_dsoftbus_service_ext)) {
+      defined(global_parts_info.communication_dsoftbus_service_ext)) {
     deps += [
       "$dsoftbus_root_path/components/nstackx_enhanced/fillp:FillpSo",
       "$dsoftbus_root_path/components/nstackx_enhanced/nstackx_core/dfile:nstackx_dfile",

@@ -21,6 +21,11 @@ dsoftbus_root_path = "../../../../../"
 
 ohos_unittest("SoftbusJsonUtilsTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "softbus_json_utils_test.cpp" ]
 
   include_dirs = [
@@ -30,9 +35,9 @@ ohos_unittest("SoftbusJsonUtilsTest") {
     "$dsoftbus_root_path/adapter/common/include",
   ]
 
-  deps = [ 
-    "$dsoftbus_root_path/core/common:softbus_utils",
+  deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
+    "$dsoftbus_root_path/core/common:softbus_utils",
   ]
 
   external_deps = [

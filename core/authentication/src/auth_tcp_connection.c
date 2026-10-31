@@ -23,6 +23,7 @@
 #include "g_enhance_auth_func_pack.h"
 #include "softbus_adapter_mem.h"
 #include "softbus_base_listener.h"
+#include "softbus_def.h"
 #include "softbus_tcp_socket.h"
 
 #define MAGIC_NUMBER             0xBABEFACE
@@ -255,7 +256,7 @@ typedef struct {
     int32_t fd;
 } AuthTcpConnInstance;
 
-bool RequireAuthTcpConnFdListLock(void)
+SOFTBUS_VISIBILITY bool RequireAuthTcpConnFdListLock(void)
 {
     if (SoftBusMutexLock(&g_authTcpConnFdListLock) != SOFTBUS_OK) {
         AUTH_LOGE(AUTH_CONN, "authTcpConnFdList lock fail");
@@ -264,7 +265,7 @@ bool RequireAuthTcpConnFdListLock(void)
     return true;
 }
 
-void ReleaseAuthTcpConnFdListLock(void)
+SOFTBUS_VISIBILITY void ReleaseAuthTcpConnFdListLock(void)
 {
     if (SoftBusMutexUnlock(&g_authTcpConnFdListLock) != SOFTBUS_OK) {
         AUTH_LOGE(AUTH_CONN, "authTcpConnFdList unlock fail");
@@ -301,7 +302,7 @@ static int32_t AddAuthTcpConnFdItem(int32_t fd, ListenerModule module)
     return SOFTBUS_OK;
 }
 
-bool IsExistAuthTcpConnFdItemByConnId(int32_t fd)
+SOFTBUS_VISIBILITY bool IsExistAuthTcpConnFdItemByConnId(int32_t fd)
 {
     if (!RequireAuthTcpConnFdListLock()) {
         AUTH_LOGE(AUTH_CONN, "RequireAuthTcpConnFdListLock fail");
@@ -333,7 +334,7 @@ bool IsExistAuthTcpConnFdItemWithoutLock(int32_t fd)
     return false;
 }
 
-bool IsExistMetaAuthFdItemWithoutLock(int32_t fd)
+SOFTBUS_SYMBOL_EXPORT bool IsExistMetaAuthFdItemWithoutLock(int32_t fd)
 {
     AuthTcpConnInstance *item = NULL;
     LIST_FOR_EACH_ENTRY(item, &g_authTcpConnFdList, AuthTcpConnInstance, node) {
@@ -347,7 +348,7 @@ bool IsExistMetaAuthFdItemWithoutLock(int32_t fd)
     return false;
 }
 
-void DeleteAuthTcpConnFdItemByConnId(int32_t fd)
+SOFTBUS_VISIBILITY void DeleteAuthTcpConnFdItemByConnId(int32_t fd)
 {
     if (!RequireAuthTcpConnFdListLock()) {
         AUTH_LOGE(AUTH_CONN, "RequireAuthTcpConnFdListLock fail");
@@ -366,7 +367,7 @@ void DeleteAuthTcpConnFdItemByConnId(int32_t fd)
     ReleaseAuthTcpConnFdListLock();
 }
 
-int32_t TryDeleteAuthTcpConnFdItemByConnId(int32_t fd)
+SOFTBUS_VISIBILITY int32_t TryDeleteAuthTcpConnFdItemByConnId(int32_t fd)
 {
     if (!RequireAuthTcpConnFdListLock()) {
         AUTH_LOGE(AUTH_CONN, "RequireAuthTcpConnFdListLock fail");
@@ -531,7 +532,7 @@ static int32_t OnDataEvent(ListenerModule module, int32_t events, int32_t fd)
     return SOFTBUS_AUTH_SOCKET_EVENT_INVALID;
 }
 
-int32_t SetSocketCallback(const SocketCallback *cb)
+SOFTBUS_VISIBILITY int32_t SetSocketCallback(const SocketCallback *cb)
 {
     CHECK_NULL_PTR_RETURN_VALUE(cb, SOFTBUS_INVALID_PARAM);
     if (memcpy_s(&g_callback, sizeof(SocketCallback), cb, sizeof(SocketCallback)) != EOK) {
@@ -541,12 +542,12 @@ int32_t SetSocketCallback(const SocketCallback *cb)
     return SOFTBUS_OK;
 }
 
-void UnsetSocketCallback(void)
+SOFTBUS_VISIBILITY void UnsetSocketCallback(void)
 {
     (void)memset_s(&g_callback, sizeof(SocketCallback), 0, sizeof(SocketCallback));
 }
 
-int32_t StartSocketListening(ListenerModule module, const LocalListenerInfo *info)
+SOFTBUS_VISIBILITY int32_t StartSocketListening(ListenerModule module, const LocalListenerInfo *info)
 {
     SoftbusBaseListener listener = {
         .onConnectEvent = OnConnectEvent,
@@ -560,7 +561,7 @@ int32_t StartSocketListening(ListenerModule module, const LocalListenerInfo *inf
     return port;
 }
 
-void StopSocketListening(ListenerModule moduleId)
+SOFTBUS_VISIBILITY void StopSocketListening(ListenerModule moduleId)
 {
     AUTH_LOGI(AUTH_CONN, "stop socket listening. moduleId=%{public}d", moduleId);
     if (StopBaseListener(moduleId) != SOFTBUS_OK) {
@@ -626,12 +627,13 @@ static int32_t SocketConnectInner(
     return fd;
 }
 
+SOFTBUS_VISIBILITY
 int32_t SocketConnectDeviceWithAllIp(const char *localIp, const char *peerIp, int32_t port, bool isBlockMode)
 {
     return SocketConnectInner(localIp, peerIp, port, AUTH_RAW_P2P_CLIENT, isBlockMode);
 }
 
-int32_t SocketSetDevice(int32_t fd, bool isBlockMode)
+SOFTBUS_VISIBILITY int32_t SocketSetDevice(int32_t fd, bool isBlockMode)
 {
     if (fd < 0) {
         AUTH_LOGE(AUTH_CONN, "ConnOpenClientSocket fail, fd=%{public}d", fd);
@@ -702,7 +704,7 @@ static int32_t SetTcpKeepaliveAndIpTos(bool isBlockMode, int32_t ifnameIdx, Trig
     return SOFTBUS_OK;
 }
 
-int32_t SocketConnectDevice(const char *ip, int32_t port, bool isBlockMode, int32_t ifnameIdx)
+SOFTBUS_VISIBILITY int32_t SocketConnectDevice(const char *ip, int32_t port, bool isBlockMode, int32_t ifnameIdx)
 {
     CHECK_NULL_PTR_RETURN_VALUE(ip, AUTH_INVALID_FD);
     char localIp[MAX_ADDR_LEN] = { 0 };
@@ -750,7 +752,8 @@ int32_t SocketConnectDevice(const char *ip, int32_t port, bool isBlockMode, int3
     return fd;
 }
 
-int32_t NipSocketConnectDevice(ListenerModule module, const char *addr, int32_t port, bool isBlockMode)
+SOFTBUS_VISIBILITY int32_t NipSocketConnectDevice(ListenerModule module, const char *addr, int32_t port,
+    bool isBlockMode)
 {
     if (addr == NULL) {
         AUTH_LOGE(AUTH_CONN, "addr is invalid param.");
@@ -785,7 +788,7 @@ int32_t NipSocketConnectDevice(ListenerModule module, const char *addr, int32_t 
     return fd;
 }
 
-void SocketDisconnectDevice(ListenerModule module, int32_t fd)
+SOFTBUS_VISIBILITY void SocketDisconnectDevice(ListenerModule module, int32_t fd)
 {
     if (fd < 0) {
         AUTH_LOGD(AUTH_CONN, "invalid fd, maybe has shutdown. fd=%{public}d", fd);
@@ -795,7 +798,7 @@ void SocketDisconnectDevice(ListenerModule module, int32_t fd)
     ConnShutdownSocket(fd);
 }
 
-int32_t SocketPostBytes(int32_t fd, const AuthDataHead *head, const uint8_t *data)
+SOFTBUS_VISIBILITY int32_t SocketPostBytes(int32_t fd, const AuthDataHead *head, const uint8_t *data)
 {
     CHECK_NULL_PTR_RETURN_VALUE(head, SOFTBUS_INVALID_PARAM);
     CHECK_NULL_PTR_RETURN_VALUE(data, SOFTBUS_INVALID_PARAM);
@@ -840,7 +843,7 @@ int32_t SocketPostBytes(int32_t fd, const AuthDataHead *head, const uint8_t *dat
     return SOFTBUS_OK;
 }
 
-int32_t SocketGetConnInfo(int32_t fd, AuthConnInfo *connInfo, bool *isServer, int32_t ifnameIdx)
+SOFTBUS_VISIBILITY int32_t SocketGetConnInfo(int32_t fd, AuthConnInfo *connInfo, bool *isServer, int32_t ifnameIdx)
 {
     CHECK_NULL_PTR_RETURN_VALUE(connInfo, SOFTBUS_INVALID_PARAM);
     CHECK_NULL_PTR_RETURN_VALUE(isServer, SOFTBUS_INVALID_PARAM);
@@ -1037,7 +1040,7 @@ static int32_t GetTcpKeepaliveOptionByCycle(ModeCycle cycle, TcpKeepaliveOption 
     return SOFTBUS_OK;
 }
 
-int32_t AuthSetTcpKeepaliveOption(int32_t fd, ModeCycle cycle)
+SOFTBUS_VISIBILITY int32_t AuthSetTcpKeepaliveOption(int32_t fd, ModeCycle cycle)
 {
     if (fd <= 0 || cycle < HIGH_FREQ_CYCLE || cycle > DEFAULT_FREQ_CYCLE) {
         AUTH_LOGE(AUTH_CONN, "invalid param");
@@ -1067,7 +1070,7 @@ int32_t AuthSetTcpKeepaliveOption(int32_t fd, ModeCycle cycle)
     return SOFTBUS_OK;
 }
 
-int32_t AuthTcpConnFdLockInit(void)
+SOFTBUS_VISIBILITY int32_t AuthTcpConnFdLockInit(void)
 {
     if (SoftBusMutexInit(&g_authTcpConnFdListLock, NULL) != SOFTBUS_OK) {
         AUTH_LOGE(AUTH_CONN, "authTcpConnFdList mutex init fail");
@@ -1076,7 +1079,7 @@ int32_t AuthTcpConnFdLockInit(void)
     return SOFTBUS_OK;
 }
 
-void AuthTcpConnFdLockDeinit(void)
+SOFTBUS_VISIBILITY void AuthTcpConnFdLockDeinit(void)
 {
     if (SoftBusMutexDestroy(&g_authTcpConnFdListLock) != SOFTBUS_OK) {
         AUTH_LOGE(AUTH_CONN, "authTcpConnFdList mutex destroy fail");
@@ -1105,7 +1108,7 @@ static void SetSessionKeyListenerModule(int32_t fd)
     }
 }
 
-void StopSessionKeyListening(int32_t fd)
+SOFTBUS_VISIBILITY void StopSessionKeyListening(int32_t fd)
 {
     if (fd < 0) {
         AUTH_LOGE(AUTH_CONN, "fd invalid, fd=%{public}d", fd);

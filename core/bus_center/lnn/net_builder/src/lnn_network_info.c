@@ -31,6 +31,7 @@
 #include "softbus_adapter_mem.h"
 #include "softbus_wifi_api_adapter.h"
 #include "softbus_json_utils.h"
+#include "softbus_def.h"
 #include "wifi_direct_manager.h"
 
 #define MSG_LEN 10
@@ -766,7 +767,7 @@ static void InitWifiDirectListener(void)
     pManager->addHmlStateListener(HmlStateOnStartCb);
 }
 
-int32_t LnnInitNetworkInfo(void)
+SOFTBUS_VISIBILITY int32_t LnnInitNetworkInfo(void)
 {
     InitWifiDirectCapability();
     InitWifiDirectListener();
@@ -805,7 +806,7 @@ int32_t LnnInitNetworkInfo(void)
     return SOFTBUS_OK;
 }
 
-void LnnDeinitNetworkInfo(void)
+SOFTBUS_VISIBILITY void LnnDeinitNetworkInfo(void)
 {
     (void)LnnUnregisterEventHandler(LNN_EVENT_BT_STATE_CHANGED, BtStateChangeEventHandler);
     (void)LnnUnregisterEventHandler(LNN_EVENT_WIFI_STATE_CHANGED, WifiStateEventHandler);

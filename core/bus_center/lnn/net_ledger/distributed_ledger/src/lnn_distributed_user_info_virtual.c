@@ -17,6 +17,7 @@
 
 #include "lnn_log.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 int32_t LnnInitDistributedUserLedger(void)
 {
@@ -28,7 +29,7 @@ void LnnDeinitDistributedUserLedger(void)
 {
 }
 
-void LnnRemoveUserInfoNode(const char *udid)
+SOFTBUS_VISIBILITY void LnnRemoveUserInfoNode(const char *udid)
 {
     (void)udid;
 }

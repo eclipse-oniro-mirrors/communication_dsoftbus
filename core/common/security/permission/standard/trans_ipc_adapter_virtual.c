@@ -17,8 +17,9 @@
 
 #include "access_control.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
-uint64_t TransAclGetFirstTokenID(void)
+SOFTBUS_VISIBILITY uint64_t TransAclGetFirstTokenID(void)
 {
     return TOKENID_NOT_SET;
 }

@@ -27,6 +27,7 @@
 #include "softbus_adapter_mem.h"
 #include "softbus_bus_center.h"
 #include "softbus_feature_config.h"
+#include "softbus_def.h"
 #include "softbus_utils.h"
 
 #define OHOS_API_VERSION           "const.ohos.apiversion"
@@ -139,7 +140,7 @@ static int32_t SoftBusGetOsType(void)
     return OHOS_TYPE_UNKNOWN;
 }
 
-int32_t GetCommonDevInfo(CommonDeviceKey key, char *value, uint32_t len)
+SOFTBUS_VISIBILITY int32_t GetCommonDevInfo(CommonDeviceKey key, char *value, uint32_t len)
 {
     if (value == NULL) {
         LNN_LOGE(LNN_STATE, "para error");
@@ -190,7 +191,7 @@ int32_t GetCommonDevInfo(CommonDeviceKey key, char *value, uint32_t len)
     return SOFTBUS_OK;
 }
 
-int32_t GetCommonOsType(int32_t *value)
+SOFTBUS_VISIBILITY int32_t GetCommonOsType(int32_t *value)
 {
     int32_t ret = SoftBusGetOsType();
     *value = ret;
@@ -201,7 +202,7 @@ int32_t GetCommonOsType(int32_t *value)
     return SOFTBUS_OK;
 }
 
-int32_t GetCommonOsVersion(char *value, uint32_t len)
+SOFTBUS_VISIBILITY int32_t GetCommonOsVersion(char *value, uint32_t len)
 {
     if (value == NULL) {
         LNN_LOGE(LNN_STATE, "para error");
@@ -228,7 +229,7 @@ int32_t GetCommonOsVersion(char *value, uint32_t len)
     return SOFTBUS_OK;
 }
 
-int32_t GetCommonDeviceVersion(char *value, uint32_t len)
+SOFTBUS_VISIBILITY int32_t GetCommonDeviceVersion(char *value, uint32_t len)
 {
     if (value == NULL) {
         LNN_LOGE(LNN_STATE, "para error");
@@ -324,7 +325,7 @@ int32_t GetWlanIpv4Addr(char *ip, uint32_t size)
     return SOFTBUS_NETWORK_GET_INVALID_DEVICE_INFO;
 }
 
-int32_t GetDeviceSecurityLevel(int32_t *level)
+SOFTBUS_VISIBILITY int32_t GetDeviceSecurityLevel(int32_t *level)
 {
     if (level == NULL) {
         LNN_LOGE(LNN_STATE, "param error");

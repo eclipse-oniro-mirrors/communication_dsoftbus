@@ -17,8 +17,9 @@
 #include "softbus_error_code.h"
 #include "usb_srv_client.h"
 #include "usb_srv_support.h"
+#include "softbus_def.h"
 
-int32_t StartUsbNcmAdapter(int32_t mode)
+SOFTBUS_SYMBOL_EXPORT int32_t StartUsbNcmAdapter(int32_t mode)
 {
     LNN_LOGI(LNN_STATE, "StartUsbNcmAdapter entered! mode= %{public}d", mode);
     if (mode == NCM_DEVICE_MODE) {

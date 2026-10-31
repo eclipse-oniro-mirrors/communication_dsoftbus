@@ -16,47 +16,48 @@
 #include "softbus_adapter_bt_common.h"
 
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
-int SoftBusAddBtStateListener(const SoftBusBtStateListener *listener, int *listenerId)
+SOFTBUS_VISIBILITY int SoftBusAddBtStateListener(const SoftBusBtStateListener *listener, int *listenerId)
 {
     (void)listener;
     (void)listenerId;
     return SOFTBUS_FUNC_NOT_SUPPORT;
 }
 
-int SoftBusRemoveBtStateListener(int listenerId)
+SOFTBUS_VISIBILITY int SoftBusRemoveBtStateListener(int listenerId)
 {
     return SOFTBUS_OK;
 }
 
-int SoftBusEnableBt(void)
+SOFTBUS_VISIBILITY int SoftBusEnableBt(void)
 {
     return SOFTBUS_FUNC_NOT_SUPPORT;
 }
 
-int SoftBusDisableBt(void)
+SOFTBUS_VISIBILITY int SoftBusDisableBt(void)
 {
     return SOFTBUS_FUNC_NOT_SUPPORT;
 }
 
-int SoftBusGetBrState(void)
+SOFTBUS_VISIBILITY int SoftBusGetBrState(void)
 {
     return BR_DISABLE;
 }
 
-int SoftBusGetBtMacAddr(SoftBusBtAddr *mac)
+SOFTBUS_VISIBILITY int SoftBusGetBtMacAddr(SoftBusBtAddr *mac)
 {
     return SOFTBUS_OK;
 }
 
-int SoftBusGetBtName(unsigned char *name, unsigned int *len)
+SOFTBUS_VISIBILITY int SoftBusGetBtName(unsigned char *name, unsigned int *len)
 {
     (void)name;
     (void)len;
     return SOFTBUS_OK;
 }
 
-int SoftBusSetBtName(const char *name)
+SOFTBUS_VISIBILITY int SoftBusSetBtName(const char *name)
 {
     return SOFTBUS_FUNC_NOT_SUPPORT;
 }
@@ -69,7 +70,7 @@ int SoftBusGetRandomAddress(const char *addr, char *out, int tokenId)
     return SOFTBUS_FUNC_NOT_SUPPORT;
 }
 
-int SoftBusBtInit(void)
+SOFTBUS_VISIBILITY int SoftBusBtInit(void)
 {
     return SOFTBUS_OK;
 }

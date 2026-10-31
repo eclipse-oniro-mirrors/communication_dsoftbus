@@ -19,6 +19,11 @@ dsoftbus_root_path = "../../../../../../../.."
 
 ohos_unittest("StreamPacketizerTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "stream_packetizer_test.cpp" ]
 
   include_dirs = [
@@ -37,7 +42,8 @@ ohos_unittest("StreamPacketizerTest") {
 
   deps = [
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
     "$dsoftbus_root_path/tests/sdk:softbus_client_static",
   ]
 

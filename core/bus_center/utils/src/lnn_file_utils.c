@@ -61,7 +61,7 @@ static int32_t InitStorageConfigPath(void)
     return SOFTBUS_OK;
 }
 
-int32_t LnnGetFullStoragePath(LnnFileId id, char *path, uint32_t len)
+SOFTBUS_VISIBILITY int32_t LnnGetFullStoragePath(LnnFileId id, char *path, uint32_t len)
 {
     if (path == NULL) {
         LNN_LOGE(LNN_STATE, "path is null");

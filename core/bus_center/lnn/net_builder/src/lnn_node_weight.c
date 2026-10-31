@@ -21,6 +21,7 @@
 #include "lnn_device_info.h"
 #include "lnn_log.h"
 #include "softbus_adapter_crypto.h"
+#include "softbus_def.h"
 
 #define MAX_WEIGHT_VALUE        1000
 #define BASE_WEIGHT_PHONE_VALUE 2000
@@ -76,7 +77,7 @@ int32_t LnnGetLocalWeight(void)
     return weight;
 }
 
-int32_t LnnCompareNodeWeight(int32_t weight1, const char *masterUdid1, int32_t weight2,
+SOFTBUS_VISIBILITY int32_t LnnCompareNodeWeight(int32_t weight1, const char *masterUdid1, int32_t weight2,
     const char *masterUdid2)
 {
     if (weight1 != weight2) {

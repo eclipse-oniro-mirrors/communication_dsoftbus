@@ -33,6 +33,7 @@
 #include "legacy/softbus_hidumper_buscenter.h"
 #include "lnn_init_monitor.h"
 #include "lnn_sle_capability.h"
+#include "softbus_def.h"
 
 #define SOFTBUS_VERSION "hm.1.0.0"
 #define VERSION_TYPE_LITE "LITE"
@@ -1139,12 +1140,12 @@ static int32_t ModifyId(char *dstId, uint32_t dstLen, const char *sourceId)
     return SOFTBUS_OK;
 }
 
-const NodeInfo *LnnGetLocalNodeInfo(void)
+SOFTBUS_VISIBILITY const NodeInfo *LnnGetLocalNodeInfo(void)
 {
     return &g_localNetLedger.localInfo;
 }
 
-int32_t LnnGetLocalNodeInfoSafe(NodeInfo *info)
+SOFTBUS_VISIBILITY int32_t LnnGetLocalNodeInfoSafe(NodeInfo *info)
 {
     if (SoftBusMutexLock(&g_localNetLedger.lock) != SOFTBUS_OK) {
         LNN_LOGE(LNN_LEDGER, "lock mutex fail");
@@ -1758,7 +1759,7 @@ int32_t LnnUpdateLocalDeviceName(const DeviceBasicInfo *info)
     return SOFTBUS_OK;
 }
 
-void LnnUpdateStateVersion(StateVersionChangeReason reason)
+SOFTBUS_SYMBOL_EXPORT void LnnUpdateStateVersion(StateVersionChangeReason reason)
 {
     UpdateStateVersionAndStore(reason);
     if (!IsLocalLedgerReady()) {
@@ -2323,7 +2324,7 @@ static LocalLedgerKeyByIfname g_localKeyByIfnameTable[] = {
     {NUM_KEY_PROXY_PORT, -1, LlGetProxyPort, UpdateLocalProxyPort},
 };
 
-int32_t LnnGetLocalStrInfo(InfoKey key, char *info, uint32_t len)
+SOFTBUS_VISIBILITY int32_t LnnGetLocalStrInfo(InfoKey key, char *info, uint32_t len)
 {
     uint32_t i;
     int32_t ret;
@@ -2353,7 +2354,7 @@ int32_t LnnGetLocalStrInfo(InfoKey key, char *info, uint32_t len)
     return SOFTBUS_NETWORK_NOT_FOUND;
 }
 
-int32_t LnnGetLocalStrInfoByIfnameIdx(InfoKey key, char *info, uint32_t len, int32_t ifIdx)
+SOFTBUS_VISIBILITY int32_t LnnGetLocalStrInfoByIfnameIdx(InfoKey key, char *info, uint32_t len, int32_t ifIdx)
 {
     uint32_t i;
     int32_t ret;
@@ -2449,7 +2450,7 @@ static int32_t LnnGetLocalInfoByIfnameIdx(InfoKey key, void* info, uint32_t info
     return SOFTBUS_NETWORK_NOT_FOUND;
 }
 
-int32_t LnnGetLocalBoolInfo(InfoKey key, bool *info, uint32_t len)
+SOFTBUS_SYMBOL_EXPORT int32_t LnnGetLocalBoolInfo(InfoKey key, bool *info, uint32_t len)
 {
     uint32_t i;
     int32_t ret;
@@ -2484,7 +2485,7 @@ static bool JudgeString(const char *info, int32_t len)
     return (len <= 0) ? false : IsValidString(info, (uint32_t)len);
 }
 
-int32_t LnnSetLocalUnifiedName(const char *unifiedName)
+SOFTBUS_VISIBILITY int32_t LnnSetLocalUnifiedName(const char *unifiedName)
 {
     if (unifiedName == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -2502,7 +2503,7 @@ int32_t LnnSetLocalUnifiedName(const char *unifiedName)
     return SOFTBUS_OK;
 }
 
-int32_t LnnSetLocalStrInfo(InfoKey key, const char *info)
+SOFTBUS_VISIBILITY int32_t LnnSetLocalStrInfo(InfoKey key, const char *info)
 {
     uint32_t i;
     int32_t ret;
@@ -2535,7 +2536,7 @@ int32_t LnnSetLocalStrInfo(InfoKey key, const char *info)
     return SOFTBUS_NETWORK_NOT_FOUND;
 }
 
-int32_t LnnSetLocalStrInfoByIfnameIdx(InfoKey key, const char *info, int32_t ifIdx)
+SOFTBUS_VISIBILITY int32_t LnnSetLocalStrInfoByIfnameIdx(InfoKey key, const char *info, int32_t ifIdx)
 {
     uint32_t i;
     int32_t ret;
@@ -2755,43 +2756,43 @@ int32_t LnnGenBroadcastCipherInfo(void)
     return ret;
 }
 
-int32_t LnnGetLocalNumInfo(InfoKey key, int32_t *info)
+SOFTBUS_VISIBILITY int32_t LnnGetLocalNumInfo(InfoKey key, int32_t *info)
 {
     return LnnGetLocalInfo(key, (void *)info, sizeof(int32_t));
 }
 
-int32_t LnnSetLocalNumInfo(InfoKey key, int32_t info)
+SOFTBUS_VISIBILITY int32_t LnnSetLocalNumInfo(InfoKey key, int32_t info)
 {
     return LnnSetLocalInfo(key, (void *)&info);
 }
 
-int32_t LnnGetLocalNumInfoByIfnameIdx(InfoKey key, int32_t *info, int32_t ifIdx)
+SOFTBUS_VISIBILITY int32_t LnnGetLocalNumInfoByIfnameIdx(InfoKey key, int32_t *info, int32_t ifIdx)
 {
     return LnnGetLocalInfoByIfnameIdx(key, (void *)info, sizeof(int32_t), ifIdx);
 }
 
-int32_t LnnGetLocalNum64Info(InfoKey key, int64_t *info)
+SOFTBUS_VISIBILITY int32_t LnnGetLocalNum64Info(InfoKey key, int64_t *info)
 {
     return LnnGetLocalInfo(key, (void *)info, sizeof(int64_t));
 }
 
-int32_t LnnSetLocalNumInfoByIfnameIdx(InfoKey key, int32_t info, int32_t ifIdx)
+SOFTBUS_VISIBILITY int32_t LnnSetLocalNumInfoByIfnameIdx(InfoKey key, int32_t info, int32_t ifIdx)
 {
     return LnnSetLocalInfoByIfnameIdx(key, (void *)&info, ifIdx);
 }
 
-int32_t LnnGetLocalNumU64Info(InfoKey key, uint64_t *info)
+SOFTBUS_VISIBILITY int32_t LnnGetLocalNumU64Info(InfoKey key, uint64_t *info)
 {
     return LnnGetLocalInfo(key, (void *)info, sizeof(uint64_t));
 }
 
-int32_t LnnSetLocalNum64Info(InfoKey key, int64_t info)
+SOFTBUS_VISIBILITY int32_t LnnSetLocalNum64Info(InfoKey key, int64_t info)
 {
     return LnnSetLocalInfo(key, (void *)&info);
 }
 
 
-int32_t LnnGetLocalNum16Info(InfoKey key, int16_t *info)
+SOFTBUS_SYMBOL_EXPORT int32_t LnnGetLocalNum16Info(InfoKey key, int16_t *info)
 {
     return LnnGetLocalInfo(key, (void *)info, sizeof(int16_t));
 }
@@ -2801,38 +2802,38 @@ int32_t LnnSetLocalNum16Info(InfoKey key, int16_t info)
     return LnnSetLocalInfo(key, (void *)&info);
 }
 
-int32_t LnnGetLocalNumU16Info(InfoKey key, uint16_t *info)
+SOFTBUS_SYMBOL_EXPORT int32_t LnnGetLocalNumU16Info(InfoKey key, uint16_t *info)
 {
     return LnnGetLocalInfo(key, (void *)info, sizeof(uint16_t));
 }
 
-int32_t LnnSetLocalNumU16Info(InfoKey key, uint16_t info)
+SOFTBUS_VISIBILITY int32_t LnnSetLocalNumU16Info(InfoKey key, uint16_t info)
 {
     return LnnSetLocalInfo(key, (void *)&info);
 }
 
-int32_t LnnGetLocalNumU32Info(InfoKey key, uint32_t *info)
+SOFTBUS_VISIBILITY int32_t LnnGetLocalNumU32Info(InfoKey key, uint32_t *info)
 {
     return LnnGetLocalInfo(key, (void *)info, sizeof(uint32_t));
 }
 
-int32_t LnnSetLocalNumU32Info(InfoKey key, uint32_t info)
+SOFTBUS_VISIBILITY int32_t LnnSetLocalNumU32Info(InfoKey key, uint32_t info)
 {
     return LnnSetLocalInfo(key, (void *)&info);
 }
 
-int32_t LnnSetLocalByteInfo(InfoKey key, const uint8_t *info, uint32_t len)
+SOFTBUS_VISIBILITY int32_t LnnSetLocalByteInfo(InfoKey key, const uint8_t *info, uint32_t len)
 {
     (void)len;
     return LnnSetLocalInfo(key, (void *)info);
 }
 
-int32_t LnnGetLocalByteInfo(InfoKey key, uint8_t *info, uint32_t len)
+SOFTBUS_VISIBILITY int32_t LnnGetLocalByteInfo(InfoKey key, uint8_t *info, uint32_t len)
 {
     return LnnGetLocalInfo(key, (void *)info, len);
 }
 
-int32_t LnnGetLocalDeviceInfo(NodeBasicInfo *info)
+SOFTBUS_VISIBILITY int32_t LnnGetLocalDeviceInfo(NodeBasicInfo *info)
 {
     int32_t rc;
     char type[DEVICE_TYPE_BUF_LEN] = {0};
@@ -2962,7 +2963,7 @@ static void GenerateStateVersion(void)
     LNN_LOGI(LNN_LEDGER, "init local stateVersion=%{public}d", g_localNetLedger.localInfo.stateVersion);
 }
 
-int32_t LnnInitLocalLedger(void)
+SOFTBUS_SYMBOL_EXPORT int32_t LnnInitLocalLedger(void)
 {
     NodeInfo *nodeInfo = NULL;
     if (g_localNetLedger.status == LL_INIT_SUCCESS) {
@@ -3084,7 +3085,7 @@ bool LnnIsMasterNode(void)
     return ret;
 }
 
-int32_t LnnUpdateLocalScreenStatus(bool isScreenOn)
+SOFTBUS_VISIBILITY int32_t LnnUpdateLocalScreenStatus(bool isScreenOn)
 {
     if (SoftBusMutexLock(&g_localNetLedger.lock) != SOFTBUS_OK) {
         LNN_LOGE(LNN_LEDGER, "lock mutex failed");

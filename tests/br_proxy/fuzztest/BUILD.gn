@@ -13,7 +13,5 @@
 
 group("fuzztest") {
   testonly = true
-  deps = [
-    "brproxy_fuzzer:fuzztest",
-  ]
+  deps = [ "brproxy_fuzzer:fuzztest" ]
 }

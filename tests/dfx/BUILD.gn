@@ -18,18 +18,18 @@ group("unittest") {
   testonly = true
   deps = [
     "anonymize:unittest",
-    "dumper/legacy/unittest:unittest",
+    "dumper/legacy/unittest",
     "event:unittest",
-    "event/legacy/unittest:unittest",
+    "event/legacy/unittest",
     "log:unittest",
-    "statistics/unittest:unittest",
+    "statistics/unittest",
   ]
 }
 
 group("fuzztest") {
   testonly = true
   deps = [
-    "dumper/legacy/fuzztest:fuzztest",
-    "event/legacy/fuzztest:fuzztest",
+    "dumper/legacy/fuzztest",
+    "event/legacy/fuzztest",
   ]
 }

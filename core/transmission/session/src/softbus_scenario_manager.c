@@ -26,6 +26,7 @@
 #include "softbus_adapter_thread.h"
 #include "softbus_bitmap.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 #include "softbus_utils.h"
 #include "trans_log.h"
 
@@ -673,12 +674,14 @@ static int32_t ScenarioManagerDelScenario(ScenarioManager *manager, const char *
     return SOFTBUS_OK;
 }
 
-int32_t AddScenario(const char *localMac, const char *peerMac, int32_t localPid, int32_t businessType)
+SOFTBUS_VISIBILITY int32_t AddScenario(const char *localMac, const char *peerMac, int32_t localPid,
+    int32_t businessType)
 {
     return ScenarioManagerAddScenario(g_manager, localMac, peerMac, localPid, businessType);
 }
 
-int32_t DelScenario(const char *localMac, const char *peerMac, int32_t localPid, int32_t businessType)
+SOFTBUS_VISIBILITY int32_t DelScenario(const char *localMac, const char *peerMac,
+    int32_t localPid, int32_t businessType)
 {
     return ScenarioManagerDelScenario(g_manager, localMac, peerMac, localPid, businessType);
 }

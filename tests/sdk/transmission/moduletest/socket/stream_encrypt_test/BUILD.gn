@@ -18,6 +18,11 @@ module_output_path = "dsoftbus/soft_bus/transmission"
 
 ohos_moduletest("TransSocketStreamEncryptMt") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "common.cpp",
     "stream_encrypt_client_mt.cpp",
@@ -28,12 +33,6 @@ ohos_moduletest("TransSocketStreamEncryptMt") {
   deps = [ "$dsoftbus_root_path/tests/sdk:softbus_client_static" ]
 
   install_enable = false
-
-  sanitize = {
-    cfi = true
-    cfi_cross_dso = true
-    debug = true
-  }
 
   if (is_standard_system) {
     external_deps = [

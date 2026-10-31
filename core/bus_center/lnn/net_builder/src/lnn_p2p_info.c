@@ -27,6 +27,7 @@
 #include "lnn_sync_info_manager.h"
 #include "softbus_adapter_json.h"
 #include "softbus_adapter_mem.h"
+#include "softbus_def.h"
 #include "wifi_direct_manager.h"
 
 #define JSON_KEY_P2P_ROLE "P2P_ROLE"
@@ -311,7 +312,7 @@ static void OnReceiveWifiDirectSyncAddr(LnnSyncInfoType type, const char *networ
     }
 }
 
-int32_t LnnSyncP2pInfo(void)
+SOFTBUS_SYMBOL_EXPORT int32_t LnnSyncP2pInfo(void)
 {
     int32_t rc = LnnAsyncCallbackHelper(GetLooper(LOOP_TYPE_DEFAULT), ProcessSyncP2pInfo, NULL);
     if (rc != SOFTBUS_OK) {
@@ -349,7 +350,7 @@ int32_t LnnInitLocalP2pInfo(NodeInfo *info)
     return SOFTBUS_OK;
 }
 
-int32_t LnnInitP2p(void)
+SOFTBUS_VISIBILITY int32_t LnnInitP2p(void)
 {
     if (LnnInitPtkPacked() != SOFTBUS_OK) {
         LNN_LOGE(LNN_INIT, "init ptk fail");
@@ -363,19 +364,19 @@ int32_t LnnInitP2p(void)
     return LnnRegSyncInfoHandler(LNN_INFO_TYPE_P2P_INFO, OnReceiveP2pSyncInfoMsg);
 }
 
-void LnnDeinitP2p(void)
+SOFTBUS_VISIBILITY void LnnDeinitP2p(void)
 {
     LnnDeinitPtkPacked();
     LnnDeinitBroadcastLinkKeyPacked();
     (void)LnnUnregSyncInfoHandler(LNN_INFO_TYPE_P2P_INFO, OnReceiveP2pSyncInfoMsg);
 }
 
-int32_t LnnInitWifiDirect(void)
+SOFTBUS_VISIBILITY int32_t LnnInitWifiDirect(void)
 {
     return LnnRegSyncInfoHandler(LNN_INFO_TYPE_WIFI_DIRECT, OnReceiveWifiDirectSyncAddr);
 }
 
-void LnnDeinitWifiDirect(void)
+SOFTBUS_VISIBILITY void LnnDeinitWifiDirect(void)
 {
     (void)LnnUnregSyncInfoHandler(LNN_INFO_TYPE_WIFI_DIRECT, OnReceiveWifiDirectSyncAddr);
 }

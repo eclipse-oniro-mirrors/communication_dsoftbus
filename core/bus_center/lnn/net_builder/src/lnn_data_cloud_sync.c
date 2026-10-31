@@ -35,6 +35,7 @@
 #include "lnn_p2p_info.h"
 #include "softbus_adapter_json.h"
 #include "softbus_adapter_mem.h"
+#include "softbus_def.h"
 #include "softbus_utils.h"
 
 #define APPID                "dsoftbus"
@@ -1442,7 +1443,7 @@ int32_t LnnSyncLedgerMultiInfoToCloud(NodeInfo *info, UserInfo *userInfo, bool i
     return ret;
 }
 
-int32_t LnnLedgerAllDataSyncToDB(NodeInfo *info, bool isAckSeq, char *peerudid)
+SOFTBUS_VISIBILITY int32_t LnnLedgerAllDataSyncToDB(NodeInfo *info, bool isAckSeq, char *peerudid)
 {
     if (info == NULL) {
         LNN_LOGE(LNN_BUILDER, "invalid param, info is NULL");
@@ -1486,7 +1487,7 @@ int32_t LnnAsyncCallLedgerAllDataSyncToDB(NodeInfo *info)
     return rc;
 }
 
-int32_t LnnDeleteSyncToDB(int32_t userId, int64_t accountId, bool isMainScreenUserId)
+SOFTBUS_VISIBILITY int32_t LnnDeleteSyncToDB(int32_t userId, int64_t accountId, bool isMainScreenUserId)
 {
     NodeInfo localCacheInfo = { 0 };
     int32_t ret = LnnGetLocalCacheNodeInfoPacked(&localCacheInfo);
@@ -1555,7 +1556,7 @@ int32_t LnnDeleteDevInfoSyncToDB(const char *udid, int64_t accountId)
     return SOFTBUS_OK;
 }
 
-int32_t LnnSetCloudAbility(const bool isEnableCloud)
+SOFTBUS_VISIBILITY int32_t LnnSetCloudAbility(const bool isEnableCloud)
 {
     LNN_LOGI(LNN_BUILDER, "enter.");
     int32_t dbId = 0;

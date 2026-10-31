@@ -20,6 +20,11 @@ module_output_path = "dsoftbus/soft_bus/discovery"
 
 ohos_unittest("DiscNfcDispatcherTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "disc_nfc_dispatcher_test.cpp" ]
 
   include_dirs = [
@@ -34,15 +39,16 @@ ohos_unittest("DiscNfcDispatcherTest") {
     "$dsoftbus_root_path/interfaces/kits/disc",
     "$dsoftbus_root_path/core/discovery/interface",
     "$softbus_adapter_common/net/bluetooth/broadcast/interface",
-    "$dsoftbus_root_path/core/frame/init/include"
+    "$dsoftbus_root_path/core/frame/init/include",
   ]
 
   deps = [
     "$dsoftbus_dfx_path:softbus_dfx",
     "$dsoftbus_root_path/adapter:softbus_adapter",
-    "$dsoftbus_root_path/components/nstackx/nstackx_ctrl:nstackx_ctrl",
+    "$dsoftbus_root_path/components/nstackx/nstackx_ctrl",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [

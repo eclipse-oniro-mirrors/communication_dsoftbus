@@ -15,6 +15,7 @@
 
 #include "disc_coap.h"
 #include "stddef.h"
+#include "softbus_def.h"
 
 DiscoveryFuncInterface *DiscCoapInit(DiscInnerCallback *discInnerCb)
 {
@@ -27,7 +28,7 @@ void DiscCoapDeinit(void)
     return;
 }
 
-uint32_t GetDiscCapability(void)
+SOFTBUS_SYMBOL_EXPORT uint32_t GetDiscCapability(void)
 {
     return 0;
 }

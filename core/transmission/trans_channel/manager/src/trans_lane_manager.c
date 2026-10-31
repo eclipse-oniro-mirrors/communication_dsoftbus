@@ -198,7 +198,7 @@ void TransSocketLaneMgrDeinit(void)
     g_socketChannelList = NULL;
 }
 
-int32_t TransLaneMgrAddLane(
+SOFTBUS_VISIBILITY int32_t TransLaneMgrAddLane(
     const TransInfo *transInfo, const LaneConnInfo *connInfo, uint32_t laneHandle, bool isQosLane, AppInfoData *myData)
 {
     if (transInfo == NULL || g_channelLaneList == NULL || connInfo == NULL || myData == NULL) {
@@ -246,7 +246,7 @@ int32_t TransLaneMgrAddLane(
     return SOFTBUS_OK;
 }
 
-int32_t TransLaneMgrDelLane(int32_t channelId, int32_t channelType, bool isAsync)
+SOFTBUS_VISIBILITY int32_t TransLaneMgrDelLane(int32_t channelId, int32_t channelType, bool isAsync)
 {
     if (g_channelLaneList == NULL) {
         TRANS_LOGE(TRANS_INIT, "trans lane manager hasn't init.");
@@ -320,7 +320,7 @@ void TransLaneMgrDeathCallback(const char *pkgName, int32_t pid)
     return;
 }
 
-int32_t TransGetLaneHandleByChannelId(int32_t channelId, uint32_t *laneHandle)
+SOFTBUS_VISIBILITY int32_t TransGetLaneHandleByChannelId(int32_t channelId, uint32_t *laneHandle)
 {
     if (g_channelLaneList == NULL || laneHandle == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -340,7 +340,7 @@ int32_t TransGetLaneHandleByChannelId(int32_t channelId, uint32_t *laneHandle)
     return SOFTBUS_TRANS_NODE_NOT_FOUND;
 }
 
-int32_t TransGetLaneIdByChannelId(int32_t channelId, uint64_t *laneId)
+SOFTBUS_VISIBILITY int32_t TransGetLaneIdByChannelId(int32_t channelId, uint64_t *laneId)
 {
     if (g_channelLaneList == NULL || laneId == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -360,7 +360,8 @@ int32_t TransGetLaneIdByChannelId(int32_t channelId, uint64_t *laneId)
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t TransGetChannelInfoByLaneHandle(uint32_t laneHandle, int32_t *channelId, int32_t *channelType)
+SOFTBUS_SYMBOL_EXPORT int32_t TransGetChannelInfoByLaneHandle(uint32_t laneHandle, int32_t *channelId,
+    int32_t *channelType)
 {
     if (g_channelLaneList == NULL || channelId == NULL || channelType == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -979,6 +980,7 @@ int32_t TransGetSocketChannelStateByChannel(int32_t channelId, int32_t channelTy
     return SOFTBUS_NOT_FIND;
 }
 
+SOFTBUS_VISIBILITY
 int32_t TransGetPidFromSocketChannelInfoBySession(const char *sessionName, int32_t sessionId, int32_t *pid)
 {
     int32_t ret = CheckParamIsValid(sessionName, sessionId);

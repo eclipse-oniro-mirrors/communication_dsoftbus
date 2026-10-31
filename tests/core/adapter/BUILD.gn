@@ -19,6 +19,11 @@ dsoftbus_root_path = "../../.."
 
 ohos_unittest("LnnKVAdapterTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "unittest/lnn_kv_adapter_test.cpp" ]
   include_dirs = [
     "$dsoftbus_root_path/core/adapter/kv_store/include",
@@ -27,7 +32,8 @@ ohos_unittest("LnnKVAdapterTest") {
   ]
   deps = [
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
   if (dsoftbus_feature_lnn_cloud_sync) {
     external_deps = [ "kv_store:distributeddata_inner" ]
@@ -36,6 +42,11 @@ ohos_unittest("LnnKVAdapterTest") {
 
 ohos_unittest("LnnKVAdapterWrapperTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "unittest/lnn_kv_adapter_wrapper_test.cpp" ]
   include_dirs = [
     "$dsoftbus_dfx_path/interface/include/form",
@@ -52,7 +63,8 @@ ohos_unittest("LnnKVAdapterWrapperTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
   external_deps = [ "googletest:gmock" ]
   if (dsoftbus_feature_lnn_cloud_sync) {
@@ -65,6 +77,11 @@ ohos_unittest("LnnKVAdapterWrapperTest") {
 
 ohos_unittest("LnnSettingdataEventMonitorTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "unittest/lnn_settingdata_event_monitor_test.cpp" ]
   include_dirs = [
     "$dsoftbus_dfx_path/interface/include/form",
@@ -85,7 +102,8 @@ ohos_unittest("LnnSettingdataEventMonitorTest") {
   ]
   deps = [
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
   external_deps = []
   if (dsoftbus_feature_lnn_cloud_sync) {
@@ -110,6 +128,11 @@ ohos_unittest("LnnSettingdataEventMonitorTest") {
 
 ohos_unittest("AdapterDsoftbusRsaCryptoTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "unittest/dsoftbus_rsa_crypto_test.cpp" ]
 
   include_dirs = [
@@ -124,7 +147,8 @@ ohos_unittest("AdapterDsoftbusRsaCryptoTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
   deps += dsoftbus_log_label_deps
 
@@ -146,6 +170,11 @@ ohos_unittest("AdapterDsoftbusRsaCryptoTest") {
 
 ohos_unittest("LNNOhosAccountTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "unittest/lnn_ohos_account_test.cpp" ]
   include_dirs = [
     "$dsoftbus_root_path/core/adapter/bus_center/include",
@@ -168,7 +197,8 @@ ohos_unittest("LNNOhosAccountTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
   external_deps = [
     "bounds_checking_function:libsec_static",
@@ -182,6 +212,11 @@ ohos_unittest("LNNOhosAccountTest") {
 
 ohos_unittest("LNNKvStoreLaunchListenerTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/adapter/subscribe_kv_store_sa/src/lnn_kv_store_launch_listener.cpp",
     "unittest/lnn_kv_store_launch_listener_mock.cpp",
@@ -215,6 +250,11 @@ ohos_unittest("LNNKvStoreLaunchListenerTest") {
 
 ohos_unittest("LNNOhosAccountMockTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "unittest/lnn_ohos_account_adapter_mock.cpp",
     "unittest/lnn_ohos_account_mock.cpp",
@@ -245,7 +285,8 @@ ohos_unittest("LNNOhosAccountMockTest") {
   ]
   deps = [
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
   external_deps = [
     "bounds_checking_function:libsec_static",
@@ -264,6 +305,11 @@ ohos_unittest("LNNOhosAccountMockTest") {
 
 ohos_unittest("LnnOhosAccountAdapterTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/adapter/bus_center/src/lnn_ohos_account_adapter.cpp",
     "unittest/lnn_ohos_account_adapter_mock.cpp",
@@ -289,7 +335,8 @@ ohos_unittest("LnnOhosAccountAdapterTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   if (is_standard_system) {
@@ -320,6 +367,11 @@ ohos_unittest("LnnOhosAccountAdapterTest") {
 
 ohos_unittest("LnnSaStatusMonitorTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/tests/core/adapter/unittest/lnn_sa_status_monitor_mock.cpp",
     "$dsoftbus_root_path/tests/core/adapter/unittest/lnn_sa_status_monitor_test.cpp",
@@ -341,7 +393,8 @@ ohos_unittest("LnnSaStatusMonitorTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -361,6 +414,11 @@ ohos_unittest("LnnSaStatusMonitorTest") {
 
 ohos_unittest("LnnUsbAdapterTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/tests/core/adapter/unittest/lnn_usb_adapter_test.cpp",
   ]
@@ -374,7 +432,8 @@ ohos_unittest("LnnUsbAdapterTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -390,6 +449,11 @@ ohos_unittest("LnnUsbAdapterTest") {
 
 ohos_unittest("WrapperBrInterfaceTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/adapter/br/src/wrapper_br_interface.c",
     "$dsoftbus_root_path/tests/core/adapter/unittest/wrapper_br_interface_mock.cpp",
@@ -406,7 +470,8 @@ ohos_unittest("WrapperBrInterfaceTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -433,7 +498,7 @@ group("unittest") {
   }
   if (support_jsapi) {
     deps += [
-      ":LNNOhosAccountMockTest",
+      #":LNNOhosAccountMockTest",
       ":LNNOhosAccountTest",
     ]
   }

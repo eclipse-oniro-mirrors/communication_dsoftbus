@@ -27,6 +27,7 @@
 #include "softbus_error_code.h"
 #include "softbus_utils.h"
 #include "wifi_direct_manager.h"
+#include "softbus_def.h"
 
 static DiscVirlinkLinklessRecvCb g_discVirLinkLinklessCb = NULL;
 static struct DiscVirlinkConnStatusListener g_discVirlinkConnStatusListener = {NULL};
@@ -49,7 +50,7 @@ static int32_t VirLinkLinklessGetWifiDirectAuthByNetworkId(const char *networkId
     return SOFTBUS_INVALID_PARAM;
 }
 
-int DiscVirlinkLinklessVirtualSend(const char *networkId, const uint8_t *data, uint32_t dataLen)
+SOFTBUS_SYMBOL_EXPORT int DiscVirlinkLinklessVirtualSend(const char *networkId, const uint8_t *data, uint32_t dataLen)
 {
     if (networkId == NULL || data == NULL || dataLen == 0) {
         DISC_LOGE(DISC_BROADCAST, "invalid param");
@@ -169,7 +170,7 @@ static struct WifiDirectStatusListener g_virlinkWifiDirectStatusListener = {
     NULL,
 };
 
-void DiscVirlinkLinklessRegisterListener(const struct DiscVirlinkConnStatusListener *listener)
+SOFTBUS_SYMBOL_EXPORT void DiscVirlinkLinklessRegisterListener(const struct DiscVirlinkConnStatusListener *listener)
 {
     if (listener != NULL && listener->onDeviceOnline != NULL && listener->onDeviceOffline != NULL) {
         g_discVirlinkConnStatusListener.onDeviceOnline = listener->onDeviceOnline;
@@ -178,7 +179,7 @@ void DiscVirlinkLinklessRegisterListener(const struct DiscVirlinkConnStatusListe
     }
 }
 
-int DiscVirlinkLinklessRegisterRecvCallback(DiscVirlinkLinklessRecvCb recvCb)
+SOFTBUS_SYMBOL_EXPORT int DiscVirlinkLinklessRegisterRecvCallback(DiscVirlinkLinklessRecvCb recvCb)
 {
     AuthTransListener linklessCb = {
         .onDataReceived = OnVirlinkLinklessMsgRecv,

@@ -1627,7 +1627,7 @@ int32_t DiscStopDiscovery(const char *packageName, int32_t subscribeId, int32_t 
     return InnerStopDiscovery(packageName, subscribeId, SUBSCRIBE_SERVICE, callingPid);
 }
 
-void DiscLinkStatusChanged(LinkStatus status, ExchangeMedium medium, int32_t ifnameIdx)
+SOFTBUS_VISIBILITY void DiscLinkStatusChanged(LinkStatus status, ExchangeMedium medium, int32_t ifnameIdx)
 {
     DISC_LOGI(DISC_CONTROL, "link status changed, status=%{public}d, medium=%{public}d, ifnameIdx=%{public}d",
         status, medium, ifnameIdx);
@@ -1638,7 +1638,7 @@ void DiscLinkStatusChanged(LinkStatus status, ExchangeMedium medium, int32_t ifn
     }
 }
 
-void DiscDeviceInfoChanged(InfoTypeChanged type)
+SOFTBUS_VISIBILITY void DiscDeviceInfoChanged(InfoTypeChanged type)
 {
     DISC_LOGI(DISC_CONTROL, "type=%{public}d", type);
     if (g_discBleInterface != NULL && g_discBleInterface->UpdateLocalDeviceInfo != NULL) {
@@ -2039,7 +2039,7 @@ CLEANUP:
     return ret;
 }
 
-int32_t DiscGetDisplayName(char *displayName, uint32_t length, uint32_t remainLen)
+SOFTBUS_SYMBOL_EXPORT int32_t DiscGetDisplayName(char *displayName, uint32_t length, uint32_t remainLen)
 {
     DISC_CHECK_AND_RETURN_RET_LOGE((displayName != NULL && remainLen > 0 && remainLen <= DISPLAY_NAME_BUF_LEN),
         SOFTBUS_INVALID_PARAM, DISC_CONTROL, "invalid param");

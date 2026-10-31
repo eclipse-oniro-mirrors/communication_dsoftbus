@@ -27,6 +27,7 @@
 #include "softbus_broadcast_utils_struct.h"
 #include "softbus_broadcast_type.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 #define GATT_ADV_MAX_NUM            21
 #define LP_BT_UUID_BURST            "43d4a49f-604d-45b5-9302-4ddbbfd538fd"
@@ -1211,7 +1212,7 @@ static SoftBusBtStateListener g_softbusBcAdapterBtStateListener = {
     .OnBtAclStateChanged = NULL,
 };
 
-void SoftbusBleAdapterInit(void)
+SOFTBUS_SYMBOL_EXPORT void SoftbusBleAdapterInit(void)
 {
     DISC_LOGI(DISC_BLE_ADAPTER, "enter");
     static SoftbusBroadcastMediumInterface interface = {
@@ -1253,7 +1254,7 @@ void SoftbusBleAdapterInit(void)
     }
 }
 
-void SoftbusBleAdapterDeInit(void)
+SOFTBUS_SYMBOL_EXPORT void SoftbusBleAdapterDeInit(void)
 {
     if (g_adapterBtStateListenerId != -1) {
         int32_t ret = SoftBusRemoveBtStateListener(g_adapterBtStateListenerId);

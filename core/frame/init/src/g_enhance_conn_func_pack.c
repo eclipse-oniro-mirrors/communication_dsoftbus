@@ -17,8 +17,9 @@
 #include "g_enhance_conn_func.h"
 #include "softbus_error_code.h"
 #include "softbus_init_common.h"
+#include "softbus_def.h"
 
-int32_t ConnCoapStartServerListenPacked(void)
+SOFTBUS_VISIBILITY int32_t ConnCoapStartServerListenPacked(void)
 {
     ConnEnhanceFuncList *pfnConnEnhanceFuncList = ConnEnhanceFuncListGet();
     if (ConnCheckFuncPointer((void *)pfnConnEnhanceFuncList->connCoapStartServerListen) != SOFTBUS_OK) {
@@ -27,7 +28,7 @@ int32_t ConnCoapStartServerListenPacked(void)
     return pfnConnEnhanceFuncList->connCoapStartServerListen();
 }
 
-void ConnCoapStopServerListenPacked(void)
+SOFTBUS_VISIBILITY void ConnCoapStopServerListenPacked(void)
 {
     ConnEnhanceFuncList *pfnConnEnhanceFuncList = ConnEnhanceFuncListGet();
     if (ConnCheckFuncPointer((void *)pfnConnEnhanceFuncList->connCoapStopServerListen) != SOFTBUS_OK) {
@@ -36,7 +37,7 @@ void ConnCoapStopServerListenPacked(void)
     return pfnConnEnhanceFuncList->connCoapStopServerListen();
 }
 
-void SoftbusBleConflictNotifyDisconnectPacked(const char *addr, const char *udid)
+SOFTBUS_VISIBILITY void SoftbusBleConflictNotifyDisconnectPacked(const char *addr, const char *udid)
 {
     ConnEnhanceFuncList *pfnConnEnhanceFuncList = ConnEnhanceFuncListGet();
     if (ConnCheckFuncPointer((void *)pfnConnEnhanceFuncList->softbusBleConflictNotifyDisconnect) != SOFTBUS_OK) {
@@ -45,6 +46,7 @@ void SoftbusBleConflictNotifyDisconnectPacked(const char *addr, const char *udid
     return pfnConnEnhanceFuncList->softbusBleConflictNotifyDisconnect(addr, udid);
 }
 
+SOFTBUS_VISIBILITY
 void SoftbusBleConflictNotifyDateReceivePacked(int32_t underlayerHandle, const uint8_t *data, uint32_t dataLen)
 {
     ConnEnhanceFuncList *pfnConnEnhanceFuncList = ConnEnhanceFuncListGet();
@@ -54,6 +56,7 @@ void SoftbusBleConflictNotifyDateReceivePacked(int32_t underlayerHandle, const u
     return pfnConnEnhanceFuncList->softbusBleConflictNotifyDateReceive(underlayerHandle, data, dataLen);
 }
 
+SOFTBUS_VISIBILITY
 void SoftbusBleConflictNotifyConnectResultPacked(uint32_t requestId, int32_t underlayerHandle, bool status)
 {
     ConnEnhanceFuncList *pfnConnEnhanceFuncList = ConnEnhanceFuncListGet();
@@ -63,7 +66,7 @@ void SoftbusBleConflictNotifyConnectResultPacked(uint32_t requestId, int32_t und
     return pfnConnEnhanceFuncList->softbusBleConflictNotifyConnectResult(requestId, underlayerHandle, status);
 }
 
-void SoftbusBleConflictRegisterListenerPacked(SoftBusBleConflictListener *listener)
+SOFTBUS_VISIBILITY void SoftbusBleConflictRegisterListenerPacked(SoftBusBleConflictListener *listener)
 {
     ConnEnhanceFuncList *pfnConnEnhanceFuncList = ConnEnhanceFuncListGet();
     if (ConnCheckFuncPointer((void *)pfnConnEnhanceFuncList->softbusBleConflictRegisterListener) != SOFTBUS_OK) {
@@ -72,7 +75,7 @@ void SoftbusBleConflictRegisterListenerPacked(SoftBusBleConflictListener *listen
     return pfnConnEnhanceFuncList->softbusBleConflictRegisterListener(listener);
 }
 
-int32_t ConnExtInitPacked(void)
+SOFTBUS_VISIBILITY int32_t ConnExtInitPacked(void)
 {
     ConnEnhanceFuncList *pfnConnEnhanceFuncList = ConnEnhanceFuncListGet();
     if (ConnCheckFuncPointer((void *)pfnConnEnhanceFuncList->connExtInit) != SOFTBUS_OK) {
@@ -81,7 +84,7 @@ int32_t ConnExtInitPacked(void)
     return pfnConnEnhanceFuncList->connExtInit();
 }
 
-bool ConnBleDirectIsEnablePacked(BleProtocolType protocol)
+SOFTBUS_VISIBILITY bool ConnBleDirectIsEnablePacked(BleProtocolType protocol)
 {
     ConnEnhanceFuncList *pfnConnEnhanceFuncList = ConnEnhanceFuncListGet();
     if (ConnCheckFuncPointer((void *)pfnConnEnhanceFuncList->connBleDirectIsEnable) != SOFTBUS_OK) {
@@ -90,7 +93,7 @@ bool ConnBleDirectIsEnablePacked(BleProtocolType protocol)
     return pfnConnEnhanceFuncList->connBleDirectIsEnable(protocol);
 }
 
-int32_t ConnBleDirectConnectDevicePacked(const ConnectOption *option, uint32_t reqId, const ConnectResult* result)
+SOFTBUS_VISIBILITY int32_t ConnBleDirectConnectDevicePacked(const ConnectOption *option, uint32_t reqId, const ConnectResult* result)
 {
     ConnEnhanceFuncList *pfnConnEnhanceFuncList = ConnEnhanceFuncListGet();
     if (ConnCheckFuncPointer((void *)pfnConnEnhanceFuncList->connBleDirectConnectDevice) != SOFTBUS_OK) {
@@ -99,7 +102,7 @@ int32_t ConnBleDirectConnectDevicePacked(const ConnectOption *option, uint32_t r
     return pfnConnEnhanceFuncList->connBleDirectConnectDevice(option, reqId, result);
 }
 
-ConnectFuncInterface *ConnSleInitPacked(const ConnectCallback *callback)
+SOFTBUS_VISIBILITY ConnectFuncInterface *ConnSleInitPacked(const ConnectCallback *callback)
 {
     ConnEnhanceFuncList *pfnConnEnhanceFuncList = ConnEnhanceFuncListGet();
     if (ConnCheckFuncPointer((void *)pfnConnEnhanceFuncList->connSleInit) != SOFTBUS_OK) {
@@ -108,7 +111,7 @@ ConnectFuncInterface *ConnSleInitPacked(const ConnectCallback *callback)
     return pfnConnEnhanceFuncList->connSleInit(callback);
 }
 
-int32_t ConnDirectConnectDevicePacked(const ConnectOption *option, uint32_t reqId, const ConnectResult* result)
+SOFTBUS_VISIBILITY int32_t ConnDirectConnectDevicePacked(const ConnectOption *option, uint32_t reqId, const ConnectResult* result)
 {
     ConnEnhanceFuncList *pfnConnEnhanceFuncList = ConnEnhanceFuncListGet();
     if (ConnCheckFuncPointer((void *)pfnConnEnhanceFuncList->connDirectConnectDevice) != SOFTBUS_OK) {
@@ -117,7 +120,7 @@ int32_t ConnDirectConnectDevicePacked(const ConnectOption *option, uint32_t reqI
     return pfnConnEnhanceFuncList->connDirectConnectDevice(option, reqId, result);
 }
 
-int32_t ConnPagingConnectInitPacked(void)
+SOFTBUS_VISIBILITY int32_t ConnPagingConnectInitPacked(void)
 {
     ConnEnhanceFuncList *pfnConnEnhanceFuncList = ConnEnhanceFuncListGet();
     if (ConnCheckFuncPointer((void *)pfnConnEnhanceFuncList->connPagingConnectInit) != SOFTBUS_OK) {

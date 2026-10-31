@@ -180,7 +180,7 @@ static void GattcServiceChangeCallback(int32_t clientId)
     cb.onServiceChanged(clientId);
 }
 
-int32_t SoftbusGattcRegisterCallback(SoftBusGattcCallback *cb, int32_t clientId)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftbusGattcRegisterCallback(SoftBusGattcCallback *cb, int32_t clientId)
 {
     CONN_CHECK_AND_RETURN_RET_LOGE(cb != NULL, SOFTBUS_INVALID_PARAM, CONN_BLE, "cb is null");
     CONN_CHECK_AND_RETURN_RET_LOGE(cb->connectionStateCallback != NULL, SOFTBUS_INVALID_PARAM, CONN_BLE,
@@ -235,7 +235,7 @@ static void GetGattcCallback(int32_t clientId, SoftBusGattcCallback *cb)
     (void)SoftBusMutexUnlock(&g_softBusGattcManager->lock);
 }
 
-int32_t SoftbusGattcRegister(void)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftbusGattcRegister(void)
 {
     BtUuid appId;
     char uuid[APP_UUID_LEN] = { 0xEE, 0xFD };
@@ -250,7 +250,7 @@ int32_t SoftbusGattcRegister(void)
     return clientId;
 }
 
-int32_t SoftbusGattcUnRegister(int32_t clientId)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftbusGattcUnRegister(int32_t clientId)
 {
     CONN_LOGI(CONN_BLE, "clientId=%{public}d", clientId);
     int32_t ret = SOFTBUS_OK;
@@ -352,7 +352,7 @@ static void SoftbusGattcDeleteMacAddrFromList(int32_t clientId)
     (void)SoftBusMutexUnlock(&g_btAddrs->lock);
 }
 
-int32_t SoftbusGattcConnect(int32_t clientId, SoftBusBtAddr *addr)
+SOFTBUS_VISIBILITY int32_t SoftbusGattcConnect(int32_t clientId, SoftBusBtAddr *addr)
 {
     CONN_CHECK_AND_RETURN_RET_LOGE(addr != NULL, SOFTBUS_INVALID_PARAM, CONN_BLE, "addr is NULL");
     BdAddr bdAddr = {0};
@@ -377,7 +377,7 @@ int32_t SoftbusGattcConnect(int32_t clientId, SoftBusBtAddr *addr)
     return SOFTBUS_OK;
 }
 
-int32_t SoftbusBleGattcDisconnect(int32_t clientId, bool refreshGatt)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftbusBleGattcDisconnect(int32_t clientId, bool refreshGatt)
 {
     SoftbusGattcDeleteMacAddrFromList(clientId);
     (void)refreshGatt;
@@ -388,7 +388,7 @@ int32_t SoftbusBleGattcDisconnect(int32_t clientId, bool refreshGatt)
     return SOFTBUS_OK;
 }
 
-int32_t SoftbusGattcSearchServices(int32_t clientId)
+SOFTBUS_VISIBILITY int32_t SoftbusGattcSearchServices(int32_t clientId)
 {
     CONN_LOGI(CONN_BLE, "input param clientId=%{public}d", clientId);
     int32_t status = BleOhosStatusToSoftBus(BleGattcSearchServices(clientId));
@@ -399,13 +399,13 @@ int32_t SoftbusGattcSearchServices(int32_t clientId)
     return SOFTBUS_OK;
 }
 
-int32_t SoftbusGattcRefreshServices(int32_t clientId)
+SOFTBUS_VISIBILITY int32_t SoftbusGattcRefreshServices(int32_t clientId)
 {
     CONN_LOGI(CONN_BLE, "input param clientId = %{public}d", clientId);
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t SoftbusGattcGetService(int32_t clientId, SoftBusBtUuid *serverUuid)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftbusGattcGetService(int32_t clientId, SoftBusBtUuid *serverUuid)
 {
     if (clientId <= 0 || serverUuid == NULL) {
         CONN_LOGE(CONN_BLE, "invalid param");
@@ -443,7 +443,7 @@ int32_t SoftbusGattcRegisterNotification(
     return SOFTBUS_OK;
 }
 
-int32_t SoftbusGattcConfigureMtuSize(int32_t clientId, int mtuSize)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftbusGattcConfigureMtuSize(int32_t clientId, int mtuSize)
 {
     if (clientId <= 0) {
         CONN_LOGE(CONN_BLE, "invalid param");
@@ -513,7 +513,7 @@ int32_t SoftbusGattcWriteCharacteristic(int32_t clientId, SoftBusGattcData *clie
     return SOFTBUS_OK;
 }
 
-int32_t SoftbusGattcSetFastestConn(int32_t clientId)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftbusGattcSetFastestConn(int32_t clientId)
 {
     if (clientId <= 0) {
         CONN_LOGE(CONN_BLE, "invalid param, clientId=%{public}d", clientId);

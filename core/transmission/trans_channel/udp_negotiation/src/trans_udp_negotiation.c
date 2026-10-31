@@ -332,7 +332,8 @@ int32_t NotifyUdpChannelOpenFailed(const AppInfo *info, int32_t errCode)
     return ret;
 }
 
-int32_t NotifyUdpQosEvent(const AppInfo *info, int32_t eventId, int32_t tvCount, const QosTv *tvList)
+SOFTBUS_SYMBOL_EXPORT int32_t NotifyUdpQosEvent(const AppInfo *info, int32_t eventId, int32_t tvCount,
+    const QosTv *tvList)
 {
     TRANS_LOGI(TRANS_QOS, "notify udp qos eventId=%{public}d.", eventId);
     TRANS_CHECK_AND_RETURN_RET_LOGE(g_channelCb != NULL, SOFTBUS_TRANS_INIT_FAILED,
@@ -1371,7 +1372,7 @@ static int32_t TransUdpGetChannelAndOpenConn(int32_t channelId)
     return SOFTBUS_OK;
 }
 
-int32_t TransOpenUdpChannel(AppInfo *appInfo, const ConnectOption *connOpt, int32_t *channelId)
+SOFTBUS_VISIBILITY int32_t TransOpenUdpChannel(AppInfo *appInfo, const ConnectOption *connOpt, int32_t *channelId)
 {
     TRANS_LOGI(TRANS_CTRL, "server trans open udp channel.");
     if (appInfo == NULL || connOpt == NULL || channelId == NULL) {

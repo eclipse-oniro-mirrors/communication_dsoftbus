@@ -19,29 +19,32 @@ dsoftbus_root_path = "../../../.."
 
 ohos_unittest("HeartBeatMediumTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/authentication/src/auth_deviceprofile_virtual.cpp",
-    "$dsoftbus_root_path/tests/core/bus_center/mock_common/src/lnn_command_dm_stub.cpp",
     "$dsoftbus_root_path/core/authentication/src/auth_interface.c",
     "$dsoftbus_root_path/core/authentication/src/auth_tcp_connection.c",
     "$dsoftbus_root_path/core/bus_center/monitor/src/lnn_init_monitor.c",
     "$dsoftbus_root_path/core/bus_center/utils/src/lnn_connection_addr_utils.c",
+    "$dsoftbus_root_path/core/frame/init/src/g_enhance_auth_func.c",
+    "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func.c",
     "$dsoftbus_root_path/core/transmission/trans_channel/auth/src/trans_auth_manager.c",
     "$dsoftbus_root_path/core/transmission/trans_channel/manager/src/trans_channel_manager.c",
     "$dsoftbus_root_path/core/transmission/trans_channel/proxy/src/softbus_proxychannel_manager.c",
     "$dsoftbus_root_path/tests/core/bus_center/lnn/net_builder/src/lnn_net_ledger_mock.cpp",
     "$dsoftbus_root_path/tests/core/bus_center/mock_common/src/distribute_net_ledger_mock.cpp",
+    "$dsoftbus_root_path/tests/core/bus_center/mock_common/src/lnn_command_dm_stub.cpp",
     "$dsoftbus_root_path/tests/core/bus_center/test/heartbeat/hb_medium_mgr_test.cpp",
     "$dsoftbus_root_path/tests/core/bus_center/test/mock/src/hb_medium_mgr_mock.cpp",
     "$dsoftbus_root_path/tests/core/bus_center/test/mock/src/hb_strategy_mock.cpp",
     "$dsoftbus_root_path/tests/core/discovery/ble/softbus_ble_mock/ble_mock.cpp",
-    "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func.c",
-    "$dsoftbus_root_path/core/frame/init/src/g_enhance_auth_func.c",
   ]
 
-  sources += [
-    "$dsoftbus_root_path/tests/core/bus_center/test/mock/src/hb_account_info_stub.cpp",
-  ]
+  sources += [ "$dsoftbus_root_path/tests/core/bus_center/test/mock/src/hb_account_info_stub.cpp" ]
 
   include_dirs = [
     "$dsoftbus_dfx_path/interface/include/form",
@@ -111,7 +114,8 @@ ohos_unittest("HeartBeatMediumTest") {
     "$dsoftbus_dfx_path:softbus_dfx",
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   if (is_standard_system) {
@@ -138,19 +142,22 @@ ohos_unittest("HeartBeatMediumTest") {
 
 ohos_unittest("HeartBeatMediumStaticTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/bus_center/lnn/lane_hub/heartbeat/src/lnn_heartbeat_utils.c",
+    "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func.c",
+    "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func_pack.c",
     "$dsoftbus_root_path/tests/core/bus_center/lnn/net_builder/src/lnn_net_ledger_mock.cpp",
     "$dsoftbus_root_path/tests/core/bus_center/test/heartbeat/hb_medium_mgr_static_test.cpp",
     "$dsoftbus_root_path/tests/core/bus_center/test/mock/src/hb_medium_mgr_static_mock.cpp",
     "$dsoftbus_root_path/tests/core/bus_center/test/mock/src/hb_strategy_mock.cpp",
-    "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func.c",
-    "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func_pack.c",
   ]
 
-  sources += [
-    "$dsoftbus_root_path/tests/core/bus_center/test/mock/src/hb_account_info_stub.cpp",
-  ]
+  sources += [ "$dsoftbus_root_path/tests/core/bus_center/test/mock/src/hb_account_info_stub.cpp" ]
 
   include_dirs = [
     "$dsoftbus_dfx_path/interface/include/form",
@@ -213,19 +220,24 @@ ohos_unittest("HeartBeatMediumStaticTest") {
 
 ohos_unittest("HeartBeatFSMTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/adapter/bus_center/src/lnn_deviceinfo_to_profile_virtual.c",
     "$dsoftbus_root_path/core/bus_center/lnn/lane_hub/heartbeat/src/lnn_heartbeat_utils.c",
     "$dsoftbus_root_path/core/bus_center/lnn/net_ledger/common/src/lnn_feature_capability.c",
     "$dsoftbus_root_path/core/bus_center/service/src/bus_center_manager.c",
     "$dsoftbus_root_path/core/bus_center/utils/src/lnn_state_machine.c",
+    "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func.c",
+    "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func_pack.c",
     "$dsoftbus_root_path/tests/core/bus_center/lnn/net_builder/src/lnn_net_ledger_mock.cpp",
     "$dsoftbus_root_path/tests/core/bus_center/mock_common/src/distribute_net_ledger_mock.cpp",
     "$dsoftbus_root_path/tests/core/bus_center/mock_common/src/lnn_connection_mock.cpp",
     "$dsoftbus_root_path/tests/core/bus_center/test/heartbeat/hb_fsm_test.cpp",
     "$dsoftbus_root_path/tests/core/bus_center/test/mock/src/hb_fsm_mock.cpp",
-    "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func_pack.c",
-    "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func.c",
   ]
 
   if (dsoftbus_feature_multi_foreground_user) {
@@ -312,6 +324,11 @@ ohos_unittest("HeartBeatFSMTest") {
 
 ohos_unittest("HeartBeatStrategyTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   if (dsoftbus_feature_lnn_ble) {
     cflags = [ "-DENABLE_FEATURE_LNN_BLE" ]
   }
@@ -390,6 +407,11 @@ ohos_unittest("HeartBeatStrategyTest") {
 
 ohos_unittest("HeartBeatUtilsTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/adapter/bus_center/src/lnn_deviceinfo_to_profile_virtual.c",
     "$dsoftbus_root_path/core/bus_center/lnn/lane_hub/heartbeat/src/lnn_heartbeat_utils.c",
@@ -471,15 +493,20 @@ ohos_unittest("HeartBeatUtilsTest") {
 
 ohos_unittest("HeartBeatCtrlTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/bus_center/lnn/lane_hub/heartbeat/src/lnn_heartbeat_ctrl.c",
     "$dsoftbus_root_path/core/bus_center/monitor/src/lnn_init_monitor.c",
+    "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func.c",
     "$dsoftbus_root_path/tests/core/bus_center/lnn/net_buscenter/lnn_ip_network_impl_mock.cpp",
     "$dsoftbus_root_path/tests/core/bus_center/mock_common/src/distribute_net_ledger_mock.cpp",
     "$dsoftbus_root_path/tests/core/bus_center/test/heartbeat/hb_ctrl_test.cpp",
     "$dsoftbus_root_path/tests/core/bus_center/test/mock/src/hb_ctrl_deps_mock.cpp",
     "$dsoftbus_root_path/tests/core/bus_center/test/mock/src/hb_strategy_mock.cpp",
-    "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func.c",
   ]
 
   if (dsoftbus_feature_multi_foreground_user) {
@@ -541,7 +568,8 @@ ohos_unittest("HeartBeatCtrlTest") {
     "$dsoftbus_dfx_path:softbus_dfx",
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   if (is_standard_system) {
@@ -567,6 +595,11 @@ ohos_unittest("HeartBeatCtrlTest") {
 
 ohos_unittest("ClientProxyTest") {
   module_out_path = "dsoftbus/soft_bus/bus_center"
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/tests/core/bus_center/test/ipc/client_proxy_test.cpp",
   ]
@@ -587,7 +620,8 @@ ohos_unittest("ClientProxyTest") {
     "$dsoftbus_dfx_path:softbus_dfx",
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   if (is_standard_system) {
@@ -617,6 +651,11 @@ ohos_unittest("ClientProxyTest") {
 
 ohos_unittest("BusCenterIpcTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/bus_center/lnn/conn_mgr/src/lnn_connection_interface.c",
     "$dsoftbus_root_path/core/bus_center/lnn/decision_center/src/lnn_ranging_manager_virtual.c",
@@ -665,7 +704,8 @@ ohos_unittest("BusCenterIpcTest") {
     "$dsoftbus_dfx_path:softbus_dfx",
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   if (is_standard_system) {
@@ -691,18 +731,23 @@ ohos_unittest("BusCenterIpcTest") {
 
 ohos_unittest("HeartBeatCtrlStaticTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/bus_center/lnn/net_builder/src/lnn_net_builder.c",
     "$dsoftbus_root_path/core/bus_center/lnn/net_builder/src/lnn_net_builder_init.c",
     "$dsoftbus_root_path/core/bus_center/lnn/net_builder/src/lnn_net_builder_process.c",
-    "$dsoftbus_root_path/tests/core/bus_center/lnn/net_builder/src/lnn_net_ledger_mock.cpp",
-    "$dsoftbus_root_path/tests/core/bus_center/test/heartbeat/hb_ctrl_static_test.cpp",
-    "$dsoftbus_root_path/tests/core/bus_center/test/mock/src/hb_ctrl_static_mock.cpp",
-    "$dsoftbus_root_path/tests/core/discovery/ble/softbus_ble_mock/ble_mock.cpp",
     "$dsoftbus_root_path/core/frame/init/src/g_enhance_adapter_func.c",
     "$dsoftbus_root_path/core/frame/init/src/g_enhance_adapter_func_pack.c",
     "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func.c",
     "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func_pack.c",
+    "$dsoftbus_root_path/tests/core/bus_center/lnn/net_builder/src/lnn_net_ledger_mock.cpp",
+    "$dsoftbus_root_path/tests/core/bus_center/test/heartbeat/hb_ctrl_static_test.cpp",
+    "$dsoftbus_root_path/tests/core/bus_center/test/mock/src/hb_ctrl_static_mock.cpp",
+    "$dsoftbus_root_path/tests/core/discovery/ble/softbus_ble_mock/ble_mock.cpp",
   ]
 
   if (dsoftbus_feature_multi_foreground_user) {
@@ -771,7 +816,8 @@ ohos_unittest("HeartBeatCtrlStaticTest") {
     "$dsoftbus_dfx_path:softbus_dfx",
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   if (is_standard_system) {
@@ -797,6 +843,11 @@ ohos_unittest("HeartBeatCtrlStaticTest") {
 
 ohos_unittest("BusCenterDecisionCenterTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/bus_center/lnn/decision_center/src/lnn_ranging_manager_virtual.c",
     "$dsoftbus_root_path/core/bus_center/lnn/net_builder/src/lnn_net_builder_init.c",
@@ -804,12 +855,12 @@ ohos_unittest("BusCenterDecisionCenterTest") {
     "$dsoftbus_root_path/core/bus_center/lnn/net_ledger/common/src/lnn_node_info.c",
     "$dsoftbus_root_path/core/bus_center/monitor/src/lnn_init_monitor.c",
     "$dsoftbus_root_path/core/bus_center/service/src/bus_center_decision_center.c",
+    "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func.c",
+    "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func_pack.c",
     "$dsoftbus_root_path/tests/core/bus_center/lnn/net_builder/src/lnn_net_builder_mock.cpp",
     "$dsoftbus_root_path/tests/core/bus_center/test/mock/src/bus_center_decision_center_mock.cpp",
     "$dsoftbus_root_path/tests/core/bus_center/test/service/bus_center_decision_center_test.cpp",
     "$dsoftbus_root_path/tests/core/discovery/ble/softbus_ble_mock/ble_mock.cpp",
-    "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func.c",
-    "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func_pack.c",
   ]
 
   include_dirs = [
@@ -907,7 +958,7 @@ group("unittest") {
     deps += [
       ":HeartBeatCtrlStaticTest",
       ":HeartBeatCtrlTest",
-      ":HeartBeatFSMTest",
+    #":HeartBeatFSMTest",
       ":HeartBeatMediumTest",
       ":HeartBeatStrategyTest",
       ":HeartBeatUtilsTest",

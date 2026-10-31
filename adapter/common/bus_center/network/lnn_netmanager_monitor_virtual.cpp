@@ -17,21 +17,23 @@
 
 #include "lnn_init_monitor.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
-int32_t ConfigNetLinkUp(const char *ifName)
+SOFTBUS_SYMBOL_EXPORT int32_t ConfigNetLinkUp(const char *ifName)
 {
     (void)ifName;
     return SOFTBUS_FUNC_NOT_SUPPORT;
 }
 
-int32_t ConfigLocalIp(const char *ifName, const char *localIp)
+SOFTBUS_SYMBOL_EXPORT int32_t ConfigLocalIp(const char *ifName, const char *localIp)
 {
     (void)ifName;
     (void)localIp;
     return SOFTBUS_FUNC_NOT_SUPPORT;
 }
 
-int32_t ConfigRoute(const int32_t id, const char *ifName, const char *destination, const char *gateway)
+SOFTBUS_SYMBOL_EXPORT int32_t ConfigRoute(const int32_t id, const char *ifName, const char *destination,
+    const char *gateway)
 {
     (void)id;
     (void)ifName;
@@ -40,7 +42,7 @@ int32_t ConfigRoute(const int32_t id, const char *ifName, const char *destinatio
     return SOFTBUS_FUNC_NOT_SUPPORT;
 }
 
-int32_t ConfigLocalIpv6(const char *ifName, const char *localIpv6)
+SOFTBUS_SYMBOL_EXPORT int32_t ConfigLocalIpv6(const char *ifName, const char *localIpv6)
 {
     (void)ifName;
     (void)localIpv6;

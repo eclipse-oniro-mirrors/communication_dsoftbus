@@ -19,12 +19,13 @@
 #include "comm_log.h"
 #include "softbus_adapter_range.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 #define MOCK_POWER (-17)
 #define DB_BASE (10.0)
 #define DB_COEFFICIENT (20.0)
 
-int SoftBusBleRange(SoftBusRangeParam *param, int32_t *range)
+SOFTBUS_SYMBOL_EXPORT int SoftBusBleRange(SoftBusRangeParam *param, int32_t *range)
 {
     if (param == NULL || range == NULL) {
         COMM_LOGE(COMM_ADAPTER, "SoftBusBleRange param is null.");
@@ -35,7 +36,7 @@ int SoftBusBleRange(SoftBusRangeParam *param, int32_t *range)
     return SOFTBUS_OK;
 }
 
-int SoftBusGetBlePower(int8_t *power)
+SOFTBUS_SYMBOL_EXPORT int SoftBusGetBlePower(int8_t *power)
 {
     if (power == NULL) {
         COMM_LOGE(COMM_ADAPTER, "SoftBusGetBlePower param is null.");
