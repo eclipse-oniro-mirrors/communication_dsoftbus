@@ -939,8 +939,9 @@ static int CheckLocalDeviceInfo(const NSTACKX_LocalDeviceInfo *localDeviceInfo)
     }
 
     if (!StringHasEOF(localDeviceInfo->deviceId, sizeof(localDeviceInfo->deviceId)) ||
-        !StringHasEOF(localDeviceInfo->name, sizeof(localDeviceInfo->name))) {
-        DFINDER_LOGE(TAG, "device id or device name is not ended");
+        !StringHasEOF(localDeviceInfo->name, sizeof(localDeviceInfo->name)) ||
+        !StringHasEOF(localDeviceInfo->version, sizeof(localDeviceInfo->version))) {
+        DFINDER_LOGE(TAG, "device id or device name or version is not ended");
         return NSTACKX_EINVAL;
     }
 
@@ -963,6 +964,7 @@ static void DeviceInfoV2Init(NSTACKX_LocalDeviceInfoV2 *v2,
 {
     v2->name = localDeviceInfo->name;
     v2->deviceId = localDeviceInfo->deviceId;
+    v2->version = localDeviceInfo->version;
     v2->deviceType = localDeviceInfo->deviceType;
     v2->businessType = localDeviceInfo->businessType;
     v2->hasDeviceHash = hasDeviceHash;
@@ -1311,6 +1313,13 @@ static NSTACKX_LocalDeviceInfoV2 *RegisterInfoCreate(const NSTACKX_LocalDeviceIn
         return NULL;
     }
 
+    len = strnlen(localDeviceInfo->version, NSTACKX_MAX_HICOM_VERSION);
+    if (len >= NSTACKX_MAX_HICOM_VERSION) {
+        DFINDER_LOGE(TAG, "version is error");
+        free(infoV2);
+        return NULL;
+    }
+
     len = strnlen(localDeviceInfo->name, NSTACKX_MAX_DEVICE_NAME_LEN);
     if (len >= NSTACKX_MAX_DEVICE_NAME_LEN) {
         DFINDER_LOGE(TAG, "name is error");
@@ -1325,6 +1334,13 @@ static NSTACKX_LocalDeviceInfoV2 *RegisterInfoCreate(const NSTACKX_LocalDeviceIn
     }
     infoV2->name = DeviceStrCreate(localDeviceInfo->name, NSTACKX_MAX_DEVICE_NAME_LEN);
     if (infoV2->name == NULL) {
+        DFINDER_LOGE(TAG, "DeviceStrCreate name is error");
+        RegisterInfoFree(infoV2);
+        return NULL;
+    }
+
+    infoV2->version = DeviceStrCreate(localDeviceInfo->version, NSTACKX_MAX_HICOM_VERSION);
+    if (infoV2->version == NULL) {
         DFINDER_LOGE(TAG, "DeviceStrCreate name is error");
         RegisterInfoFree(infoV2);
         return NULL;
@@ -1369,7 +1385,8 @@ static struct RegDeviceInfo *RegisterDeviceCreate(const NSTACKX_LocalDeviceInfoV
 static int32_t RegisterDeviceWithType(const NSTACKX_LocalDeviceInfoV2 *localDeviceInfo, int registerType)
 {
     if (localDeviceInfo == NULL || localDeviceInfo->name == NULL ||
-        localDeviceInfo->deviceId == NULL || localDeviceInfo->ifNums > NSTACKX_MAX_LOCAL_IFACE_NUM ||
+        localDeviceInfo->deviceId == NULL || localDeviceInfo->version == NULL ||
+        localDeviceInfo->ifNums > NSTACKX_MAX_LOCAL_IFACE_NUM ||
         (localDeviceInfo->ifNums != 0 && localDeviceInfo->localIfInfo == NULL) ||
         CheckInterfaceInfo(localDeviceInfo->localIfInfo, localDeviceInfo->ifNums) != NSTACKX_EOK) {
         DFINDER_LOGE(TAG, "invalid args");
