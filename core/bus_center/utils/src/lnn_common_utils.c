@@ -18,8 +18,9 @@
 
 #include "g_enhance_lnn_func_pack.h"
 #include "softbus_adapter_mem.h"
+#include "softbus_def.h"
 
-bool IsEnableSoftBusHeartbeat(void)
+SOFTBUS_VISIBILITY bool IsEnableSoftBusHeartbeat(void)
 {
     return true;
 }
@@ -34,7 +35,7 @@ bool IsOOBEState(void)
     return state != SOFTBUS_OOBE_END;
 }
 
-int32_t LnnEncryptAesGcm(AesGcmInputParam *in, int32_t keyIndex, uint8_t **out, uint32_t *outLen)
+SOFTBUS_VISIBILITY int32_t LnnEncryptAesGcm(AesGcmInputParam *in, int32_t keyIndex, uint8_t **out, uint32_t *outLen)
 {
     if (in == NULL || out == NULL || outLen == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -68,7 +69,7 @@ int32_t LnnEncryptAesGcm(AesGcmInputParam *in, int32_t keyIndex, uint8_t **out, 
     return SOFTBUS_OK;
 }
 
-int32_t LnnDecryptAesGcm(AesGcmInputParam *in, uint8_t **out, uint32_t *outLen)
+SOFTBUS_VISIBILITY int32_t LnnDecryptAesGcm(AesGcmInputParam *in, uint8_t **out, uint32_t *outLen)
 {
     if (in == NULL || out == NULL || outLen == NULL) {
         return SOFTBUS_INVALID_PARAM;

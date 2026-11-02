@@ -31,7 +31,7 @@
 #define SWTICH_LENGTH_INVALID 0xFFFF
 #define SWITCH_MAX_LENGTH 24
 
-bool LnnHasDiscoveryType(const NodeInfo *info, DiscoveryType type)
+SOFTBUS_VISIBILITY bool LnnHasDiscoveryType(const NodeInfo *info, DiscoveryType type)
 {
     if (info == NULL || type >= DISCOVERY_TYPE_COUNT) {
         LNN_LOGE(LNN_LEDGER, "para error");
@@ -43,7 +43,7 @@ bool LnnHasDiscoveryType(const NodeInfo *info, DiscoveryType type)
     return false;
 }
 
-const char *LnnGetDeviceUdid(const NodeInfo *info)
+SOFTBUS_VISIBILITY const char *LnnGetDeviceUdid(const NodeInfo *info)
 {
     if (info == NULL) {
         return NULL;
@@ -71,7 +71,7 @@ const char *LnnGetDeviceUuid(const NodeInfo *info)
     return info->uuid;
 }
 
-int32_t LnnSetDiscoveryType(NodeInfo *info, DiscoveryType type)
+SOFTBUS_SYMBOL_EXPORT int32_t LnnSetDiscoveryType(NodeInfo *info, DiscoveryType type)
 {
     if (info == NULL || type >= DISCOVERY_TYPE_COUNT) {
         LNN_LOGE(LNN_LEDGER, "para error");
@@ -81,7 +81,7 @@ int32_t LnnSetDiscoveryType(NodeInfo *info, DiscoveryType type)
     return SOFTBUS_OK;
 }
 
-int32_t LnnClearDiscoveryType(NodeInfo *info, DiscoveryType type)
+SOFTBUS_VISIBILITY int32_t LnnClearDiscoveryType(NodeInfo *info, DiscoveryType type)
 {
     if (info == NULL || type >= DISCOVERY_TYPE_COUNT) {
         LNN_LOGE(LNN_LEDGER, "para error");
@@ -91,7 +91,7 @@ int32_t LnnClearDiscoveryType(NodeInfo *info, DiscoveryType type)
     return SOFTBUS_OK;
 }
 
-bool LnnIsNodeOnline(const NodeInfo *info)
+SOFTBUS_VISIBILITY bool LnnIsNodeOnline(const NodeInfo *info)
 {
     if (info == NULL) {
         LNN_LOGE(LNN_LEDGER, "para error");
@@ -109,7 +109,7 @@ void LnnSetNodeConnStatus(NodeInfo *info, ConnectStatus status)
     info->status = status;
 }
 
-const char *LnnGetBtMac(const NodeInfo *info)
+SOFTBUS_VISIBILITY const char *LnnGetBtMac(const NodeInfo *info)
 {
     if (info == NULL) {
         LNN_LOGE(LNN_LEDGER, "para error");
@@ -180,7 +180,7 @@ const char *LnnGetWiFiIp(const NodeInfo *info, int32_t ifnameIdx)
     return info->connectInfo.ifInfo[ifnameIdx].deviceIp;
 }
 
-void LnnSetWiFiIp(NodeInfo *info, const char *ip, int32_t ifnameIdx)
+SOFTBUS_VISIBILITY void LnnSetWiFiIp(NodeInfo *info, const char *ip, int32_t ifnameIdx)
 {
     if (info == NULL || ip == NULL || isIfnameIdxInvalid(ifnameIdx)) {
         LNN_LOGE(LNN_LEDGER, "PARA ERROR");
@@ -214,7 +214,7 @@ int32_t LnnSetMasterUdid(NodeInfo *info, const char *udid)
     return SOFTBUS_OK;
 }
 
-int32_t LnnGetAuthPort(const NodeInfo *info, int32_t ifnameIdx)
+SOFTBUS_VISIBILITY int32_t LnnGetAuthPort(const NodeInfo *info, int32_t ifnameIdx)
 {
     if (info == NULL || isIfnameIdxInvalid(ifnameIdx)) {
         LNN_LOGE(LNN_LEDGER, "para error");
@@ -233,7 +233,7 @@ int32_t LnnSetAuthPort(NodeInfo *info, int32_t port, int32_t ifnameIdx)
     return SOFTBUS_OK;
 }
 
-int32_t LnnGetSessionPort(const NodeInfo *info, int32_t ifnameIdx)
+SOFTBUS_VISIBILITY int32_t LnnGetSessionPort(const NodeInfo *info, int32_t ifnameIdx)
 {
     if (info == NULL || isIfnameIdxInvalid(ifnameIdx)) {
         LNN_LOGE(LNN_LEDGER, "para error");
@@ -252,7 +252,7 @@ int32_t LnnSetSessionPort(NodeInfo *info, int32_t port, int32_t ifnameIdx)
     return SOFTBUS_OK;
 }
 
-int32_t LnnGetProxyPort(const NodeInfo *info, int32_t ifnameIdx)
+SOFTBUS_VISIBILITY int32_t LnnGetProxyPort(const NodeInfo *info, int32_t ifnameIdx)
 {
     if (info == NULL || isIfnameIdxInvalid(ifnameIdx)) {
         LNN_LOGE(LNN_LEDGER, "para error");
@@ -271,7 +271,7 @@ int32_t LnnSetProxyPort(NodeInfo *info, int32_t port, int32_t ifnameIdx)
     return SOFTBUS_OK;
 }
 
-int32_t LnnSetP2pRole(NodeInfo *info, int32_t p2pRole)
+SOFTBUS_VISIBILITY int32_t LnnSetP2pRole(NodeInfo *info, int32_t p2pRole)
 {
     if (info == NULL) {
         LNN_LOGE(LNN_LEDGER, "invalid param");
@@ -281,7 +281,7 @@ int32_t LnnSetP2pRole(NodeInfo *info, int32_t p2pRole)
     return SOFTBUS_OK;
 }
 
-int32_t LnnGetP2pRole(const NodeInfo *info)
+SOFTBUS_VISIBILITY int32_t LnnGetP2pRole(const NodeInfo *info)
 {
     if (info == NULL) {
         LNN_LOGE(LNN_LEDGER, "invalid param");
@@ -344,7 +344,7 @@ int32_t LnnSetStaFrequency(NodeInfo *info, int32_t staFrequency)
     return SOFTBUS_OK;
 }
 
-int32_t LnnGetStaFrequency(const NodeInfo *info)
+SOFTBUS_VISIBILITY int32_t LnnGetStaFrequency(const NodeInfo *info)
 {
     if (info == NULL) {
         LNN_LOGE(LNN_LEDGER, "invalid param");
@@ -353,7 +353,7 @@ int32_t LnnGetStaFrequency(const NodeInfo *info)
     return info->p2pInfo.staFrequency;
 }
 
-int32_t LnnSetP2pMac(NodeInfo *info, const char *p2pMac)
+SOFTBUS_VISIBILITY int32_t LnnSetP2pMac(NodeInfo *info, const char *p2pMac)
 {
     if (info == NULL || p2pMac == NULL) {
         LNN_LOGE(LNN_LEDGER, "invalid param");
@@ -366,7 +366,7 @@ int32_t LnnSetP2pMac(NodeInfo *info, const char *p2pMac)
     return SOFTBUS_OK;
 }
 
-const char *LnnGetP2pMac(const NodeInfo *info)
+SOFTBUS_VISIBILITY const char *LnnGetP2pMac(const NodeInfo *info)
 {
     if (info == NULL) {
         LNN_LOGE(LNN_LEDGER, "invalid param");
@@ -375,7 +375,7 @@ const char *LnnGetP2pMac(const NodeInfo *info)
     return info->p2pInfo.p2pMac;
 }
 
-const char *LnnGetWifiDirectAddr(const NodeInfo *info)
+SOFTBUS_VISIBILITY const char *LnnGetWifiDirectAddr(const NodeInfo *info)
 {
     if (info == NULL) {
         LNN_LOGE(LNN_LEDGER, "invalid param");
@@ -479,7 +479,7 @@ int32_t LnnSetDataSwitchLength(NodeInfo *info, uint16_t dataSwitchLength)
     return SOFTBUS_OK;
 }
 
-int32_t LnnSetP2pGoMac(NodeInfo *info, const char *goMac)
+SOFTBUS_VISIBILITY int32_t LnnSetP2pGoMac(NodeInfo *info, const char *goMac)
 {
     if (info == NULL || goMac == NULL) {
         LNN_LOGE(LNN_LEDGER, "invalid param");
@@ -502,7 +502,7 @@ const char *LnnGetP2pGoMac(const NodeInfo *info)
     return info->p2pInfo.goMac;
 }
 
-uint64_t LnnGetSupportedProtocols(const NodeInfo *info)
+SOFTBUS_VISIBILITY uint64_t LnnGetSupportedProtocols(const NodeInfo *info)
 {
     if (info == NULL) {
         LNN_LOGE(LNN_LEDGER, "para error");
@@ -521,7 +521,7 @@ int32_t LnnSetSupportedProtocols(NodeInfo *info, uint64_t protocols)
     return SOFTBUS_OK;
 }
 
-int32_t LnnSetWifiDirectAddr(NodeInfo *info, const char *wifiDirectAddr)
+SOFTBUS_VISIBILITY int32_t LnnSetWifiDirectAddr(NodeInfo *info, const char *wifiDirectAddr)
 {
     if (info == NULL || wifiDirectAddr == NULL) {
         LNN_LOGE(LNN_LEDGER, "invalid param");
@@ -602,7 +602,7 @@ int32_t LnnGetUserIdCheckSum(NodeInfo *info, uint8_t *data, uint32_t len)
     return SOFTBUS_OK;
 }
 
-int32_t LnnSetPtk(NodeInfo *info, const char *remotePtk)
+SOFTBUS_SYMBOL_EXPORT int32_t LnnSetPtk(NodeInfo *info, const char *remotePtk)
 {
     if (info == NULL || remotePtk == NULL) {
         LNN_LOGE(LNN_LEDGER, "invalid param");
@@ -615,7 +615,7 @@ int32_t LnnSetPtk(NodeInfo *info, const char *remotePtk)
     return SOFTBUS_OK;
 }
 
-void LnnDumpRemotePtk(const char *oldPtk, const char *newPtk, const char *log)
+SOFTBUS_VISIBILITY void LnnDumpRemotePtk(const char *oldPtk, const char *newPtk, const char *log)
 {
     char ptkStr[PTK_STR_LEN] = { 0 };
     char oldPtkStr[PTK_STR_LEN] = { 0 };
@@ -644,7 +644,7 @@ void LnnDumpRemotePtk(const char *oldPtk, const char *newPtk, const char *log)
     (void)memset_s(oldPtkStr, PTK_STR_LEN, 0, PTK_STR_LEN);
 }
 
-void LnnDumpNodeInfo(const NodeInfo *deviceInfo, const char *log)
+SOFTBUS_SYMBOL_EXPORT void LnnDumpNodeInfo(const NodeInfo *deviceInfo, const char *log)
 {
     if (deviceInfo == NULL || log == NULL) {
         LNN_LOGE(LNN_LEDGER, "invalid param");
@@ -745,7 +745,7 @@ void LnnAnonymizeDeviceStr(const char *deviceStr, uint32_t strLen, uint32_t defa
     SoftBusFree(hexStr);
 }
 
-void LnnDumpSparkCheck(const unsigned char *sparkCheck, const char *log)
+SOFTBUS_VISIBILITY void LnnDumpSparkCheck(const unsigned char *sparkCheck, const char *log)
 {
     if (log == NULL) {
         LNN_LOGE(LNN_LEDGER, "invalid param");

@@ -246,7 +246,7 @@ int32_t CheckAndUpdateTimeBySessionName(const char *sessionName, uint64_t timest
     return SOFTBUS_TRANS_SESSION_NAME_NO_EXIST;
 }
 
-bool CheckUidAndPid(const char *sessionName, pid_t callingUid, pid_t callingPid)
+SOFTBUS_VISIBILITY bool CheckUidAndPid(const char *sessionName, pid_t callingUid, pid_t callingPid)
 {
     if (sessionName == NULL) {
         TRANS_LOGE(TRANS_CTRL, "Parameter sessionName is empty");
@@ -306,7 +306,8 @@ void TransDelItemByPackageName(const char *pkgName, int32_t pid)
     TRANS_LOGI(TRANS_CTRL, "del pkgName=%{public}s", pkgName);
 }
 
-int32_t TransGetPkgNameBySessionName(const char *sessionName, char *pkgName, uint16_t len)
+SOFTBUS_VISIBILITY SOFTBUS_SYMBOL_EXPORT int32_t TransGetPkgNameBySessionName(
+    const char *sessionName, char *pkgName, uint16_t len)
 {
     if (sessionName == NULL || pkgName == NULL || len == 0) {
         TRANS_LOGE(TRANS_CTRL, "param error");
@@ -343,7 +344,7 @@ int32_t TransGetPkgNameBySessionName(const char *sessionName, char *pkgName, uin
     return SOFTBUS_TRANS_SESSION_NAME_NO_EXIST;
 }
 
-int32_t TransGetUidAndPid(const char *sessionName, int32_t *uid, int32_t *pid)
+SOFTBUS_VISIBILITY SOFTBUS_SYMBOL_EXPORT int32_t TransGetUidAndPid(const char *sessionName, int32_t *uid, int32_t *pid)
 {
     if (sessionName == NULL || (uid == NULL && pid == NULL)) {
         return SOFTBUS_INVALID_PARAM;
@@ -476,6 +477,7 @@ void TransOnLinkDown(const char *networkId, const char *uuid, const char *udid, 
     TransListDelete(&sessionServerList);
 }
 
+SOFTBUS_VISIBILITY
 int32_t TransGetPidAndPkgName(const char *sessionName, int32_t uid, int32_t *pid, char *pkgName, uint32_t len)
 {
     if (sessionName == NULL || pid == NULL || pkgName == NULL) {
@@ -660,7 +662,7 @@ int32_t GetAccessInfoBySessionName(
     return SOFTBUS_TRANS_SESSION_NAME_NO_EXIST;
 }
 
-int32_t GetTokenTypeBySessionName(const char *sessionName, int32_t *tokenType)
+SOFTBUS_VISIBILITY int32_t GetTokenTypeBySessionName(const char *sessionName, int32_t *tokenType)
 {
     if (sessionName == NULL || tokenType == NULL) {
         TRANS_LOGE(TRANS_CTRL, "invalid param.");
@@ -691,6 +693,7 @@ int32_t GetTokenTypeBySessionName(const char *sessionName, int32_t *tokenType)
     return SOFTBUS_TRANS_SESSION_NAME_NO_EXIST;
 }
 
+SOFTBUS_VISIBILITY
 int32_t TransGetAclInfoBySessionName(const char *sessionName, uint64_t *tokenId, int32_t *pid, int32_t *userId)
 {
     if (sessionName == NULL || tokenId == NULL) {

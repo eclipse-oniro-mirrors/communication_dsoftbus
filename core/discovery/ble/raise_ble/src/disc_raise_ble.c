@@ -20,6 +20,7 @@
 #include "disc_raise_ble.h"
 #include "softbus_error_code.h"
 #include "softbus_json_utils.h"
+#include "softbus_def.h"
 
 #define JSON_KEY_NOW_TIMES          "nowTimes"
 #define JSON_KEY_HEARTBEAT_VALUE    "heartbeatValue"
@@ -175,7 +176,7 @@ static int32_t CreateCustDataJson(DeviceInfo *device, RaiseHandDeviceInfo *devic
     return SOFTBUS_OK;
 }
 
-int32_t OnRaiseHandDeviceFound(RaiseHandDeviceInfo *deviceInfo)
+SOFTBUS_SYMBOL_EXPORT int32_t OnRaiseHandDeviceFound(RaiseHandDeviceInfo *deviceInfo)
 {
     DISC_CHECK_AND_RETURN_RET_LOGE(deviceInfo != NULL && g_raiseInnerCb != NULL,
         SOFTBUS_INVALID_PARAM, DISC_BLE, "invalid param");

@@ -33,6 +33,7 @@
 #include "softbus_adapter_json.h"
 #include "softbus_adapter_mem.h"
 #include "softbus_json_utils.h"
+#include "softbus_def.h"
 
 #define FLAG_COMPRESS_DEVICE_INFO   1
 #define FLAG_UNCOMPRESS_DEVICE_INFO 0
@@ -137,7 +138,7 @@ static void DfxRecordLnnPostDeviceIdStart(int64_t authSeq, const AuthSessionInfo
     LNN_EVENT(EVENT_SCENE_JOIN_LNN, EVENT_STAGE_AUTH_DEVICE_ID_POST, extra);
 }
 
-int32_t PostDeviceIdMessage(int64_t authSeq, const AuthSessionInfo *info)
+SOFTBUS_VISIBILITY int32_t PostDeviceIdMessage(int64_t authSeq, const AuthSessionInfo *info)
 {
     DfxRecordLnnPostDeviceIdStart(authSeq, info);
     AUTH_CHECK_AND_RETURN_RET_LOGE(info != NULL, SOFTBUS_INVALID_PARAM, AUTH_FSM, "info is NULL");
@@ -148,6 +149,7 @@ int32_t PostDeviceIdMessage(int64_t authSeq, const AuthSessionInfo *info)
     }
 }
 
+SOFTBUS_VISIBILITY
 int32_t ProcessDeviceIdMessage(AuthSessionInfo *info, const uint8_t *data, uint32_t len, int64_t authSeq)
 {
     AUTH_CHECK_AND_RETURN_RET_LOGE(info != NULL, SOFTBUS_INVALID_PARAM, AUTH_FSM, "info is NULL");
@@ -222,7 +224,7 @@ static void SetIndataInfo(InDataInfo *inDataInfo, uint8_t *compressData, uint32_
     }
 }
 
-int32_t PostDeviceInfoMessage(int64_t authSeq, const AuthSessionInfo *info)
+SOFTBUS_VISIBILITY int32_t PostDeviceInfoMessage(int64_t authSeq, const AuthSessionInfo *info)
 {
     DfxRecordLnnPostDeviceInfoStart(authSeq, info);
     AUTH_CHECK_AND_RETURN_RET_LOGE(info != NULL, SOFTBUS_INVALID_PARAM, AUTH_FSM, "info is NULL");

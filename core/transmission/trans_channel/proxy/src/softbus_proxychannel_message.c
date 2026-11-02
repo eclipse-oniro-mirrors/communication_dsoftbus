@@ -53,7 +53,7 @@
 #define PROXY_CHANNEL_SERVER      1
 #define CHAT_MODE_SINGLE          0x01
 
-int32_t TransParseMessageHeadType(char *data, int32_t len, ProxyMessage *msg)
+SOFTBUS_VISIBILITY int32_t TransParseMessageHeadType(char *data, int32_t len, ProxyMessage *msg)
 {
     if (data == NULL || msg == NULL || (size_t)len <= sizeof(uint8_t)) {
         TRANS_LOGE(TRANS_CTRL, "invalid param");
@@ -1015,7 +1015,7 @@ static void PagingSendBadKeyMsg(ProxyMessage *msg, uint8_t *accountHash, uint8_t
     TransPagingSendBadKeyMsg(msg, accountHash, udidHash);
 }
 
-int32_t TransPagingParseMessage(char *data, int32_t len, ProxyMessage *msg)
+SOFTBUS_VISIBILITY int32_t TransPagingParseMessage(char *data, int32_t len, ProxyMessage *msg)
 {
     TRANS_CHECK_AND_RETURN_RET_LOGE((msg->msgHead.type == PROXYCHANNEL_MSG_TYPE_PAGING_HANDSHAKE &&
         len > PAGING_CHANNEL_HANDSHAKE_HEAD_LEN) ||
@@ -1106,7 +1106,7 @@ static int32_t DecryptProxyMessage(ProxyMessage *msg, AuthHandle *auth)
     return SOFTBUS_OK;
 }
 
-int32_t TransProxyParseMessage(
+SOFTBUS_VISIBILITY int32_t TransProxyParseMessage(
     char *data, int32_t len, ProxyMessage *msg, AuthHandle *auth, bool isSupportConcurrentMetaNode)
 {
     TRANS_CHECK_AND_RETURN_RET_LOGE(len > PROXY_CHANNEL_HEAD_LEN,
@@ -1233,6 +1233,7 @@ int32_t PackEncryptedExternalMessage(
 }
 
 #ifdef DSOFTBUS_FEATURE_PROXY_CHANNEL
+SOFTBUS_VISIBILITY
 int32_t TransPagingPackMessage(PagingProxyMessage *msg, ProxyDataInfo *dataInfo, ProxyChannelInfo *chan, bool needHash)
 {
     if (msg == NULL || dataInfo == NULL || chan == NULL) {
@@ -1270,7 +1271,7 @@ int32_t TransPagingPackMessage(PagingProxyMessage *msg, ProxyDataInfo *dataInfo,
 }
 #endif
 
-int32_t TransProxyPackMessage(
+SOFTBUS_VISIBILITY int32_t TransProxyPackMessage(
     ProxyMessageHead *msg, AuthHandle authHandle, ProxyDataInfo *dataInfo)
 {
     if (msg == NULL || dataInfo == NULL || dataInfo->inData == NULL || dataInfo->inLen == 0) {
@@ -1339,7 +1340,7 @@ static int32_t PackHandshakeMsgForNormal(SessionKeyBase64 *sessionBase64, AppInf
     return SOFTBUS_OK;
 }
 
-char *TransPagingPackHandshakeErrMsg(int32_t errCode, int32_t channelId)
+SOFTBUS_VISIBILITY char *TransPagingPackHandshakeErrMsg(int32_t errCode, int32_t channelId)
 {
     cJSON *root = NULL;
     char *buf = NULL;
@@ -1365,7 +1366,7 @@ char *TransPagingPackHandshakeErrMsg(int32_t errCode, int32_t channelId)
 }
 #endif
 
-char *TransProxyPackHandshakeErrMsg(int32_t errCode)
+SOFTBUS_VISIBILITY char *TransProxyPackHandshakeErrMsg(int32_t errCode)
 {
     cJSON *root = NULL;
     char *buf = NULL;
@@ -1476,7 +1477,7 @@ static bool PackInnerHandshakeFields(cJSON *root, AppInfo *appInfo, SessionKeyBa
     return AddStringToJsonObject(root, JSON_KEY_SESSION_KEY, sessionBase64->sessionKeyBase64);
 }
 
-char *TransProxyPackHandshakeMsg(ProxyChannelInfo *info)
+SOFTBUS_VISIBILITY char *TransProxyPackHandshakeMsg(ProxyChannelInfo *info)
 {
     if (info == NULL) {
         TRANS_LOGE(TRANS_CTRL, "invalid param.");
@@ -1529,7 +1530,7 @@ static int32_t AddSinkSessionKeyToHandshakeAckMsg(cJSON *root, const AppInfo *ap
     return EncryptAndAddSinkSessionKey(root, appInfo);
 }
 
-char *TransPagingPackHandshakeAckMsg(ProxyChannelInfo *chan)
+SOFTBUS_VISIBILITY char *TransPagingPackHandshakeAckMsg(ProxyChannelInfo *chan)
 {
     TRANS_CHECK_AND_RETURN_RET_LOGE(chan != NULL, NULL, TRANS_CTRL, "invalid param.");
     AppInfo *appInfo = &(chan->appInfo);
@@ -1600,7 +1601,7 @@ static bool PackNormalAckFields(cJSON *root, const AppInfo *appInfo, ProxyChanne
 }
 #endif
 
-char *TransProxyPackHandshakeAckMsg(ProxyChannelInfo *chan)
+SOFTBUS_VISIBILITY char *TransProxyPackHandshakeAckMsg(ProxyChannelInfo *chan)
 {
     TRANS_CHECK_AND_RETURN_RET_LOGE(chan != NULL, NULL, TRANS_CTRL, "invalid param.");
     AppInfo *appInfo = &(chan->appInfo);
@@ -1644,7 +1645,7 @@ char *TransProxyPackHandshakeAckMsg(ProxyChannelInfo *chan)
     return buf;
 }
 
-int32_t TransProxyUnPackHandshakeErrMsg(const char *msg, int32_t *errCode, int32_t len)
+SOFTBUS_VISIBILITY int32_t TransProxyUnPackHandshakeErrMsg(const char *msg, int32_t *errCode, int32_t len)
 {
     if (errCode == NULL) {
         TRANS_LOGE(TRANS_CTRL, "invalid param errCode.");
@@ -1718,7 +1719,7 @@ static void GetNoramlInfoFromHandshakeAckMsg(cJSON *root, ProxyChannelInfo *chan
 }
 #endif
 
-int32_t TransProxyUnpackHandshakeAckMsg(const char *msg, ProxyChannelInfo *chanInfo, int32_t len)
+SOFTBUS_VISIBILITY int32_t TransProxyUnpackHandshakeAckMsg(const char *msg, ProxyChannelInfo *chanInfo, int32_t len)
 {
     TRANS_CHECK_AND_RETURN_RET_LOGE(msg != NULL && chanInfo != NULL,
         SOFTBUS_INVALID_PARAM, TRANS_CTRL, "msg or chanInfo or fastDataSize is empty.");
@@ -1939,7 +1940,7 @@ static int32_t TransProxyGetJsonObject(cJSON *root, ProxyChannelInfo *chan)
     return SOFTBUS_OK;
 }
 
-int32_t TransProxyUnpackHandshakeMsg(const char *msg, ProxyChannelInfo *chan, int32_t len)
+SOFTBUS_VISIBILITY int32_t TransProxyUnpackHandshakeMsg(const char *msg, ProxyChannelInfo *chan, int32_t len)
 {
     TRANS_CHECK_AND_RETURN_RET_LOGE(msg != NULL && chan != NULL, SOFTBUS_INVALID_PARAM, TRANS_CTRL, "param invalid.");
     cJSON *root = cJSON_ParseWithLength(msg, len);
@@ -1986,7 +1987,7 @@ ERR_EXIT:
 }
 
 #ifdef DSOFTBUS_FEATURE_PROXY_CHANNEL
-char *TransProxyPagingPackChannelId(int16_t channelId)
+SOFTBUS_VISIBILITY char *TransProxyPagingPackChannelId(int16_t channelId)
 {
     if (channelId <= 0) {
         TRANS_LOGE(TRANS_CTRL, "channel id is invalid");
@@ -2013,7 +2014,7 @@ char *TransProxyPagingPackChannelId(int16_t channelId)
 }
 #endif
 
-char *TransProxyPackIdentity(const char *identity)
+SOFTBUS_VISIBILITY char *TransProxyPackIdentity(const char *identity)
 {
     cJSON *root = NULL;
     char *buf = NULL;
@@ -2040,7 +2041,7 @@ char *TransProxyPackIdentity(const char *identity)
     return buf;
 }
 
-int32_t TransProxyUnpackIdentity(const char *msg, char *identity, uint32_t identitySize, int32_t len)
+SOFTBUS_VISIBILITY int32_t TransProxyUnpackIdentity(const char *msg, char *identity, uint32_t identitySize, int32_t len)
 {
     cJSON *root = NULL;
 

@@ -21,6 +21,7 @@
 #include "softbus_adapter_mem.h"
 #include "softbus_error_code.h"
 #include "softbus_json_utils.h"
+#include "softbus_def.h"
 #include "softbus_utils.h"
 #include "trans_event.h"
 
@@ -49,7 +50,7 @@ static SoftBusList *g_networkResourceList = NULL;
 
 static SoftBusList *g_channelDfxInfoList = NULL;
 
-void AddChannelStatisticsInfo(int32_t channelId, int32_t channelType)
+SOFTBUS_SYMBOL_EXPORT void AddChannelStatisticsInfo(int32_t channelId, int32_t channelType)
 {
     if (channelId < 0) {
         COMM_LOGE(COMM_DFX, "invalid param");
@@ -90,7 +91,7 @@ void AddChannelStatisticsInfo(int32_t channelId, int32_t channelType)
     (void)SoftBusMutexUnlock(&g_channelDfxInfoList->lock);
 }
 
-void AddNetworkResource(NetworkResource *networkResource)
+SOFTBUS_VISIBILITY void AddNetworkResource(NetworkResource *networkResource)
 {
     if (networkResource == NULL) {
         COMM_LOGE(COMM_DFX, "invalid param");
@@ -334,7 +335,7 @@ static void DfxRecordTransChannelStatistics(NetworkStatisticsInfo *networkStatis
     cJSON_free(trafficStats);
 }
 
-void DeleteNetworkResourceByLaneId(uint64_t laneId)
+SOFTBUS_VISIBILITY void DeleteNetworkResourceByLaneId(uint64_t laneId)
 {
     if (g_networkResourceList == NULL) {
         COMM_LOGE(COMM_DFX, "network resource list init fail");

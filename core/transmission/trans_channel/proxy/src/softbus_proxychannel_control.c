@@ -1,4 +1,5 @@
 /*
+#include "softbus_def.h"
  * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -382,7 +383,7 @@ static void ReportPagingAckHandshakeExtra(const ProxyChannelInfo *chan, int32_t 
 #endif
 
 #ifdef DSOFTBUS_FEATURE_PROXY_CHANNEL
-int32_t TransPagingAckHandshake(ProxyChannelInfo *chan, int32_t retCode)
+SOFTBUS_VISIBILITY int32_t TransPagingAckHandshake(ProxyChannelInfo *chan, int32_t retCode)
 {
     TRANS_CHECK_AND_RETURN_RET_LOGE(chan != NULL, SOFTBUS_INVALID_PARAM, TRANS_CTRL, "invalid param.");
     char *payLoad = NULL;
@@ -493,7 +494,7 @@ static int32_t PackExternalAckHandshakeData(
     return PackEncryptedExternalMessage(&msgHead, chan->authHandle, dataInfo);
 }
 
-int32_t TransProxyAckHandshake(uint32_t connId, ProxyChannelInfo *chan, int32_t retCode)
+SOFTBUS_VISIBILITY int32_t TransProxyAckHandshake(uint32_t connId, ProxyChannelInfo *chan, int32_t retCode)
 {
     TRANS_CHECK_AND_RETURN_RET_LOGE(chan != NULL, SOFTBUS_INVALID_PARAM, TRANS_CTRL, "invalid param.");
     char *payLoad = NULL;
@@ -701,7 +702,7 @@ static int32_t PackExternalResetData(const ProxyChannelInfo *info, char **payLoa
     return PackEncryptedExternalMessage(&msgHead, info->authHandle, dataInfo);
 }
 
-int32_t TransProxyResetPeer(ProxyChannelInfo *info)
+SOFTBUS_VISIBILITY int32_t TransProxyResetPeer(ProxyChannelInfo *info)
 {
     if (info == NULL) {
         TRANS_LOGW(TRANS_CTRL, "invalid param.");

@@ -334,6 +334,7 @@ static int32_t TriggerLink(uint32_t laneReqId, TransOption *request,
     Unlock();
     int32_t ret = LnnLanePostMsgToHandler(MSG_TYPE_LANE_TRIGGER_LINK, laneReqId, 0, NULL, 0);
     if (ret != SOFTBUS_OK) {
+        linkNode->linkList = NULL;
         DeleteLaneLinkNode(laneReqId);
         return ret;
     }
@@ -474,6 +475,7 @@ static int32_t TriggerLinkWithQos(uint32_t laneReqId, const LaneAllocInfo *alloc
     Unlock();
     int32_t ret = LnnLanePostMsgToHandler(MSG_TYPE_LANE_TRIGGER_LINK, laneReqId, 0, NULL, 0);
     if (ret != SOFTBUS_OK) {
+        linkNode->linkList = NULL;
         DeleteLaneLinkNode(laneReqId);
         return ret;
     }

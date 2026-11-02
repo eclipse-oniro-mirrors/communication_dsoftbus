@@ -22,11 +22,13 @@
 extern "C" {
 #endif
 
-int32_t StartAbility(const char *bundleName, const char *abilityName, int32_t userId);
+__attribute__((visibility("default"))) int32_t StartAbility(const char *bundleName, const char *abilityName,
+    int32_t userId);
 
-bool IsRunningProcess(const char *bundleName, int32_t userId);
+__attribute__((visibility("default"))) bool IsRunningProcess(const char *bundleName, int32_t userId);
 
-bool IsExtensionAbility(const char *bundleName, const char *abilityName, int32_t upperLimit);
+__attribute__((visibility("default"))) bool IsExtensionAbility(const char *bundleName, const char *abilityName,
+    int32_t upperLimit);
 
 #ifdef __cplusplus
 }

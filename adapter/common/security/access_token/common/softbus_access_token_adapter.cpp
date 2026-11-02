@@ -24,6 +24,7 @@
 #include "regex.h"
 #include "softbus_common.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 #include "softbus_permission.h"
 #include "tokenid_kit.h"
 #include "softbus_def.h"
@@ -124,7 +125,7 @@ SOFTBUS_SYMBOL_EXPORT bool SoftBusCheckIsNormalApp(uint64_t fullTokenId, const c
     return false;
 }
 
-SOFTBUS_SYMBOL_EXPORT bool SoftBusCheckIsAccessAndRecordAccessToken(uint64_t tokenId, const char *permission)
+SOFTBUS_SYMBOL_EXPORT SOFTBUS_VISIBILITY bool SoftBusCheckIsAccessAndRecordAccessToken(uint64_t tokenId, const char *permission)
 {
     if (permission == nullptr) {
         COMM_LOGE(COMM_PERM, "invalid param, permission is nullptr");

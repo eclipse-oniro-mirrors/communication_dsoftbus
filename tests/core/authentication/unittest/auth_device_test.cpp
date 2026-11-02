@@ -120,10 +120,11 @@ static AuthManager *CreateTestAuthManager(int64_t authId, bool isServer = false,
  * @tc.desc: Test IsNeedAuthLimit with null param
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, IS_NEED_AUTH_LIMIT_TEST_001, TestSize.Level1)
 {
-    bool ret = IsNeedAuthLimit(NULL);
+    bool ret = IsNeedAuthLimit(nullptr);
     EXPECT_FALSE(ret);
 }
 
@@ -132,6 +133,7 @@ HWTEST_F(AuthDeviceTest, IS_NEED_AUTH_LIMIT_TEST_001, TestSize.Level1)
  * @tc.desc: Test IsNeedAuthLimit when not init
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, IS_NEED_AUTH_LIMIT_TEST_002, TestSize.Level1)
 {
@@ -144,6 +146,7 @@ HWTEST_F(AuthDeviceTest, IS_NEED_AUTH_LIMIT_TEST_002, TestSize.Level1)
  * @tc.desc: Test IsNeedAuthLimit when key exists but time expired
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, IS_NEED_AUTH_LIMIT_TEST_003, TestSize.Level1)
 {
@@ -163,6 +166,7 @@ HWTEST_F(AuthDeviceTest, IS_NEED_AUTH_LIMIT_TEST_003, TestSize.Level1)
  * @tc.desc: Test IsNeedAuthLimit when key exists and within delay time
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, IS_NEED_AUTH_LIMIT_TEST_004, TestSize.Level1)
 {
@@ -182,6 +186,7 @@ HWTEST_F(AuthDeviceTest, IS_NEED_AUTH_LIMIT_TEST_004, TestSize.Level1)
  * @tc.desc: Test IsNeedAuthLimit when LnnMapGet returns NULL
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, IS_NEED_AUTH_LIMIT_TEST_005, TestSize.Level1)
 {
@@ -198,10 +203,11 @@ HWTEST_F(AuthDeviceTest, IS_NEED_AUTH_LIMIT_TEST_005, TestSize.Level1)
  * @tc.desc: Test AuthDeleteLimitMap with null param
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DELETE_LIMIT_MAP_TEST_001, TestSize.Level1)
 {
-    AuthDeleteLimitMap(NULL);
+    AuthDeleteLimitMap(nullptr);
 }
 
 /*
@@ -209,6 +215,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DELETE_LIMIT_MAP_TEST_001, TestSize.Level1)
  * @tc.desc: Test AuthDeleteLimitMap when not init
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DELETE_LIMIT_MAP_TEST_002, TestSize.Level1)
 {
@@ -221,6 +228,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DELETE_LIMIT_MAP_TEST_002, TestSize.Level1)
  * @tc.desc: Test AuthDeleteLimitMap success
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DELETE_LIMIT_MAP_TEST_003, TestSize.Level1)
 {
@@ -236,6 +244,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DELETE_LIMIT_MAP_TEST_003, TestSize.Level1)
  * @tc.desc: Test ClearAuthLimitMap when not init
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, CLEAR_AUTH_LIMIT_MAP_TEST_001, TestSize.Level1)
 {
@@ -248,6 +257,7 @@ HWTEST_F(AuthDeviceTest, CLEAR_AUTH_LIMIT_MAP_TEST_001, TestSize.Level1)
  * @tc.desc: Test ClearAuthLimitMap success
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, CLEAR_AUTH_LIMIT_MAP_TEST_002, TestSize.Level1)
 {
@@ -266,7 +276,7 @@ HWTEST_F(AuthDeviceTest, CLEAR_AUTH_LIMIT_MAP_TEST_002, TestSize.Level1)
  */
 HWTEST_F(AuthDeviceTest, AUTH_ADD_NODE_TO_LIMIT_MAP_TEST_001, TestSize.Level1)
 {
-    AuthAddNodeToLimitMap(NULL, SOFTBUS_AUTH_HICHAIN_LOCAL_IDENTITY_NOT_EXIST);
+    AuthAddNodeToLimitMap(nullptr, SOFTBUS_AUTH_HICHAIN_LOCAL_IDENTITY_NOT_EXIST);
 }
 
 /*
@@ -274,6 +284,7 @@ HWTEST_F(AuthDeviceTest, AUTH_ADD_NODE_TO_LIMIT_MAP_TEST_001, TestSize.Level1)
  * @tc.desc: Test AuthAddNodeToLimitMap with non-matching reason
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_ADD_NODE_TO_LIMIT_MAP_TEST_002, TestSize.Level1)
 {
@@ -286,6 +297,7 @@ HWTEST_F(AuthDeviceTest, AUTH_ADD_NODE_TO_LIMIT_MAP_TEST_002, TestSize.Level1)
  * @tc.desc: Test AuthAddNodeToLimitMap with hash generation failure
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_ADD_NODE_TO_LIMIT_MAP_TEST_003, TestSize.Level1)
 {
@@ -300,6 +312,7 @@ HWTEST_F(AuthDeviceTest, AUTH_ADD_NODE_TO_LIMIT_MAP_TEST_003, TestSize.Level1)
  * @tc.desc: Test AuthAddNodeToLimitMap with convert hex string failure
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_ADD_NODE_TO_LIMIT_MAP_TEST_004, TestSize.Level1)
 {
@@ -315,6 +328,7 @@ HWTEST_F(AuthDeviceTest, AUTH_ADD_NODE_TO_LIMIT_MAP_TEST_004, TestSize.Level1)
  * @tc.desc: Test AuthAddNodeToLimitMap success
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_ADD_NODE_TO_LIMIT_MAP_TEST_005, TestSize.Level1)
 {
@@ -334,6 +348,7 @@ HWTEST_F(AuthDeviceTest, AUTH_ADD_NODE_TO_LIMIT_MAP_TEST_005, TestSize.Level1)
  * @tc.desc: Test AuthAddNodeToLimitMap with AuthMapInit failure
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_ADD_NODE_TO_LIMIT_MAP_TEST_006, TestSize.Level1)
 {
@@ -351,11 +366,12 @@ HWTEST_F(AuthDeviceTest, AUTH_ADD_NODE_TO_LIMIT_MAP_TEST_006, TestSize.Level1)
  * @tc.desc: Test AuthDevicePostTransData with null dataInfo
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_POST_TRANS_DATA_TEST_001, TestSize.Level1)
 {
     AuthHandle handle = { .authId = TEST_AUTH_ID, .type = AUTH_LINK_TYPE_WIFI };
-    int32_t ret = AuthDevicePostTransData(handle, NULL);
+    int32_t ret = AuthDevicePostTransData(handle, nullptr);
     EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
 }
 
@@ -364,6 +380,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_POST_TRANS_DATA_TEST_001, TestSize.Level1)
  * @tc.desc: Test AuthDevicePostTransData with invalid link type
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_POST_TRANS_DATA_TEST_002, TestSize.Level1)
 {
@@ -381,6 +398,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_POST_TRANS_DATA_TEST_002, TestSize.Level1)
  * @tc.desc: Test AuthDevicePostTransData auth not found
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_POST_TRANS_DATA_TEST_003, TestSize.Level1)
 {
@@ -399,6 +417,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_POST_TRANS_DATA_TEST_003, TestSize.Level1)
  * @tc.desc: Test AuthDevicePostTransData encrypt fail
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_POST_TRANS_DATA_TEST_004, TestSize.Level1)
 {
@@ -422,6 +441,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_POST_TRANS_DATA_TEST_004, TestSize.Level1)
  * @tc.desc: Test AuthDevicePostTransData post data fail
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_POST_TRANS_DATA_TEST_005, TestSize.Level1)
 {
@@ -448,6 +468,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_POST_TRANS_DATA_TEST_005, TestSize.Level1)
  * @tc.desc: Test AuthDevicePostTransData success
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_POST_TRANS_DATA_TEST_006, TestSize.Level1)
 {
@@ -474,6 +495,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_POST_TRANS_DATA_TEST_006, TestSize.Level1)
  * @tc.desc: Test AuthDeviceEncrypt with invalid params
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_ENCRYPT_TEST_001, TestSize.Level1)
 {
@@ -481,11 +503,11 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_ENCRYPT_TEST_001, TestSize.Level1)
     uint8_t inData[] = "test";
     uint8_t outData[128] = {0};
     uint32_t outLen = sizeof(outData);
-    EXPECT_EQ(AuthDeviceEncrypt(NULL, inData, sizeof(inData), outData, &outLen), SOFTBUS_INVALID_PARAM);
-    EXPECT_EQ(AuthDeviceEncrypt(&handle, NULL, sizeof(inData), outData, &outLen), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthDeviceEncrypt(nullptr, inData, sizeof(inData), outData, &outLen), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthDeviceEncrypt(&handle, nullptr, sizeof(inData), outData, &outLen), SOFTBUS_INVALID_PARAM);
     EXPECT_EQ(AuthDeviceEncrypt(&handle, inData, 0, outData, &outLen), SOFTBUS_INVALID_PARAM);
-    EXPECT_EQ(AuthDeviceEncrypt(&handle, inData, sizeof(inData), NULL, &outLen), SOFTBUS_INVALID_PARAM);
-    EXPECT_EQ(AuthDeviceEncrypt(&handle, inData, sizeof(inData), outData, NULL), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthDeviceEncrypt(&handle, inData, sizeof(inData), nullptr, &outLen), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthDeviceEncrypt(&handle, inData, sizeof(inData), outData, nullptr), SOFTBUS_INVALID_PARAM);
 }
 
 /*
@@ -493,6 +515,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_ENCRYPT_TEST_001, TestSize.Level1)
  * @tc.desc: Test AuthDeviceEncrypt auth not found
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_ENCRYPT_TEST_002, TestSize.Level1)
 {
@@ -511,6 +534,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_ENCRYPT_TEST_002, TestSize.Level1)
  * @tc.desc: Test AuthDeviceEncrypt encrypt fail
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_ENCRYPT_TEST_003, TestSize.Level1)
 {
@@ -534,6 +558,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_ENCRYPT_TEST_003, TestSize.Level1)
  * @tc.desc: Test AuthDeviceEncrypt success
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_ENCRYPT_TEST_004, TestSize.Level1)
 {
@@ -557,6 +582,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_ENCRYPT_TEST_004, TestSize.Level1)
  * @tc.desc: Test AuthDeviceDecrypt fail
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_DECRYPT_TEST_001, TestSize.Level1)
 {
@@ -564,8 +590,8 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_DECRYPT_TEST_001, TestSize.Level1)
     uint8_t inData[] = "test";
     uint8_t outData[128] = {0};
     uint32_t outLen = sizeof(outData);
-    EXPECT_EQ(AuthDeviceDecrypt(NULL, inData, sizeof(inData), outData, &outLen), SOFTBUS_INVALID_PARAM);
-    EXPECT_EQ(AuthDeviceDecrypt(&handle, NULL, sizeof(inData), outData, &outLen), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthDeviceDecrypt(nullptr, inData, sizeof(inData), outData, &outLen), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthDeviceDecrypt(&handle, nullptr, sizeof(inData), outData, &outLen), SOFTBUS_INVALID_PARAM);
 }
 
 /*
@@ -573,6 +599,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_DECRYPT_TEST_001, TestSize.Level1)
  * @tc.desc: Test AuthDeviceDecrypt auth not found
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_DECRYPT_TEST_002, TestSize.Level1)
 {
@@ -592,6 +619,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_DECRYPT_TEST_002, TestSize.Level1)
  * @tc.desc: Test AuthDeviceDecrypt decrypt fail
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_DECRYPT_TEST_003, TestSize.Level1)
 {
@@ -616,6 +644,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_DECRYPT_TEST_003, TestSize.Level1)
  * @tc.desc: Test AuthDeviceDecrypt success
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_DECRYPT_TEST_004, TestSize.Level1)
 {
@@ -640,11 +669,12 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_DECRYPT_TEST_004, TestSize.Level1)
  * @tc.desc: Test AuthDeviceGetConnInfo with null connInfo
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_GET_CONN_INFO_TEST_001, TestSize.Level1)
 {
     AuthHandle handle = { .authId = TEST_AUTH_ID, .type = AUTH_LINK_TYPE_WIFI };
-    EXPECT_EQ(AuthDeviceGetConnInfo(handle, NULL), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthDeviceGetConnInfo(handle, nullptr), SOFTBUS_INVALID_PARAM);
 }
 
 /*
@@ -652,6 +682,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_GET_CONN_INFO_TEST_001, TestSize.Level1)
  * @tc.desc: Test AuthDeviceGetConnInfo with invalid link type
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_GET_CONN_INFO_TEST_002, TestSize.Level1)
 {
@@ -666,6 +697,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_GET_CONN_INFO_TEST_002, TestSize.Level1)
  * @tc.desc: Test AuthDeviceGetConnInfo auth not found
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_GET_CONN_INFO_TEST_003, TestSize.Level1)
 {
@@ -682,6 +714,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_GET_CONN_INFO_TEST_003, TestSize.Level1)
  * @tc.desc: Test AuthDeviceGetConnInfo success
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_GET_CONN_INFO_TEST_004, TestSize.Level1)
 {
@@ -704,10 +737,11 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_GET_CONN_INFO_TEST_004, TestSize.Level1)
  * @tc.desc: Test AuthDeviceGetServerSide with null isServer
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_GET_SERVER_SIDE_TEST_001, TestSize.Level1)
 {
-    EXPECT_EQ(AuthDeviceGetServerSide(TEST_AUTH_ID, NULL), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthDeviceGetServerSide(TEST_AUTH_ID, nullptr), SOFTBUS_INVALID_PARAM);
 }
 
 /*
@@ -715,6 +749,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_GET_SERVER_SIDE_TEST_001, TestSize.Level1)
  * @tc.desc: Test AuthDeviceGetServerSide auth not found
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_GET_SERVER_SIDE_TEST_002, TestSize.Level1)
 {
@@ -729,6 +764,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_GET_SERVER_SIDE_TEST_002, TestSize.Level1)
  * @tc.desc: Test AuthDeviceGetServerSide success
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_GET_SERVER_SIDE_TEST_003, TestSize.Level1)
 {
@@ -749,10 +785,11 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_GET_SERVER_SIDE_TEST_003, TestSize.Level1)
  * @tc.desc: Test AuthDeviceGetDeviceUuid with null uuid
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_GET_DEVICE_UUID_TEST_001, TestSize.Level1)
 {
-    EXPECT_EQ(AuthDeviceGetDeviceUuid(TEST_AUTH_ID, NULL, UUID_BUF_LEN), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthDeviceGetDeviceUuid(TEST_AUTH_ID, nullptr, UUID_BUF_LEN), SOFTBUS_INVALID_PARAM);
 }
 
 /*
@@ -760,6 +797,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_GET_DEVICE_UUID_TEST_001, TestSize.Level1)
  * @tc.desc: Test AuthDeviceGetDeviceUuid auth not found
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_GET_DEVICE_UUID_TEST_002, TestSize.Level1)
 {
@@ -774,6 +812,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_GET_DEVICE_UUID_TEST_002, TestSize.Level1)
  * @tc.desc: Test AuthDeviceGetDeviceUuid success
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_GET_DEVICE_UUID_TEST_003, TestSize.Level1)
 {
@@ -794,10 +833,11 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_GET_DEVICE_UUID_TEST_003, TestSize.Level1)
  * @tc.desc: Test AuthDeviceGetVersion with null version
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_GET_VERSION_TEST_001, TestSize.Level1)
 {
-    EXPECT_EQ(AuthDeviceGetVersion(TEST_AUTH_ID, NULL), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthDeviceGetVersion(TEST_AUTH_ID, nullptr), SOFTBUS_INVALID_PARAM);
 }
 
 /*
@@ -805,6 +845,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_GET_VERSION_TEST_001, TestSize.Level1)
  * @tc.desc: Test AuthDeviceGetVersion auth not found
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_GET_VERSION_TEST_002, TestSize.Level1)
 {
@@ -819,6 +860,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_GET_VERSION_TEST_002, TestSize.Level1)
  * @tc.desc: Test AuthDeviceGetVersion success
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_GET_VERSION_TEST_003, TestSize.Level1)
 {
@@ -839,10 +881,11 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_GET_VERSION_TEST_003, TestSize.Level1)
  * @tc.desc: Test AuthDeviceNotTrust with null param
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_NOT_TRUST_TEST_001, TestSize.Level1)
 {
-    EXPECT_NO_FATAL_FAILURE(AuthDeviceNotTrust(NULL));
+    EXPECT_NO_FATAL_FAILURE(AuthDeviceNotTrust(nullptr));
 }
 
 /*
@@ -850,6 +893,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_NOT_TRUST_TEST_001, TestSize.Level1)
  * @tc.desc: Test AuthDeviceNotTrust with empty string
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_NOT_TRUST_TEST_002, TestSize.Level1)
 {
@@ -861,6 +905,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_NOT_TRUST_TEST_002, TestSize.Level1)
  * @tc.desc: Test AuthDeviceNotTrust with get networkId fail
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_NOT_TRUST_TEST_003, TestSize.Level1)
 {
@@ -874,6 +919,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_NOT_TRUST_TEST_003, TestSize.Level1)
  * @tc.desc: Test AuthDeviceNotTrust success
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_NOT_TRUST_TEST_004, TestSize.Level1)
 {
@@ -893,11 +939,12 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_NOT_TRUST_TEST_004, TestSize.Level1)
  * @tc.desc: Test AuthNotifyDeviceVerifyPassed with null nodeInfo
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_NOTIFY_DEVICE_VERIFY_PASSED_TEST_001, TestSize.Level1)
 {
     AuthHandle handle = { .authId = TEST_AUTH_ID, .type = AUTH_LINK_TYPE_WIFI };
-    EXPECT_NO_FATAL_FAILURE(AuthNotifyDeviceVerifyPassed(handle, NULL));
+    EXPECT_NO_FATAL_FAILURE(AuthNotifyDeviceVerifyPassed(handle, nullptr));
 }
 
 /*
@@ -905,6 +952,7 @@ HWTEST_F(AuthDeviceTest, AUTH_NOTIFY_DEVICE_VERIFY_PASSED_TEST_001, TestSize.Lev
  * @tc.desc: Test AuthNotifyDeviceVerifyPassed auth not found
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_NOTIFY_DEVICE_VERIFY_PASSED_TEST_002, TestSize.Level1)
 {
@@ -921,6 +969,7 @@ HWTEST_F(AuthDeviceTest, AUTH_NOTIFY_DEVICE_VERIFY_PASSED_TEST_002, TestSize.Lev
  * @tc.desc: Test AuthNotifyDeviceVerifyPassed with P2P link type
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_NOTIFY_DEVICE_VERIFY_PASSED_TEST_003, TestSize.Level1)
 {
@@ -941,6 +990,7 @@ HWTEST_F(AuthDeviceTest, AUTH_NOTIFY_DEVICE_VERIFY_PASSED_TEST_003, TestSize.Lev
  * @tc.desc: Test AuthNotifyDeviceVerifyPassed with null verify callback
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_NOTIFY_DEVICE_VERIFY_PASSED_TEST_004, TestSize.Level1)
 {
@@ -962,6 +1012,7 @@ HWTEST_F(AuthDeviceTest, AUTH_NOTIFY_DEVICE_VERIFY_PASSED_TEST_004, TestSize.Lev
  * @tc.desc: Test AuthNotifyDeviceVerifyPassed with callback
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_NOTIFY_DEVICE_VERIFY_PASSED_TEST_005, TestSize.Level1)
 {
@@ -986,6 +1037,7 @@ HWTEST_F(AuthDeviceTest, AUTH_NOTIFY_DEVICE_VERIFY_PASSED_TEST_005, TestSize.Lev
  * @tc.desc: Test AuthNotifyDeviceDisconnect with null callback
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_NOTIFY_DEVICE_DISCONNECT_TEST_001, TestSize.Level1)
 {
@@ -999,6 +1051,7 @@ HWTEST_F(AuthDeviceTest, AUTH_NOTIFY_DEVICE_DISCONNECT_TEST_001, TestSize.Level1
  * @tc.desc: Test AuthNotifyDeviceDisconnect with callback
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_NOTIFY_DEVICE_DISCONNECT_TEST_002, TestSize.Level1)
 {
@@ -1015,10 +1068,11 @@ HWTEST_F(AuthDeviceTest, AUTH_NOTIFY_DEVICE_DISCONNECT_TEST_002, TestSize.Level1
  * @tc.desc: Test RegAuthVerifyListener with null listener
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, REG_AUTH_VERIFY_LISTENER_TEST_001, TestSize.Level1)
 {
-    EXPECT_EQ(RegAuthVerifyListener(NULL), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(RegAuthVerifyListener(nullptr), SOFTBUS_INVALID_PARAM);
 }
 
 /*
@@ -1039,6 +1093,7 @@ HWTEST_F(AuthDeviceTest, REG_AUTH_VERIFY_LISTENER_TEST_002, TestSize.Level1)
  * @tc.desc: Test UnregAuthVerifyListener
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, UNREG_AUTH_VERIFY_LISTENER_TEST_001, TestSize.Level1)
 {
@@ -1050,10 +1105,11 @@ HWTEST_F(AuthDeviceTest, UNREG_AUTH_VERIFY_LISTENER_TEST_001, TestSize.Level1)
  * @tc.desc: Test RegGroupChangeListener with null listener
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, REG_GROUP_CHANGE_LISTENER_TEST_001, TestSize.Level1)
 {
-    EXPECT_EQ(RegGroupChangeListener(NULL), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(RegGroupChangeListener(nullptr), SOFTBUS_INVALID_PARAM);
 }
 
 /*
@@ -1061,6 +1117,7 @@ HWTEST_F(AuthDeviceTest, REG_GROUP_CHANGE_LISTENER_TEST_001, TestSize.Level1)
  * @tc.desc: Test RegGroupChangeListener success
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, REG_GROUP_CHANGE_LISTENER_TEST_002, TestSize.Level1)
 {
@@ -1074,6 +1131,7 @@ HWTEST_F(AuthDeviceTest, REG_GROUP_CHANGE_LISTENER_TEST_002, TestSize.Level1)
  * @tc.desc: Test UnregGroupChangeListener
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, UNREG_GROUP_CHANGE_LISTENER_TEST_001, TestSize.Level1)
 {
@@ -1085,6 +1143,7 @@ HWTEST_F(AuthDeviceTest, UNREG_GROUP_CHANGE_LISTENER_TEST_001, TestSize.Level1)
  * @tc.desc: Test OnGroupCreated with null callback
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, ON_GROUP_CREATED_TEST_001, TestSize.Level1)
 {
@@ -1097,6 +1156,7 @@ HWTEST_F(AuthDeviceTest, ON_GROUP_CREATED_TEST_001, TestSize.Level1)
  * @tc.desc: Test OnGroupCreated with callback
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, ON_GROUP_CREATED_TEST_002, TestSize.Level1)
 {
@@ -1112,6 +1172,7 @@ HWTEST_F(AuthDeviceTest, ON_GROUP_CREATED_TEST_002, TestSize.Level1)
  * @tc.desc: Test OnGroupDeleted with null callback
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, ON_GROUP_DELETED_TEST_001, TestSize.Level1)
 {
@@ -1124,6 +1185,7 @@ HWTEST_F(AuthDeviceTest, ON_GROUP_DELETED_TEST_001, TestSize.Level1)
  * @tc.desc: Test OnGroupDeleted with callback
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, ON_GROUP_DELETED_TEST_002, TestSize.Level1)
 {
@@ -1139,6 +1201,7 @@ HWTEST_F(AuthDeviceTest, ON_GROUP_DELETED_TEST_002, TestSize.Level1)
  * @tc.desc: Test OnDeviceBound with callback
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, ON_DEVICE_BOUND_TEST_001, TestSize.Level1)
 {
@@ -1156,6 +1219,7 @@ HWTEST_F(AuthDeviceTest, ON_DEVICE_BOUND_TEST_001, TestSize.Level1)
  * @tc.desc: Test OnDeviceBound with null group callback
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, ON_DEVICE_BOUND_TEST_002, TestSize.Level1)
 {
@@ -1170,6 +1234,7 @@ HWTEST_F(AuthDeviceTest, ON_DEVICE_BOUND_TEST_002, TestSize.Level1)
  * @tc.desc: Test RegTrustListenerOnHichainSaStart fail
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, REG_TRUST_LISTENER_ON_HICHAIN_SA_START_TEST_001, TestSize.Level1)
 {
@@ -1185,6 +1250,7 @@ HWTEST_F(AuthDeviceTest, REG_TRUST_LISTENER_ON_HICHAIN_SA_START_TEST_001, TestSi
  * @tc.desc: Test RegTrustListenerOnHichainSaStart success
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, REG_TRUST_LISTENER_ON_HICHAIN_SA_START_TEST_002, TestSize.Level1)
 {
@@ -1200,6 +1266,7 @@ HWTEST_F(AuthDeviceTest, REG_TRUST_LISTENER_ON_HICHAIN_SA_START_TEST_002, TestSi
  * @tc.desc: Test RetryRegTrustDataChangeListener fail all retries
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, RETRY_REG_TRUST_DATA_CHANGE_LISTENER_TEST_001, TestSize.Level1)
 {
@@ -1216,6 +1283,7 @@ HWTEST_F(AuthDeviceTest, RETRY_REG_TRUST_DATA_CHANGE_LISTENER_TEST_001, TestSize
  * @tc.desc: Test RetryRegTrustDataChangeListener success on second retry
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, RETRY_REG_TRUST_DATA_CHANGE_LISTENER_TEST_002, TestSize.Level1)
 {
@@ -1233,6 +1301,7 @@ HWTEST_F(AuthDeviceTest, RETRY_REG_TRUST_DATA_CHANGE_LISTENER_TEST_002, TestSize
  * @tc.desc: Test AuthRegisterToDpDelay RegisterToDp fail
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_REGISTER_TO_DP_DELAY_TEST_001, TestSize.Level1)
 {
@@ -1247,6 +1316,7 @@ HWTEST_F(AuthDeviceTest, AUTH_REGISTER_TO_DP_DELAY_TEST_001, TestSize.Level1)
  * @tc.desc: Test AuthRegisterToDpDelay InitDbListDelay fail
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_REGISTER_TO_DP_DELAY_TEST_002, TestSize.Level1)
 {
@@ -1262,6 +1332,7 @@ HWTEST_F(AuthDeviceTest, AUTH_REGISTER_TO_DP_DELAY_TEST_002, TestSize.Level1)
  * @tc.desc: Test AuthRegisterToDpDelay success
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_REGISTER_TO_DP_DELAY_TEST_003, TestSize.Level1)
 {
@@ -1277,6 +1348,7 @@ HWTEST_F(AuthDeviceTest, AUTH_REGISTER_TO_DP_DELAY_TEST_003, TestSize.Level1)
  * @tc.desc: Test AuthDeviceCloseConn with invalid type
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_CLOSE_CONN_TEST_001, TestSize.Level1)
 {
@@ -1289,6 +1361,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_CLOSE_CONN_TEST_001, TestSize.Level1)
  * @tc.desc: Test AuthDeviceCloseConn auth not found
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_CLOSE_CONN_TEST_002, TestSize.Level1)
 {
@@ -1303,6 +1376,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_CLOSE_CONN_TEST_002, TestSize.Level1)
  * @tc.desc: Test AuthDeviceCloseConn WiFi type (do nothing)
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_CLOSE_CONN_TEST_003, TestSize.Level1)
 {
@@ -1322,6 +1396,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_CLOSE_CONN_TEST_003, TestSize.Level1)
  * @tc.desc: Test AuthDeviceCloseConn BR type (should disconnect)
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_CLOSE_CONN_TEST_004, TestSize.Level1)
 {
@@ -1341,12 +1416,13 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_CLOSE_CONN_TEST_004, TestSize.Level1)
  * @tc.desc: Test AuthDeviceOpenConn with null info
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_OPEN_CONN_TEST_001, TestSize.Level1)
 {
     AuthConnCallback cb;
     (void)memset_s(&cb, sizeof(cb), 0, sizeof(cb));
-    EXPECT_EQ(AuthDeviceOpenConn(NULL, TEST_REQUEST_ID, &cb), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthDeviceOpenConn(nullptr, TEST_REQUEST_ID, &cb), SOFTBUS_INVALID_PARAM);
 }
 
 /*
@@ -1354,6 +1430,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_OPEN_CONN_TEST_001, TestSize.Level1)
  * @tc.desc: Test AuthDeviceOpenConn with invalid connInfo type
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_OPEN_CONN_TEST_002, TestSize.Level1)
 {
@@ -1372,6 +1449,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_OPEN_CONN_TEST_002, TestSize.Level1)
  * @tc.desc: Test AuthStartVerify with null params
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_START_VERIFY_TEST_001, TestSize.Level1)
 {
@@ -1381,8 +1459,8 @@ HWTEST_F(AuthDeviceTest, AUTH_START_VERIFY_TEST_001, TestSize.Level1)
     (void)memset_s(&param, sizeof(param), 0, sizeof(param));
     AuthConnInfo connInfo;
     (void)memset_s(&connInfo, sizeof(connInfo), 0, sizeof(connInfo));
-    EXPECT_EQ(AuthStartVerify(NULL, &param, &cb), SOFTBUS_INVALID_PARAM);
-    EXPECT_EQ(AuthStartVerify(&connInfo, NULL, &cb), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthStartVerify(nullptr, &param, &cb), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthStartVerify(&connInfo, nullptr, &cb), SOFTBUS_INVALID_PARAM);
 }
 
 /*
@@ -1390,6 +1468,7 @@ HWTEST_F(AuthDeviceTest, AUTH_START_VERIFY_TEST_001, TestSize.Level1)
  * @tc.desc: Test AuthStartConnVerify with null params
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_START_CONN_VERIFY_TEST_001, TestSize.Level1)
 {
@@ -1397,7 +1476,7 @@ HWTEST_F(AuthDeviceTest, AUTH_START_CONN_VERIFY_TEST_001, TestSize.Level1)
     (void)memset_s(&cb, sizeof(cb), 0, sizeof(cb));
     AuthConnInfo connInfo;
     (void)memset_s(&connInfo, sizeof(connInfo), 0, sizeof(connInfo));
-    EXPECT_EQ(AuthStartConnVerify(NULL, TEST_REQUEST_ID, &cb, AUTH_MODULE_LNN, true), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthStartConnVerify(nullptr, TEST_REQUEST_ID, &cb, AUTH_MODULE_LNN, true), SOFTBUS_INVALID_PARAM);
 }
 
 /*
@@ -1405,10 +1484,11 @@ HWTEST_F(AuthDeviceTest, AUTH_START_CONN_VERIFY_TEST_001, TestSize.Level1)
  * @tc.desc: Test AuthDirectOnlineCreateAuthManager with null info
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DIRECT_ONLINE_CREATE_AUTH_MANAGER_TEST_001, TestSize.Level1)
 {
-    EXPECT_EQ(AuthDirectOnlineCreateAuthManager(1, NULL), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthDirectOnlineCreateAuthManager(1, nullptr), SOFTBUS_INVALID_PARAM);
 }
 
 /*
@@ -1416,6 +1496,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DIRECT_ONLINE_CREATE_AUTH_MANAGER_TEST_001, TestSi
  * @tc.desc: Test AuthDirectOnlineCreateAuthManager with invalid connInfo type
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DIRECT_ONLINE_CREATE_AUTH_MANAGER_TEST_002, TestSize.Level1)
 {
@@ -1432,6 +1513,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DIRECT_ONLINE_CREATE_AUTH_MANAGER_TEST_002, TestSi
  * @tc.desc: Test AuthDirectOnlineCreateAuthManager non-BLE type fails
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DIRECT_ONLINE_CREATE_AUTH_MANAGER_TEST_003, TestSize.Level1)
 {
@@ -1451,6 +1533,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DIRECT_ONLINE_CREATE_AUTH_MANAGER_TEST_003, TestSi
  * @tc.desc: Test AuthDirectOnlineCreateAuthManager require lock fail
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DIRECT_ONLINE_CREATE_AUTH_MANAGER_TEST_004, TestSize.Level1)
 {
@@ -1469,6 +1552,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DIRECT_ONLINE_CREATE_AUTH_MANAGER_TEST_004, TestSi
  * @tc.desc: Test AuthDirectOnlineCreateAuthManager get device auth manager null
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DIRECT_ONLINE_CREATE_AUTH_MANAGER_TEST_005, TestSize.Level1)
 {
@@ -1489,6 +1573,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DIRECT_ONLINE_CREATE_AUTH_MANAGER_TEST_005, TestSi
  * @tc.desc: Test AuthDirectOnlineCreateAuthManager success
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DIRECT_ONLINE_CREATE_AUTH_MANAGER_TEST_006, TestSize.Level1)
 {
@@ -1512,6 +1597,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DIRECT_ONLINE_CREATE_AUTH_MANAGER_TEST_006, TestSi
  * @tc.desc: Test AuthDeviceGetConnInfo with type below WIFI
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_DEVICE_GET_CONN_INFO_TEST_005, TestSize.Level1)
 {
@@ -1526,6 +1612,7 @@ HWTEST_F(AuthDeviceTest, AUTH_DEVICE_GET_CONN_INFO_TEST_005, TestSize.Level1)
  * @tc.desc: Test OnDeviceNotTrusted with has profile and callback null
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, ON_DEVICE_NOT_TRUSTED_TEST_001, TestSize.Level1)
 {
@@ -1546,6 +1633,7 @@ HWTEST_F(AuthDeviceTest, ON_DEVICE_NOT_TRUSTED_TEST_001, TestSize.Level1)
  * @tc.desc: Test OnDeviceNotTrusted with no profile and callback set
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, ON_DEVICE_NOT_TRUSTED_TEST_002, TestSize.Level1)
 {
@@ -1571,6 +1659,7 @@ HWTEST_F(AuthDeviceTest, ON_DEVICE_NOT_TRUSTED_TEST_002, TestSize.Level1)
  * @tc.desc: Test AuthMapInit success
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, AUTH_MAP_INIT_TEST_001, TestSize.Level1)
 {
@@ -1586,6 +1675,7 @@ HWTEST_F(AuthDeviceTest, AUTH_MAP_INIT_TEST_001, TestSize.Level1)
  * @tc.desc: Test VerifyDevice with RegTrustDataChangeListener failure
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, VERIFY_DEVICE_TEST_001, TestSize.Level1)
 {
@@ -1609,6 +1699,7 @@ HWTEST_F(AuthDeviceTest, VERIFY_DEVICE_TEST_001, TestSize.Level1)
  * @tc.desc: Test InsertToAuthLimitMap refreshes existing key without cap check or sweep
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, INSERT_TO_AUTH_LIMIT_MAP_TEST_001, TestSize.Level1)
 {
@@ -1628,6 +1719,7 @@ HWTEST_F(AuthDeviceTest, INSERT_TO_AUTH_LIMIT_MAP_TEST_001, TestSize.Level1)
  * @tc.desc: Test InsertToAuthLimitMap inserts new key directly when not full
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, INSERT_TO_AUTH_LIMIT_MAP_TEST_002, TestSize.Level1)
 {
@@ -1646,6 +1738,7 @@ HWTEST_F(AuthDeviceTest, INSERT_TO_AUTH_LIMIT_MAP_TEST_002, TestSize.Level1)
  * @tc.desc: Test InsertToAuthLimitMap evicts one expired node then inserts when full
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, INSERT_TO_AUTH_LIMIT_MAP_TEST_003, TestSize.Level1)
 {
@@ -1689,6 +1782,7 @@ HWTEST_F(AuthDeviceTest, INSERT_TO_AUTH_LIMIT_MAP_TEST_003, TestSize.Level1)
  * @tc.desc: Test InsertToAuthLimitMap skips insert when full and no expired node
  * @tc.type: FUNC
  * @tc.level: Level1
+ * @tc.require:
  */
 HWTEST_F(AuthDeviceTest, INSERT_TO_AUTH_LIMIT_MAP_TEST_004, TestSize.Level1)
 {

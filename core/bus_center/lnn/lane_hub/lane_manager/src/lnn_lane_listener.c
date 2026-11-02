@@ -26,6 +26,7 @@
 #include "lnn_trans_lane.h"
 #include "bus_center_manager.h"
 #include "softbus_adapter_mem.h"
+#include "softbus_def.h"
 #include "softbus_socket.h"
 #include "wifi_direct_manager.h"
 
@@ -87,7 +88,7 @@ static LaneBusinessInfo *GetLaneBusinessInfoWithoutLock(const LaneBusinessInfo *
     return NULL;
 }
 
-int32_t UpdateLaneBusinessInfoItem(uint64_t oldLaneId, uint64_t newLaneId)
+SOFTBUS_SYMBOL_EXPORT int32_t UpdateLaneBusinessInfoItem(uint64_t oldLaneId, uint64_t newLaneId)
 {
     if (oldLaneId == INVALID_LANE_ID || newLaneId == INVALID_LANE_ID) {
         LNN_LOGE(LNN_LANE, "invalid param");
@@ -112,7 +113,7 @@ int32_t UpdateLaneBusinessInfoItem(uint64_t oldLaneId, uint64_t newLaneId)
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t AddLaneBusinessInfoItem(LaneType laneType, uint64_t laneId)
+SOFTBUS_VISIBILITY int32_t AddLaneBusinessInfoItem(LaneType laneType, uint64_t laneId)
 {
     if (!LaneTypeCheck(laneType) || laneId == INVALID_LANE_ID) {
         LNN_LOGE(LNN_LANE, "invalid param");
@@ -155,7 +156,7 @@ int32_t AddLaneBusinessInfoItem(LaneType laneType, uint64_t laneId)
     return SOFTBUS_OK;
 }
 
-int32_t DelLaneBusinessInfoItem(LaneType laneType, uint64_t laneId)
+SOFTBUS_VISIBILITY int32_t DelLaneBusinessInfoItem(LaneType laneType, uint64_t laneId)
 {
     if (!LaneTypeCheck(laneType)) {
         LNN_LOGE(LNN_LANE, "invalid param");
@@ -258,7 +259,7 @@ static int32_t FindLaneListenerInfoByLaneType(LaneType type, LaneListenerInfo *l
     return SOFTBUS_OK;
 }
 
-int32_t LaneLinkupNotify(const char *peerUdid, const LaneLinkInfo *laneLinkInfo)
+SOFTBUS_VISIBILITY int32_t LaneLinkupNotify(const char *peerUdid, const LaneLinkInfo *laneLinkInfo)
 {
     if (peerUdid == NULL || laneLinkInfo == NULL) {
         LNN_LOGE(LNN_LANE, "invalid param");
@@ -300,7 +301,7 @@ int32_t LaneLinkupNotify(const char *peerUdid, const LaneLinkInfo *laneLinkInfo)
     return SOFTBUS_OK;
 }
 
-int32_t LaneLinkdownNotify(const char *peerUdid, const LaneLinkInfo *laneLinkInfo)
+SOFTBUS_VISIBILITY int32_t LaneLinkdownNotify(const char *peerUdid, const LaneLinkInfo *laneLinkInfo)
 {
     if (peerUdid == NULL || laneLinkInfo == NULL) {
         LNN_LOGE(LNN_LANE, "invalid param");
@@ -369,6 +370,22 @@ static int32_t GetStateNotifyInfo(const char *peerIp, const char *peerUuid, Lane
     return SOFTBUS_OK;
 }
 
+static void TryCancelWifiDirectExclusive(const char *remoteUuid)
+{
+    char networkId[NETWORK_ID_BUF_LEN] = {0};
+    if (LnnGetNetworkIdByUuid(remoteUuid, networkId, sizeof(networkId)) != SOFTBUS_OK) {
+        char *anonyUuid = NULL;
+        Anonymize(remoteUuid, &anonyUuid);
+        LNN_LOGW(LNN_LANE, "get networkId failed, skip exclusive cancel, uuid=%{public}s", AnonymizeWrapper(anonyUuid));
+        AnonymizeFree(anonyUuid);
+        return;
+    }
+    int32_t ret = DcWifiDirectExclusiveCancelByDeviceIdPacked(networkId);
+    if (ret != SOFTBUS_OK) {
+        LNN_LOGE(LNN_LANE, "dc wifi direct exclusive cancel failed, ret=%{public}d", ret);
+    }
+}
+
 static void LnnOnWifiDirectDeviceOnline(const char *peerMac, const char *peerIp, const char *peerUuid, bool isSource)
 {
     LNN_LOGI(LNN_LANE, "lnn wifidirect up");
@@ -403,6 +420,9 @@ static void LnnOnWifiDirectDeviceOffline(const char *peerMac, const char *peerIp
     }
     if (laneLinkInfo.type == LANE_HML && IsPowerControlEnabledPacked()) {
         DetectDisableWifiDirectApply();
+    }
+    if (laneLinkInfo.type == LANE_HML || laneLinkInfo.type == LANE_P2P) {
+        TryCancelWifiDirectExclusive(peerUuid);
     }
     if (PostLaneStateChangeMessage(LANE_STATE_LINKDOWN, laneLinkInfo.peerUdid, &laneLinkInfo) != SOFTBUS_OK) {
         LNN_LOGE(LNN_LANE, "post laneState linkdown msg fail");

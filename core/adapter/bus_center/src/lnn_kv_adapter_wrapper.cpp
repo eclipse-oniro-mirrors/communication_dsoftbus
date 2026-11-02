@@ -19,6 +19,7 @@
 #include "lnn_log.h"
 #include "iservice_registry.h"
 #include "lnn_kv_store_launch_listener.h"
+#include "softbus_def.h"
 #include "system_ability_definition.h"
 
 using namespace OHOS;
@@ -107,6 +108,7 @@ static std::shared_ptr<KVAdapter> FindKvStorePtr(int32_t &dbId)
     return iter->second;
 }
 
+SOFTBUS_VISIBILITY
 int32_t LnnPutDBData(int32_t dbId, const char *key, int32_t keyLen, const char *value, int32_t valueLen)
 {
     int32_t putRet;
@@ -218,7 +220,7 @@ int32_t LnnDeleteDBDataByPrefix(int32_t dbId, const char *keyPrefix, int32_t key
     return SOFTBUS_OK;
 }
 
-int32_t LnnCloudSync(int32_t dbId)
+SOFTBUS_VISIBILITY int32_t LnnCloudSync(int32_t dbId)
 {
     std::lock_guard<std::mutex> lock(g_kvAdapterWrapperMutex);
     if (dbId < MIN_DBID_COUNT || dbId >= g_dbId) {
@@ -291,7 +293,7 @@ void LnnUnRegisterDataChangeListener(int32_t dbId)
     LNN_LOGI(LNN_LEDGER, "DeRegisterDataChangeListener success");
 }
 
-int32_t LnnSubcribeKvStoreService(void)
+SOFTBUS_VISIBILITY int32_t LnnSubcribeKvStoreService(void)
 {
     auto abilityManager = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (abilityManager == nullptr) {

@@ -62,9 +62,7 @@ ohos_shared_library("br_proxy_adapter") {
   }
   branch_protector_ret = "pac_ret"
   sources = []
-  if (is_standard_system &&
-      (!defined(global_parts_info) ||
-       defined(global_parts_info.resourceschedule_device_standby))) {
+  if (is_standard_system) {
     sources += [ "br_proxy_adapter.cpp" ]
     deps = [ "$dsoftbus_dfx_path:softbus_dfx" ]
     external_deps = [
@@ -74,11 +72,18 @@ ohos_shared_library("br_proxy_adapter") {
       "bundle_framework:appexecfwk_base",
       "bundle_framework:appexecfwk_core",
       "c_utils:utils",
-      "device_standby:standby_innerkits",
       "ipc:ipc_single",
       "resource_schedule_service:ressched_client",
       "samgr:samgr_proxy",
     ]
+    # device_standby is an optional dependency: when supported, define the DSOFTBUS_FEATURE_DEVICE_STANDBY
+    # macro and pull in the dependency so Unrestricted runs the normal logic; when not supported,
+    # Unrestricted returns an error directly without affecting compilation.
+    if (!defined(global_parts_info) ||
+        defined(global_parts_info.resourceschedule_device_standby)) {
+      defines += [ "DSOFTBUS_FEATURE_DEVICE_STANDBY" ]
+      external_deps += [ "device_standby:standby_innerkits" ]
+    }
   } else {
     sources += [ "br_proxy_adapter_virtual.cpp" ]
   }

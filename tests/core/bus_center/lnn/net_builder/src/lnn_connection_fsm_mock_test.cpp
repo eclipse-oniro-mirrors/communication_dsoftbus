@@ -485,7 +485,7 @@ HWTEST_F(LNNConnectionFsmMockTest, LNN_STOP_CONNECTION_FSM_TEST_001, TestSize.Le
     EXPECT_TRUE(ret == SOFTBUS_INVALID_PARAM);
     ret = LnnStopConnectionFsm(connFsm, LnnConnectionFsmStopCallback);
     EXPECT_TRUE(ret == SOFTBUS_OK);
-    LnnDestroyConnectionFsm(connFsm);
+    DestroyConnFsm(connFsm);
 }
 
 /*

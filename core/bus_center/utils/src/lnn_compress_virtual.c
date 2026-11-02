@@ -16,6 +16,7 @@
 #include "lnn_compress.h"
 
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 /* compress data by GZIP  */
 int32_t DataCompress(uint8_t *in, uint32_t inLen, uint8_t **out, uint32_t *outLen)
@@ -24,7 +25,7 @@ int32_t DataCompress(uint8_t *in, uint32_t inLen, uint8_t **out, uint32_t *outLe
 }
 
 /* decompress data by GZIP */
-int32_t DataDecompress(uint8_t *in, uint32_t inLen, uint8_t **out, uint32_t *outLen)
+SOFTBUS_VISIBILITY int32_t DataDecompress(uint8_t *in, uint32_t inLen, uint8_t **out, uint32_t *outLen)
 {
     return SOFTBUS_OK;
 }

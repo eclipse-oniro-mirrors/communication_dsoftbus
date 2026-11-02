@@ -58,6 +58,11 @@ config("softbus_conn_ble_manager_test_config") {
 
 ohos_unittest("BleManagerTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   public_configs = [ ":softbus_conn_ble_manager_test_config" ]
   sources = [
@@ -69,7 +74,8 @@ ohos_unittest("BleManagerTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [

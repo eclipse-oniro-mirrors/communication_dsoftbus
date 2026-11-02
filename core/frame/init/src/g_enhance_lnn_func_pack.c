@@ -21,6 +21,7 @@
 #include "softbus_adapter_mem.h"
 #include "softbus_error_code.h"
 #include "softbus_init_common.h"
+#include "softbus_def.h"
 
 #define VIRTUAL_DEFAULT_SCORE 60
 
@@ -89,7 +90,7 @@ LnnHeartbeatMediumMgr g_bleMgr = {
 };
 #endif
 
-int32_t AuthMetaOpenConnPacked(const AuthConnInfo *info, uint32_t requestId, const AuthConnCallback *callback)
+SOFTBUS_VISIBILITY int32_t AuthMetaOpenConnPacked(const AuthConnInfo *info, uint32_t requestId, const AuthConnCallback *callback)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->authMetaOpenConn) != SOFTBUS_OK) {
@@ -98,7 +99,7 @@ int32_t AuthMetaOpenConnPacked(const AuthConnInfo *info, uint32_t requestId, con
     return pfnLnnEnhanceFuncList->authMetaOpenConn(info, requestId, callback);
 }
 
-int32_t AuthMetaPostTransDataPacked(int64_t authId, const AuthTransData *dataInfo)
+SOFTBUS_VISIBILITY int32_t AuthMetaPostTransDataPacked(int64_t authId, const AuthTransData *dataInfo)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->authMetaPostTransData) != SOFTBUS_OK) {
@@ -107,7 +108,7 @@ int32_t AuthMetaPostTransDataPacked(int64_t authId, const AuthTransData *dataInf
     return pfnLnnEnhanceFuncList->authMetaPostTransData(authId, dataInfo);
 }
 
-void AuthMetaCloseConnPacked(int64_t authId)
+SOFTBUS_VISIBILITY void AuthMetaCloseConnPacked(int64_t authId)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->authMetaCloseConn) != SOFTBUS_OK) {
@@ -116,7 +117,7 @@ void AuthMetaCloseConnPacked(int64_t authId)
     return pfnLnnEnhanceFuncList->authMetaCloseConn(authId);
 }
 
-int32_t AuthMetaGetPreferConnInfoPacked(const char *networkId, AuthConnInfo *connInfo)
+SOFTBUS_VISIBILITY int32_t AuthMetaGetPreferConnInfoPacked(const char *networkId, AuthConnInfo *connInfo)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->authMetaGetPreferConnInfo) != SOFTBUS_OK) {
@@ -125,7 +126,7 @@ int32_t AuthMetaGetPreferConnInfoPacked(const char *networkId, AuthConnInfo *con
     return pfnLnnEnhanceFuncList->authMetaGetPreferConnInfo(networkId, connInfo);
 }
 
-int64_t AuthMetaGetIdByConnInfoPacked(const AuthConnInfo *connInfo, bool isServer)
+SOFTBUS_VISIBILITY int64_t AuthMetaGetIdByConnInfoPacked(const AuthConnInfo *connInfo, bool isServer)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->authMetaGetIdByConnInfo) != SOFTBUS_OK) {
@@ -134,7 +135,7 @@ int64_t AuthMetaGetIdByConnInfoPacked(const AuthConnInfo *connInfo, bool isServe
     return pfnLnnEnhanceFuncList->authMetaGetIdByConnInfo(connInfo, isServer);
 }
 
-int64_t AuthMetaGetIdByUuidPacked(const char *uuid, AuthLinkType type, bool isServer)
+SOFTBUS_VISIBILITY int64_t AuthMetaGetIdByUuidPacked(const char *uuid, AuthLinkType type, bool isServer)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->authMetaGetIdByUuid) != SOFTBUS_OK) {
@@ -143,7 +144,7 @@ int64_t AuthMetaGetIdByUuidPacked(const char *uuid, AuthLinkType type, bool isSe
     return pfnLnnEnhanceFuncList->authMetaGetIdByUuid(uuid, type, isServer);
 }
 
-int64_t AuthMetaGetIdByIpPacked(const char *ip)
+SOFTBUS_VISIBILITY int64_t AuthMetaGetIdByIpPacked(const char *ip)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->authMetaGetIdByIp) != SOFTBUS_OK) {
@@ -152,7 +153,7 @@ int64_t AuthMetaGetIdByIpPacked(const char *ip)
     return pfnLnnEnhanceFuncList->authMetaGetIdByIp(ip);
 }
 
-int32_t AuthMetaEncryptPacked(int64_t authId, const uint8_t *inData, uint32_t inLen,
+SOFTBUS_VISIBILITY int32_t AuthMetaEncryptPacked(int64_t authId, const uint8_t *inData, uint32_t inLen,
     uint8_t *outData, uint32_t *outLen)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
@@ -163,7 +164,7 @@ int32_t AuthMetaEncryptPacked(int64_t authId, const uint8_t *inData, uint32_t in
 }
 
 
-int32_t AuthMetaDecryptPacked(int64_t authId, const uint8_t *inData, uint32_t inLen,
+SOFTBUS_VISIBILITY int32_t AuthMetaDecryptPacked(int64_t authId, const uint8_t *inData, uint32_t inLen,
     uint8_t *outData, uint32_t *outLen)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
@@ -173,7 +174,7 @@ int32_t AuthMetaDecryptPacked(int64_t authId, const uint8_t *inData, uint32_t in
     return pfnLnnEnhanceFuncList->authMetaDecrypt(authId, inData, inLen, outData, outLen);
 }
 
-int32_t AuthMetaSetP2pMacPacked(int64_t authId, const char *p2pMac)
+SOFTBUS_VISIBILITY int32_t AuthMetaSetP2pMacPacked(int64_t authId, const char *p2pMac)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->authMetaSetP2pMac) != SOFTBUS_OK) {
@@ -182,7 +183,7 @@ int32_t AuthMetaSetP2pMacPacked(int64_t authId, const char *p2pMac)
     return pfnLnnEnhanceFuncList->authMetaSetP2pMac(authId, p2pMac);
 }
 
-int32_t AuthMetaGetConnInfoPacked(int64_t authId, AuthConnInfo *connInfo)
+SOFTBUS_VISIBILITY int32_t AuthMetaGetConnInfoPacked(int64_t authId, AuthConnInfo *connInfo)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->authMetaGetConnInfo) != SOFTBUS_OK) {
@@ -191,7 +192,7 @@ int32_t AuthMetaGetConnInfoPacked(int64_t authId, AuthConnInfo *connInfo)
     return pfnLnnEnhanceFuncList->authMetaGetConnInfo(authId, connInfo);
 }
 
-int32_t AuthMetaGetDeviceUuidPacked(int64_t authId, char *uuid, uint16_t size)
+SOFTBUS_VISIBILITY int32_t AuthMetaGetDeviceUuidPacked(int64_t authId, char *uuid, uint16_t size)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->authMetaGetDeviceUuid) != SOFTBUS_OK) {
@@ -200,7 +201,7 @@ int32_t AuthMetaGetDeviceUuidPacked(int64_t authId, char *uuid, uint16_t size)
     return pfnLnnEnhanceFuncList->authMetaGetDeviceUuid(authId, uuid, size);
 }
 
-int32_t AuthMetaGetServerSidePacked(int64_t authId, bool *isServer)
+SOFTBUS_VISIBILITY int32_t AuthMetaGetServerSidePacked(int64_t authId, bool *isServer)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->authMetaGetServerSide) != SOFTBUS_OK) {
@@ -209,7 +210,7 @@ int32_t AuthMetaGetServerSidePacked(int64_t authId, bool *isServer)
     return pfnLnnEnhanceFuncList->authMetaGetServerSide(authId, isServer);
 }
 
-void AuthMetaCheckMetaExistPacked(const AuthConnInfo *connInfo, bool *isExist)
+SOFTBUS_VISIBILITY void AuthMetaCheckMetaExistPacked(const AuthConnInfo *connInfo, bool *isExist)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->authMetaCheckMetaExist) != SOFTBUS_OK) {
@@ -218,7 +219,7 @@ void AuthMetaCheckMetaExistPacked(const AuthConnInfo *connInfo, bool *isExist)
     return pfnLnnEnhanceFuncList->authMetaCheckMetaExist(connInfo, isExist);
 }
 
-int32_t CustomizedSecurityProtocolInitPacked(void)
+SOFTBUS_VISIBILITY int32_t CustomizedSecurityProtocolInitPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->customizedSecurityProtocolInit) != SOFTBUS_OK) {
@@ -227,7 +228,7 @@ int32_t CustomizedSecurityProtocolInitPacked(void)
     return pfnLnnEnhanceFuncList->customizedSecurityProtocolInit();
 }
 
-void CustomizedSecurityProtocolDeinitPacked(void)
+SOFTBUS_VISIBILITY void CustomizedSecurityProtocolDeinitPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->customizedSecurityProtocolDeinit) != SOFTBUS_OK) {
@@ -236,7 +237,7 @@ void CustomizedSecurityProtocolDeinitPacked(void)
     return pfnLnnEnhanceFuncList->customizedSecurityProtocolDeinit();
 }
 
-void AuthMetaDeinitPacked(void)
+SOFTBUS_VISIBILITY void AuthMetaDeinitPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->authMetaDeinit) != SOFTBUS_OK) {
@@ -245,7 +246,7 @@ void AuthMetaDeinitPacked(void)
     return pfnLnnEnhanceFuncList->authMetaDeinit();
 }
 
-void DelAuthMetaManagerByPidPacked(const char *pkgName, int32_t pid)
+SOFTBUS_VISIBILITY void DelAuthMetaManagerByPidPacked(const char *pkgName, int32_t pid)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->delAuthMetaManagerByPid) != SOFTBUS_OK) {
@@ -254,7 +255,7 @@ void DelAuthMetaManagerByPidPacked(const char *pkgName, int32_t pid)
     return pfnLnnEnhanceFuncList->delAuthMetaManagerByPid(pkgName, pid);
 }
 
-void ClearMetaNodeRequestByPidPacked(const char *pkgName, int32_t pid)
+SOFTBUS_VISIBILITY void ClearMetaNodeRequestByPidPacked(const char *pkgName, int32_t pid)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->clearMetaNodeRequestByPid) != SOFTBUS_OK) {
@@ -263,7 +264,7 @@ void ClearMetaNodeRequestByPidPacked(const char *pkgName, int32_t pid)
     return pfnLnnEnhanceFuncList->clearMetaNodeRequestByPid(pkgName, pid);
 }
 
-void LnnClearAuthExchangeUdidPacked(const char *networkId)
+SOFTBUS_VISIBILITY void LnnClearAuthExchangeUdidPacked(const char *networkId)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnClearAuthExchangeUdid) != SOFTBUS_OK) {
@@ -272,7 +273,7 @@ void LnnClearAuthExchangeUdidPacked(const char *networkId)
     return pfnLnnEnhanceFuncList->lnnClearAuthExchangeUdid(networkId);
 }
 
-int32_t AuthInsertDeviceKeyPacked(const NodeInfo *deviceInfo, const AuthDeviceKeyInfo *deviceKey,
+SOFTBUS_VISIBILITY int32_t AuthInsertDeviceKeyPacked(const NodeInfo *deviceInfo, const AuthDeviceKeyInfo *deviceKey,
     AuthLinkType type)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
@@ -282,7 +283,7 @@ int32_t AuthInsertDeviceKeyPacked(const NodeInfo *deviceInfo, const AuthDeviceKe
     return pfnLnnEnhanceFuncList->authInsertDeviceKey(deviceInfo, deviceKey, type);
 }
 
-void AuthUpdateKeyIndexPacked(const char *udidHash, int32_t keyType, int64_t index, bool isServer)
+SOFTBUS_VISIBILITY void AuthUpdateKeyIndexPacked(const char *udidHash, int32_t keyType, int64_t index, bool isServer)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->authUpdateKeyIndex) != SOFTBUS_OK) {
@@ -291,7 +292,7 @@ void AuthUpdateKeyIndexPacked(const char *udidHash, int32_t keyType, int64_t ind
     return pfnLnnEnhanceFuncList->authUpdateKeyIndex(udidHash, keyType, index, isServer);
 }
 
-int32_t LnnGenerateLocalPtkPacked(char *udid, char *uuid)
+SOFTBUS_VISIBILITY int32_t LnnGenerateLocalPtkPacked(char *udid, char *uuid)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnGenerateLocalPtk) != SOFTBUS_OK) {
@@ -300,7 +301,7 @@ int32_t LnnGenerateLocalPtkPacked(char *udid, char *uuid)
     return pfnLnnEnhanceFuncList->lnnGenerateLocalPtk(udid, uuid);
 }
 
-bool CalcHKDFPacked(const uint8_t *ikm, uint32_t ikmLen, uint8_t *out, uint32_t outLen)
+SOFTBUS_VISIBILITY bool CalcHKDFPacked(const uint8_t *ikm, uint32_t ikmLen, uint8_t *out, uint32_t outLen)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->calcHKDF) != SOFTBUS_OK) {
@@ -309,7 +310,7 @@ bool CalcHKDFPacked(const uint8_t *ikm, uint32_t ikmLen, uint8_t *out, uint32_t 
     return pfnLnnEnhanceFuncList->calcHKDF(ikm, ikmLen, out, outLen);
 }
 
-void AuthUpdateCreateTimePacked(const char *udidHash, int32_t keyType, bool isServer)
+SOFTBUS_VISIBILITY void AuthUpdateCreateTimePacked(const char *udidHash, int32_t keyType, bool isServer)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->authUpdateCreateTime) != SOFTBUS_OK) {
@@ -318,7 +319,7 @@ void AuthUpdateCreateTimePacked(const char *udidHash, int32_t keyType, bool isSe
     return pfnLnnEnhanceFuncList->authUpdateCreateTime(udidHash, keyType, isServer);
 }
 
-int32_t AuthFindNormalizeKeyByServerSidePacked(const char *udidHash, bool isServer, AuthDeviceKeyInfo *deviceKey)
+SOFTBUS_VISIBILITY int32_t AuthFindNormalizeKeyByServerSidePacked(const char *udidHash, bool isServer, AuthDeviceKeyInfo *deviceKey)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->authFindNormalizeKeyByServerSide) != SOFTBUS_OK) {
@@ -327,7 +328,7 @@ int32_t AuthFindNormalizeKeyByServerSidePacked(const char *udidHash, bool isServ
     return pfnLnnEnhanceFuncList->authFindNormalizeKeyByServerSide(udidHash, isServer, deviceKey);
 }
 
-bool IsSupportUDIDAbatementPacked(void)
+SOFTBUS_VISIBILITY bool IsSupportUDIDAbatementPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->isSupportUDIDAbatement) != SOFTBUS_OK) {
@@ -336,7 +337,7 @@ bool IsSupportUDIDAbatementPacked(void)
     return pfnLnnEnhanceFuncList->isSupportUDIDAbatement();
 }
 
-int32_t AuthMetaGetConnIdByInfoPacked(const AuthConnInfo *connInfo, uint32_t *connectionId)
+SOFTBUS_VISIBILITY int32_t AuthMetaGetConnIdByInfoPacked(const AuthConnInfo *connInfo, uint32_t *connectionId)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->authMetaGetConnIdByInfo) != SOFTBUS_OK) {
@@ -345,7 +346,7 @@ int32_t AuthMetaGetConnIdByInfoPacked(const AuthConnInfo *connInfo, uint32_t *co
     return pfnLnnEnhanceFuncList->authMetaGetConnIdByInfo(connInfo, connectionId);
 }
 
-int32_t LnnGetMetaPtkPacked(uint32_t connId, char *metaPtk, uint32_t len)
+SOFTBUS_VISIBILITY int32_t LnnGetMetaPtkPacked(uint32_t connId, char *metaPtk, uint32_t len)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnGetMetaPtk) != SOFTBUS_OK) {
@@ -354,7 +355,7 @@ int32_t LnnGetMetaPtkPacked(uint32_t connId, char *metaPtk, uint32_t len)
     return pfnLnnEnhanceFuncList->lnnGetMetaPtk(connId, metaPtk, len);
 }
 
-bool PackCipherKeySyncMsgPacked(void *json)
+SOFTBUS_VISIBILITY bool PackCipherKeySyncMsgPacked(void *json)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->packCipherKeySyncMsg) != SOFTBUS_OK) {
@@ -363,7 +364,7 @@ bool PackCipherKeySyncMsgPacked(void *json)
     return pfnLnnEnhanceFuncList->packCipherKeySyncMsg(json);
 }
 
-void ProcessCipherKeySyncInfoPacked(const void *json, const char *networkId)
+SOFTBUS_VISIBILITY void ProcessCipherKeySyncInfoPacked(const void *json, const char *networkId)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->processCipherKeySyncInfo) != SOFTBUS_OK) {
@@ -372,7 +373,7 @@ void ProcessCipherKeySyncInfoPacked(const void *json, const char *networkId)
     return pfnLnnEnhanceFuncList->processCipherKeySyncInfo(json, networkId);
 }
 
-void FreeSoftbusChainPacked(SoftbusCertChain *softbusCertChain)
+SOFTBUS_VISIBILITY void FreeSoftbusChainPacked(SoftbusCertChain *softbusCertChain)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->freeSoftbusChain) != SOFTBUS_OK) {
@@ -381,7 +382,7 @@ void FreeSoftbusChainPacked(SoftbusCertChain *softbusCertChain)
     return pfnLnnEnhanceFuncList->freeSoftbusChain(softbusCertChain);
 }
 
-int32_t InitSoftbusChainPacked(SoftbusCertChain *softbusCertChain)
+SOFTBUS_VISIBILITY int32_t InitSoftbusChainPacked(SoftbusCertChain *softbusCertChain)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->initSoftbusChain) != SOFTBUS_OK) {
@@ -390,7 +391,7 @@ int32_t InitSoftbusChainPacked(SoftbusCertChain *softbusCertChain)
     return pfnLnnEnhanceFuncList->initSoftbusChain(softbusCertChain);
 }
 
-int32_t LnnSyncTrustedRelationShipPacked(const char *pkgName, const char *msg, uint32_t msgLen)
+SOFTBUS_VISIBILITY int32_t LnnSyncTrustedRelationShipPacked(const char *pkgName, const char *msg, uint32_t msgLen)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnSyncTrustedRelationShip) != SOFTBUS_OK) {
@@ -399,7 +400,7 @@ int32_t LnnSyncTrustedRelationShipPacked(const char *pkgName, const char *msg, u
     return pfnLnnEnhanceFuncList->lnnSyncTrustedRelationShip(pkgName, msg, msgLen);
 }
 
-int32_t LnnProcessPushMsgPacked(const uint8_t *data, uint32_t len)
+SOFTBUS_VISIBILITY int32_t LnnProcessPushMsgPacked(const uint8_t *data, uint32_t len)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnProcessPushMsg) != SOFTBUS_OK) {
@@ -408,7 +409,7 @@ int32_t LnnProcessPushMsgPacked(const uint8_t *data, uint32_t len)
     return pfnLnnEnhanceFuncList->lnnProcessPushMsg(data, len);
 }
 
-void LnnCoapConnectPacked(const char *ip)
+SOFTBUS_VISIBILITY void LnnCoapConnectPacked(const char *ip)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnCoapConnect) != SOFTBUS_OK) {
@@ -417,7 +418,7 @@ void LnnCoapConnectPacked(const char *ip)
     return pfnLnnEnhanceFuncList->lnnCoapConnect(ip);
 }
 
-void LnnDestroyCoapConnectListPacked(void)
+SOFTBUS_VISIBILITY void LnnDestroyCoapConnectListPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnDestroyCoapConnectList) != SOFTBUS_OK) {
@@ -426,7 +427,7 @@ void LnnDestroyCoapConnectListPacked(void)
     return pfnLnnEnhanceFuncList->lnnDestroyCoapConnectList();
 }
 
-int32_t LnnInitQosPacked(void)
+SOFTBUS_VISIBILITY int32_t LnnInitQosPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnInitQos) != SOFTBUS_OK) {
@@ -435,7 +436,7 @@ int32_t LnnInitQosPacked(void)
     return pfnLnnEnhanceFuncList->lnnInitQos();
 }
 
-void LnnDeinitQosPacked(void)
+SOFTBUS_VISIBILITY void LnnDeinitQosPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnDeinitQos) != SOFTBUS_OK) {
@@ -444,7 +445,7 @@ void LnnDeinitQosPacked(void)
     return pfnLnnEnhanceFuncList->lnnDeinitQos();
 }
 
-int32_t LnnSyncBleOfflineMsgPacked(void)
+SOFTBUS_VISIBILITY int32_t LnnSyncBleOfflineMsgPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnSyncBleOfflineMsg) != SOFTBUS_OK) {
@@ -453,7 +454,7 @@ int32_t LnnSyncBleOfflineMsgPacked(void)
     return pfnLnnEnhanceFuncList->lnnSyncBleOfflineMsg();
 }
 
-void LnnBleHbRegDataLevelChangeCbPacked(const IDataLevelChangeCallback *callback)
+SOFTBUS_VISIBILITY void LnnBleHbRegDataLevelChangeCbPacked(const IDataLevelChangeCallback *callback)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnBleHbRegDataLevelChangeCb) != SOFTBUS_OK) {
@@ -462,7 +463,7 @@ void LnnBleHbRegDataLevelChangeCbPacked(const IDataLevelChangeCallback *callback
     return pfnLnnEnhanceFuncList->lnnBleHbRegDataLevelChangeCb(callback);
 }
 
-void LnnBleHbUnregDataLevelChangeCbPacked(void)
+SOFTBUS_VISIBILITY void LnnBleHbUnregDataLevelChangeCbPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnBleHbUnregDataLevelChangeCb) != SOFTBUS_OK) {
@@ -471,7 +472,7 @@ void LnnBleHbUnregDataLevelChangeCbPacked(void)
     return pfnLnnEnhanceFuncList->lnnBleHbUnregDataLevelChangeCb();
 }
 
-int32_t DecryptUserIdPacked(NodeInfo *deviceInfo, uint8_t *advUserId, uint32_t len)
+SOFTBUS_VISIBILITY int32_t DecryptUserIdPacked(NodeInfo *deviceInfo, uint8_t *advUserId, uint32_t len)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->decryptUserId) != SOFTBUS_OK) {
@@ -480,7 +481,7 @@ int32_t DecryptUserIdPacked(NodeInfo *deviceInfo, uint8_t *advUserId, uint32_t l
     return pfnLnnEnhanceFuncList->decryptUserId(deviceInfo, advUserId, len);
 }
 
-bool IsCloudSyncEnabledPacked(void)
+SOFTBUS_VISIBILITY bool IsCloudSyncEnabledPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->isCloudSyncEnabled) != SOFTBUS_OK) {
@@ -489,7 +490,7 @@ bool IsCloudSyncEnabledPacked(void)
     return pfnLnnEnhanceFuncList->isCloudSyncEnabled();
 }
 
-int32_t AuthFindDeviceKeyPacked(const char *udidHash, int32_t keyType, AuthDeviceKeyInfo *deviceKey)
+SOFTBUS_VISIBILITY int32_t AuthFindDeviceKeyPacked(const char *udidHash, int32_t keyType, AuthDeviceKeyInfo *deviceKey)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->authFindDeviceKey) != SOFTBUS_OK) {
@@ -498,7 +499,7 @@ int32_t AuthFindDeviceKeyPacked(const char *udidHash, int32_t keyType, AuthDevic
     return pfnLnnEnhanceFuncList->authFindDeviceKey(udidHash, keyType, deviceKey);
 }
 
-int32_t AuthFindLatestNormalizeKeyPacked(const char *udidHash, AuthDeviceKeyInfo *deviceKey, bool clearOldKey)
+SOFTBUS_VISIBILITY int32_t AuthFindLatestNormalizeKeyPacked(const char *udidHash, AuthDeviceKeyInfo *deviceKey, bool clearOldKey)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->authFindLatestNormalizeKey) != SOFTBUS_OK) {
@@ -507,7 +508,7 @@ int32_t AuthFindLatestNormalizeKeyPacked(const char *udidHash, AuthDeviceKeyInfo
     return pfnLnnEnhanceFuncList->authFindLatestNormalizeKey(udidHash, deviceKey, clearOldKey);
 }
 
-bool IsCipherManagerFindKeyPk(const char *udid)
+SOFTBUS_SYMBOL_EXPORT bool IsCipherManagerFindKeyPk(const char *udid)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->isCipherManagerFindKey) != SOFTBUS_OK) {
@@ -516,7 +517,7 @@ bool IsCipherManagerFindKeyPk(const char *udid)
     return pfnLnnEnhanceFuncList->isCipherManagerFindKey(udid);
 }
 
-int32_t LnnAddRemoteChannelCodePacked(const char *udid, int32_t channelCode)
+SOFTBUS_VISIBILITY int32_t LnnAddRemoteChannelCodePacked(const char *udid, int32_t channelCode)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnAddRemoteChannelCode) != SOFTBUS_OK) {
@@ -525,7 +526,7 @@ int32_t LnnAddRemoteChannelCodePacked(const char *udid, int32_t channelCode)
     return pfnLnnEnhanceFuncList->lnnAddRemoteChannelCode(udid, channelCode);
 }
 
-int32_t LnnRegistBleHeartbeatMediumMgrPacked(void)
+SOFTBUS_VISIBILITY int32_t LnnRegistBleHeartbeatMediumMgrPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnRegistBleHeartbeatMediumMgr) != SOFTBUS_OK) {
@@ -538,7 +539,7 @@ int32_t LnnRegistBleHeartbeatMediumMgrPacked(void)
     return pfnLnnEnhanceFuncList->lnnRegistBleHeartbeatMediumMgr();
 }
 
-int32_t LnnRegisterBleLpDeviceMediumMgrPacked(void)
+SOFTBUS_VISIBILITY int32_t LnnRegisterBleLpDeviceMediumMgrPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnRegisterBleLpDeviceMediumMgr) != SOFTBUS_OK) {
@@ -547,7 +548,7 @@ int32_t LnnRegisterBleLpDeviceMediumMgrPacked(void)
     return pfnLnnEnhanceFuncList->lnnRegisterBleLpDeviceMediumMgr();
 }
 
-int32_t LnnRegisterSleHeartbeatMediumMgrPacked(void)
+SOFTBUS_VISIBILITY int32_t LnnRegisterSleHeartbeatMediumMgrPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnRegisterSleHeartbeatMediumMgr) != SOFTBUS_OK) {
@@ -556,7 +557,7 @@ int32_t LnnRegisterSleHeartbeatMediumMgrPacked(void)
     return pfnLnnEnhanceFuncList->lnnRegisterSleHeartbeatMediumMgr();
 }
 
-bool HaveConcurrencyPreLinkReqIdByReuseConnReqIdPacked(uint32_t connReqId, bool isCheckPreLink)
+SOFTBUS_VISIBILITY bool HaveConcurrencyPreLinkReqIdByReuseConnReqIdPacked(uint32_t connReqId, bool isCheckPreLink)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->haveConcurrencyPreLinkReqIdByReuseConnReqId) != SOFTBUS_OK) {
@@ -565,7 +566,7 @@ bool HaveConcurrencyPreLinkReqIdByReuseConnReqIdPacked(uint32_t connReqId, bool 
     return pfnLnnEnhanceFuncList->haveConcurrencyPreLinkReqIdByReuseConnReqId(connReqId, isCheckPreLink);
 }
 
-bool HaveConcurrencyPreLinkNodeByLaneReqIdPacked(uint32_t laneReqId, bool isCheckPreLink)
+SOFTBUS_VISIBILITY bool HaveConcurrencyPreLinkNodeByLaneReqIdPacked(uint32_t laneReqId, bool isCheckPreLink)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL) {
@@ -577,7 +578,7 @@ bool HaveConcurrencyPreLinkNodeByLaneReqIdPacked(uint32_t laneReqId, bool isChec
     return pfnLnnEnhanceFuncList->haveConcurrencyPreLinkNodeByLaneReqId(laneReqId, isCheckPreLink);
 }
 
-int32_t GetConcurrencyLaneReqIdByConnReqIdPacked(uint32_t connReqId, uint32_t *laneReqId)
+SOFTBUS_VISIBILITY int32_t GetConcurrencyLaneReqIdByConnReqIdPacked(uint32_t connReqId, uint32_t *laneReqId)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->getConcurrencyLaneReqIdByConnReqId) != SOFTBUS_OK) {
@@ -586,7 +587,7 @@ int32_t GetConcurrencyLaneReqIdByConnReqIdPacked(uint32_t connReqId, uint32_t *l
     return pfnLnnEnhanceFuncList->getConcurrencyLaneReqIdByConnReqId(connReqId, laneReqId);
 }
 
-void LnnFreePreLinkPacked(void *para)
+SOFTBUS_VISIBILITY void LnnFreePreLinkPacked(void *para)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnFreePreLink) != SOFTBUS_OK) {
@@ -595,7 +596,7 @@ void LnnFreePreLinkPacked(void *para)
     return pfnLnnEnhanceFuncList->lnnFreePreLink(para);
 }
 
-int32_t LnnRequestCheckOnlineStatusPacked(const char *networkId, uint64_t timeout)
+SOFTBUS_VISIBILITY int32_t LnnRequestCheckOnlineStatusPacked(const char *networkId, uint64_t timeout)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnRequestCheckOnlineStatus) != SOFTBUS_OK) {
@@ -604,7 +605,7 @@ int32_t LnnRequestCheckOnlineStatusPacked(const char *networkId, uint64_t timeou
     return pfnLnnEnhanceFuncList->lnnRequestCheckOnlineStatus(networkId, timeout);
 }
 
-int32_t LnnSyncPtkPacked(const char *networkId)
+SOFTBUS_VISIBILITY int32_t LnnSyncPtkPacked(const char *networkId)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnSyncPtk) != SOFTBUS_OK) {
@@ -613,7 +614,7 @@ int32_t LnnSyncPtkPacked(const char *networkId)
     return pfnLnnEnhanceFuncList->lnnSyncPtk(networkId);
 }
 
-int32_t GetConcurrencyLaneReqIdByActionIdPacked(uint32_t actionId, uint32_t *laneReqId)
+SOFTBUS_VISIBILITY int32_t GetConcurrencyLaneReqIdByActionIdPacked(uint32_t actionId, uint32_t *laneReqId)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->getConcurrencyLaneReqIdByActionId) != SOFTBUS_OK) {
@@ -622,7 +623,7 @@ int32_t GetConcurrencyLaneReqIdByActionIdPacked(uint32_t actionId, uint32_t *lan
     return pfnLnnEnhanceFuncList->getConcurrencyLaneReqIdByActionId(actionId, laneReqId);
 }
 
-int32_t UpdateConcurrencyReuseLaneReqIdByActionIdPacked(uint32_t actionId, uint32_t reuseLaneReqId, uint32_t connReqId)
+SOFTBUS_VISIBILITY int32_t UpdateConcurrencyReuseLaneReqIdByActionIdPacked(uint32_t actionId, uint32_t reuseLaneReqId, uint32_t connReqId)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->updateConcurrencyReuseLaneReqIdByActionId) != SOFTBUS_OK) {
@@ -631,7 +632,7 @@ int32_t UpdateConcurrencyReuseLaneReqIdByActionIdPacked(uint32_t actionId, uint3
     return pfnLnnEnhanceFuncList->updateConcurrencyReuseLaneReqIdByActionId(actionId, reuseLaneReqId, connReqId);
 }
 
-int32_t UpdateConcurrencyReuseLaneReqIdByUdidPacked(
+SOFTBUS_VISIBILITY int32_t UpdateConcurrencyReuseLaneReqIdByUdidPacked(
     const char *udidHash, uint32_t udidHashLen, uint32_t reuseLaneReqId, uint32_t connReqId)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
@@ -645,7 +646,7 @@ int32_t UpdateConcurrencyReuseLaneReqIdByUdidPacked(
         udidHash, udidHashLen, reuseLaneReqId, connReqId);
 }
 
-int32_t LnnAddLocalVapInfoPacked(LnnVapType type, const LnnVapAttr *vapAttr)
+SOFTBUS_VISIBILITY int32_t LnnAddLocalVapInfoPacked(LnnVapType type, const LnnVapAttr *vapAttr)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnAddLocalVapInfo) != SOFTBUS_OK) {
@@ -654,7 +655,7 @@ int32_t LnnAddLocalVapInfoPacked(LnnVapType type, const LnnVapAttr *vapAttr)
     return pfnLnnEnhanceFuncList->lnnAddLocalVapInfo(type, vapAttr);
 }
 
-int32_t LnnDeleteLocalVapInfoPacked(LnnVapType type)
+SOFTBUS_VISIBILITY int32_t LnnDeleteLocalVapInfoPacked(LnnVapType type)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnDeleteLocalVapInfo) != SOFTBUS_OK) {
@@ -663,7 +664,7 @@ int32_t LnnDeleteLocalVapInfoPacked(LnnVapType type)
     return pfnLnnEnhanceFuncList->lnnDeleteLocalVapInfo(type);
 }
 
-void DisablePowerControlPacked(const WifiDirectLinkInfo *wifiDirectInfo)
+SOFTBUS_VISIBILITY void DisablePowerControlPacked(const WifiDirectLinkInfo *wifiDirectInfo)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->disablePowerControl) != SOFTBUS_OK) {
@@ -672,7 +673,7 @@ void DisablePowerControlPacked(const WifiDirectLinkInfo *wifiDirectInfo)
     return pfnLnnEnhanceFuncList->disablePowerControl(wifiDirectInfo);
 }
 
-int32_t EnablePowerControlPacked(const WifiDirectLinkInfo *wifiDirectInfo)
+SOFTBUS_VISIBILITY int32_t EnablePowerControlPacked(const WifiDirectLinkInfo *wifiDirectInfo)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->enablePowerControl) != SOFTBUS_OK) {
@@ -681,7 +682,7 @@ int32_t EnablePowerControlPacked(const WifiDirectLinkInfo *wifiDirectInfo)
     return pfnLnnEnhanceFuncList->enablePowerControl(wifiDirectInfo);
 }
 
-int32_t LnnInitScorePacked(void)
+SOFTBUS_VISIBILITY int32_t LnnInitScorePacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnInitScore) != SOFTBUS_OK) {
@@ -690,7 +691,7 @@ int32_t LnnInitScorePacked(void)
     return pfnLnnEnhanceFuncList->lnnInitScore();
 }
 
-int32_t LnnStartScoringPacked(int32_t interval)
+SOFTBUS_VISIBILITY int32_t LnnStartScoringPacked(int32_t interval)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnStartScoring) != SOFTBUS_OK) {
@@ -699,7 +700,7 @@ int32_t LnnStartScoringPacked(int32_t interval)
     return pfnLnnEnhanceFuncList->lnnStartScoring(interval);
 }
 
-int32_t LnnInitVapInfoPacked(void)
+SOFTBUS_VISIBILITY int32_t LnnInitVapInfoPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnInitVapInfo) != SOFTBUS_OK) {
@@ -708,7 +709,7 @@ int32_t LnnInitVapInfoPacked(void)
     return pfnLnnEnhanceFuncList->lnnInitVapInfo();
 }
 
-void LnnDeinitScorePacked(void)
+SOFTBUS_VISIBILITY void LnnDeinitScorePacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnDeinitScore) != SOFTBUS_OK) {
@@ -717,7 +718,7 @@ void LnnDeinitScorePacked(void)
     return pfnLnnEnhanceFuncList->lnnDeinitScore();
 }
 
-void LnnDeinitVapInfoPacked(void)
+SOFTBUS_VISIBILITY void LnnDeinitVapInfoPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnDeinitVapInfo) != SOFTBUS_OK) {
@@ -726,7 +727,7 @@ void LnnDeinitVapInfoPacked(void)
     return pfnLnnEnhanceFuncList->lnnDeinitVapInfo();
 }
 
-int32_t LnnGetWlanLinkedInfoPacked(LnnWlanLinkedInfo *info)
+SOFTBUS_VISIBILITY int32_t LnnGetWlanLinkedInfoPacked(LnnWlanLinkedInfo *info)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnGetWlanLinkedInfo) != SOFTBUS_OK) {
@@ -735,7 +736,7 @@ int32_t LnnGetWlanLinkedInfoPacked(LnnWlanLinkedInfo *info)
     return pfnLnnEnhanceFuncList->lnnGetWlanLinkedInfo(info);
 }
 
-int32_t LnnGetCurrChannelScorePacked(int32_t channelId)
+SOFTBUS_VISIBILITY int32_t LnnGetCurrChannelScorePacked(int32_t channelId)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnGetCurrChannelScore) != SOFTBUS_OK) {
@@ -744,7 +745,7 @@ int32_t LnnGetCurrChannelScorePacked(int32_t channelId)
     return pfnLnnEnhanceFuncList->lnnGetCurrChannelScore(channelId);
 }
 
-bool IsPowerControlEnabledPacked(void)
+SOFTBUS_VISIBILITY bool IsPowerControlEnabledPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->isPowerControlEnabled) != SOFTBUS_OK) {
@@ -753,7 +754,7 @@ bool IsPowerControlEnabledPacked(void)
     return pfnLnnEnhanceFuncList->isPowerControlEnabled();
 }
 
-int32_t LnnStartTimeSyncImplPacked(const char *targetNetworkId, TimeSyncAccuracy accuracy,
+SOFTBUS_VISIBILITY int32_t LnnStartTimeSyncImplPacked(const char *targetNetworkId, TimeSyncAccuracy accuracy,
     TimeSyncPeriod period, const TimeSyncImplCallback *callback)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
@@ -763,7 +764,7 @@ int32_t LnnStartTimeSyncImplPacked(const char *targetNetworkId, TimeSyncAccuracy
     return pfnLnnEnhanceFuncList->lnnStartTimeSyncImpl(targetNetworkId, accuracy, period, callback);
 }
 
-int32_t LnnStopTimeSyncImplPacked(const char *targetNetworkId)
+SOFTBUS_VISIBILITY int32_t LnnStopTimeSyncImplPacked(const char *targetNetworkId)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnStopTimeSyncImpl) != SOFTBUS_OK) {
@@ -772,7 +773,7 @@ int32_t LnnStopTimeSyncImplPacked(const char *targetNetworkId)
     return pfnLnnEnhanceFuncList->lnnStopTimeSyncImpl(targetNetworkId);
 }
 
-int32_t LnnTimeSyncImplInitPacked(void)
+SOFTBUS_VISIBILITY int32_t LnnTimeSyncImplInitPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL ||
@@ -783,7 +784,7 @@ int32_t LnnTimeSyncImplInitPacked(void)
     return pfnLnnEnhanceFuncList->lnnTimeSyncImplInit();
 }
 
-int32_t LnnTimeChangeNotifyPacked(void)
+SOFTBUS_VISIBILITY int32_t LnnTimeChangeNotifyPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL ||
@@ -794,7 +795,7 @@ int32_t LnnTimeChangeNotifyPacked(void)
     return pfnLnnEnhanceFuncList->lnnTimeChangeNotify();
 }
 
-void LnnTimeSyncImplDeinitPacked(void)
+SOFTBUS_VISIBILITY void LnnTimeSyncImplDeinitPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnTimeSyncImplDeinit) != SOFTBUS_OK) {
@@ -803,7 +804,7 @@ void LnnTimeSyncImplDeinitPacked(void)
     return pfnLnnEnhanceFuncList->lnnTimeSyncImplDeinit();
 }
 
-void SendDeviceStateToMlpsPacked(void *para)
+SOFTBUS_VISIBILITY void SendDeviceStateToMlpsPacked(void *para)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->sendDeviceStateToMlps) != SOFTBUS_OK) {
@@ -813,7 +814,7 @@ void SendDeviceStateToMlpsPacked(void *para)
     return pfnLnnEnhanceFuncList->sendDeviceStateToMlps(para);
 }
 
-int32_t LnnRetrieveDeviceInfoByNetworkIdPacked(const char *networkId, NodeInfo *info)
+SOFTBUS_VISIBILITY int32_t LnnRetrieveDeviceInfoByNetworkIdPacked(const char *networkId, NodeInfo *info)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnRetrieveDeviceInfoByNetworkId) != SOFTBUS_OK) {
@@ -822,7 +823,7 @@ int32_t LnnRetrieveDeviceInfoByNetworkIdPacked(const char *networkId, NodeInfo *
     return pfnLnnEnhanceFuncList->lnnRetrieveDeviceInfoByNetworkId(networkId, info);
 }
 
-void SetLpKeepAliveStatePacked(void *para)
+SOFTBUS_VISIBILITY void SetLpKeepAliveStatePacked(void *para)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->setLpKeepAliveState) != SOFTBUS_OK) {
@@ -831,7 +832,7 @@ void SetLpKeepAliveStatePacked(void *para)
     return pfnLnnEnhanceFuncList->setLpKeepAliveState(para);
 }
 
-int32_t LnnSetRemoteBroadcastCipherInfoPacked(const char *value, const char *udid)
+SOFTBUS_VISIBILITY int32_t LnnSetRemoteBroadcastCipherInfoPacked(const char *value, const char *udid)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnSetRemoteBroadcastCipherInfo) != SOFTBUS_OK) {
@@ -840,7 +841,7 @@ int32_t LnnSetRemoteBroadcastCipherInfoPacked(const char *value, const char *udi
     return pfnLnnEnhanceFuncList->lnnSetRemoteBroadcastCipherInfo(value, udid);
 }
 
-int32_t LnnGetLocalCacheNodeInfoPacked(NodeInfo *info)
+SOFTBUS_VISIBILITY int32_t LnnGetLocalCacheNodeInfoPacked(NodeInfo *info)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnGetLocalCacheNodeInfo) != SOFTBUS_OK) {
@@ -849,7 +850,7 @@ int32_t LnnGetLocalCacheNodeInfoPacked(NodeInfo *info)
     return pfnLnnEnhanceFuncList->lnnGetLocalCacheNodeInfo(info);
 }
 
-void LnnDeleteDeviceInfoPacked(const char *udid)
+SOFTBUS_VISIBILITY void LnnDeleteDeviceInfoPacked(const char *udid)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnDeleteDeviceInfo) != SOFTBUS_OK) {
@@ -858,7 +859,7 @@ void LnnDeleteDeviceInfoPacked(const char *udid)
     return pfnLnnEnhanceFuncList->lnnDeleteDeviceInfo(udid);
 }
 
-int32_t LnnUnPackCloudSyncDeviceInfoPacked(cJSON *json, NodeInfo *cloudSyncInfo)
+SOFTBUS_VISIBILITY int32_t LnnUnPackCloudSyncDeviceInfoPacked(cJSON *json, NodeInfo *cloudSyncInfo)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnUnPackCloudSyncDeviceInfo) != SOFTBUS_OK) {
@@ -867,7 +868,7 @@ int32_t LnnUnPackCloudSyncDeviceInfoPacked(cJSON *json, NodeInfo *cloudSyncInfo)
     return pfnLnnEnhanceFuncList->lnnUnPackCloudSyncDeviceInfo(json, cloudSyncInfo);
 }
 
-int32_t LnnPackCloudSyncDeviceInfoPacked(cJSON *json, const NodeInfo *cloudSyncInfo)
+SOFTBUS_VISIBILITY int32_t LnnPackCloudSyncDeviceInfoPacked(cJSON *json, const NodeInfo *cloudSyncInfo)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnPackCloudSyncDeviceInfo) != SOFTBUS_OK) {
@@ -876,7 +877,7 @@ int32_t LnnPackCloudSyncDeviceInfoPacked(cJSON *json, const NodeInfo *cloudSyncI
     return pfnLnnEnhanceFuncList->lnnPackCloudSyncDeviceInfo(json, cloudSyncInfo);
 }
 
-int32_t LnnGetLocalBroadcastCipherInfoPacked(CloudSyncInfo *info)
+SOFTBUS_VISIBILITY int32_t LnnGetLocalBroadcastCipherInfoPacked(CloudSyncInfo *info)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnGetLocalBroadcastCipherInfo) != SOFTBUS_OK) {
@@ -885,7 +886,7 @@ int32_t LnnGetLocalBroadcastCipherInfoPacked(CloudSyncInfo *info)
     return pfnLnnEnhanceFuncList->lnnGetLocalBroadcastCipherInfo(info);
 }
 
-int32_t LnnPackCloudSyncAckSeqPacked(cJSON *json, char *peerudid)
+SOFTBUS_VISIBILITY int32_t LnnPackCloudSyncAckSeqPacked(cJSON *json, char *peerudid)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnPackCloudSyncAckSeq) != SOFTBUS_OK) {
@@ -894,7 +895,7 @@ int32_t LnnPackCloudSyncAckSeqPacked(cJSON *json, char *peerudid)
     return pfnLnnEnhanceFuncList->lnnPackCloudSyncAckSeq(json, peerudid);
 }
 
-int32_t LnnInitCipherKeyManagerPacked(void)
+SOFTBUS_VISIBILITY int32_t LnnInitCipherKeyManagerPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnInitCipherKeyManager) != SOFTBUS_OK) {
@@ -903,7 +904,7 @@ int32_t LnnInitCipherKeyManagerPacked(void)
     return pfnLnnEnhanceFuncList->lnnInitCipherKeyManager();
 }
 
-int32_t LnnSendNotTrustedInfoPacked(const NotTrustedDelayInfo *info, uint32_t num,
+SOFTBUS_VISIBILITY int32_t LnnSendNotTrustedInfoPacked(const NotTrustedDelayInfo *info, uint32_t num,
     LnnSyncInfoMsgComplete complete)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
@@ -913,7 +914,7 @@ int32_t LnnSendNotTrustedInfoPacked(const NotTrustedDelayInfo *info, uint32_t nu
     return pfnLnnEnhanceFuncList->lnnSendNotTrustedInfo(info, num, complete);
 }
 
-void RegisterOOBEMonitorPacked(void *para)
+SOFTBUS_VISIBILITY void RegisterOOBEMonitorPacked(void *para)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->registerOOBEMonitor) != SOFTBUS_OK) {
@@ -922,7 +923,7 @@ void RegisterOOBEMonitorPacked(void *para)
     return pfnLnnEnhanceFuncList->registerOOBEMonitor(para);
 }
 
-int32_t LnnLinkFinderInitPacked(void)
+SOFTBUS_VISIBILITY int32_t LnnLinkFinderInitPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnLinkFinderInit) != SOFTBUS_OK) {
@@ -931,7 +932,7 @@ int32_t LnnLinkFinderInitPacked(void)
     return pfnLnnEnhanceFuncList->lnnLinkFinderInit();
 }
 
-int32_t LnnInitFastOfflinePacked(void)
+SOFTBUS_VISIBILITY int32_t LnnInitFastOfflinePacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnInitFastOffline) != SOFTBUS_OK) {
@@ -940,7 +941,7 @@ int32_t LnnInitFastOfflinePacked(void)
     return pfnLnnEnhanceFuncList->lnnInitFastOffline();
 }
 
-void LnnDeinitFastOfflinePacked(void)
+SOFTBUS_VISIBILITY void LnnDeinitFastOfflinePacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnDeinitFastOffline) != SOFTBUS_OK) {
@@ -949,7 +950,7 @@ void LnnDeinitFastOfflinePacked(void)
     return pfnLnnEnhanceFuncList->lnnDeinitFastOffline();
 }
 
-int32_t LnnDeviceCloudConvergenceInitPacked(void)
+SOFTBUS_VISIBILITY int32_t LnnDeviceCloudConvergenceInitPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnDeviceCloudConvergenceInit) != SOFTBUS_OK) {
@@ -958,7 +959,7 @@ int32_t LnnDeviceCloudConvergenceInitPacked(void)
     return pfnLnnEnhanceFuncList->lnnDeviceCloudConvergenceInit();
 }
 
-int32_t LnnRemoveLinkFinderInfoPacked(const char *networkId)
+SOFTBUS_VISIBILITY int32_t LnnRemoveLinkFinderInfoPacked(const char *networkId)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnRemoveLinkFinderInfo) != SOFTBUS_OK) {
@@ -967,7 +968,7 @@ int32_t LnnRemoveLinkFinderInfoPacked(const char *networkId)
     return pfnLnnEnhanceFuncList->lnnRemoveLinkFinderInfo(networkId);
 }
 
-int32_t LnnUpdateLastAccLoginTimestampByUdidPacked(uint64_t timestamp, const char *udid)
+SOFTBUS_VISIBILITY int32_t LnnUpdateLastAccLoginTimestampByUdidPacked(uint64_t timestamp, const char *udid)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnUpdateLastAccLoginTimestampByUdid) != SOFTBUS_OK) {
@@ -976,7 +977,7 @@ int32_t LnnUpdateLastAccLoginTimestampByUdidPacked(uint64_t timestamp, const cha
     return pfnLnnEnhanceFuncList->lnnUpdateLastAccLoginTimestampByUdid(timestamp, udid);
 }
 
-int32_t LnnRetrieveDeviceInfoByUdidPacked(const char *udid, NodeInfo *deviceInfo)
+SOFTBUS_VISIBILITY int32_t LnnRetrieveDeviceInfoByUdidPacked(const char *udid, NodeInfo *deviceInfo)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnRetrieveDeviceInfoByUdid) != SOFTBUS_OK) {
@@ -985,7 +986,7 @@ int32_t LnnRetrieveDeviceInfoByUdidPacked(const char *udid, NodeInfo *deviceInfo
     return pfnLnnEnhanceFuncList->lnnRetrieveDeviceInfoByUdid(udid, deviceInfo);
 }
 
-int32_t LnnInitBroadcastLinkKeyPacked(void)
+SOFTBUS_VISIBILITY int32_t LnnInitBroadcastLinkKeyPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnInitBroadcastLinkKey) != SOFTBUS_OK) {
@@ -994,7 +995,7 @@ int32_t LnnInitBroadcastLinkKeyPacked(void)
     return pfnLnnEnhanceFuncList->lnnInitBroadcastLinkKey();
 }
 
-int32_t LnnInitPtkPacked(void)
+SOFTBUS_VISIBILITY int32_t LnnInitPtkPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnInitPtk) != SOFTBUS_OK) {
@@ -1003,7 +1004,7 @@ int32_t LnnInitPtkPacked(void)
     return pfnLnnEnhanceFuncList->lnnInitPtk();
 }
 
-void LnnDeinitBroadcastLinkKeyPacked(void)
+SOFTBUS_VISIBILITY void LnnDeinitBroadcastLinkKeyPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnDeinitBroadcastLinkKey) != SOFTBUS_OK) {
@@ -1012,7 +1013,7 @@ void LnnDeinitBroadcastLinkKeyPacked(void)
     return pfnLnnEnhanceFuncList->lnnDeinitBroadcastLinkKey();
 }
 
-void LnnDeinitPtkPacked(void)
+SOFTBUS_VISIBILITY void LnnDeinitPtkPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnDeinitPtk) != SOFTBUS_OK) {
@@ -1021,7 +1022,7 @@ void LnnDeinitPtkPacked(void)
     return pfnLnnEnhanceFuncList->lnnDeinitPtk();
 }
 
-void LnnIpAddrChangeEventHandlerPacked(void)
+SOFTBUS_VISIBILITY void LnnIpAddrChangeEventHandlerPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnIpAddrChangeEventHandler) != SOFTBUS_OK) {
@@ -1030,7 +1031,7 @@ void LnnIpAddrChangeEventHandlerPacked(void)
     return pfnLnnEnhanceFuncList->lnnIpAddrChangeEventHandler();
 }
 
-void LnnInitOOBEStateMonitorImplPacked(void)
+SOFTBUS_VISIBILITY void LnnInitOOBEStateMonitorImplPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnInitOOBEStateMonitorImpl) != SOFTBUS_OK) {
@@ -1039,7 +1040,7 @@ void LnnInitOOBEStateMonitorImplPacked(void)
     return pfnLnnEnhanceFuncList->lnnInitOOBEStateMonitorImpl();
 }
 
-void EhLoginEventHandlerPacked(void)
+SOFTBUS_VISIBILITY void EhLoginEventHandlerPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->ehLoginEventHandler) != SOFTBUS_OK) {
@@ -1048,7 +1049,7 @@ void EhLoginEventHandlerPacked(void)
     return pfnLnnEnhanceFuncList->ehLoginEventHandler();
 }
 
-int32_t LnnInitMetaNodeExtLedgerPacked(void)
+SOFTBUS_VISIBILITY int32_t LnnInitMetaNodeExtLedgerPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnInitMetaNodeExtLedger) != SOFTBUS_OK) {
@@ -1057,7 +1058,7 @@ int32_t LnnInitMetaNodeExtLedgerPacked(void)
     return pfnLnnEnhanceFuncList->lnnInitMetaNodeExtLedger();
 }
 
-void LnnDeinitMetaNodeExtLedgerPacked(void)
+SOFTBUS_VISIBILITY void LnnDeinitMetaNodeExtLedgerPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnDeinitMetaNodeExtLedger) != SOFTBUS_OK) {
@@ -1066,7 +1067,7 @@ void LnnDeinitMetaNodeExtLedgerPacked(void)
     return pfnLnnEnhanceFuncList->lnnDeinitMetaNodeExtLedger();
 }
 
-bool IsSupportLpFeaturePacked(void)
+SOFTBUS_VISIBILITY bool IsSupportLpFeaturePacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->isSupportLpFeature) != SOFTBUS_OK) {
@@ -1075,7 +1076,7 @@ bool IsSupportLpFeaturePacked(void)
     return pfnLnnEnhanceFuncList->isSupportLpFeature();
 }
 
-bool LnnIsSupportLpSparkFeaturePacked(void)
+SOFTBUS_VISIBILITY bool LnnIsSupportLpSparkFeaturePacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL) {
@@ -1087,7 +1088,7 @@ bool LnnIsSupportLpSparkFeaturePacked(void)
     return pfnLnnEnhanceFuncList->lnnIsSupportLpSparkFeature();
 }
 
-bool LnnIsFeatureSupportDetailPacked(void)
+SOFTBUS_VISIBILITY bool LnnIsFeatureSupportDetailPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL) {
@@ -1099,7 +1100,7 @@ bool LnnIsFeatureSupportDetailPacked(void)
     return pfnLnnEnhanceFuncList->isFeatureSupportDetail();
 }
 
-void AuthLoadDeviceKeyPacked(void)
+SOFTBUS_VISIBILITY void AuthLoadDeviceKeyPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->authLoadDeviceKey) != SOFTBUS_OK) {
@@ -1108,7 +1109,7 @@ void AuthLoadDeviceKeyPacked(void)
     return pfnLnnEnhanceFuncList->authLoadDeviceKey();
 }
 
-void UpdateLocalDeviceInfoToMlpsPacked(const NodeInfo *localInfo)
+SOFTBUS_VISIBILITY void UpdateLocalDeviceInfoToMlpsPacked(const NodeInfo *localInfo)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL) {
@@ -1120,7 +1121,7 @@ void UpdateLocalDeviceInfoToMlpsPacked(const NodeInfo *localInfo)
     return pfnLnnEnhanceFuncList->updateLocalDeviceInfoToMlps(localInfo);
 }
 
-int32_t LnnLoadLocalDeviceInfoPacked(void)
+SOFTBUS_VISIBILITY int32_t LnnLoadLocalDeviceInfoPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnLoadLocalDeviceInfo) != SOFTBUS_OK) {
@@ -1129,7 +1130,7 @@ int32_t LnnLoadLocalDeviceInfoPacked(void)
     return pfnLnnEnhanceFuncList->lnnLoadLocalDeviceInfo();
 }
 
-void LnnLoadPtkInfoPacked(void)
+SOFTBUS_VISIBILITY void LnnLoadPtkInfoPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnLoadPtkInfo) != SOFTBUS_OK) {
@@ -1138,7 +1139,7 @@ void LnnLoadPtkInfoPacked(void)
     return pfnLnnEnhanceFuncList->lnnLoadPtkInfo();
 }
 
-int32_t LnnLoadRemoteDeviceInfoPacked(void)
+SOFTBUS_VISIBILITY int32_t LnnLoadRemoteDeviceInfoPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnLoadRemoteDeviceInfo) != SOFTBUS_OK) {
@@ -1147,7 +1148,7 @@ int32_t LnnLoadRemoteDeviceInfoPacked(void)
     return pfnLnnEnhanceFuncList->lnnLoadRemoteDeviceInfo();
 }
 
-void LoadBleBroadcastKeyPacked(void)
+SOFTBUS_VISIBILITY void LoadBleBroadcastKeyPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->loadBleBroadcastKey) != SOFTBUS_OK) {
@@ -1156,7 +1157,7 @@ void LoadBleBroadcastKeyPacked(void)
     return pfnLnnEnhanceFuncList->loadBleBroadcastKey();
 }
 
-void LnnClearPtkListPacked(void)
+SOFTBUS_VISIBILITY void LnnClearPtkListPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnClearPtkList) != SOFTBUS_OK) {
@@ -1165,7 +1166,7 @@ void LnnClearPtkListPacked(void)
     return pfnLnnEnhanceFuncList->lnnClearPtkList();
 }
 
-void ClearDeviceInfoPacked(void)
+SOFTBUS_VISIBILITY void ClearDeviceInfoPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->clearDeviceInfo) != SOFTBUS_OK) {
@@ -1174,7 +1175,7 @@ void ClearDeviceInfoPacked(void)
     return pfnLnnEnhanceFuncList->clearDeviceInfo();
 }
 
-int32_t GenerateNewLocalCipherKeyPacked(void)
+SOFTBUS_VISIBILITY int32_t GenerateNewLocalCipherKeyPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->generateNewLocalCipherKey) != SOFTBUS_OK) {
@@ -1183,7 +1184,7 @@ int32_t GenerateNewLocalCipherKeyPacked(void)
     return pfnLnnEnhanceFuncList->generateNewLocalCipherKey();
 }
 
-int32_t LnnRetrieveDeviceInfoPacked(const char *udid, NodeInfo *deviceInfo)
+SOFTBUS_VISIBILITY int32_t LnnRetrieveDeviceInfoPacked(const char *udid, NodeInfo *deviceInfo)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnRetrieveDeviceInfo) != SOFTBUS_OK) {
@@ -1192,7 +1193,7 @@ int32_t LnnRetrieveDeviceInfoPacked(const char *udid, NodeInfo *deviceInfo)
     return pfnLnnEnhanceFuncList->lnnRetrieveDeviceInfo(udid, deviceInfo);
 }
 
-int32_t LnnSaveRemoteDeviceInfoPacked(const NodeInfo *deviceInfo)
+SOFTBUS_VISIBILITY int32_t LnnSaveRemoteDeviceInfoPacked(const NodeInfo *deviceInfo)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnSaveRemoteDeviceInfo) != SOFTBUS_OK) {
@@ -1201,7 +1202,7 @@ int32_t LnnSaveRemoteDeviceInfoPacked(const NodeInfo *deviceInfo)
     return pfnLnnEnhanceFuncList->lnnSaveRemoteDeviceInfo(deviceInfo);
 }
 
-int32_t LnnInsertLinkFinderInfoPacked(const char *networkId)
+SOFTBUS_VISIBILITY int32_t LnnInsertLinkFinderInfoPacked(const char *networkId)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnInsertLinkFinderInfo) != SOFTBUS_OK) {
@@ -1210,7 +1211,7 @@ int32_t LnnInsertLinkFinderInfoPacked(const char *networkId)
     return pfnLnnEnhanceFuncList->lnnInsertLinkFinderInfo(networkId);
 }
 
-int32_t LnnUpdateRemoteDeviceInfoPacked(const NodeInfo *deviceInfo)
+SOFTBUS_VISIBILITY int32_t LnnUpdateRemoteDeviceInfoPacked(const NodeInfo *deviceInfo)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnUpdateRemoteDeviceInfo) != SOFTBUS_OK) {
@@ -1219,7 +1220,7 @@ int32_t LnnUpdateRemoteDeviceInfoPacked(const NodeInfo *deviceInfo)
     return pfnLnnEnhanceFuncList->lnnUpdateRemoteDeviceInfo(deviceInfo);
 }
 
-int32_t LnnSaveLocalDeviceInfoPacked(const NodeInfo *deviceInfo)
+SOFTBUS_VISIBILITY int32_t LnnSaveLocalDeviceInfoPacked(const NodeInfo *deviceInfo)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnSaveLocalDeviceInfo) != SOFTBUS_OK) {
@@ -1228,7 +1229,7 @@ int32_t LnnSaveLocalDeviceInfoPacked(const NodeInfo *deviceInfo)
     return pfnLnnEnhanceFuncList->lnnSaveLocalDeviceInfo(deviceInfo);
 }
 
-int32_t LnnGetAccountIdFromLocalCachePacked(int64_t *buf)
+SOFTBUS_VISIBILITY int32_t LnnGetAccountIdFromLocalCachePacked(int64_t *buf)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnGetAccountIdFromLocalCache) != SOFTBUS_OK) {
@@ -1237,7 +1238,7 @@ int32_t LnnGetAccountIdFromLocalCachePacked(int64_t *buf)
     return pfnLnnEnhanceFuncList->lnnGetAccountIdFromLocalCache(buf);
 }
 
-int32_t LnnGetLocalDevInfoPacked(NodeInfo *deviceInfo)
+SOFTBUS_VISIBILITY int32_t LnnGetLocalDevInfoPacked(NodeInfo *deviceInfo)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnGetLocalDevInfo) != SOFTBUS_OK) {
@@ -1246,7 +1247,7 @@ int32_t LnnGetLocalDevInfoPacked(NodeInfo *deviceInfo)
     return pfnLnnEnhanceFuncList->lnnGetLocalDevInfo(deviceInfo);
 }
 
-int32_t LnnGetLocalBroadcastCipherKeyPacked(BroadcastCipherKey *broadcastKey)
+SOFTBUS_VISIBILITY int32_t LnnGetLocalBroadcastCipherKeyPacked(BroadcastCipherKey *broadcastKey)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnGetLocalBroadcastCipherKey) != SOFTBUS_OK) {
@@ -1255,7 +1256,7 @@ int32_t LnnGetLocalBroadcastCipherKeyPacked(BroadcastCipherKey *broadcastKey)
     return pfnLnnEnhanceFuncList->lnnGetLocalBroadcastCipherKey(broadcastKey);
 }
 
-int32_t LnnLoadLocalBroadcastCipherKeyPacked(void)
+SOFTBUS_VISIBILITY int32_t LnnLoadLocalBroadcastCipherKeyPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnLoadLocalBroadcastCipherKey) != SOFTBUS_OK) {
@@ -1264,7 +1265,7 @@ int32_t LnnLoadLocalBroadcastCipherKeyPacked(void)
     return pfnLnnEnhanceFuncList->lnnLoadLocalBroadcastCipherKey();
 }
 
-int32_t LnnUpdateLocalBroadcastCipherKeyPacked(BroadcastCipherKey *broadcastKey)
+SOFTBUS_VISIBILITY int32_t LnnUpdateLocalBroadcastCipherKeyPacked(BroadcastCipherKey *broadcastKey)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnUpdateLocalBroadcastCipherKey) != SOFTBUS_OK) {
@@ -1273,7 +1274,7 @@ int32_t LnnUpdateLocalBroadcastCipherKeyPacked(BroadcastCipherKey *broadcastKey)
     return pfnLnnEnhanceFuncList->lnnUpdateLocalBroadcastCipherKey(broadcastKey);
 }
 
-int32_t HbBuildUserIdCheckSumPacked(const int32_t *userIdArray, int32_t num, uint8_t *custData, int32_t len)
+SOFTBUS_VISIBILITY int32_t HbBuildUserIdCheckSumPacked(const int32_t *userIdArray, int32_t num, uint8_t *custData, int32_t len)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->hbBuildUserIdCheckSum) != SOFTBUS_OK) {
@@ -1282,7 +1283,7 @@ int32_t HbBuildUserIdCheckSumPacked(const int32_t *userIdArray, int32_t num, uin
     return pfnLnnEnhanceFuncList->hbBuildUserIdCheckSum(userIdArray, num, custData, len);
 }
 
-void LnnUpdateAuthExchangeUdidPacked(void)
+SOFTBUS_VISIBILITY void LnnUpdateAuthExchangeUdidPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnUpdateAuthExchangeUdid) != SOFTBUS_OK) {
@@ -1291,7 +1292,7 @@ void LnnUpdateAuthExchangeUdidPacked(void)
     return pfnLnnEnhanceFuncList->lnnUpdateAuthExchangeUdid();
 }
 
-void LnnCoapConnectInitPacked(void)
+SOFTBUS_VISIBILITY void LnnCoapConnectInitPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnCoapConnectInit) != SOFTBUS_OK) {
@@ -1300,7 +1301,7 @@ void LnnCoapConnectInitPacked(void)
     return pfnLnnEnhanceFuncList->lnnCoapConnectInit();
 }
 
-int32_t LnnInitMetaNodePacked(void)
+SOFTBUS_VISIBILITY int32_t LnnInitMetaNodePacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnInitMetaNode) != SOFTBUS_OK) {
@@ -1309,7 +1310,7 @@ int32_t LnnInitMetaNodePacked(void)
     return pfnLnnEnhanceFuncList->lnnInitMetaNode();
 }
 
-int32_t InitActionBleConcurrencyPacked(void)
+SOFTBUS_VISIBILITY int32_t InitActionBleConcurrencyPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->initActionBleConcurrency) != SOFTBUS_OK) {
@@ -1318,7 +1319,7 @@ int32_t InitActionBleConcurrencyPacked(void)
     return pfnLnnEnhanceFuncList->initActionBleConcurrency();
 }
 
-int32_t InitActionStateAdapterPacked(void)
+SOFTBUS_VISIBILITY int32_t InitActionStateAdapterPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->initActionStateAdapter) != SOFTBUS_OK) {
@@ -1327,7 +1328,7 @@ int32_t InitActionStateAdapterPacked(void)
     return pfnLnnEnhanceFuncList->initActionStateAdapter();
 }
 
-int32_t LnnLoadLocalDeviceAccountIdInfoPacked(void)
+SOFTBUS_VISIBILITY int32_t LnnLoadLocalDeviceAccountIdInfoPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnLoadLocalDeviceAccountIdInfo) != SOFTBUS_OK) {
@@ -1336,7 +1337,7 @@ int32_t LnnLoadLocalDeviceAccountIdInfoPacked(void)
     return pfnLnnEnhanceFuncList->lnnLoadLocalDeviceAccountIdInfo();
 }
 
-void LnnDeinitMetaNodePacked(void)
+SOFTBUS_VISIBILITY void LnnDeinitMetaNodePacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnDeinitMetaNode) != SOFTBUS_OK) {
@@ -1345,7 +1346,7 @@ void LnnDeinitMetaNodePacked(void)
     return pfnLnnEnhanceFuncList->lnnDeinitMetaNode();
 }
 
-void LnnCoapConnectDeinitPacked(void)
+SOFTBUS_VISIBILITY void LnnCoapConnectDeinitPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnCoapConnectDeinit) != SOFTBUS_OK) {
@@ -1354,7 +1355,7 @@ void LnnCoapConnectDeinitPacked(void)
     return pfnLnnEnhanceFuncList->lnnCoapConnectDeinit();
 }
 
-int32_t LnnGetOOBEStatePacked(SoftBusOOBEState *state)
+SOFTBUS_VISIBILITY int32_t LnnGetOOBEStatePacked(SoftBusOOBEState *state)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnGetOOBEState) != SOFTBUS_OK) {
@@ -1368,7 +1369,7 @@ int32_t LnnGetOOBEStatePacked(SoftBusOOBEState *state)
     return pfnLnnEnhanceFuncList->lnnGetOOBEState(state);
 }
 
-void LnnReportLaneIdStatsInfoPacked(const LaneIdStatsInfo *statsList, uint32_t listSize)
+SOFTBUS_VISIBILITY void LnnReportLaneIdStatsInfoPacked(const LaneIdStatsInfo *statsList, uint32_t listSize)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnReportLaneIdStatsInfo) != SOFTBUS_OK) {
@@ -1377,7 +1378,7 @@ void LnnReportLaneIdStatsInfoPacked(const LaneIdStatsInfo *statsList, uint32_t l
     return pfnLnnEnhanceFuncList->lnnReportLaneIdStatsInfo(statsList, listSize);
 }
 
-int32_t LnnRequestQosOptimizationPacked(const uint64_t *laneIdList, uint32_t listSize, int32_t *result,
+SOFTBUS_VISIBILITY int32_t LnnRequestQosOptimizationPacked(const uint64_t *laneIdList, uint32_t listSize, int32_t *result,
     uint32_t resultSize)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
@@ -1387,7 +1388,7 @@ int32_t LnnRequestQosOptimizationPacked(const uint64_t *laneIdList, uint32_t lis
     return pfnLnnEnhanceFuncList->lnnRequestQosOptimization(laneIdList, listSize, result, resultSize);
 }
 
-void LnnCancelQosOptimizationPacked(const uint64_t *laneIdList, uint32_t listSize)
+SOFTBUS_VISIBILITY void LnnCancelQosOptimizationPacked(const uint64_t *laneIdList, uint32_t listSize)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnCancelQosOptimization) != SOFTBUS_OK) {
@@ -1396,7 +1397,7 @@ void LnnCancelQosOptimizationPacked(const uint64_t *laneIdList, uint32_t listSiz
     return pfnLnnEnhanceFuncList->lnnCancelQosOptimization(laneIdList, listSize);
 }
 
-void LnnReportRippleDataPacked(uint64_t laneId, const LnnRippleData *data)
+SOFTBUS_VISIBILITY void LnnReportRippleDataPacked(uint64_t laneId, const LnnRippleData *data)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnReportRippleData) != SOFTBUS_OK) {
@@ -1405,7 +1406,7 @@ void LnnReportRippleDataPacked(uint64_t laneId, const LnnRippleData *data)
     return pfnLnnEnhanceFuncList->lnnReportRippleData(laneId, data);
 }
 
-int32_t LnnGetUdidByBrMacPacked(const char *brMac, char *udid, uint32_t udidLen)
+SOFTBUS_VISIBILITY int32_t LnnGetUdidByBrMacPacked(const char *brMac, char *udid, uint32_t udidLen)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnGetUdidByBrMac) != SOFTBUS_OK) {
@@ -1414,7 +1415,7 @@ int32_t LnnGetUdidByBrMacPacked(const char *brMac, char *udid, uint32_t udidLen)
     return pfnLnnEnhanceFuncList->lnnGetUdidByBrMac(brMac, udid, udidLen);
 }
 
-void AuthRemoveDeviceKeyByUdidPacked(const char *udidOrHash)
+SOFTBUS_VISIBILITY void AuthRemoveDeviceKeyByUdidPacked(const char *udidOrHash)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->authRemoveDeviceKeyByUdid) != SOFTBUS_OK) {
@@ -1423,7 +1424,7 @@ void AuthRemoveDeviceKeyByUdidPacked(const char *udidOrHash)
     return pfnLnnEnhanceFuncList->authRemoveDeviceKeyByUdid(udidOrHash);
 }
 
-int32_t LnnGetRecommendChannelPacked(const char *udid, int32_t *preferChannel)
+SOFTBUS_VISIBILITY int32_t LnnGetRecommendChannelPacked(const char *udid, int32_t *preferChannel)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnGetRecommendChannel) != SOFTBUS_OK) {
@@ -1432,7 +1433,7 @@ int32_t LnnGetRecommendChannelPacked(const char *udid, int32_t *preferChannel)
     return pfnLnnEnhanceFuncList->lnnGetRecommendChannel(udid, preferChannel);
 }
 
-int32_t LnnGetLocalPtkByUuidPacked(const char *uuid, char *localPtk, uint32_t len)
+SOFTBUS_VISIBILITY int32_t LnnGetLocalPtkByUuidPacked(const char *uuid, char *localPtk, uint32_t len)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnGetLocalPtkByUuid) != SOFTBUS_OK) {
@@ -1441,7 +1442,7 @@ int32_t LnnGetLocalPtkByUuidPacked(const char *uuid, char *localPtk, uint32_t le
     return pfnLnnEnhanceFuncList->lnnGetLocalPtkByUuid(uuid, localPtk, len);
 }
 
-int32_t LnnInitSleRangePacked(void)
+SOFTBUS_VISIBILITY int32_t LnnInitSleRangePacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnInitSLeRange) != SOFTBUS_OK) {
@@ -1450,7 +1451,7 @@ int32_t LnnInitSleRangePacked(void)
     return pfnLnnEnhanceFuncList->lnnInitSLeRange();
 }
 
-void LnnDeinitSleRangePacked(void)
+SOFTBUS_VISIBILITY void LnnDeinitSleRangePacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnDeinitSleRange) != SOFTBUS_OK) {
@@ -1459,7 +1460,7 @@ void LnnDeinitSleRangePacked(void)
     pfnLnnEnhanceFuncList->lnnDeinitSleRange();
 }
 
-int32_t LnnStartRangePacked(const RangeConfig *config)
+SOFTBUS_VISIBILITY int32_t LnnStartRangePacked(const RangeConfig *config)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnStartRange) != SOFTBUS_OK) {
@@ -1468,7 +1469,7 @@ int32_t LnnStartRangePacked(const RangeConfig *config)
     return pfnLnnEnhanceFuncList->lnnStartRange(config);
 }
 
-int32_t LnnStopRangePacked(const RangeConfig *config)
+SOFTBUS_VISIBILITY int32_t LnnStopRangePacked(const RangeConfig *config)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnStopRange) != SOFTBUS_OK) {
@@ -1477,7 +1478,7 @@ int32_t LnnStopRangePacked(const RangeConfig *config)
     return pfnLnnEnhanceFuncList->lnnStopRange(config);
 }
 
-void LnnRegSleRangeCbPacked(const ISleRangeInnerCallback *callback)
+SOFTBUS_VISIBILITY void LnnRegSleRangeCbPacked(const ISleRangeInnerCallback *callback)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnRegSleRangeCb) != SOFTBUS_OK) {
@@ -1486,7 +1487,7 @@ void LnnRegSleRangeCbPacked(const ISleRangeInnerCallback *callback)
     return pfnLnnEnhanceFuncList->lnnRegSleRangeCb(callback);
 }
 
-void LnnUnregSleRangeCbPacked(void)
+SOFTBUS_VISIBILITY void LnnUnregSleRangeCbPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnUnregSleRangeCb) != SOFTBUS_OK) {
@@ -1495,7 +1496,7 @@ void LnnUnregSleRangeCbPacked(void)
     return pfnLnnEnhanceFuncList->lnnUnregSleRangeCb();
 }
 
-void SleRangeDeathCallbackPacked(void)
+SOFTBUS_VISIBILITY void SleRangeDeathCallbackPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->sleRangeDeathCallback) != SOFTBUS_OK) {
@@ -1504,7 +1505,7 @@ void SleRangeDeathCallbackPacked(void)
     return pfnLnnEnhanceFuncList->sleRangeDeathCallback();
 }
 
-bool IsSupportLowLatencyPacked(const TransReqInfo *reqInfo, const LaneLinkInfo *laneLinkInfo)
+SOFTBUS_VISIBILITY bool IsSupportLowLatencyPacked(const TransReqInfo *reqInfo, const LaneLinkInfo *laneLinkInfo)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->isSupportLowLatency) != SOFTBUS_OK) {
@@ -1514,7 +1515,7 @@ bool IsSupportLowLatencyPacked(const TransReqInfo *reqInfo, const LaneLinkInfo *
     return pfnLnnEnhanceFuncList->isSupportLowLatency(reqInfo, laneLinkInfo);
 }
 
-int32_t LnnRetrieveDeviceDataPacked(LnnDataType dataType, char **data, uint32_t *dataLen)
+SOFTBUS_VISIBILITY int32_t LnnRetrieveDeviceDataPacked(LnnDataType dataType, char **data, uint32_t *dataLen)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL ||
@@ -1524,7 +1525,7 @@ int32_t LnnRetrieveDeviceDataPacked(LnnDataType dataType, char **data, uint32_t 
     return pfnLnnEnhanceFuncList->lnnRetrieveDeviceData(dataType, data, dataLen);
 }
 
-int32_t LnnSaveDeviceDataPacked(const char *data, LnnDataType dataType)
+SOFTBUS_VISIBILITY int32_t LnnSaveDeviceDataPacked(const char *data, LnnDataType dataType)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnSaveDeviceData) != SOFTBUS_OK) {
@@ -1533,7 +1534,7 @@ int32_t LnnSaveDeviceDataPacked(const char *data, LnnDataType dataType)
     return pfnLnnEnhanceFuncList->lnnSaveDeviceData(data, dataType);
 }
 
-int32_t LnnVirtualLinkInitPacked(void)
+SOFTBUS_VISIBILITY int32_t LnnVirtualLinkInitPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL) {
@@ -1546,7 +1547,7 @@ int32_t LnnVirtualLinkInitPacked(void)
     return pfnLnnEnhanceFuncList->lnnVirtualLinkInit();
 }
 
-void LnnVirtualLinkDeinitPacked(void)
+SOFTBUS_VISIBILITY void LnnVirtualLinkDeinitPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL) {
@@ -1559,7 +1560,7 @@ void LnnVirtualLinkDeinitPacked(void)
     pfnLnnEnhanceFuncList->lnnVirtualLinkDeinit();
 }
 
-int32_t LnnRegisterPushListenerPacked(void)
+SOFTBUS_VISIBILITY int32_t LnnRegisterPushListenerPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL) {
@@ -1571,7 +1572,7 @@ int32_t LnnRegisterPushListenerPacked(void)
     return pfnLnnEnhanceFuncList->lnnRegisterPushListener();
 }
 
-int32_t DcTriggerVirtualLinkPacked(const char *peerNetworkId)
+SOFTBUS_VISIBILITY int32_t DcTriggerVirtualLinkPacked(const char *peerNetworkId)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL) {
@@ -1584,7 +1585,7 @@ int32_t DcTriggerVirtualLinkPacked(const char *peerNetworkId)
     return pfnLnnEnhanceFuncList->dcTriggerVirtualLink(peerNetworkId);
 }
 
-int32_t LnnGetLocalChannelInfoPacked(VapChannelInfo *channelInfo)
+SOFTBUS_VISIBILITY int32_t LnnGetLocalChannelInfoPacked(VapChannelInfo *channelInfo)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL) {
@@ -1597,7 +1598,7 @@ int32_t LnnGetLocalChannelInfoPacked(VapChannelInfo *channelInfo)
     return pfnLnnEnhanceFuncList->lnnGetLocalChannelInfo(channelInfo);
 }
 
-int32_t LnnSetLocalChannelInfoPacked(LnnVapType type, int32_t channelId)
+SOFTBUS_VISIBILITY int32_t LnnSetLocalChannelInfoPacked(LnnVapType type, int32_t channelId)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL) {
@@ -1610,7 +1611,7 @@ int32_t LnnSetLocalChannelInfoPacked(LnnVapType type, int32_t channelId)
     return pfnLnnEnhanceFuncList->lnnSetLocalChannelInfo(type, channelId);
 }
 
-void TriggerSparkGroupBuildPacked(uint32_t delayTime)
+SOFTBUS_VISIBILITY void TriggerSparkGroupBuildPacked(uint32_t delayTime)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->triggerSparkGroupBuild) != SOFTBUS_OK) {
@@ -1619,7 +1620,7 @@ void TriggerSparkGroupBuildPacked(uint32_t delayTime)
     return pfnLnnEnhanceFuncList->triggerSparkGroupBuild(delayTime);
 }
 
-void TriggerSparkGroupClearPacked(uint32_t state, uint32_t delayTime)
+SOFTBUS_VISIBILITY void TriggerSparkGroupClearPacked(uint32_t state, uint32_t delayTime)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->triggerSparkGroupClear) != SOFTBUS_OK) {
@@ -1628,7 +1629,7 @@ void TriggerSparkGroupClearPacked(uint32_t state, uint32_t delayTime)
     return pfnLnnEnhanceFuncList->triggerSparkGroupClear(state, delayTime);
 }
 
-void TriggerSparkGroupJoinAgainPacked(const char *udid, uint32_t delayTime)
+SOFTBUS_VISIBILITY void TriggerSparkGroupJoinAgainPacked(const char *udid, uint32_t delayTime)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->triggerSparkGroupJoinAgain) != SOFTBUS_OK) {
@@ -1637,7 +1638,7 @@ void TriggerSparkGroupJoinAgainPacked(const char *udid, uint32_t delayTime)
     return pfnLnnEnhanceFuncList->triggerSparkGroupJoinAgain(udid, delayTime);
 }
 
-int32_t InitControlPlanePacked(void)
+SOFTBUS_VISIBILITY int32_t InitControlPlanePacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL) {
@@ -1649,7 +1650,7 @@ int32_t InitControlPlanePacked(void)
     return pfnLnnEnhanceFuncList->initControlPlane();
 }
 
-void DeinitControlPlanePacked(void)
+SOFTBUS_VISIBILITY void DeinitControlPlanePacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL) {
@@ -1661,7 +1662,7 @@ void DeinitControlPlanePacked(void)
     return pfnLnnEnhanceFuncList->deinitControlPlane();
 }
 
-int32_t QueryControlPlaneNodeValidPacked(const char *deviceId)
+SOFTBUS_VISIBILITY int32_t QueryControlPlaneNodeValidPacked(const char *deviceId)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->queryControlPlaneNodeValid) != SOFTBUS_OK) {
@@ -1670,7 +1671,7 @@ int32_t QueryControlPlaneNodeValidPacked(const char *deviceId)
     return pfnLnnEnhanceFuncList->queryControlPlaneNodeValid(deviceId);
 }
 
-int32_t LnnDumpControlLaneGroupInfoPacked(int32_t fd)
+SOFTBUS_VISIBILITY int32_t LnnDumpControlLaneGroupInfoPacked(int32_t fd)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnDumpControlLaneGroupInfo) != SOFTBUS_OK) {
@@ -1679,7 +1680,7 @@ int32_t LnnDumpControlLaneGroupInfoPacked(int32_t fd)
     return pfnLnnEnhanceFuncList->lnnDumpControlLaneGroupInfo(fd);
 }
 
-bool IsSparkGroupEnabledPacked(void)
+SOFTBUS_VISIBILITY bool IsSparkGroupEnabledPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL) {
@@ -1691,7 +1692,7 @@ bool IsSparkGroupEnabledPacked(void)
     return pfnLnnEnhanceFuncList->isSparkGroupEnabled();
 }
 
-bool IsDeviceHasRiskFactorPacked(void)
+SOFTBUS_VISIBILITY bool IsDeviceHasRiskFactorPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL ||
@@ -1701,7 +1702,7 @@ bool IsDeviceHasRiskFactorPacked(void)
     return pfnLnnEnhanceFuncList->isDeviceHasRiskFactor();
 }
 
-void LnnDeinitLocalUserInfoPacked(void)
+SOFTBUS_VISIBILITY void LnnDeinitLocalUserInfoPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnDeinitLocalUserInfo) != SOFTBUS_OK) {
@@ -1710,7 +1711,7 @@ void LnnDeinitLocalUserInfoPacked(void)
     return pfnLnnEnhanceFuncList->lnnDeinitLocalUserInfo();
 }
 
-int32_t LnnPackCloudSyncUserInfoPacked(cJSON *json, const UserInfo *userInfo)
+SOFTBUS_VISIBILITY int32_t LnnPackCloudSyncUserInfoPacked(cJSON *json, const UserInfo *userInfo)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnPackCloudSyncUserInfo) != SOFTBUS_OK) {
@@ -1719,7 +1720,7 @@ int32_t LnnPackCloudSyncUserInfoPacked(cJSON *json, const UserInfo *userInfo)
     return pfnLnnEnhanceFuncList->lnnPackCloudSyncUserInfo(json, userInfo);
 }
 
-int32_t LnnUnPackCloudSyncUserInfoPacked(cJSON *json, UserInfo *userInfo)
+SOFTBUS_VISIBILITY int32_t LnnUnPackCloudSyncUserInfoPacked(cJSON *json, UserInfo *userInfo)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnUnPackCloudSyncUserInfo) != SOFTBUS_OK) {
@@ -1728,7 +1729,7 @@ int32_t LnnUnPackCloudSyncUserInfoPacked(cJSON *json, UserInfo *userInfo)
     return pfnLnnEnhanceFuncList->lnnUnPackCloudSyncUserInfo(json, userInfo);
 }
 
-bool LnnCheckUserExistsByAccountIdPacked(int64_t accountId)
+SOFTBUS_VISIBILITY bool LnnCheckUserExistsByAccountIdPacked(int64_t accountId)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnCheckUserExistsByAccountId) != SOFTBUS_OK) {
@@ -1737,7 +1738,7 @@ bool LnnCheckUserExistsByAccountIdPacked(int64_t accountId)
     return pfnLnnEnhanceFuncList->lnnCheckUserExistsByAccountId(accountId);
 }
 
-int32_t LnnSaveLocalUserInfoPacked(void)
+SOFTBUS_VISIBILITY int32_t LnnSaveLocalUserInfoPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnSaveLocalUserInfo) != SOFTBUS_OK) {
@@ -1746,7 +1747,7 @@ int32_t LnnSaveLocalUserInfoPacked(void)
     return pfnLnnEnhanceFuncList->lnnSaveLocalUserInfo();
 }
 
-int32_t LnnLoadLocalUserInfoPacked(void)
+SOFTBUS_VISIBILITY int32_t LnnLoadLocalUserInfoPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnLoadLocalUserInfo) != SOFTBUS_OK) {
@@ -1755,7 +1756,7 @@ int32_t LnnLoadLocalUserInfoPacked(void)
     return pfnLnnEnhanceFuncList->lnnLoadLocalUserInfo();
 }
 
-int32_t LnnSaveRemoteUserInfoPacked(const char *udid, const UserInfo *userInfo)
+SOFTBUS_VISIBILITY int32_t LnnSaveRemoteUserInfoPacked(const char *udid, const UserInfo *userInfo)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnSaveRemoteUserInfo) != SOFTBUS_OK) {
@@ -1764,7 +1765,7 @@ int32_t LnnSaveRemoteUserInfoPacked(const char *udid, const UserInfo *userInfo)
     return pfnLnnEnhanceFuncList->lnnSaveRemoteUserInfo(udid, userInfo);
 }
 
-int32_t LnnLoadRemoteUserInfoPacked(void)
+SOFTBUS_VISIBILITY int32_t LnnLoadRemoteUserInfoPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnLoadRemoteUserInfo) != SOFTBUS_OK) {
@@ -1773,7 +1774,7 @@ int32_t LnnLoadRemoteUserInfoPacked(void)
     return pfnLnnEnhanceFuncList->lnnLoadRemoteUserInfo();
 }
 
-int32_t LnnAsyncSaveDeviceDataPacked(const char *data, LnnDataType dataType)
+SOFTBUS_VISIBILITY int32_t LnnAsyncSaveDeviceDataPacked(const char *data, LnnDataType dataType)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnAsyncSaveDeviceData) != SOFTBUS_OK) {
@@ -1782,7 +1783,7 @@ int32_t LnnAsyncSaveDeviceDataPacked(const char *data, LnnDataType dataType)
     return pfnLnnEnhanceFuncList->lnnAsyncSaveDeviceData(data, dataType);
 }
 
-int32_t LnnDeleteDeviceDataPacked(LnnDataType dataType)
+SOFTBUS_VISIBILITY int32_t LnnDeleteDeviceDataPacked(LnnDataType dataType)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->lnnDeleteDeviceData) != SOFTBUS_OK) {
@@ -1791,7 +1792,7 @@ int32_t LnnDeleteDeviceDataPacked(LnnDataType dataType)
     return pfnLnnEnhanceFuncList->lnnDeleteDeviceData(dataType);
 }
 
-void CheckNeedCloudSyncOfflinePacked(DiscoveryType type)
+SOFTBUS_VISIBILITY void CheckNeedCloudSyncOfflinePacked(DiscoveryType type)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->checkNeedCloudSyncOffline) != SOFTBUS_OK) {
@@ -1800,7 +1801,7 @@ void CheckNeedCloudSyncOfflinePacked(DiscoveryType type)
     pfnLnnEnhanceFuncList->checkNeedCloudSyncOffline(type);
 }
 
-int32_t LnnInitDecisionCenterV2Packed(void)
+SOFTBUS_VISIBILITY int32_t LnnInitDecisionCenterV2Packed(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL) {
@@ -1813,7 +1814,7 @@ int32_t LnnInitDecisionCenterV2Packed(void)
     return pfnLnnEnhanceFuncList->lnnInitDecisionCenterV2();
 }
 
-void LnnDeinitDecisionCenterV2Packed(void)
+SOFTBUS_VISIBILITY void LnnDeinitDecisionCenterV2Packed(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL) {
@@ -1826,7 +1827,7 @@ void LnnDeinitDecisionCenterV2Packed(void)
     pfnLnnEnhanceFuncList->lnnDeinitDecisionCenterV2();
 }
 
-void SdMgrDeathCallbackPacked(const char *pkgName)
+SOFTBUS_VISIBILITY void SdMgrDeathCallbackPacked(const char *pkgName)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL) {
@@ -1839,7 +1840,7 @@ void SdMgrDeathCallbackPacked(const char *pkgName)
     pfnLnnEnhanceFuncList->sdMgrDeathCallback(pkgName);
 }
 
-int32_t AuthMetaGetIpByMetaNodeIdPacked(const char *metaNodeId, char *ip, int32_t len)
+SOFTBUS_VISIBILITY int32_t AuthMetaGetIpByMetaNodeIdPacked(const char *metaNodeId, char *ip, int32_t len)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL) {
@@ -1852,7 +1853,7 @@ int32_t AuthMetaGetIpByMetaNodeIdPacked(const char *metaNodeId, char *ip, int32_
     return pfnLnnEnhanceFuncList->authMetaGetIpByMetaNodeId(metaNodeId, ip, len);
 }
 
-int32_t AuthMetaGetLocalIpByMetaNodeIdPacked(const char *metaNodeId, char *localIp, int32_t len)
+SOFTBUS_VISIBILITY int32_t AuthMetaGetLocalIpByMetaNodeIdPacked(const char *metaNodeId, char *localIp, int32_t len)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL) {
@@ -1865,7 +1866,7 @@ int32_t AuthMetaGetLocalIpByMetaNodeIdPacked(const char *metaNodeId, char *local
     return pfnLnnEnhanceFuncList->authMetaGetLocalIpByMetaNodeId(metaNodeId, localIp, len);
 }
 
-int32_t AuthMetaGetConnectionTypeByMetaNodeIdPacked(const char *metaNodeId, NetworkConnectionType *connectionType)
+SOFTBUS_VISIBILITY int32_t AuthMetaGetConnectionTypeByMetaNodeIdPacked(const char *metaNodeId, NetworkConnectionType *connectionType)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL) {
@@ -1878,7 +1879,7 @@ int32_t AuthMetaGetConnectionTypeByMetaNodeIdPacked(const char *metaNodeId, Netw
     return pfnLnnEnhanceFuncList->authMetaGetConnectionTypeByMetaNodeId(metaNodeId, connectionType);
 }
 
-bool IsSupportMcuFeaturePacked(void)
+SOFTBUS_VISIBILITY bool IsSupportMcuFeaturePacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL) {
@@ -1890,7 +1891,7 @@ bool IsSupportMcuFeaturePacked(void)
     return pfnLnnEnhanceFuncList->isSupportMcuFeature();
 }
 
-void LnnSendDeviceStateToMcuPacked(void *para)
+SOFTBUS_VISIBILITY void LnnSendDeviceStateToMcuPacked(void *para)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL) {
@@ -1904,7 +1905,7 @@ void LnnSendDeviceStateToMcuPacked(void *para)
     return pfnLnnEnhanceFuncList->lnnSendDeviceStateToMcu(para);
 }
 
-int32_t LnnInitMcuPacked(void)
+SOFTBUS_VISIBILITY int32_t LnnInitMcuPacked(void)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL) {
@@ -1916,7 +1917,7 @@ int32_t LnnInitMcuPacked(void)
     return pfnLnnEnhanceFuncList->lnnInitMcu();
 }
 
-int32_t AuthMetaGetPidByAuthIdPacked(int64_t authId, int32_t *pid)
+SOFTBUS_VISIBILITY int32_t AuthMetaGetPidByAuthIdPacked(int64_t authId, int32_t *pid)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL) {
@@ -1928,7 +1929,7 @@ int32_t AuthMetaGetPidByAuthIdPacked(int64_t authId, int32_t *pid)
     return pfnLnnEnhanceFuncList->authMetaGetPidByAuthId(authId, pid);
 }
 
-int32_t LnnGetAllRemoteDevInfoPacked(NodeInfo **info, int32_t *nums)
+SOFTBUS_VISIBILITY int32_t LnnGetAllRemoteDevInfoPacked(NodeInfo **info, int32_t *nums)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL) {
@@ -1940,7 +1941,7 @@ int32_t LnnGetAllRemoteDevInfoPacked(NodeInfo **info, int32_t *nums)
     return pfnLnnEnhanceFuncList->lnnGetAllRemoteDevInfo(info, nums);
 }
 
-int32_t LnnSendAgentDataPacked(const char *udid, const char *data, uint32_t length,
+SOFTBUS_VISIBILITY int32_t LnnSendAgentDataPacked(const char *udid, const char *data, uint32_t length,
     LnnEventExtra *extra, bool isAckMsg)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
@@ -1953,7 +1954,7 @@ int32_t LnnSendAgentDataPacked(const char *udid, const char *data, uint32_t leng
     return pfnLnnEnhanceFuncList->lnnSendAgentData(udid, data, length, extra, isAckMsg);
 }
 
-bool FarfieldParseModuleTypePacked(const uint8_t *data, uint32_t dataLen, uint32_t *moduleType)
+SOFTBUS_VISIBILITY bool FarfieldParseModuleTypePacked(const uint8_t *data, uint32_t dataLen, uint32_t *moduleType)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL) {
@@ -1965,7 +1966,7 @@ bool FarfieldParseModuleTypePacked(const uint8_t *data, uint32_t dataLen, uint32
     return pfnLnnEnhanceFuncList->farfieldParseModuleType(data, dataLen, moduleType);
 }
 
-int32_t PostLnnCloudEventPacked(LnnCloudMsgType event, LnnCloudHandler handler,
+SOFTBUS_VISIBILITY int32_t PostLnnCloudEventPacked(LnnCloudMsgType event, LnnCloudHandler handler,
     const void *obj, uint32_t size, uint64_t delayMs)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
@@ -1978,7 +1979,7 @@ int32_t PostLnnCloudEventPacked(LnnCloudMsgType event, LnnCloudHandler handler,
     return pfnLnnEnhanceFuncList->postLnnCloudEvent(event, handler, obj, size, delayMs);
 }
 
-int32_t RemoveLnnCloudEventPacked(LnnCloudMsgType event, LnnCloudRemoveCompareFunc func, void *param)
+SOFTBUS_VISIBILITY int32_t RemoveLnnCloudEventPacked(LnnCloudMsgType event, LnnCloudRemoveCompareFunc func, void *param)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL) {
@@ -1990,7 +1991,7 @@ int32_t RemoveLnnCloudEventPacked(LnnCloudMsgType event, LnnCloudRemoveCompareFu
     return pfnLnnEnhanceFuncList->removeLnnCloudEvent(event, func, param);
 }
 
-int32_t PerceptionBuildAdvDataPacked(const PerceptionType *type, const PerceptionAdvParam *params,
+SOFTBUS_VISIBILITY int32_t PerceptionBuildAdvDataPacked(const PerceptionType *type, const PerceptionAdvParam *params,
     uint32_t paramCnt, BroadcastPacket *packet)
 {
     LnnEnhanceFuncList *funcList = LnnEnhanceFuncListGet();
@@ -2000,7 +2001,7 @@ int32_t PerceptionBuildAdvDataPacked(const PerceptionType *type, const Perceptio
     return funcList->perceptionBuildAdvData(type, params, paramCnt, packet);
 }
 
-int32_t PerceptionBuildScanFilterPacked(BcScanFilter **filter, uint8_t *filterNum)
+SOFTBUS_VISIBILITY int32_t PerceptionBuildScanFilterPacked(BcScanFilter **filter, uint8_t *filterNum)
 {
     LnnEnhanceFuncList *funcList = LnnEnhanceFuncListGet();
     if (funcList == NULL || LnnCheckFuncPointer((void *)funcList->perceptionBuildScanFilter) != SOFTBUS_OK) {
@@ -2009,7 +2010,7 @@ int32_t PerceptionBuildScanFilterPacked(BcScanFilter **filter, uint8_t *filterNu
     return funcList->perceptionBuildScanFilter(filter, filterNum);
 }
 
-int32_t PerceptionGetDeviceInfoListPacked(PerceptionType type, PerceptionDeviceInfo **list, uint32_t *count)
+SOFTBUS_VISIBILITY int32_t PerceptionGetDeviceInfoListPacked(PerceptionType type, PerceptionDeviceInfo **list, uint32_t *count)
 {
     LnnEnhanceFuncList *funcList = LnnEnhanceFuncListGet();
     if (funcList == NULL || LnnCheckFuncPointer((void *)funcList->perceptionGetDeviceInfoList) != SOFTBUS_OK) {
@@ -2018,7 +2019,7 @@ int32_t PerceptionGetDeviceInfoListPacked(PerceptionType type, PerceptionDeviceI
     return funcList->perceptionGetDeviceInfoList(type, list, count);
 }
 
-int32_t PerceptionSyncStatePacked(PerceptionState state)
+SOFTBUS_VISIBILITY int32_t PerceptionSyncStatePacked(PerceptionState state)
 {
     LnnEnhanceFuncList *funcList = LnnEnhanceFuncListGet();
     if (funcList == NULL || LnnCheckFuncPointer((void *)funcList->perceptionSyncState) != SOFTBUS_OK) {
@@ -2027,7 +2028,7 @@ int32_t PerceptionSyncStatePacked(PerceptionState state)
     return funcList->perceptionSyncState(state);
 }
 
-int32_t PerceptionSyncCyclePacked(PerceptionType type, uint32_t cycle)
+SOFTBUS_VISIBILITY int32_t PerceptionSyncCyclePacked(PerceptionType type, uint32_t cycle)
 {
     LnnEnhanceFuncList *funcList = LnnEnhanceFuncListGet();
     if (funcList == NULL || LnnCheckFuncPointer((void *)funcList->perceptionSyncCycle) != SOFTBUS_OK) {
@@ -2036,7 +2037,7 @@ int32_t PerceptionSyncCyclePacked(PerceptionType type, uint32_t cycle)
     return funcList->perceptionSyncCycle(type, cycle);
 }
 
-int32_t PerceptionEnhanceInitPacked(void)
+SOFTBUS_VISIBILITY int32_t PerceptionEnhanceInitPacked(void)
 {
     LnnEnhanceFuncList *funcList = LnnEnhanceFuncListGet();
     if (funcList == NULL || LnnCheckFuncPointer((void *)funcList->perceptionEnhanceInit) != SOFTBUS_OK) {
@@ -2045,7 +2046,7 @@ int32_t PerceptionEnhanceInitPacked(void)
     return funcList->perceptionEnhanceInit();
 }
 
-void PerceptionEnhanceDeinitPacked(void)
+SOFTBUS_VISIBILITY void PerceptionEnhanceDeinitPacked(void)
 {
     LnnEnhanceFuncList *funcList = LnnEnhanceFuncListGet();
     if (funcList == NULL || LnnCheckFuncPointer((void *)funcList->perceptionEnhanceDeinit) != SOFTBUS_OK) {
@@ -2054,7 +2055,7 @@ void PerceptionEnhanceDeinitPacked(void)
     funcList->perceptionEnhanceDeinit();
 }
 
-int32_t AuthMetaOpenConnWithOtherOsTypePacked(const AuthConnInfo *info, const char *networkId,
+SOFTBUS_VISIBILITY int32_t AuthMetaOpenConnWithOtherOsTypePacked(const AuthConnInfo *info, const char *networkId,
     uint32_t requestId, const AuthConnCallback *callback)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
@@ -2067,7 +2068,7 @@ int32_t AuthMetaOpenConnWithOtherOsTypePacked(const AuthConnInfo *info, const ch
     return pfnLnnEnhanceFuncList->authMetaOpenConnWithOtherOsType(info, networkId, requestId, callback);
 }
 
-int32_t LnnGetAllDevicesUdidPacked(bool isCloud, char (**udidList)[UDID_BUF_LEN], uint32_t *count)
+SOFTBUS_VISIBILITY int32_t LnnGetAllDevicesUdidPacked(bool isCloud, char (**udidList)[UDID_BUF_LEN], uint32_t *count)
 {
     LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
     if (pfnLnnEnhanceFuncList == NULL) {
@@ -2077,4 +2078,40 @@ int32_t LnnGetAllDevicesUdidPacked(bool isCloud, char (**udidList)[UDID_BUF_LEN]
         return SOFTBUS_NOT_IMPLEMENT;
     }
     return pfnLnnEnhanceFuncList->lnnGetAllDevicesUdid(isCloud, udidList, count);
+}
+
+SOFTBUS_VISIBILITY int32_t DcWifiDirectExclusiveCancelByDeviceIdPacked(const char *deviceId)
+{
+    LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
+    if (pfnLnnEnhanceFuncList == NULL) {
+        return SOFTBUS_NOT_IMPLEMENT;
+    }
+    if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->dcWifiDirectExclusiveCancelByDeviceId) != SOFTBUS_OK) {
+        return SOFTBUS_NOT_IMPLEMENT;
+    }
+    return pfnLnnEnhanceFuncList->dcWifiDirectExclusiveCancelByDeviceId(deviceId);
+}
+
+SOFTBUS_VISIBILITY void DcWifiDirectExclusiveClearByPidPacked(int32_t pid)
+{
+    LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
+    if (pfnLnnEnhanceFuncList == NULL) {
+        return;
+    }
+    if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->dcWifiDirectExclusiveClearByPid) != SOFTBUS_OK) {
+        return;
+    }
+    pfnLnnEnhanceFuncList->dcWifiDirectExclusiveClearByPid(pid);
+}
+
+SOFTBUS_VISIBILITY int32_t DcWifiDirectExclusiveCancelBySessionNamePacked(const char *sessionName)
+{
+    LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
+    if (pfnLnnEnhanceFuncList == NULL) {
+        return SOFTBUS_NOT_IMPLEMENT;
+    }
+    if (LnnCheckFuncPointer((void *)pfnLnnEnhanceFuncList->dcWifiDirectExclusiveCancelBySessionName) != SOFTBUS_OK) {
+        return SOFTBUS_NOT_IMPLEMENT;
+    }
+    return pfnLnnEnhanceFuncList->dcWifiDirectExclusiveCancelBySessionName(sessionName);
 }

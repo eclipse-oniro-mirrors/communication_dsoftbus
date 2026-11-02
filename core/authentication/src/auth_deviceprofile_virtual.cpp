@@ -25,9 +25,10 @@
 #include "lnn_ohos_account_adapter.h"
 #include "softbus_error_code.h"
 #include "softbus_json_utils.h"
+#include "softbus_def.h"
 
 extern "C" {
-bool IsPotentialTrustedDeviceDp(const char *deviceIdHash, bool isOnlyPointToPoint)
+SOFTBUS_VISIBILITY bool IsPotentialTrustedDeviceDp(const char *deviceIdHash, bool isOnlyPointToPoint)
 {
     (void)deviceIdHash;
     (void)isOnlyPointToPoint;
@@ -42,7 +43,7 @@ bool DpHasAccessControlProfile(const char *udid, bool isNeedUserId, int32_t loca
     return false;
 }
 
-void UpdateDpSameAccount(UpdateDpAclParams *aclParams, SessionKey sessionKey, bool isNeedUpdateDk,
+SOFTBUS_VISIBILITY void UpdateDpSameAccount(UpdateDpAclParams *aclParams, SessionKey sessionKey, bool isNeedUpdateDk,
     AclWriteState aclState, bool *isNeedUpdateAclState)
 {
     (void)aclParams;
@@ -52,7 +53,7 @@ void UpdateDpSameAccount(UpdateDpAclParams *aclParams, SessionKey sessionKey, bo
     (void)isNeedUpdateAclState;
 }
 
-void UpdateDpSameAccountWithoutUserKey(UpdateDpAclParams *aclParams, AclWriteState aclState,
+SOFTBUS_VISIBILITY void UpdateDpSameAccountWithoutUserKey(UpdateDpAclParams *aclParams, AclWriteState aclState,
     bool *isNeedUpdateAclState)
 {
     (void)aclParams;
@@ -65,12 +66,12 @@ void DelNotTrustDevice(const char *udid)
     (void)udid;
 }
 
-void DelSessionKeyProfile(int32_t sessionKeyId)
+SOFTBUS_VISIBILITY void DelSessionKeyProfile(int32_t sessionKeyId)
 {
     (void)sessionKeyId;
 }
 
-bool GetSessionKeyProfile(int32_t sessionKeyId, uint8_t *sessionKey, uint32_t *length)
+SOFTBUS_VISIBILITY bool GetSessionKeyProfile(int32_t sessionKeyId, uint8_t *sessionKey, uint32_t *length)
 {
     (void)sessionKeyId;
     (void)sessionKey;
@@ -136,7 +137,7 @@ int32_t SelectAllAcl(TrustedInfo **trustedInfoArray, uint32_t *num)
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-bool IsTrustedDeviceFromAccess(const char *peerAccountHash, const char *peerUdid, int32_t peerUserId)
+SOFTBUS_VISIBILITY bool IsTrustedDeviceFromAccess(const char *peerAccountHash, const char *peerUdid, int32_t peerUserId)
 {
     (void)peerAccountHash;
     (void)peerUdid;
@@ -167,7 +168,7 @@ int32_t GetAccessUkIdByGroupShare(const AuthACLInfo *acl, int32_t *ukId, uint64_
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t IsSKIdFindAclInfo(int32_t sessionKeyId, char *peerUdid)
+SOFTBUS_VISIBILITY int32_t IsSKIdFindAclInfo(int32_t sessionKeyId, char *peerUdid)
 {
     (void)sessionKeyId;
     (void)peerUdid;

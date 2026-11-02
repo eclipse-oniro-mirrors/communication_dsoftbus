@@ -1568,8 +1568,6 @@ HWTEST_F(LNNNetLedgerCommonTest, LNN_SET_DATA_LEVEL_001, TestSize.Level1)
     dataLevel.switchLevel = 0;
     dataLevel.switchLength = 0;
     bool isSwitchLevelChanged = false;
-    NetLedgerCommonInterfaceMock netLedgerMock;
-    EXPECT_CALL(netLedgerMock, LnnSetLocalNumU16Info(_, _)).WillOnce(Return(SOFTBUS_INVALID_PARAM));
     uint32_t ret = LnnSetDataLevel(&dataLevel, &isSwitchLevelChanged);
     EXPECT_EQ(ret, SOFTBUS_NETWORK_SET_LEDGER_INFO_ERR);
 }

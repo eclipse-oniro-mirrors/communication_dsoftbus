@@ -48,7 +48,7 @@ dsoftbus_fuzz_common = {
 
   deps = [
     "$dsoftbus_core_path/common:softbus_utils",
-    "$dsoftbus_core_path/frame:softbus_server",
+    "$dsoftbus_core_path/frame:softbus_server_test",
     "$dsoftbus_root_path/adapter:softbus_adapter",
   ]
 
@@ -60,7 +60,6 @@ dsoftbus_fuzz_common = {
 }
 
 ohos_fuzztest("TransBuildDataHeadFuzzTest") {
-
   sources = [ "transbuilddatahead_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -72,7 +71,6 @@ ohos_fuzztest("TransBuildDataHeadFuzzTest") {
 }
 
 ohos_fuzztest("TransCheckBufLenAndCopyDataFuzzTest") {
-
   sources = [ "transcheckbuflenandcopydata_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -84,7 +82,6 @@ ohos_fuzztest("TransCheckBufLenAndCopyDataFuzzTest") {
 }
 
 ohos_fuzztest("TransMoveNodeFuzzTest") {
-
   sources = [ "transmovenode_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -96,7 +93,6 @@ ohos_fuzztest("TransMoveNodeFuzzTest") {
 }
 
 ohos_fuzztest("TransPackDataFuzzTest") {
-
   sources = [ "transpackdata_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -108,7 +104,6 @@ ohos_fuzztest("TransPackDataFuzzTest") {
 }
 
 ohos_fuzztest("TransPackTcpDataPacketHeadFuzzTest") {
-
   sources = [ "transpacktcpdatapackethead_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -120,7 +115,6 @@ ohos_fuzztest("TransPackTcpDataPacketHeadFuzzTest") {
 }
 
 ohos_fuzztest("TransReleaseDataHeadResourceFuzzTest") {
-
   sources = [ "transreleasedataheadresource_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -132,7 +126,6 @@ ohos_fuzztest("TransReleaseDataHeadResourceFuzzTest") {
 }
 
 ohos_fuzztest("TransResizeDataBufferFuzzTest") {
-
   sources = [ "transresizedatabuffer_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -144,7 +137,6 @@ ohos_fuzztest("TransResizeDataBufferFuzzTest") {
 }
 
 ohos_fuzztest("TransTcpDataTlvUnpackFuzzTest") {
-
   sources = [ "transtcpdatatlvunpack_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -156,7 +148,6 @@ ohos_fuzztest("TransTcpDataTlvUnpackFuzzTest") {
 }
 
 ohos_fuzztest("TransTdcDecryptFuzzTest") {
-
   sources = [ "transtdcdecrypt_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -168,7 +159,6 @@ ohos_fuzztest("TransTdcDecryptFuzzTest") {
 }
 
 ohos_fuzztest("TransTdcEncryptWithSeqFuzzTest") {
-
   sources = [ "transtdcencryptwithseq_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -180,7 +170,6 @@ ohos_fuzztest("TransTdcEncryptWithSeqFuzzTest") {
 }
 
 ohos_fuzztest("TransTdcPackAllDataFuzzTest") {
-
   sources = [ "transtdcpackalldata_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -192,7 +181,6 @@ ohos_fuzztest("TransTdcPackAllDataFuzzTest") {
 }
 
 ohos_fuzztest("TransTdcParseTlvFuzzTest") {
-
   sources = [ "transtdcparsetlv_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -204,7 +192,6 @@ ohos_fuzztest("TransTdcParseTlvFuzzTest") {
 }
 
 ohos_fuzztest("TransTdcRecvFirstDataFuzzTest") {
-
   sources = [ "transtdcrecvfirstdata_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -216,7 +203,6 @@ ohos_fuzztest("TransTdcRecvFirstDataFuzzTest") {
 }
 
 ohos_fuzztest("TransTdcSendDataFuzzTest") {
-
   sources = [ "transtdcsenddata_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -228,7 +214,6 @@ ohos_fuzztest("TransTdcSendDataFuzzTest") {
 }
 
 ohos_fuzztest("TransTdcUnpackAllDataFuzzTest") {
-
   sources = [ "transtdcunpackalldata_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -240,7 +225,6 @@ ohos_fuzztest("TransTdcUnpackAllDataFuzzTest") {
 }
 
 ohos_fuzztest("TransTdcUnpackAllTlvDataFuzzTest") {
-
   sources = [ "transtdcunpackalltlvdata_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -252,7 +236,6 @@ ohos_fuzztest("TransTdcUnpackAllTlvDataFuzzTest") {
 }
 
 ohos_fuzztest("TransTdcUnpackDataFuzzTest") {
-
   sources = [ "transtdcunpackdata_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -264,7 +247,6 @@ ohos_fuzztest("TransTdcUnpackDataFuzzTest") {
 }
 
 ohos_fuzztest("TransUnpackTcpDataPacketHeadFuzzTest") {
-
   sources = [ "transunpacktcpdatapackethead_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -274,7 +256,6 @@ ohos_fuzztest("TransUnpackTcpDataPacketHeadFuzzTest") {
   module_out_path = dsoftbus_fuzz_common.module_out_path
   fuzz_config_file = dsoftbus_fuzz_common.fuzz_config_file
 }
-
 
 group("fuzztest") {
   testonly = true
@@ -296,6 +277,6 @@ group("fuzztest") {
     ":TransTdcUnpackAllDataFuzzTest",
     ":TransTdcUnpackAllTlvDataFuzzTest",
     ":TransTdcUnpackDataFuzzTest",
-    ":TransUnpackTcpDataPacketHeadFuzzTest"
+    ":TransUnpackTcpDataPacketHeadFuzzTest",
   ]
 }

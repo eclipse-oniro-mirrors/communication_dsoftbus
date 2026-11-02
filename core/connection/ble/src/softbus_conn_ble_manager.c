@@ -36,6 +36,7 @@
 #include "softbus_datahead_transform.h"
 #include "softbus_utils.h"
 #include "softbus_init_common.h"
+#include "softbus_def.h"
 
 #define CONFLICT_REUSE_CONNECTING 0
 #define SHORT_UDID_HASH_LEN       8
@@ -1182,7 +1183,7 @@ static uint32_t AllocateConnectionIdUnsafe()
     return connectionId;
 }
 
-int32_t ConnBleSaveConnection(ConnBleConnection *connection)
+SOFTBUS_SYMBOL_EXPORT int32_t ConnBleSaveConnection(ConnBleConnection *connection)
 {
     CONN_CHECK_AND_RETURN_RET_LOGW(
         connection != NULL, SOFTBUS_INVALID_PARAM, CONN_BLE, "invalid param, ble connection is null");
@@ -1331,6 +1332,7 @@ static ConnBleConnection *GetConnectionByOption(const BleConnectionCompareOption
     return target;
 }
 
+SOFTBUS_VISIBILITY
 ConnBleConnection *ConnBleGetConnectionByAddr(const char *addr, ConnSideType side, BleProtocolType protocol)
 {
     CONN_CHECK_AND_RETURN_RET_LOGW(addr != NULL, NULL, CONN_BLE, "invalid param, ble addr is null");
@@ -1345,7 +1347,7 @@ ConnBleConnection *ConnBleGetConnectionByAddr(const char *addr, ConnSideType sid
     return GetConnectionByOption(&option);
 }
 
-ConnBleConnection *ConnBleGetConnectionById(uint32_t connectionId)
+SOFTBUS_VISIBILITY ConnBleConnection *ConnBleGetConnectionById(uint32_t connectionId)
 {
     BleConnectionCompareOption option = {
         .type = BLE_CONNECTION_COMPARE_TYPE_CONNECTION_ID,
@@ -1365,6 +1367,7 @@ ConnBleConnection *ConnBleGetConnectionByHandle(int32_t underlayerHandle, ConnSi
     return GetConnectionByOption(&option);
 }
 
+SOFTBUS_VISIBILITY
 ConnBleConnection *ConnBleGetConnectionByUdid(const char *addr, const char *udid, BleProtocolType protocol)
 {
     BleConnectionCompareOption option = {
@@ -1378,7 +1381,7 @@ ConnBleConnection *ConnBleGetConnectionByUdid(const char *addr, const char *udid
     return GetConnectionByOption(&option);
 }
 
-ConnBleConnection *ConnBleGetClientConnectionByUdid(const char *udid, BleProtocolType protocol)
+SOFTBUS_VISIBILITY ConnBleConnection *ConnBleGetClientConnectionByUdid(const char *udid, BleProtocolType protocol)
 {
     BleConnectionCompareOption option = {
         .type = BLE_CONNECTION_COMPARE_TYPE_UDID_CLIENT_SIDE,
@@ -1390,7 +1393,7 @@ ConnBleConnection *ConnBleGetClientConnectionByUdid(const char *udid, BleProtoco
     return GetConnectionByOption(&option);
 }
 
-void ConnBleReturnConnection(ConnBleConnection **connection)
+SOFTBUS_VISIBILITY void ConnBleReturnConnection(ConnBleConnection **connection)
 {
     CONN_CHECK_AND_RETURN_LOGW(connection != NULL, CONN_BLE, "invalid param, ble connnetion is null");
     CONN_CHECK_AND_RETURN_LOGW(
@@ -1424,7 +1427,7 @@ void NotifyReusedConnected(uint32_t connectionId, uint16_t challengeCode)
     g_connectCallback.OnReusedConnected(connectionId, &info);
 }
 
-int32_t ConnBleKeepAlive(uint32_t connectionId, uint32_t requestId, uint32_t time)
+SOFTBUS_VISIBILITY int32_t ConnBleKeepAlive(uint32_t connectionId, uint32_t requestId, uint32_t time)
 {
     CONN_CHECK_AND_RETURN_RET_LOGW(time != 0 && time <= BLE_CONNECT_KEEP_ALIVE_TIMEOUT_MILLIS,
         SOFTBUS_INVALID_PARAM, CONN_BLE, "time is invaliad, time=%{public}u", time);
@@ -1444,7 +1447,7 @@ int32_t ConnBleKeepAlive(uint32_t connectionId, uint32_t requestId, uint32_t tim
     return SOFTBUS_OK;
 }
 
-int32_t ConnBleRemoveKeepAlive(uint32_t connectionId, uint32_t requestId)
+SOFTBUS_VISIBILITY int32_t ConnBleRemoveKeepAlive(uint32_t connectionId, uint32_t requestId)
 {
     ConnBleConnection *connection = ConnBleGetConnectionById(connectionId);
     CONN_CHECK_AND_RETURN_RET_LOGD(connection != NULL, SOFTBUS_CONN_BLE_INTERNAL_ERR, CONN_BLE,
@@ -2324,7 +2327,7 @@ static int32_t InitBleManager(const ConnectCallback *callback)
     return SOFTBUS_OK;
 }
 
-ConnectFuncInterface *ConnInitBle(const ConnectCallback *callback)
+SOFTBUS_VISIBILITY ConnectFuncInterface *ConnInitBle(const ConnectCallback *callback)
 {
     CONN_CHECK_AND_RETURN_RET_LOGW(
         callback != NULL, NULL, CONN_INIT, "conn init ble fail: invalid param, callback is null");

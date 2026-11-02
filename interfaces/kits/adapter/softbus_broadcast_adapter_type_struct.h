@@ -88,6 +88,7 @@ typedef struct {
     SoftbusBroadcastPayload bcData;
     SoftbusBroadcastPayload rspData;
     SoftbusBroadcastPayload uuidData;
+    bool isIncludeDeviceName;
 } SoftbusBroadcastData;
 
 /**
@@ -166,6 +167,7 @@ typedef struct {
     int32_t maxInterval;
     int32_t channelMap;
     int32_t duration;
+    bool isIncludeDeviceName;
 } SoftbusBroadcastParam;
 
 /**

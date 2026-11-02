@@ -29,6 +29,7 @@
 #include "softbus_adapter_socket.h"
 #include "softbus_error_code.h"
 #include "softbus_init_common.h"
+#include "softbus_def.h"
 #include "softbus_transmission_interface.h"
 #include "softbus_utils.h"
 #include "trans_log.h"
@@ -119,7 +120,7 @@ static void TransProxyPipelineFreeMessage(SoftBusMessage *msg)
     SoftBusFree(msg);
 }
 
-int32_t TransProxyReuseByChannelId(int32_t channelId)
+SOFTBUS_VISIBILITY int32_t TransProxyReuseByChannelId(int32_t channelId)
 {
     TRANS_LOGD(TRANS_CTRL, "enter.");
     TRANS_CHECK_AND_RETURN_RET_LOGW(SoftBusMutexLock(&g_manager.channels->lock) == SOFTBUS_OK,
@@ -135,7 +136,7 @@ int32_t TransProxyReuseByChannelId(int32_t channelId)
     return SOFTBUS_OK;
 }
 
-int32_t TransProxyPipelineGenRequestId(void)
+SOFTBUS_VISIBILITY int32_t TransProxyPipelineGenRequestId(void)
 {
     static int32_t requestIdGenerator = 0;
     TRANS_CHECK_AND_RETURN_RET_LOGW(SoftBusMutexLock(&g_manager.channels->lock) == SOFTBUS_OK,
@@ -145,6 +146,7 @@ int32_t TransProxyPipelineGenRequestId(void)
     return retValue;
 }
 
+SOFTBUS_VISIBILITY
 int32_t TransProxyPipelineRegisterListener(TransProxyPipelineMsgType type, const ITransProxyPipelineListener *listener)
 {
     TRANS_LOGD(TRANS_CTRL, "enter.");
@@ -228,7 +230,7 @@ static struct SoftBusMessage *CreateOpenChannelMessage(int32_t requestId)
     return msg;
 }
 
-int32_t TransProxyPipelineOpenChannel(int32_t requestId, const char *networkId,
+SOFTBUS_VISIBILITY int32_t TransProxyPipelineOpenChannel(int32_t requestId, const char *networkId,
     const TransProxyPipelineChannelOption *option, const ITransProxyPipelineCallback *callback)
 {
     TRANS_LOGD(TRANS_CTRL, "enter.");
@@ -266,7 +268,7 @@ int32_t TransProxyPipelineOpenChannel(int32_t requestId, const char *networkId,
     return SOFTBUS_OK;
 }
 
-int32_t TransProxyPipelineSendMessage(
+SOFTBUS_VISIBILITY int32_t TransProxyPipelineSendMessage(
     int32_t channelId, const uint8_t *data, uint32_t dataLen, TransProxyPipelineMsgType type)
 {
     TRANS_LOGD(TRANS_CTRL, "enter.");
@@ -292,7 +294,7 @@ int32_t TransProxyPipelineSendMessage(
     return SOFTBUS_OK;
 }
 
-int32_t TransProxyPipelineGetChannelIdByNetworkId(const char *networkId)
+SOFTBUS_VISIBILITY int32_t TransProxyPipelineGetChannelIdByNetworkId(const char *networkId)
 {
     TRANS_LOGD(TRANS_CTRL, "enter.");
     if (!IsValidStringSafe(networkId, NETWORK_ID_BUF_LEN)) {
@@ -322,7 +324,7 @@ int32_t TransProxyPipelineGetChannelIdByNetworkId(const char *networkId)
     return channelId;
 }
 
-int32_t TransProxyPipelineGetUuidByChannelId(int32_t channelId, char *uuid, uint32_t uuidLen)
+SOFTBUS_SYMBOL_EXPORT int32_t TransProxyPipelineGetUuidByChannelId(int32_t channelId, char *uuid, uint32_t uuidLen)
 {
     TRANS_LOGD(TRANS_CTRL, "enter.");
     TRANS_CHECK_AND_RETURN_RET_LOGW(SoftBusMutexLock(&g_manager.channels->lock) == SOFTBUS_OK,
@@ -341,7 +343,7 @@ int32_t TransProxyPipelineGetUuidByChannelId(int32_t channelId, char *uuid, uint
     return SOFTBUS_OK;
 }
 
-int32_t TransProxyPipelineCloseChannel(int32_t channelId)
+SOFTBUS_VISIBILITY int32_t TransProxyPipelineCloseChannel(int32_t channelId)
 {
     TRANS_LOGI(TRANS_CTRL, "enter.");
     TRANS_CHECK_AND_RETURN_RET_LOGW(SoftBusMutexLock(&g_manager.channels->lock) == SOFTBUS_OK,
@@ -364,7 +366,7 @@ int32_t TransProxyPipelineCloseChannel(int32_t channelId)
     return SOFTBUS_OK;
 }
 
-int32_t TransProxyPipelineCloseChannelDelay(int32_t channelId)
+SOFTBUS_VISIBILITY int32_t TransProxyPipelineCloseChannelDelay(int32_t channelId)
 {
 #define DELAY_CLOSE_CHANNEL_MS 3000
     TRANS_LOGD(TRANS_CTRL, "enter.");

@@ -41,7 +41,8 @@ ohos_fuzztest("ConnectionCommonFuzzTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [

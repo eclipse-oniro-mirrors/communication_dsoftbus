@@ -24,9 +24,10 @@
 #include "client_trans_tcp_direct_message.h"
 #include "client_trans_udp_manager.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 #include "trans_log.h"
 
-int32_t ClientTransChannelInit(void)
+SOFTBUS_VISIBILITY int32_t ClientTransChannelInit(void)
 {
     IClientSessionCallBack *cb = GetClientSessionCb();
     TRANS_CHECK_AND_RETURN_RET_LOGE(cb != NULL, SOFTBUS_NO_INIT, TRANS_SDK, "get client session Cb failed.");

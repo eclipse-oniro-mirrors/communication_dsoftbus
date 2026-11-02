@@ -209,7 +209,8 @@ static int32_t NotifyOpenAuthChannelSuccess(const AppInfo *appInfo, bool isServe
         appInfo->myData.sessionName, &channelInfo);
 }
 
-int32_t NotifyOpenAuthChannelFailed(const char *pkgName, int32_t pid, int32_t channelId, int32_t errCode)
+SOFTBUS_SYMBOL_EXPORT int32_t NotifyOpenAuthChannelFailed(const char *pkgName, int32_t pid, int32_t channelId,
+    int32_t errCode)
 {
     return g_cb->OnChannelOpenFailed(pkgName, pid, channelId, CHANNEL_TYPE_AUTH, errCode);
 }
@@ -569,7 +570,7 @@ static void ChannelReplyErrProc(TransEventExtra *extra, int32_t errorCode, AuthC
         (int32_t)(info->appInfo.myData.pid), (int32_t)(info->appInfo.myData.channelId), errorCode);
 }
 
-int32_t TransAuthGetPeerUdidByChanId(int32_t channelId, char *peerUdid, uint32_t len)
+SOFTBUS_VISIBILITY int32_t TransAuthGetPeerUdidByChanId(int32_t channelId, char *peerUdid, uint32_t len)
 {
     if (len < DEVICE_ID_SIZE_MAX || peerUdid == NULL) {
         TRANS_LOGE(TRANS_SVC, "param err");
@@ -788,7 +789,7 @@ int32_t TransGetLocalDeviceId(const char *mySessionName, AppInfo *appInfo)
     return SOFTBUS_OK;
 }
 
-int32_t GetAppInfo(const char *sessionName, int32_t channelId, AppInfo *appInfo, bool isClient)
+SOFTBUS_SYMBOL_EXPORT int32_t GetAppInfo(const char *sessionName, int32_t channelId, AppInfo *appInfo, bool isClient)
 {
     if (sessionName == NULL || appInfo == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -1159,7 +1160,8 @@ static int32_t PostAuthMsg(AuthChannelInfo *channel, TransEventExtra *extra, con
     return SOFTBUS_OK;
 }
 
-int32_t TransOpenAuthMsgChannelWithPara(const char *sessionName, const LaneConnInfo *connInfo, int32_t *channelId,
+SOFTBUS_SYMBOL_EXPORT int32_t TransOpenAuthMsgChannelWithPara(const char *sessionName, const LaneConnInfo *connInfo,
+    int32_t *channelId,
     bool accountInfo)
 {
     SoftBusHitraceChainBegin("TransOpenAuthMsgChannelWithPara");
@@ -1402,7 +1404,7 @@ int32_t TransAuthGetAppInfoByChanId(int32_t channelId, AppInfo *appInfo)
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t TransAuthGetConnIdByChanId(int32_t channelId, int32_t *connId)
+SOFTBUS_VISIBILITY int32_t TransAuthGetConnIdByChanId(int32_t channelId, int32_t *connId)
 {
     if ((g_authChannelList == NULL) || (connId == NULL)) {
         TRANS_LOGE(TRANS_SVC, "invalid param");

@@ -38,7 +38,7 @@ extern "C" {
 // provide remove event compare function field
 typedef struct {
     SoftBusHandler handler;
-    int (*eventCompareFunc)(const SoftBusMessage *, void *);
+    int32_t (*eventCompareFunc)(const SoftBusMessage *, void *);
 } SoftBusHandlerWrapper;
 
 typedef struct {

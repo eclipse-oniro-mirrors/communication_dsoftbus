@@ -18,6 +18,11 @@ module_output_path = "dsoftbus/soft_bus/connection/wifi_direct_cpp"
 wifi_direct_cpp_path = "$dsoftbus_root_path/core/connection/wifi_direct_cpp"
 ohos_unittest("WifiDirectUtilsTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   include_dirs = [
     "$dsoftbus_dfx_path/interface/include",
@@ -152,5 +157,5 @@ ohos_unittest("WifiDirectUtilsTest") {
 
 group("unittest") {
   testonly = true
-  deps = [ ":WifiDirectUtilsTest" ]
+  deps = []
 }

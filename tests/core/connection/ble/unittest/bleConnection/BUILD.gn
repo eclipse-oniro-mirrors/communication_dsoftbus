@@ -56,6 +56,11 @@ config("softbus_conn_ble_connection_test_config") {
 
 ohos_unittest("ConnBleConnectionTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   public_configs = [ ":softbus_conn_ble_connection_test_config" ]
   sources = [
@@ -67,7 +72,8 @@ ohos_unittest("ConnBleConnectionTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -78,5 +84,4 @@ ohos_unittest("ConnBleConnectionTest") {
     "googletest:gmock_main",
     "hilog:libhilog",
   ]
-  deps += dsoftbus_log_label_deps
 }

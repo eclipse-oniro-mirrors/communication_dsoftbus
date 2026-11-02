@@ -16,13 +16,14 @@
 #include "lnn_event_monitor_impl.h"
 
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 int32_t LnnInitBootEventMonitorImpl(void)
 {
     return SOFTBUS_OK;
 }
 
-int32_t LnnSubscribeAccountBootEvent(AccountEventHandle handle)
+SOFTBUS_VISIBILITY int32_t LnnSubscribeAccountBootEvent(AccountEventHandle handle)
 {
     return SOFTBUS_OK;
 }

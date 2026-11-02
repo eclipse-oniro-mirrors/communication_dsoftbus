@@ -22,7 +22,8 @@ import("../../../../../dsoftbus.gni")
 
 ohos_fuzztest("TransBroadcastFuzzTest") {
   module_out_path = dsoftbus_fuzz_out_path
-  fuzz_config_file = "$dsoftbus_test_path/core/transmission/fuzztest/transbroadcast_fuzzer"
+  fuzz_config_file =
+      "$dsoftbus_test_path/core/transmission/fuzztest/transbroadcast_fuzzer"
 
   include_dirs = [
     "$dsoftbus_root_path/adapter/common/include",
@@ -54,7 +55,7 @@ ohos_fuzztest("TransBroadcastFuzzTest") {
 
   deps = [
     "$dsoftbus_core_path/common:softbus_utils",
-    "$dsoftbus_core_path/frame:softbus_server",
+    "$dsoftbus_core_path/frame:softbus_server_test",
     "$dsoftbus_root_path/adapter:softbus_adapter",
   ]
 

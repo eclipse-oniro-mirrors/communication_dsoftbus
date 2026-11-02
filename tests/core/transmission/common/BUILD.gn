@@ -17,6 +17,11 @@ module_output_path = "dsoftbus/soft_bus/transmission"
 
 ohos_unittest("TransProcessDataTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "trans_process_data_test.cpp" ]
 
   include_dirs = [
@@ -26,7 +31,7 @@ ohos_unittest("TransProcessDataTest") {
 
   deps = [
     "$dsoftbus_core_path/common:softbus_utils",
-    "$dsoftbus_core_path/frame:softbus_server",
+    "$dsoftbus_core_path/frame:softbus_server_test",
     "$dsoftbus_root_path/adapter:softbus_adapter",
   ]
 
@@ -40,6 +45,11 @@ ohos_unittest("TransProcessDataTest") {
 
 ohos_unittest("TransMintpSocketTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "softbus_mintp_socket_test.cpp" ]
 
   include_dirs = [
@@ -56,7 +66,7 @@ ohos_unittest("TransMintpSocketTest") {
 
   deps = [
     "$dsoftbus_core_path/common:softbus_utils",
-    "$dsoftbus_core_path/frame:softbus_server",
+    "$dsoftbus_core_path/frame:softbus_server_test",
     "$dsoftbus_root_path/adapter:softbus_adapter",
   ]
 
@@ -70,9 +80,12 @@ ohos_unittest("TransMintpSocketTest") {
 
 ohos_unittest("SoftBusHtpSocketTest") {
   module_out_path = module_output_path
-  sources = [
-    "softbus_htp_socket_test.cpp"
-  ]
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+  sources = [ "softbus_htp_socket_test.cpp" ]
 
   include_dirs = [
     "$dsoftbus_root_path/core/authentication/include",
@@ -88,7 +101,7 @@ ohos_unittest("SoftBusHtpSocketTest") {
 
   deps = [
     "$dsoftbus_core_path/common:softbus_utils",
-    "$dsoftbus_core_path/frame:softbus_server",
+    "$dsoftbus_core_path/frame:softbus_server_test",
     "$dsoftbus_root_path/adapter:softbus_adapter",
   ]
 
@@ -102,9 +115,14 @@ ohos_unittest("SoftBusHtpSocketTest") {
 
 ohos_unittest("SoftbusHtpSocketMockTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
-    "softbus_htp_socket_mock_test.cpp",
     "mock/src/softbus_htp_socket_mock.cpp",
+    "softbus_htp_socket_mock_test.cpp",
   ]
 
   include_dirs = [
@@ -122,7 +140,7 @@ ohos_unittest("SoftbusHtpSocketMockTest") {
 
   deps = [
     "$dsoftbus_core_path/common:softbus_utils",
-    "$dsoftbus_core_path/frame:softbus_server",
+    "$dsoftbus_core_path/frame:softbus_server_test",
     "$dsoftbus_root_path/adapter:softbus_adapter",
   ]
 
@@ -138,10 +156,10 @@ group("unittest") {
   testonly = true
 
   deps = [
-    ":TransMintpSocketTest",
-    ":TransProcessDataTest",
     ":SoftBusHtpSocketTest",
     ":SoftbusHtpSocketMockTest",
+    ":TransMintpSocketTest",
+    ":TransProcessDataTest",
     "trans_pending_pkt_test:unittest",
   ]
 }

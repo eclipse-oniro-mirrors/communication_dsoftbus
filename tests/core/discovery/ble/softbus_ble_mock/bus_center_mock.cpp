@@ -22,43 +22,75 @@
 /* implement related global function of bus center */
 int32_t LnnGetLocalStrInfo(InfoKey key, char *info, uint32_t len)
 {
-    return BusCenterMock::GetMock()->LnnGetLocalStrInfo(key, info, len);
+    BusCenterMock *mock = BusCenterMock::GetMock();
+    if (mock == nullptr) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    return mock->LnnGetLocalStrInfo(key, info, len);
 }
 #endif
 
 int32_t LnnSetLocalDeviceName(const char *displayName)
 {
-    return BusCenterMock::GetMock()->LnnSetLocalDeviceName(displayName);
+    BusCenterMock *mock = BusCenterMock::GetMock();
+    if (mock == nullptr) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    return mock->LnnSetLocalDeviceName(displayName);
 }
 
 int32_t LnnConvertDeviceTypeToId(const char *deviceType, uint16_t *typeId)
 {
-    return BusCenterMock::GetMock()->LnnConvertDeviceTypeToId(deviceType, typeId);
+    BusCenterMock *mock = BusCenterMock::GetMock();
+    if (mock == nullptr) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    return mock->LnnConvertDeviceTypeToId(deviceType, typeId);
 }
 
 int32_t LnnGetLocalByteInfo(InfoKey key, uint8_t *info, uint32_t len)
 {
-    return BusCenterMock::GetMock()->LnnGetLocalByteInfo(key, info, len);
+    BusCenterMock *mock = BusCenterMock::GetMock();
+    if (mock == nullptr) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    return mock->LnnGetLocalByteInfo(key, info, len);
 }
 
 bool LnnIsDefaultOhosAccount()
 {
-    return BusCenterMock::GetMock()->LnnIsDefaultOhosAccount();
+    BusCenterMock *mock = BusCenterMock::GetMock();
+    if (mock == nullptr) {
+        return false;
+    }
+    return mock->LnnIsDefaultOhosAccount();
 }
 
 int32_t LnnEncryptDataByHuks(const struct HksBlob *keyAlias, const struct HksBlob *inData, struct HksBlob *outData)
 {
-    return BusCenterMock::GetMock()->LnnEncryptDataByHuks(keyAlias, inData, outData);
+    BusCenterMock *mock = BusCenterMock::GetMock();
+    if (mock == nullptr) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    return mock->LnnEncryptDataByHuks(keyAlias, inData, outData);
 }
 
 int32_t LnnDecryptDataByHuks(const struct HksBlob *keyAlias, const struct HksBlob *inData, struct HksBlob *outData)
 {
-    return BusCenterMock::GetMock()->LnnDecryptDataByHuks(keyAlias, inData, outData);
+    BusCenterMock *mock = BusCenterMock::GetMock();
+    if (mock == nullptr) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    return mock->LnnDecryptDataByHuks(keyAlias, inData, outData);
 }
 
 int32_t LnnGenerateRandomByHuks(uint8_t *randomKey, uint32_t len)
 {
-    return BusCenterMock::GetMock()->LnnGenerateRandomByHuks(randomKey, len);
+    BusCenterMock *mock = BusCenterMock::GetMock();
+    if (mock == nullptr) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    return mock->LnnGenerateRandomByHuks(randomKey, len);
 }
 /* definition for class BusCenterMock */
 BusCenterMock::BusCenterMock()

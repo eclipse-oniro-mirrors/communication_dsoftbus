@@ -14,6 +14,7 @@
  */
 
 #include "softbus_network_utils.h"
+#include "softbus_def.h"
 
 #define FREQUENCY_2G_FIRST 2412
 #define FREQUENCY_2G_LAST  2472
@@ -40,7 +41,7 @@ int SoftBusChannelToFrequency(int channel)
     }
 }
 
-int SoftBusFrequencyToChannel(int frequency)
+SOFTBUS_SYMBOL_EXPORT int SoftBusFrequencyToChannel(int frequency)
 {
     if (frequency >= FREQUENCY_2G_FIRST && frequency <= FREQUENCY_2G_LAST) {
         return (frequency - FREQUENCY_2G_FIRST) / FREQUENCY_STEP + CHANNEL_2G_FIRST;

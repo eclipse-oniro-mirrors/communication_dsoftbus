@@ -46,6 +46,7 @@
 #include "lnn_init_monitor.h"
 #include "softbus_adapter_bt_common.h"
 #include "softbus_adapter_mem.h"
+#include "softbus_def.h"
 
 #define HB_LOOPBACK_IP "127.0.0.1"
 #define INVALID_DELAY_TIME (-1)
@@ -121,7 +122,7 @@ static void InitHbSpecificConditionState(void)
     }
 }
 
-bool IsHeartbeatEnable(void)
+SOFTBUS_VISIBILITY bool IsHeartbeatEnable(void)
 {
     if ((g_hbConditionState.lockState == SOFTBUS_SCREEN_LOCK_UNKNOWN) && IsActiveOsAccountUnlocked()) {
         g_hbConditionState.lockState = SOFTBUS_SCREEN_UNLOCK;
@@ -165,7 +166,7 @@ static bool IsHeartbeatEnableForMultiUser(int32_t userId)
 }
 #endif
 
-bool IsHeartbeatEnableForMcu(void)
+SOFTBUS_SYMBOL_EXPORT bool IsHeartbeatEnableForMcu(void)
 {
     if ((g_hbConditionState.lockState == SOFTBUS_SCREEN_LOCK_UNKNOWN) && IsActiveOsAccountUnlocked()) {
         g_hbConditionState.lockState = SOFTBUS_SCREEN_UNLOCK;
@@ -189,22 +190,22 @@ bool IsHeartbeatEnableForMcu(void)
         (isLogIn || g_hbConditionState.hasTrustedRelation) && isOOBEEnd && isInitCheckSuc && !isDeviceRisk;
 }
 
-SoftBusScreenState GetScreenState(void)
+SOFTBUS_VISIBILITY SoftBusScreenState GetScreenState(void)
 {
     return g_hbConditionState.screenState;
 }
 
-SoftBusScreenLockState GetScreenLockState(void)
+SOFTBUS_VISIBILITY SoftBusScreenLockState GetScreenLockState(void)
 {
     return g_hbConditionState.lockState;
 }
 
-bool LnnIsCloudSyncEnd(void)
+SOFTBUS_VISIBILITY bool LnnIsCloudSyncEnd(void)
 {
     return g_isCloudSyncEnd;
 }
 
-bool LnnIsNeedInterceptBroadcast(bool disableGlass)
+SOFTBUS_VISIBILITY bool LnnIsNeedInterceptBroadcast(bool disableGlass)
 {
     int32_t localDevTypeId = TYPE_UNKNOW_ID;
     if (LnnGetLocalNumInfo(NUM_KEY_DEV_TYPE_ID, &localDevTypeId) == SOFTBUS_OK &&
@@ -216,7 +217,7 @@ bool LnnIsNeedInterceptBroadcast(bool disableGlass)
     return false;
 }
 
-void SetScreenState(SoftBusScreenState state)
+SOFTBUS_VISIBILITY void SetScreenState(SoftBusScreenState state)
 {
     g_hbConditionState.screenState = state;
 }
@@ -443,7 +444,7 @@ static uint64_t GetDisEnableBleDiscoveryTime(uint64_t modeDuration)
     return timeout;
 }
 
-void HbEnableDiscovery(void)
+SOFTBUS_VISIBILITY void HbEnableDiscovery(void)
 {
     LNN_LOGI(LNN_HEART_BEAT, "Enable ble discovery.");
     HbConditionChanged(false);
@@ -490,7 +491,7 @@ static int32_t SameAccountDevDisableDiscoveryProcess(bool hasMcuRequestDisable)
     return LnnSyncBleOfflineMsgPacked();
 }
 
-void LnnRequestBleDiscoveryProcess(int32_t strategy, int64_t timeout)
+SOFTBUS_VISIBILITY void LnnRequestBleDiscoveryProcess(int32_t strategy, int64_t timeout)
 {
     LNN_LOGI(LNN_HEART_BEAT, "LnnRequestBleDiscoveryProcess enter, strategy=%{public}d", strategy);
     if (LnnIsLocalSupportMcuFeature()) {
@@ -1346,7 +1347,7 @@ static void PeriodDumpLocalInfo(void *para)
     LnnAsyncCallbackDelayHelper(GetLooper(LOOP_TYPE_DEFAULT), PeriodDumpLocalInfo, NULL, HB_PERIOD_DUMP_LOCAL_INFO_LEN);
 }
 
-int32_t LnnStartHeartbeatFrameDelay(void)
+SOFTBUS_VISIBILITY int32_t LnnStartHeartbeatFrameDelay(void)
 {
     LNN_LOGI(LNN_HEART_BEAT, "heartbeat(HB) FSM start");
     LnnAsyncCallbackDelayHelper(GetLooper(LOOP_TYPE_DEFAULT), PeriodDumpLocalInfo, NULL, HB_PERIOD_DUMP_LOCAL_INFO_LEN);
@@ -1371,12 +1372,12 @@ int32_t LnnStartHeartbeatFrameDelay(void)
     return LnnStartHeartbeat(0);
 }
 
-int32_t LnnSetHeartbeatMediumParam(const LnnHeartbeatMediumParam *param)
+SOFTBUS_VISIBILITY int32_t LnnSetHeartbeatMediumParam(const LnnHeartbeatMediumParam *param)
 {
     return LnnSetMediumParamBySpecificType(param);
 }
 
-int32_t LnnOfflineTimingByHeartbeat(const char *networkId, ConnectionAddrType addrType)
+SOFTBUS_VISIBILITY int32_t LnnOfflineTimingByHeartbeat(const char *networkId, ConnectionAddrType addrType)
 {
     if (networkId == NULL) {
         LNN_LOGE(LNN_HEART_BEAT, "offline timing get invalid param");
@@ -1407,7 +1408,7 @@ int32_t LnnOfflineTimingByHeartbeat(const char *networkId, ConnectionAddrType ad
     return SOFTBUS_OK;
 }
 
-void LnnStopOfflineTimingByHeartbeat(const char *networkId, ConnectionAddrType addrType)
+SOFTBUS_VISIBILITY void LnnStopOfflineTimingByHeartbeat(const char *networkId, ConnectionAddrType addrType)
 {
     if (networkId == NULL) {
         LNN_LOGE(LNN_HEART_BEAT, "HB stop offline timing get invalid param");
@@ -1442,6 +1443,7 @@ static void ReportBusinessDiscoveryResultEvt(const char *pkgName, int32_t discCn
     }
 }
 
+SOFTBUS_VISIBILITY
 int32_t LnnShiftLNNGear(const char *pkgName, const char *callerId, const char *targetNetworkId, const GearMode *mode)
 {
     char *anonyNetworkId = NULL;
@@ -1492,6 +1494,7 @@ int32_t LnnShiftLNNGear(const char *pkgName, const char *callerId, const char *t
     return SOFTBUS_OK;
 }
 
+SOFTBUS_VISIBILITY
 int32_t HmosShiftLNNGear(const char *callerId, const GearMode *mode, LnnHeartbeatStrategyType strategyType)
 {
     if (mode == NULL || callerId == NULL) {
@@ -1544,7 +1547,7 @@ int32_t HmosShiftLNNGear(const char *callerId, const GearMode *mode, LnnHeartbea
     return SOFTBUS_OK;
 }
 
-int32_t LnnTriggerHbRangeForMsdp(const char *pkgName, const RangeConfig *config)
+SOFTBUS_VISIBILITY int32_t LnnTriggerHbRangeForMsdp(const char *pkgName, const RangeConfig *config)
 {
     LNN_CHECK_AND_RETURN_RET_LOGE(pkgName != NULL && config != NULL && config->medium != SLE_CONN_HADM,
         SOFTBUS_INVALID_PARAM, LNN_INIT, "invalid param");
@@ -1581,7 +1584,7 @@ int32_t LnnTriggerHbRangeForMsdp(const char *pkgName, const RangeConfig *config)
     return SOFTBUS_OK;
 }
 
-void LnnUpdateHeartbeatInfo(LnnHeartbeatUpdateInfoType type)
+SOFTBUS_VISIBILITY void LnnUpdateHeartbeatInfo(LnnHeartbeatUpdateInfoType type)
 {
     LNN_LOGI(LNN_HEART_BEAT, "update heartbeat infoType=%{public}d", type);
     if (type == UPDATE_HB_ACCOUNT_INFO && !LnnIsDefaultOhosAccount()) {
@@ -1614,7 +1617,7 @@ static void HbDelayCheckTrustedRelation(void *para)
     }
 }
 
-void LnnHbOnTrustedRelationIncreased(int32_t groupType)
+SOFTBUS_VISIBILITY void LnnHbOnTrustedRelationIncreased(int32_t groupType)
 {
     /* If it is a peer-to-peer group or share group, delay initialization to give BR networking priority. */
     if ((groupType != AUTH_PEER_TO_PEER_GROUP || !IsHeartbeatEnable()) && !IsSupportMcuFeaturePacked()) {
@@ -1631,7 +1634,7 @@ void LnnHbOnTrustedRelationIncreased(int32_t groupType)
     }
 }
 
-void LnnHbOnTrustedRelationReduced(void)
+SOFTBUS_VISIBILITY void LnnHbOnTrustedRelationReduced(void)
 {
     if (LnnAsyncCallbackDelayHelper(GetLooper(LOOP_TYPE_DEFAULT), HbDelayCheckTrustedRelation, NULL,
         CHECK_TRUSTED_RELATION_TIME) != SOFTBUS_OK) {
@@ -1743,7 +1746,7 @@ static void HbRangeCallback(SoftBusRangeHandle handle, const RangeResult *result
     }
 }
 
-int32_t LnnInitHeartbeat(void)
+SOFTBUS_VISIBILITY int32_t LnnInitHeartbeat(void)
 {
 #ifdef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
     if (LnnHbChannelMgrInit() != SOFTBUS_OK) {
@@ -1777,7 +1780,7 @@ int32_t LnnInitHeartbeat(void)
     return SOFTBUS_OK;
 }
 
-void LnnDeinitHeartbeat(void)
+SOFTBUS_VISIBILITY void LnnDeinitHeartbeat(void)
 {
     LnnHbStrategyDeinit();
 #ifdef DSOFTBUS_FEATURE_MULTI_FOREGROUND_USER
@@ -1807,7 +1810,7 @@ void LnnDeinitHeartbeat(void)
     LnnUnregisterEventHandler(LNN_EVENT_ACCOUNT_SWITCH_CHECK, HbAccountSwitchCheckHandler);
 }
 
-int32_t LnnTriggerDataLevelHeartbeat(void)
+SOFTBUS_VISIBILITY int32_t LnnTriggerDataLevelHeartbeat(void)
 {
     if (LnnIsNeedInterceptBroadcast(true)) {
         LNN_LOGI(LNN_HEART_BEAT, "local heartbeat disable");
@@ -1823,7 +1826,7 @@ int32_t LnnTriggerDataLevelHeartbeat(void)
     return SOFTBUS_OK;
 }
 
-int32_t LnnTriggerDirectHeartbeat(const char *networkId, uint64_t timeout)
+SOFTBUS_VISIBILITY int32_t LnnTriggerDirectHeartbeat(const char *networkId, uint64_t timeout)
 {
     LNN_LOGD(LNN_HEART_BEAT, "LnnTriggerDirectHeartbeat");
     if (networkId == NULL) {
@@ -1839,7 +1842,7 @@ int32_t LnnTriggerDirectHeartbeat(const char *networkId, uint64_t timeout)
     return SOFTBUS_OK;
 }
 
-int32_t LnnTriggerCloudSyncHeartbeat(void)
+SOFTBUS_VISIBILITY int32_t LnnTriggerCloudSyncHeartbeat(void)
 {
     LNN_LOGD(LNN_HEART_BEAT, "LnnTriggerCloudSyncHeartbeat");
     if (LnnStartHbByTypeAndStrategy(
@@ -1851,17 +1854,17 @@ int32_t LnnTriggerCloudSyncHeartbeat(void)
     return SOFTBUS_OK;
 }
 
-void LnnRegDataLevelChangeCb(const IDataLevelChangeCallback *callback)
+SOFTBUS_VISIBILITY void LnnRegDataLevelChangeCb(const IDataLevelChangeCallback *callback)
 {
     LnnBleHbRegDataLevelChangeCbPacked(callback);
 }
 
-void LnnUnregDataLevelChangeCb(void)
+SOFTBUS_VISIBILITY void LnnUnregDataLevelChangeCb(void)
 {
     LnnBleHbUnregDataLevelChangeCbPacked();
 }
 
-void LnnRegBleRangeCb(const IBleRangeInnerCallback *callback)
+SOFTBUS_VISIBILITY void LnnRegBleRangeCb(const IBleRangeInnerCallback *callback)
 {
     if (callback == NULL) {
         LNN_LOGE(LNN_HEART_BEAT, "invalid param");
@@ -1871,12 +1874,12 @@ void LnnRegBleRangeCb(const IBleRangeInnerCallback *callback)
     g_bleRangeCallback.onRangeResult = callback->onRangeResult;
 }
 
-void LnnUnregBleRangeCb(void)
+SOFTBUS_VISIBILITY void LnnUnregBleRangeCb(void)
 {
     g_bleRangeCallback.onRangeResult = NULL;
 }
 
-int32_t LnnTriggerSleHeartbeat(void)
+SOFTBUS_VISIBILITY int32_t LnnTriggerSleHeartbeat(void)
 {
     if (!IsHeartbeatEnable()) {
         LNN_LOGD(LNN_HEART_BEAT, "sle no need handle");
@@ -1899,7 +1902,7 @@ int32_t LnnTriggerSleHeartbeat(void)
     return SOFTBUS_OK;
 }
 
-int32_t LnnStopSleHeartbeat(void)
+SOFTBUS_VISIBILITY int32_t LnnStopSleHeartbeat(void)
 {
     if (!g_hbConditionState.isSleEnable) {
         LNN_LOGD(LNN_HEART_BEAT, "sle has stoped");
@@ -1918,7 +1921,7 @@ int32_t LnnStopSleHeartbeat(void)
     return SOFTBUS_OK;
 }
 
-int32_t LnnOfflineTimingBySleHb(const char *networkId, ConnectionAddrType addrType)
+SOFTBUS_VISIBILITY int32_t LnnOfflineTimingBySleHb(const char *networkId, ConnectionAddrType addrType)
 {
     LNN_CHECK_AND_RETURN_RET_LOGE(networkId != NULL, SOFTBUS_INVALID_PARAM, LNN_HEART_BEAT, "invalid param");
     LNN_CHECK_AND_RETURN_RET_LOGE(addrType == CONNECTION_ADDR_BLE, SOFTBUS_INVALID_PARAM, LNN_HEART_BEAT,
@@ -1943,7 +1946,7 @@ int32_t LnnOfflineTimingBySleHb(const char *networkId, ConnectionAddrType addrTy
     return SOFTBUS_OK;
 }
 
-void LnnStopOfflineTimingBySleHb(const char *networkId, ConnectionAddrType addrType)
+SOFTBUS_VISIBILITY void LnnStopOfflineTimingBySleHb(const char *networkId, ConnectionAddrType addrType)
 {
     LNN_CHECK_AND_RETURN_LOGE(networkId != NULL, LNN_HEART_BEAT, "invalid param");
     LNN_CHECK_AND_RETURN_LOGE(addrType == CONNECTION_ADDR_BLE, LNN_HEART_BEAT, "only support ble");

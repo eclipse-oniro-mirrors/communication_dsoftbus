@@ -53,9 +53,9 @@ ohos_fuzztest("ConnGeneralConnectionFuzzTest") {
 
   sources = [
     "$dsoftbus_root_path/core/connection/manager/softbus_conn_manager.c",
+    "$dsoftbus_root_path/tests/core/connection/general/unittest/mock/general_connection_mock.cpp",
     "$dsoftbus_root_path/tests/core/connection/general/unittest/mock/hilog_mock.cpp",
     "$dsoftbus_root_path/tests/core/connection/general/unittest/softbus_conn_general_connection_test.cpp",
-    "$dsoftbus_root_path/tests/core/connection/general/unittest/mock/general_connection_mock.cpp",
     "conngeneralconnection_fuzzer.cpp",
   ]
 
@@ -81,8 +81,9 @@ ohos_fuzztest("ConnGeneralConnectionFuzzTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
     "$dsoftbus_root_path/dfx:softbus_dfx",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [

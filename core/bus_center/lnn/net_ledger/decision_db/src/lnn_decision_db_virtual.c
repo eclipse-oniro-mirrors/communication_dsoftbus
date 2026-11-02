@@ -17,8 +17,9 @@
 
 #include "lnn_log.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
-int32_t LnnInsertSpecificTrustedDevInfo(const char *udid)
+SOFTBUS_VISIBILITY int32_t LnnInsertSpecificTrustedDevInfo(const char *udid)
 {
     (void)udid;
 
@@ -34,7 +35,7 @@ int32_t LnnDeleteSpecificTrustedDevInfo(const char *udid)
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnGetTrustedDevInfo(char **udidArray, uint32_t *num)
+SOFTBUS_VISIBILITY int32_t LnnGetTrustedDevInfo(char **udidArray, uint32_t *num)
 {
     (void)udidArray;
     (void)num;
@@ -43,7 +44,7 @@ int32_t LnnGetTrustedDevInfo(char **udidArray, uint32_t *num)
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-bool LnnIsPotentialHomeGroup(const char *udid)
+SOFTBUS_VISIBILITY bool LnnIsPotentialHomeGroup(const char *udid)
 {
     (void)udid;
 
@@ -51,14 +52,14 @@ bool LnnIsPotentialHomeGroup(const char *udid)
     return false;
 }
 
-int32_t LnnGenerateCeParams(bool isUnlocked)
+SOFTBUS_VISIBILITY int32_t LnnGenerateCeParams(bool isUnlocked)
 {
     (void)isUnlocked;
     LNN_LOGI(LNN_INIT, "LnnGenerateCeParams not implemented");
     return SOFTBUS_OK;
 }
 
-int32_t UpdateRecoveryDeviceInfo(void)
+SOFTBUS_VISIBILITY int32_t UpdateRecoveryDeviceInfo(void)
 {
     return SOFTBUS_OK;
 }
@@ -69,7 +70,7 @@ int32_t LnnCheckGenerateSoftBusKeyByHuks(void)
     return SOFTBUS_OK;
 }
 
-int32_t LnnFindDeviceUdidTrustedInfo(const char *udid)
+SOFTBUS_VISIBILITY int32_t LnnFindDeviceUdidTrustedInfo(const char *udid)
 {
     (void)udid;
     LNN_LOGI(LNN_INIT, "no find trusted");

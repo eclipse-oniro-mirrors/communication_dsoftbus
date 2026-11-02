@@ -16,6 +16,7 @@
 #include "lnn_data_cloud_sync.h"
 
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 void LnnInitCloudSyncModule(void)
 {
@@ -27,7 +28,7 @@ void LnnDeInitCloudSyncModule(void)
     return;
 }
 
-int32_t LnnLedgerAllDataSyncToDB(NodeInfo *info, bool isAckSeq, char *peerudid)
+SOFTBUS_VISIBILITY int32_t LnnLedgerAllDataSyncToDB(NodeInfo *info, bool isAckSeq, char *peerudid)
 {
     (void)info;
     (void)isAckSeq;
@@ -49,7 +50,7 @@ int32_t LnnLedgerDataChangeSyncToDB(const char *key, const char *value, size_t v
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnDeleteSyncToDB(int32_t userId, int64_t accountId, bool isMainScreenUserId)
+SOFTBUS_VISIBILITY int32_t LnnDeleteSyncToDB(int32_t userId, int64_t accountId, bool isMainScreenUserId)
 {
     (void)userId;
     (void)accountId;
@@ -80,13 +81,13 @@ int32_t LnnDBDataChangeSyncToCacheInner(const char *key, const char *value)
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnSetCloudAbility(const bool isEnableCloud)
+SOFTBUS_VISIBILITY int32_t LnnSetCloudAbility(const bool isEnableCloud)
 {
     (void)isEnableCloud;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnDeleteDevInfoSyncToDB(const char *udid, int64_t accountId)
+SOFTBUS_SYMBOL_EXPORT int32_t LnnDeleteDevInfoSyncToDB(const char *udid, int64_t accountId)
 {
     (void)udid;
     (void)accountId;

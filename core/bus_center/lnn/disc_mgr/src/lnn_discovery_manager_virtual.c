@@ -17,27 +17,28 @@
 
 #include "lnn_log.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
-int32_t LnnInitDiscoveryManager(void)
+SOFTBUS_VISIBILITY int32_t LnnInitDiscoveryManager(void)
 {
     LNN_LOGI(LNN_BUILDER, "init virtual discovery manager");
     return SOFTBUS_OK;
 }
 
-int32_t LnnStartPublish(void)
+SOFTBUS_VISIBILITY int32_t LnnStartPublish(void)
 {
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-void LnnStopPublish(void)
+SOFTBUS_VISIBILITY void LnnStopPublish(void)
 {
 }
 
-int32_t LnnStartDiscovery(void)
+SOFTBUS_VISIBILITY int32_t LnnStartDiscovery(void)
 {
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-void LnnStopDiscovery(void)
+SOFTBUS_VISIBILITY void LnnStopDiscovery(void)
 {
 }

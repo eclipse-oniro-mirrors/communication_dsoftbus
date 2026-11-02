@@ -17,15 +17,16 @@
 
 #include "lnn_log.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
-int32_t LnnStartRange(const RangeConfig *config)
+SOFTBUS_SYMBOL_EXPORT int32_t LnnStartRange(const RangeConfig *config)
 {
     (void)config;
     LNN_LOGI(LNN_INIT, "sle start range success");
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnStopRange(const RangeConfig *config)
+SOFTBUS_SYMBOL_EXPORT int32_t LnnStopRange(const RangeConfig *config)
 {
     (void)config;
     LNN_LOGI(LNN_INIT, "sle stop range success");
@@ -51,18 +52,18 @@ int32_t SendAuthResult(AuthHandle authHandle, int64_t seq, const uint8_t *data, 
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-void LnnRegSleRangeCb(const ISleRangeInnerCallback *callback)
+SOFTBUS_SYMBOL_EXPORT void LnnRegSleRangeCb(const ISleRangeInnerCallback *callback)
 {
     (void)callback;
     LNN_LOGI(LNN_BUILDER, "reg sle cb success");
 }
 
-void LnnUnregSleRangeCb(void)
+SOFTBUS_SYMBOL_EXPORT void LnnUnregSleRangeCb(void)
 {
     LNN_LOGI(LNN_BUILDER, "unreg sle cb success");
 }
 
-void SleRangeDeathCallback(void)
+SOFTBUS_SYMBOL_EXPORT void SleRangeDeathCallback(void)
 {
     LNN_LOGI(LNN_BUILDER, "sle range death callback success");
 }

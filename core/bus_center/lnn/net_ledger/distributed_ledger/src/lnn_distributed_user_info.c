@@ -23,6 +23,7 @@
 #include "lnn_map.h"
 #include "softbus_adapter_mem.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 #include "softbus_utils.h"
 
 static bool g_isDistributedUserLedgerInit = false;
@@ -95,7 +96,7 @@ void LnnDeinitDistributedUserLedger(void)
     LNN_LOGI(LNN_LEDGER, "deinit distributed user ledger successful");
 }
 
-void LnnRemoveUserInfoNode(const char *udid)
+SOFTBUS_VISIBILITY void LnnRemoveUserInfoNode(const char *udid)
 {
     if (udid == NULL) {
         LNN_LOGE(LNN_LEDGER, "udid is null, please check udid");
@@ -258,7 +259,7 @@ int32_t LnnUpdateDistributedUserInfo(const UserInfo *userInfo, const char *udid)
     return ret;
 }
 
-int32_t LnnFindUserByUserIdAndUdid(const char *udid, int32_t userId, UserInfo *userInfo)
+SOFTBUS_VISIBILITY int32_t LnnFindUserByUserIdAndUdid(const char *udid, int32_t userId, UserInfo *userInfo)
 {
     if (udid == NULL || userInfo == NULL) {
         LNN_LOGE(LNN_LEDGER, "invalid param");

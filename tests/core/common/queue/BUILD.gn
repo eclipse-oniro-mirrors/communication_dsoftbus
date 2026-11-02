@@ -21,6 +21,11 @@ dsoftbus_root_path = "../../../.."
 
 ohos_unittest("CommonCoreQueueTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/common/queue/softbus_queue.c",
     "queue_test.cpp",
@@ -31,9 +36,9 @@ ohos_unittest("CommonCoreQueueTest") {
     "$dsoftbus_root_path/core/common/include",
   ]
 
-  deps = [ 
-    "$dsoftbus_root_path/core/common:softbus_utils",
+  deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
+    "$dsoftbus_root_path/core/common:softbus_utils",
   ]
 
   external_deps = [

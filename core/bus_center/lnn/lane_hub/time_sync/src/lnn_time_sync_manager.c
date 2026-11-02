@@ -24,6 +24,7 @@
 #include "lnn_feature_capability.h"
 #include "message_handler.h"
 #include "softbus_adapter_mem.h"
+#include "softbus_def.h"
 
 #define THOUSAND 1000
 
@@ -570,7 +571,7 @@ void LnnDeinitTimeSync(void)
     LnnTimeSyncImplDeinitPacked();
 }
 
-int32_t LnnStartTimeSync(const char *pkgName, int32_t callingPid, const char *targetNetworkId,
+SOFTBUS_VISIBILITY int32_t LnnStartTimeSync(const char *pkgName, int32_t callingPid, const char *targetNetworkId,
     TimeSyncAccuracy accuracy, TimeSyncPeriod period)
 {
     StartTimeSyncReqMsgPara *para = NULL;
@@ -610,7 +611,7 @@ int32_t LnnStartTimeSync(const char *pkgName, int32_t callingPid, const char *ta
     return SOFTBUS_OK;
 }
 
-int32_t LnnStopTimeSync(const char *pkgName, const char *targetNetworkId, int32_t callingPid)
+SOFTBUS_VISIBILITY int32_t LnnStopTimeSync(const char *pkgName, const char *targetNetworkId, int32_t callingPid)
 {
     StopTimeSyncReqMsgPara *para = NULL;
 

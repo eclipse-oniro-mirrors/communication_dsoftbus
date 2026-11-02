@@ -15,13 +15,14 @@
 
 #include "broadcast_scheduler.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
-int32_t SchedulerInitBroadcast(void)
+SOFTBUS_SYMBOL_EXPORT int32_t SchedulerInitBroadcast(void)
 {
     return SOFTBUS_OK;
 }
 
-int32_t SchedulerDeinitBroadcast(void)
+SOFTBUS_SYMBOL_EXPORT int32_t SchedulerDeinitBroadcast(void)
 {
     return SOFTBUS_OK;
 }
@@ -42,7 +43,7 @@ int32_t SchedulerUnregisterBroadcaster(int32_t bcId)
     return SOFTBUS_OK;
 }
 
-int32_t SchedulerRegisterScanListener(
+SOFTBUS_SYMBOL_EXPORT int32_t SchedulerRegisterScanListener(
     BroadcastProtocol protocol, BaseServiceType type, int32_t *listenerId, const ScanCallback *cb)
 {
     (void)protocol;
@@ -52,13 +53,14 @@ int32_t SchedulerRegisterScanListener(
     return SOFTBUS_OK;
 }
 
-int32_t SchedulerUnregisterListener(int32_t listenerId)
+SOFTBUS_SYMBOL_EXPORT int32_t SchedulerUnregisterListener(int32_t listenerId)
 {
     (void)listenerId;
     return SOFTBUS_OK;
 }
 
-int32_t SchedulerStartBroadcast(int32_t bcId, BroadcastContentType contentType, const BroadcastParam *param,
+SOFTBUS_SYMBOL_EXPORT int32_t SchedulerStartBroadcast(int32_t bcId, BroadcastContentType contentType,
+    const BroadcastParam *param,
     const BroadcastPacket *packet)
 {
     (void)bcId;
@@ -68,7 +70,8 @@ int32_t SchedulerStartBroadcast(int32_t bcId, BroadcastContentType contentType, 
     return SOFTBUS_OK;
 }
 
-int32_t SchedulerUpdateBroadcast(int32_t bcId, const BroadcastParam *param, const BroadcastPacket *packet)
+SOFTBUS_SYMBOL_EXPORT int32_t SchedulerUpdateBroadcast(int32_t bcId, const BroadcastParam *param,
+    const BroadcastPacket *packet)
 {
     (void)bcId;
     (void)param;
@@ -76,21 +79,21 @@ int32_t SchedulerUpdateBroadcast(int32_t bcId, const BroadcastParam *param, cons
     return SOFTBUS_OK;
 }
 
-int32_t SchedulerSetBroadcastData(int32_t bcId, const BroadcastPacket *packet)
+SOFTBUS_SYMBOL_EXPORT int32_t SchedulerSetBroadcastData(int32_t bcId, const BroadcastPacket *packet)
 {
     (void)bcId;
     (void)packet;
     return SOFTBUS_OK;
 }
 
-int32_t SchedulerSetBroadcastParam(int32_t bcId, const BroadcastParam *param)
+SOFTBUS_SYMBOL_EXPORT int32_t SchedulerSetBroadcastParam(int32_t bcId, const BroadcastParam *param)
 {
     (void)bcId;
     (void)param;
     return SOFTBUS_OK;
 }
 
-int32_t SchedulerStopBroadcast(int32_t bcId)
+SOFTBUS_SYMBOL_EXPORT int32_t SchedulerStopBroadcast(int32_t bcId)
 {
     (void)bcId;
     return SOFTBUS_OK;

@@ -19,6 +19,7 @@
 #include "lnn_log.h"
 #include "lnn_service_mock.h"
 #include "softbus_adapter_mem.h"
+#include "softbus_def.h"
 #include "softbus_error_code.h"
 
 using namespace testing;
@@ -273,3 +274,55 @@ int32_t LnnServicetInterfaceMock::ActionOfLnnRegisterEventHandler(LnnEventType e
 }
 } // extern "C"
 } // namespace OHOS
+
+extern "C" {
+SOFTBUS_VISIBILITY int TransGetUidAndPid(const char *sessionName, int *uid, int *pid)
+{
+    (void)sessionName;
+    if (uid) { *uid = 0; }
+    if (pid) { *pid = 0; }
+    return 0;
+}
+SOFTBUS_VISIBILITY int TransGetPkgNameBySessionName(const char *sessionName, char *pkgName, unsigned short len)
+{
+    (void)sessionName;
+    if (pkgName && len > 0) { pkgName[0] = 0; }
+    return 0;
+}
+SOFTBUS_VISIBILITY int TransCommonCloseChannel(const char *sessionName, int channelId, int channelType)
+{
+    (void)sessionName;
+    (void)channelId;
+    (void)channelType;
+    return 0;
+}
+SOFTBUS_VISIBILITY int TransProxyPostSessionData(int channelId, const unsigned char *data, unsigned int len, int flags)
+{
+    (void)channelId;
+    (void)data;
+    (void)len;
+    (void)flags;
+    return 0;
+}
+}
+
+extern "C" {
+SOFTBUS_VISIBILITY int32_t TransProxyCloseConnChannel(unsigned int connectionId, int isServer, int isD2d)
+{
+    (void)connectionId;
+    (void)isServer;
+    (void)isD2d;
+    return 0;
+}
+SOFTBUS_VISIBILITY int32_t TransProxyGetConnInfoByConnId(unsigned int connId, void *connInfo)
+{
+    (void)connId;
+    (void)connInfo;
+    return 0;
+}
+SOFTBUS_VISIBILITY int32_t TransProxyResetPeer(void *info)
+{
+    (void)info;
+    return 0;
+}
+}

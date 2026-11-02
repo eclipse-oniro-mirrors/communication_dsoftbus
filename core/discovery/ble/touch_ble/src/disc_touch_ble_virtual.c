@@ -17,6 +17,7 @@
 
 #include "disc_manager.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 static int32_t TouchBleStartActivePublish(const PublishOption *option)
 {
@@ -107,16 +108,16 @@ DiscoveryBleDispatcherInterface *DiscTouchBleInit(DiscInnerCallback *discInnerCb
     return &g_touchBleInterface;
 }
 
-void DiscTouchBleDeinit(void)
+SOFTBUS_SYMBOL_EXPORT void DiscTouchBleDeinit(void)
 {
 }
 
-int32_t DiscTouchBleEventInit(void)
+SOFTBUS_SYMBOL_EXPORT int32_t DiscTouchBleEventInit(void)
 {
     return SOFTBUS_OK;
 }
 
-void DiscTouchBleEventDeinit(void)
+SOFTBUS_SYMBOL_EXPORT void DiscTouchBleEventDeinit(void)
 {
 }
 

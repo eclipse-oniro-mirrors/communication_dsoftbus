@@ -49,6 +49,7 @@ private:
     int32_t EvaluateQosInner(MessageParcel &data, MessageParcel &reply);
     int32_t ProcessInnerEventInner(MessageParcel &data, MessageParcel &reply);
     int32_t SetWirelessLinkCtrlInner(MessageParcel &data, MessageParcel &reply);
+    int32_t SetDisconnectPolicyInner(MessageParcel &data, MessageParcel &reply);
     int32_t PrivilegeCloseChannelInner(MessageParcel &data, MessageParcel &reply);
 
     int32_t JoinLNNInner(MessageParcel &data, MessageParcel &reply);

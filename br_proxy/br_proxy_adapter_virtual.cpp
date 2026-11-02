@@ -18,18 +18,41 @@
 #include <unistd.h>
 #include "softbus_error_code.h"
 
-extern "C" int32_t StartAbility(const char *bundleName, const char *abilityName)
+extern "C" int32_t StartAbility(const char *bundleName, const char *abilityName,
+    int32_t appIndex, int32_t userId)
 {
+    (void)bundleName;
+    (void)abilityName;
+    (void)appIndex;
+    (void)userId;
     return SOFTBUS_FUNC_NOT_SUPPORT;
 }
 
-extern "C" int32_t ProxyChannelMgrGetAbilityName(char *abilityName, int32_t userId,
-    uint32_t abilityNameLen, std::string bundleName)
+extern "C" bool GetRunningProcessInformation(const std::string bundleName, int32_t userId, pid_t uid, pid_t *pid)
 {
+    (void)bundleName;
+    (void)userId;
+    (void)uid;
+    (void)pid;
+    return false;
+}
+
+extern "C" int32_t ProxyChannelMgrGetAbilityName(char *abilityName, int32_t userId, uint32_t abilityNameLen,
+    std::string bundleName, int32_t *appIndex)
+{
+    (void)abilityName;
+    (void)userId;
+    (void)abilityNameLen;
+    (void)bundleName;
+    (void)appIndex;
     return SOFTBUS_FUNC_NOT_SUPPORT;
 }
 
-extern "C" int32_t Unrestricted(const char *bundleName, pid_t pid, pid_t uid)
+extern "C" int32_t Unrestricted(const char *bundleName, pid_t pid, pid_t uid, bool isThaw)
 {
+    (void)bundleName;
+    (void)pid;
+    (void)uid;
+    (void)isThaw;
     return SOFTBUS_FUNC_NOT_SUPPORT;
 }

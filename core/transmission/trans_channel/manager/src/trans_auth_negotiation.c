@@ -20,6 +20,7 @@
 
 #include "softbus_adapter_mem.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 #include "softbus_utils.h"
 #include "trans_log.h"
 
@@ -238,7 +239,7 @@ int32_t TransNegotiateSessionKey(const AuthConnInfo *authConnInfo, int32_t chann
     return SOFTBUS_OK;
 }
 
-int32_t TransReNegotiateSessionKey(const AuthConnInfo *authConnInfo, int32_t channelId)
+SOFTBUS_VISIBILITY int32_t TransReNegotiateSessionKey(const AuthConnInfo *authConnInfo, int32_t channelId)
 {
     TRANS_CHECK_AND_RETURN_RET_LOGE(authConnInfo != NULL, SOFTBUS_INVALID_PARAM, TRANS_SVC, "invalid param");
 
@@ -327,7 +328,7 @@ static int32_t ConvertConnInfoToAuthConnInfo(const ConnectionInfo *connInfo, Aut
     }
 }
 
-int32_t GetAuthConnInfoByConnId(uint32_t connectionId, AuthConnInfo *authConnInfo)
+SOFTBUS_VISIBILITY int32_t GetAuthConnInfoByConnId(uint32_t connectionId, AuthConnInfo *authConnInfo)
 {
     TRANS_CHECK_AND_RETURN_RET_LOGE(authConnInfo != NULL, SOFTBUS_INVALID_PARAM, TRANS_SVC, "invalid param");
 

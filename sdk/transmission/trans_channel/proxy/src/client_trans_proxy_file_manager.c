@@ -1962,7 +1962,7 @@ static int32_t ProcessRecvFileFrameData(int32_t sessionId, int32_t channelId, co
     }
     return ProcessFileFrameByType(sessionId, channelId, oneFrame, osType, packetSize);
 }
-
+SOFTBUS_VISIBILITY
 int32_t ProcessFileFrameData(int32_t sessionId, int32_t channelId, const char *data, uint32_t len, int32_t type)
 {
     FileFrame oneFrame;

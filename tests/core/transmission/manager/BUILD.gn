@@ -18,6 +18,11 @@ module_output_path = "dsoftbus/soft_bus/transmission"
 
 ohos_unittest("SoftbusTransInitTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "mock/softbus_trans_init_mock.cpp",
     "softbus_trans_init_test.cpp",
@@ -30,7 +35,7 @@ ohos_unittest("SoftbusTransInitTest") {
 
   deps = [
     "$dsoftbus_core_path/common:softbus_utils",
-    "$dsoftbus_core_path/frame:softbus_server",
+    "$dsoftbus_core_path/frame:softbus_server_test",
     "$dsoftbus_root_path/adapter:softbus_adapter",
   ]
 
@@ -44,7 +49,5 @@ ohos_unittest("SoftbusTransInitTest") {
 
 group("unittest") {
   testonly = true
-  deps = [
-    ":SoftbusTransInitTest",
-  ]
+  deps = [ ":SoftbusTransInitTest" ]
 }

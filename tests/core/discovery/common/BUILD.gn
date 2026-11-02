@@ -19,6 +19,11 @@ module_output_path = "dsoftbus/soft_bus/discovery"
 
 ohos_unittest("LocaleConfigWrapperTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/discovery/common/src/locale_config_wrapper.cpp",
     "locale_config_wrapper_test.cpp",

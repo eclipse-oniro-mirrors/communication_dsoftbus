@@ -22,6 +22,7 @@
 #include "lnn_distributed_net_ledger.h"
 #include "lnn_lane_dfx.h"
 #include "lnn_trans_lane.h"
+#include "softbus_def.h"
 
 #define DELAY_DESTROY_LANE_TIME 5000
 
@@ -111,7 +112,7 @@ static NotifyFreeType GetFreeLaneType(const TransReqInfo *reqInfo, int32_t errCo
     return NOTIFY_TYPE_NORMAL;
 }
 
-void NotifyFreeLaneResult(uint32_t laneReqId, int32_t errCode)
+SOFTBUS_VISIBILITY void NotifyFreeLaneResult(uint32_t laneReqId, int32_t errCode)
 {
     TransReqInfo reqInfo;
     (void)memset_s(&reqInfo, sizeof(TransReqInfo), 0, sizeof(TransReqInfo));
@@ -143,7 +144,7 @@ void NotifyFreeLaneResult(uint32_t laneReqId, int32_t errCode)
             LNN_LOGI(LNN_LANE, "free unused link do nothing, laneReqId=%{public}u", laneReqId);
             break;
         case NOTIFY_TYPE_NORMAL: {
-            LNN_LOGI(LNN_LANE, "notify free lane result, laneReqId=%{public}d, errCode=%{public}d", laneReqId, errCode);
+            LNN_LOGI(LNN_LANE, "notify free lane result, laneReqId=%{public}u, errCode=%{public}d", laneReqId, errCode);
             ReportLaneEventWithFreeLinkInfo(laneReqId, errCode);
             DelLaneResourceByLaneId(reqInfo.laneId, false, reqInfo.allocInfo.networkId);
             NotifyFreeLaneCallback(&reqInfo, errCode);

@@ -27,6 +27,7 @@
 #include "softbus_adapter_mem.h"
 #include "softbus_adapter_thread.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 #include "trans_event.h"
 #include "trans_event_form.h"
 #include "trans_log.h"
@@ -175,7 +176,7 @@ void BrProxyDynamicLoaderDeInit()
     (void)SoftBusMutexUnlock(&g_lock);
 }
 
-extern "C" int32_t PullUpHap(const char *bundleName, const char *abilityName, int32_t appIndex)
+SOFTBUS_VISIBILITY extern "C" int32_t PullUpHap(const char *bundleName, const char *abilityName, int32_t appIndex)
 {
     #define CLOSE_DELAY_TIME 3000
     int32_t ret = AbilityManagerClientDynamicLoader(bundleName, abilityName, appIndex);
@@ -187,22 +188,22 @@ extern "C" int32_t PullUpHap(const char *bundleName, const char *abilityName, in
     return SOFTBUS_OK;
 }
 
-extern "C" pid_t GetCallerPid()
+SOFTBUS_VISIBILITY extern "C" pid_t GetCallerPid()
 {
     return IPCSkeleton::GetCallingPid();
 }
 
-extern "C" pid_t GetCallerUid()
+SOFTBUS_VISIBILITY extern "C" pid_t GetCallerUid()
 {
     return IPCSkeleton::GetCallingUid();
 }
 
-extern "C" uint32_t GetCallerTokenId()
+SOFTBUS_VISIBILITY extern "C" uint32_t GetCallerTokenId()
 {
     return IPCSkeleton::GetCallingTokenID();
 }
 
-extern "C" int32_t GetCallerHapInfo(char *bundleName, uint32_t bundleNamelen,
+SOFTBUS_VISIBILITY extern "C" int32_t GetCallerHapInfo(char *bundleName, uint32_t bundleNamelen,
     char *abilityName, uint32_t abilityNameLen, int32_t *appIndex)
 {
     if (bundleName == nullptr || abilityName == nullptr || appIndex == nullptr) {
@@ -243,7 +244,7 @@ extern "C" int32_t GetCallerHapInfo(char *bundleName, uint32_t bundleNamelen,
     return SOFTBUS_OK;
 }
 
-extern "C" int32_t CheckPushPermission()
+SOFTBUS_VISIBILITY extern "C" int32_t CheckPushPermission()
 {
     auto callerToken = IPCSkeleton::GetCallingTokenID();
     auto type = Security::AccessToken::AccessTokenKit::GetTokenType(callerToken);

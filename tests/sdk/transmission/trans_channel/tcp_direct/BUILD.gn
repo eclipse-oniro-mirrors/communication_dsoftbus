@@ -19,12 +19,12 @@ dsoftbus_root_path = "../../../../.."
 softbus_adapter_config = "${dsoftbus_root_path}/adapter/default_config"
 
 ohos_unittest("TransSdkTcpDirectTest") {
+  module_out_path = module_output_path
   sanitize = {
     cfi = true
     cfi_cross_dso = true
     debug = false
   }
-  module_out_path = module_output_path
   sources = [ "trans_sdk_tcp_direct_test.cpp" ]
 
   include_dirs = [
@@ -67,13 +67,12 @@ ohos_unittest("TransSdkTcpDirectTest") {
 }
 
 ohos_unittest("TransSessionTest") {
+  module_out_path = module_output_path
   sanitize = {
     cfi = true
     cfi_cross_dso = true
     debug = false
-    blocklist = "$dsoftbus_root_path/tests/cfi_blocklist.txt"
   }
-  module_out_path = module_output_path
   sources = [ "trans_session_test.cpp" ]
 
   include_dirs = [
@@ -120,6 +119,11 @@ ohos_unittest("TransSessionTest") {
 
 ohos_unittest("TransTcpDirectTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "trans_tcp_direct_mock.cpp",
     "trans_tcp_direct_test.cpp",
@@ -177,6 +181,11 @@ ohos_unittest("TransTcpDirectTest") {
 
 ohos_unittest("TransTcpDirectMockTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "trans_tcp_direct_mock_test.cpp",
     "trans_tcp_direct_tlv_mock.cpp",
@@ -229,6 +238,11 @@ ohos_unittest("TransTcpDirectMockTest") {
 
 ohos_unittest("ClientTransTcpDirectMsgMockTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "client_trans_tcp_direct_message_mock.cpp",
     "client_trans_tcp_direct_message_mock_test.cpp",
@@ -274,10 +288,10 @@ ohos_unittest("ClientTransTcpDirectMsgMockTest") {
 group("unittest") {
   testonly = true
   deps = [
+    ":ClientTransTcpDirectMsgMockTest",
     ":TransSdkTcpDirectTest",
     ":TransSessionTest",
     ":TransTcpDirectMockTest",
     ":TransTcpDirectTest",
-    ":ClientTransTcpDirectMsgMockTest",
   ]
 }

@@ -51,6 +51,11 @@ config("softbus_connection_ble_test_config") {
 
 ohos_unittest("ConnectionBleTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   public_configs = [ ":softbus_connection_ble_test_config" ]
   sources = [
@@ -61,7 +66,8 @@ ohos_unittest("ConnectionBleTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -75,13 +81,19 @@ ohos_unittest("ConnectionBleTest") {
 
 ohos_unittest("ConnectionBleSwitchTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   public_configs = [ ":softbus_connection_ble_test_config" ]
   sources = [ "$dsoftbus_root_path/tests/core/connection/ble/unittest/softbus_conn_ble_switch_test.cpp" ]
 
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -96,6 +108,11 @@ ohos_unittest("ConnectionBleSwitchTest") {
 
 ohos_unittest("BleConnectionServiceTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   public_configs = [ ":softbus_connection_ble_test_config" ]
   sources = [
     "$dsoftbus_root_path/tests/core/connection/ble/unittest/mock/softbus_conn_ble_connection_mock.cpp",
@@ -105,7 +122,8 @@ ohos_unittest("BleConnectionServiceTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -120,6 +138,11 @@ ohos_unittest("BleConnectionServiceTest") {
 
 ohos_unittest("BleConnectionManagerTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   include_dirs = [
     "$dsoftbus_root_path/core/connection/ble/include",
     "$dsoftbus_root_path/interfaces/inner_kits/lnn",
@@ -134,7 +157,7 @@ ohos_unittest("BleConnectionManagerTest") {
     "$dsoftbus_root_path/core/discovery/usb/dispatcher/include",
     "$dsoftbus_root_path/components/nstackx/nstackx_ctrl/interface",
     "$dsoftbus_root_path/adapter/common/net/bluetooth/broadcast/interface",
-    "$dsoftbus_root_path/core/discovery/nfc/dispatcher/include"
+    "$dsoftbus_root_path/core/discovery/nfc/dispatcher/include",
   ]
   public_configs = [ ":softbus_connection_ble_test_config" ]
   sources = [
@@ -143,18 +166,19 @@ ohos_unittest("BleConnectionManagerTest") {
     "$dsoftbus_root_path/core/connection/ble/src/softbus_conn_ble_snapshot.c",
     "$dsoftbus_root_path/core/connection/manager/softbus_conn_flow_control.c",
     "$dsoftbus_root_path/core/connection/manager/softbus_conn_manager.c",
-    "$dsoftbus_root_path/tests/core/connection/ble/unittest/mock/softbus_conn_ble_manager_mock.cpp",
-    "$dsoftbus_root_path/core/frame/init/src/g_enhance_conn_func.c",
     "$dsoftbus_root_path/core/frame/common/src/softbus_init_common.c",
+    "$dsoftbus_root_path/core/frame/init/src/g_enhance_conn_func.c",
     "$dsoftbus_root_path/core/frame/init/src/g_enhance_conn_func_pack.c",
+    "$dsoftbus_root_path/tests/core/connection/ble/unittest/mock/softbus_conn_ble_manager_mock.cpp",
     "$dsoftbus_root_path/tests/core/connection/ble/unittest/softbus_conn_ble_manager_test.cpp",
   ]
 
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
     "$dsoftbus_root_path/dfx:softbus_dfx",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -168,6 +192,11 @@ ohos_unittest("BleConnectionManagerTest") {
 
 ohos_unittest("BleTransTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   include_dirs = [
     "$softbus_adapter_common/include",
     "$dsoftbus_dfx_path/interface/include",
@@ -206,6 +235,11 @@ ohos_unittest("BleTransTest") {
 
 ohos_unittest("ConnBleTransTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   include_dirs = [
     "$softbus_adapter_common/include",
     "$dsoftbus_dfx_path/interface/include",
@@ -223,8 +257,8 @@ ohos_unittest("ConnBleTransTest") {
     "$dsoftbus_root_path/core/connection/ble/src/softbus_conn_ble_send_queue.c",
     "$dsoftbus_root_path/core/connection/ble/src/softbus_conn_ble_trans.c",
     "$dsoftbus_root_path/core/connection/manager/softbus_conn_flow_control.c",
-    "$dsoftbus_root_path/tests/core/connection/ble/unittest/connbletrans_test/mock/conn_ble_trans_mock.cpp",
     "$dsoftbus_root_path/tests/core/connection/ble/unittest/connbletrans_test/conn_ble_trans_test.cpp",
+    "$dsoftbus_root_path/tests/core/connection/ble/unittest/connbletrans_test/mock/conn_ble_trans_mock.cpp",
   ]
 
   deps = [
@@ -244,6 +278,11 @@ ohos_unittest("ConnBleTransTest") {
 
 ohos_unittest("BleClientTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   include_dirs = [
     "$dsoftbus_dfx_path/interface/include",
     "$dsoftbus_root_path/core/connection/ble/include",
@@ -272,19 +311,19 @@ ohos_unittest("BleClientTest") {
     "$dsoftbus_root_path/core/discovery/usb/dispatcher/include",
     "$dsoftbus_root_path/components/nstackx/nstackx_ctrl/interface",
     "$dsoftbus_root_path/adapter/common/net/bluetooth/broadcast/interface",
-    "$dsoftbus_root_path/core/discovery/nfc/dispatcher/include"
+    "$dsoftbus_root_path/core/discovery/nfc/dispatcher/include",
   ]
   sources = [
     "$dsoftbus_root_path/core/connection/ble/src/ble_protocol_interface_factory.c",
     "$dsoftbus_root_path/core/connection/ble/src/softbus_conn_ble_client.c",
     "$dsoftbus_root_path/core/connection/ble/src/softbus_conn_ble_connection.c",
     "$dsoftbus_root_path/core/connection/ble/src/softbus_conn_ble_manager.c",
-    "$dsoftbus_root_path/core/frame/init/src/g_enhance_conn_func.c",
     "$dsoftbus_root_path/core/frame/common/src/softbus_init_common.c",
-    "$dsoftbus_root_path/tests/core/connection/ble/unittest/mock/softbus_conn_ble_client_mock.cpp",
-    "$dsoftbus_root_path/tests/core/connection/ble/unittest/softbus_conn_client_test.cpp",
+    "$dsoftbus_root_path/core/frame/init/src/g_enhance_conn_func.c",
     "$dsoftbus_root_path/core/frame/init/src/g_enhance_conn_func_pack.c",
     "$dsoftbus_root_path/core/frame/init/src/g_enhance_disc_func.c",
+    "$dsoftbus_root_path/tests/core/connection/ble/unittest/mock/softbus_conn_ble_client_mock.cpp",
+    "$dsoftbus_root_path/tests/core/connection/ble/unittest/softbus_conn_client_test.cpp",
   ]
 
   deps = [
@@ -304,6 +343,11 @@ ohos_unittest("BleClientTest") {
 
 ohos_unittest("BleHidumperTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   include_dirs = [
     "$dsoftbus_dfx_path/interface/include",
     "$dsoftbus_root_path/core/connection/ble/include",
@@ -331,7 +375,7 @@ ohos_unittest("BleHidumperTest") {
     "$dsoftbus_root_path/core/discovery/usb/dispatcher/include",
     "$dsoftbus_root_path/components/nstackx/nstackx_ctrl/interface",
     "$dsoftbus_root_path/adapter/common/net/bluetooth/broadcast/interface",
-    "$dsoftbus_root_path/core/discovery/nfc/dispatcher/include"
+    "$dsoftbus_root_path/core/discovery/nfc/dispatcher/include",
   ]
 
   public_configs = [ ":softbus_connection_ble_test_config" ]
@@ -343,11 +387,11 @@ ohos_unittest("BleHidumperTest") {
     "$dsoftbus_root_path/core/connection/ble/src/softbus_conn_ble_snapshot.c",
     "$dsoftbus_root_path/core/connection/manager/softbus_conn_flow_control.c",
     "$dsoftbus_root_path/core/connection/manager/softbus_conn_manager.c",
-    "$dsoftbus_root_path/tests/core/connection/ble/unittest/mock/softbus_conn_ble_manager_mock.cpp",
-    "$dsoftbus_root_path/core/frame/init/src/g_enhance_conn_func.c",
     "$dsoftbus_root_path/core/frame/common/src/softbus_init_common.c",
-    "$dsoftbus_root_path/tests/core/connection/ble/unittest/connection_ble_hidumper_test.cpp",
+    "$dsoftbus_root_path/core/frame/init/src/g_enhance_conn_func.c",
     "$dsoftbus_root_path/core/frame/init/src/g_enhance_conn_func_pack.c",
+    "$dsoftbus_root_path/tests/core/connection/ble/unittest/connection_ble_hidumper_test.cpp",
+    "$dsoftbus_root_path/tests/core/connection/ble/unittest/mock/softbus_conn_ble_manager_mock.cpp",
   ]
 
   deps = [
@@ -355,14 +399,14 @@ ohos_unittest("BleHidumperTest") {
     "$dsoftbus_dfx_path/dumper/legacy:softbus_dfx_dump",
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
     "bluetooth:btframework",
     "bounds_checking_function:libsec_shared",
     "cJSON:cjson",
-    "c_utils:utils",
     "c_utils:utils",
     "googletest:gmock_main",
     "hilog:libhilog",
@@ -371,6 +415,11 @@ ohos_unittest("BleHidumperTest") {
 
 ohos_unittest("BleSnapshotTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   include_dirs = [
     "$dsoftbus_root_path/core/connection/ble/include",
     "$dsoftbus_root_path/core/connection/common/include",
@@ -402,6 +451,11 @@ ohos_unittest("BleSnapshotTest") {
 
 ohos_unittest("BleProtocolInterfaceFactoryTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   include_dirs = [
     "$dsoftbus_root_path/core/connection/ble/include",
     "$dsoftbus_root_path/core/connection/common/include",
@@ -427,10 +481,10 @@ ohos_unittest("BleProtocolInterfaceFactoryTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-   ]
-   deps += dsoftbus_log_label_deps
+  ]
+  deps += dsoftbus_log_label_deps
 
-   external_deps = [
+  external_deps = [
     "bluetooth:btframework",
     "bounds_checking_function:libsec_shared",
     "c_utils:utils",
@@ -441,6 +495,11 @@ ohos_unittest("BleProtocolInterfaceFactoryTest") {
 
 ohos_unittest("BleTransExpandTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   include_dirs = [
     "$dsoftbus_root_path/core/connection/ble/include",
     "$dsoftbus_root_path/core/connection/common/include",
@@ -457,8 +516,8 @@ ohos_unittest("BleTransExpandTest") {
   ]
 
   sources = [
-    "$dsoftbus_root_path/core/connection/ble/src/softbus_conn_ble_trans.c",
     "$dsoftbus_root_path/core/connection/ble/src/softbus_conn_ble_send_queue.c",
+    "$dsoftbus_root_path/core/connection/ble/src/softbus_conn_ble_trans.c",
     "$dsoftbus_root_path/core/frame/common/src/softbus_init_common.c",
     "$dsoftbus_root_path/core/frame/init/src/g_enhance_conn_func.c",
     "$dsoftbus_root_path/tests/core/connection/ble/unittest/ble_gatt_stub.cpp",
@@ -482,6 +541,11 @@ ohos_unittest("BleTransExpandTest") {
 
 ohos_unittest("ConnBleTransExtTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   include_dirs = [
     "$softbus_adapter_common/include",
     "$dsoftbus_dfx_path/interface/include",
@@ -499,8 +563,8 @@ ohos_unittest("ConnBleTransExtTest") {
     "$dsoftbus_root_path/core/connection/ble/src/softbus_conn_ble_send_queue.c",
     "$dsoftbus_root_path/core/connection/ble/src/softbus_conn_ble_trans.c",
     "$dsoftbus_root_path/core/connection/manager/softbus_conn_flow_control.c",
-    "$dsoftbus_root_path/tests/core/connection/ble/unittest/connbletrans_test/mock/conn_ble_trans_mock.cpp",
     "$dsoftbus_root_path/tests/core/connection/ble/unittest/connbletrans_ext_test/conn_ble_trans_ext_test.cpp",
+    "$dsoftbus_root_path/tests/core/connection/ble/unittest/connbletrans_test/mock/conn_ble_trans_mock.cpp",
   ]
 
   deps = [

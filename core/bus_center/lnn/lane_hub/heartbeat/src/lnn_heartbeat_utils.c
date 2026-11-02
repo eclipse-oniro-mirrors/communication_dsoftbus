@@ -25,6 +25,7 @@
 #include "lnn_log.h"
 #include "softbus_adapter_crypto.h"
 #include "softbus_adapter_mem.h"
+#include "softbus_def.h"
 #include "softbus_utils.h"
 #include "wifi_direct_manager.h"
 
@@ -44,7 +45,7 @@ LnnHeartbeatType LnnConvertConnAddrTypeToHbType(ConnectionAddrType addrType)
     return HEARTBEAT_TYPE_MAX;
 }
 
-ConnectionAddrType LnnConvertHbTypeToConnAddrType(LnnHeartbeatType type)
+SOFTBUS_VISIBILITY ConnectionAddrType LnnConvertHbTypeToConnAddrType(LnnHeartbeatType type)
 {
     switch (type) {
         case HEARTBEAT_TYPE_UDP:
@@ -61,7 +62,7 @@ ConnectionAddrType LnnConvertHbTypeToConnAddrType(LnnHeartbeatType type)
     return CONNECTION_ADDR_MAX;
 }
 
-int32_t LnnConvertHbTypeToId(LnnHeartbeatType type)
+SOFTBUS_VISIBILITY int32_t LnnConvertHbTypeToId(LnnHeartbeatType type)
 {
     int32_t cnt = -1;
 
@@ -196,7 +197,7 @@ bool LnnHasActiveConnection(const char *networkId, ConnectionAddrType addrType)
     return false;
 }
 
-bool LnnVisitHbTypeSet(VisitHbTypeCb callback, LnnHeartbeatType *typeSet, void *data)
+SOFTBUS_VISIBILITY bool LnnVisitHbTypeSet(VisitHbTypeCb callback, LnnHeartbeatType *typeSet, void *data)
 {
     bool isFinish = false;
     LnnHeartbeatType i;
@@ -281,7 +282,7 @@ int32_t LnnGetShortAccountHash(uint8_t *accountHash, uint32_t len)
     return SOFTBUS_OK;
 }
 
-int32_t LnnGenerateBtMacHash(const char *btMac, int32_t brMacLen, char *brMacHash, int32_t hashLen)
+SOFTBUS_VISIBILITY int32_t LnnGenerateBtMacHash(const char *btMac, int32_t brMacLen, char *brMacHash, int32_t hashLen)
 {
     if (btMac == NULL || brMacHash == NULL) {
         LNN_LOGE(LNN_HEART_BEAT, "null point");
@@ -348,7 +349,7 @@ bool LnnIsSupportBurstFeature(const char *networkId)
         IsFeatureSupport(peerFeature, BIT_BLE_SUPPORT_LP_HEARTBEAT);
 }
 
-bool LnnIsLocalSupportBurstFeature(void)
+SOFTBUS_VISIBILITY bool LnnIsLocalSupportBurstFeature(void)
 {
     uint64_t localFeature = 0;
     if (LnnGetLocalNumU64Info(NUM_KEY_FEATURE_CAPA, &localFeature) != SOFTBUS_OK) {
@@ -358,7 +359,7 @@ bool LnnIsLocalSupportBurstFeature(void)
     return IsFeatureSupport(localFeature, BIT_BLE_SUPPORT_LP_HEARTBEAT);
 }
 
-void LnnDumpLocalBasicInfo(void)
+SOFTBUS_VISIBILITY void LnnDumpLocalBasicInfo(void)
 {
     char *anonyIp = NULL;
     char *anonyBtMac = NULL;

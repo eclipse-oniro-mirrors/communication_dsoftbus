@@ -18,21 +18,22 @@
 #include "lnn_log.h"
 #include "lnn_p2p_info.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
-int32_t LnnInitNetBuilder(void)
+SOFTBUS_VISIBILITY int32_t LnnInitNetBuilder(void)
 {
     LNN_LOGI(LNN_INIT, "init virtual net builder");
     return SOFTBUS_OK;
 }
 
-int32_t LnnInitNetBuilderDelay(void)
+SOFTBUS_VISIBILITY int32_t LnnInitNetBuilderDelay(void)
 {
     return SOFTBUS_OK;
 }
 
 void LnnDeinitNetBuilder(void) { }
 
-int32_t LnnServerJoin(ConnectionAddr *addr, const char *pkgName, bool isForceJoin)
+SOFTBUS_VISIBILITY int32_t LnnServerJoin(ConnectionAddr *addr, const char *pkgName, bool isForceJoin)
 {
     (void)addr;
     (void)pkgName;
@@ -40,14 +41,14 @@ int32_t LnnServerJoin(ConnectionAddr *addr, const char *pkgName, bool isForceJoi
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnServerLeave(const char *networkId, const char *pkgName)
+SOFTBUS_VISIBILITY int32_t LnnServerLeave(const char *networkId, const char *pkgName)
 {
     (void)networkId;
     (void)pkgName;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnNotifyDiscoveryDevice(
+SOFTBUS_VISIBILITY int32_t LnnNotifyDiscoveryDevice(
     const ConnectionAddr *addr, const LnnDfxDeviceInfoReport *infoReport, bool isNeedConnect, int32_t peerUserId,
     int32_t localUserId)
 {
@@ -59,7 +60,7 @@ int32_t LnnNotifyDiscoveryDevice(
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnRequestLeaveByAddrType(const bool *type, uint32_t typeLen, bool hasMcuRequestDisable)
+SOFTBUS_VISIBILITY int32_t LnnRequestLeaveByAddrType(const bool *type, uint32_t typeLen, bool hasMcuRequestDisable)
 {
     (void)type;
     (void)typeLen;
@@ -73,16 +74,17 @@ int32_t LnnInitLocalP2pInfo(NodeInfo *info)
     return SOFTBUS_OK;
 }
 
-void ClearLnnBleReportExtraMap(void)
+SOFTBUS_VISIBILITY void ClearLnnBleReportExtraMap(void)
 {
     return;
 }
 
-void ClearPcRestrictMap(void)
+SOFTBUS_VISIBILITY void ClearPcRestrictMap(void)
 {
     return;
 }
 
+SOFTBUS_VISIBILITY
 int32_t LnnRequestLeaveSpecific(const char *networkId, ConnectionAddrType addrType, DeviceLeaveReason leaveReason)
 {
     (void)networkId;
@@ -95,7 +97,7 @@ int32_t LnnSetReSyncDeviceName(void)
     return SOFTBUS_OK;
 }
 
-void AddNodeToLnnBleReportExtraMap(const char *udidHash, const LnnBleReportExtra *bleExtra)
+SOFTBUS_VISIBILITY void AddNodeToLnnBleReportExtraMap(const char *udidHash, const LnnBleReportExtra *bleExtra)
 {
     (void)udidHash;
     (void)bleExtra;
@@ -119,7 +121,7 @@ int32_t ConfigLocalLedger(void)
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-void DeleteNodeFromLnnBleReportExtraMap(const char *udidHash)
+SOFTBUS_VISIBILITY void DeleteNodeFromLnnBleReportExtraMap(const char *udidHash)
 {
     (void)udidHash;
 }
@@ -155,26 +157,26 @@ ConnectionAddrType GetCurrentConnectType(AuthLinkType linkType)
     return CONNECTION_ADDR_MAX;
 }
 
-int32_t GetNodeFromLnnBleReportExtraMap(const char *udidHash, LnnBleReportExtra *bleExtra)
+SOFTBUS_VISIBILITY int32_t GetNodeFromLnnBleReportExtraMap(const char *udidHash, LnnBleReportExtra *bleExtra)
 {
     (void)udidHash;
     (void)bleExtra;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t GetNodeFromPcRestrictMap(const char *udidHash, uint32_t *count)
+SOFTBUS_VISIBILITY int32_t GetNodeFromPcRestrictMap(const char *udidHash, uint32_t *count)
 {
     (void)udidHash;
     (void)count;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-bool GetWatchdogFlag(void)
+SOFTBUS_VISIBILITY bool GetWatchdogFlag(void)
 {
     return false;
 }
 
-bool IsExistLnnDfxNodeByUdidHash(const char *udidHash, LnnBleReportExtra *bleExtra)
+SOFTBUS_VISIBILITY bool IsExistLnnDfxNodeByUdidHash(const char *udidHash, LnnBleReportExtra *bleExtra)
 {
     (void)udidHash;
     (void)bleExtra;
@@ -233,7 +235,7 @@ int32_t LnnNotifyLeaveLnnByAuthHandle(AuthHandle *authHandle)
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnNotifyMasterElect(const char *networkId, const char *masterUdid, int32_t masterWeight)
+SOFTBUS_VISIBILITY int32_t LnnNotifyMasterElect(const char *networkId, const char *masterUdid, int32_t masterWeight)
 {
     (void)networkId;
     (void)masterUdid;
@@ -271,7 +273,7 @@ int32_t LnnRequestLeaveInvalidConn(const char *oldNetworkId, ConnectionAddrType 
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnServerJoinExt(ConnectionAddr *addr, LnnServerJoinExtCallBack *callback)
+SOFTBUS_VISIBILITY int32_t LnnServerJoinExt(ConnectionAddr *addr, LnnServerJoinExtCallBack *callback)
 {
     (void)addr;
     (void)callback;
@@ -302,7 +304,7 @@ bool NeedPendingJoinRequest(void)
     return false;
 }
 
-void NotifyForegroundUseridChange(char *networkId, uint32_t discoveryType, bool isChange)
+SOFTBUS_VISIBILITY void NotifyForegroundUseridChange(char *networkId, uint32_t discoveryType, bool isChange)
 {
     (void)networkId;
     (void)discoveryType;

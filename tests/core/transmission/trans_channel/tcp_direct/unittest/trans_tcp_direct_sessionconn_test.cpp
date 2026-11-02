@@ -351,6 +351,50 @@ HWTEST_F(TransTcpDirectSessionConnTest, CreateTcpChannelInfo001, TestSize.Level1
 }
 
 /*
+ * @tc.name: CreateTcpChannelInfo002
+ * @tc.desc: Test CreateTcpChannelInfo saves the local session name of the session conn into mySessionName
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransTcpDirectSessionConnTest, CreateTcpChannelInfo002, TestSize.Level1)
+{
+    int32_t ret = CreatSessionConnList();
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    SessionConn *conn = TestSetSessionConn();
+    ASSERT_NE(conn, nullptr);
+    conn->channelId = 100;
+    (void)strcpy_s(conn->appInfo.myData.sessionName, SESSION_NAME_SIZE_MAX, "testMySessionName");
+    ret = TransTdcAddSessionConn(conn);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+
+    char myIp[IP_LEN] = "192.168.8.1";
+    char peerSessionName[SESSION_NAME_SIZE_MAX] = "testPeerSessionName";
+    char peerDeviceId[DEVICE_ID_SIZE_MAX] = "123456";
+    char peerIp[IP_LEN] = "192.168.8.2";
+    ChannelInfo *channel = (ChannelInfo *)SoftBusCalloc(sizeof(ChannelInfo));
+    ASSERT_NE(channel, nullptr);
+    channel->channelId = conn->channelId;
+    channel->businessType = BUSINESS_TYPE_BYTE;
+    channel->connectType = CONNECT_HML;
+    channel->isServer = true;
+    channel->channelType = 0;
+    channel->timeStart = 12345;
+    channel->linkType = 0;
+    channel->myIp = myIp;
+    channel->peerSessionName = peerSessionName;
+    channel->peerDeviceId = peerDeviceId;
+    channel->peerIp = peerIp;
+
+    TcpChannelInfo *info = CreateTcpChannelInfo(channel);
+    ASSERT_NE(info, nullptr);
+    EXPECT_EQ(0, strcmp(info->mySessionName, "testMySessionName"));
+
+    SoftBusFree(info);
+    SoftBusFree(channel);
+    (void)TransDelSessionConnById(conn->channelId);
+}
+
+/*
  * @tc.name: TransTdcGetIpAndConnectTypeById
  * @tc.desc: Verify whether the function can correctly return the error code SOFTBUS_INVALID_PARAM
  *           when invalid parameters are passed

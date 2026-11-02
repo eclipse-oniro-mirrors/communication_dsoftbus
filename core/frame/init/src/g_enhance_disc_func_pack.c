@@ -20,10 +20,11 @@
 #include "softbus_broadcast_manager.h"
 #include "softbus_error_code.h"
 #include "softbus_init_common.h"
+#include "softbus_def.h"
 
 #if !defined(__G_ENHANCE_DISC_FUNC_PACK_BROADCAST_MGR_VIRTUAL)
 
-int32_t SchedulerStartBroadcastPacked(int32_t bcId, BroadcastContentType bcType, const BroadcastParam *bcParam,
+SOFTBUS_VISIBILITY int32_t SchedulerStartBroadcastPacked(int32_t bcId, BroadcastContentType bcType, const BroadcastParam *bcParam,
     const BroadcastPacket *bcPacket)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
@@ -34,7 +35,7 @@ int32_t SchedulerStartBroadcastPacked(int32_t bcId, BroadcastContentType bcType,
     return pfnDiscEnhanceFuncList->schedulerStartBroadcast(bcId, bcType, bcParam, bcPacket);
 }
 
-int32_t SchedulerUpdateBroadcastPacked(int32_t bcId, const BroadcastParam *bcParam,
+SOFTBUS_VISIBILITY int32_t SchedulerUpdateBroadcastPacked(int32_t bcId, const BroadcastParam *bcParam,
     const BroadcastPacket *bcPacket)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
@@ -44,7 +45,7 @@ int32_t SchedulerUpdateBroadcastPacked(int32_t bcId, const BroadcastParam *bcPar
     return pfnDiscEnhanceFuncList->schedulerUpdateBroadcast(bcId, bcParam, bcPacket);
 }
 
-int32_t SchedulerSetBroadcastDataPacked(int32_t bcId, const BroadcastPacket *bcPacket)
+SOFTBUS_VISIBILITY int32_t SchedulerSetBroadcastDataPacked(int32_t bcId, const BroadcastPacket *bcPacket)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
     if (DiscCheckFuncPointer((void *)pfnDiscEnhanceFuncList->schedulerSetBroadcastData) != SOFTBUS_OK) {
@@ -53,7 +54,7 @@ int32_t SchedulerSetBroadcastDataPacked(int32_t bcId, const BroadcastPacket *bcP
     return pfnDiscEnhanceFuncList->schedulerSetBroadcastData(bcId, bcPacket);
 }
 
-int32_t SchedulerStopBroadcastPacked(int32_t bcId)
+SOFTBUS_VISIBILITY int32_t SchedulerStopBroadcastPacked(int32_t bcId)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
     if (DiscCheckFuncPointer((void *)pfnDiscEnhanceFuncList->schedulerStopBroadcast) != SOFTBUS_OK) {
@@ -62,7 +63,7 @@ int32_t SchedulerStopBroadcastPacked(int32_t bcId)
     return pfnDiscEnhanceFuncList->schedulerStopBroadcast(bcId);
 }
 
-int32_t SchedulerSetBroadcastParamPacked(int32_t bcId, const BroadcastParam *bcParam)
+SOFTBUS_VISIBILITY int32_t SchedulerSetBroadcastParamPacked(int32_t bcId, const BroadcastParam *bcParam)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
     if (DiscCheckFuncPointer((void *)pfnDiscEnhanceFuncList->schedulerSetBroadcastParam) != SOFTBUS_OK) {
@@ -71,7 +72,7 @@ int32_t SchedulerSetBroadcastParamPacked(int32_t bcId, const BroadcastParam *bcP
     return pfnDiscEnhanceFuncList->schedulerSetBroadcastParam(bcId, bcParam);
 }
 
-int32_t SchedulerInitBroadcastPacked(void)
+SOFTBUS_VISIBILITY int32_t SchedulerInitBroadcastPacked(void)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
     if (DiscCheckFuncPointer((void *)pfnDiscEnhanceFuncList->schedulerInitBroadcast) != SOFTBUS_OK) {
@@ -80,7 +81,7 @@ int32_t SchedulerInitBroadcastPacked(void)
     return pfnDiscEnhanceFuncList->schedulerInitBroadcast();
 }
 
-int32_t SchedulerDeinitBroadcastPacked(void)
+SOFTBUS_VISIBILITY int32_t SchedulerDeinitBroadcastPacked(void)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
     if (DiscCheckFuncPointer((void *)pfnDiscEnhanceFuncList->schedulerDeinitBroadcast) != SOFTBUS_OK) {
@@ -91,7 +92,7 @@ int32_t SchedulerDeinitBroadcastPacked(void)
 #endif
 
 #if !defined(__G_ENHANCE_DISC_FUNC_PACK_INNER_DISC_COAP_VIRTUAL)
-int32_t DiscCoapProcessDeviceInfoPacked(const NSTACKX_DeviceInfo *nstackxInfo, DeviceInfo *devInfo,
+SOFTBUS_VISIBILITY int32_t DiscCoapProcessDeviceInfoPacked(const NSTACKX_DeviceInfo *nstackxInfo, DeviceInfo *devInfo,
     const DiscInnerCallback discCb)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
@@ -101,7 +102,7 @@ int32_t DiscCoapProcessDeviceInfoPacked(const NSTACKX_DeviceInfo *nstackxInfo, D
     return pfnDiscEnhanceFuncList->discCoapProcessDeviceInfo(nstackxInfo, devInfo, discCb);
 }
 
-int32_t DiscCoapAssembleBdataPacked(const unsigned char *capabilityData, uint32_t dataLen, char *businessData,
+SOFTBUS_VISIBILITY int32_t DiscCoapAssembleBdataPacked(const unsigned char *capabilityData, uint32_t dataLen, char *businessData,
     uint32_t businessDataLen)
 {
 #ifdef DSOFTBUS_FEATURE_DISC_COAP_CUSTDATA
@@ -115,7 +116,7 @@ int32_t DiscCoapAssembleBdataPacked(const unsigned char *capabilityData, uint32_
 }
 
 #ifdef DSOFTBUS_FEATURE_DISC_SHARE_COAP
-int32_t DiscCoapAssembleCapDataPacked(uint32_t capability, const char *capabilityData, uint32_t dataLen, char *outData,
+SOFTBUS_VISIBILITY int32_t DiscCoapAssembleCapDataPacked(uint32_t capability, const char *capabilityData, uint32_t dataLen, char *outData,
     uint32_t outLen)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
@@ -125,7 +126,7 @@ int32_t DiscCoapAssembleCapDataPacked(uint32_t capability, const char *capabilit
     return pfnDiscEnhanceFuncList->discCoapAssembleCapData(capability, capabilityData, dataLen, outData, outLen);
 }
 
-void DiscCoapUpdateAbilityPacked(uint32_t capability, const char *capabilityData, uint32_t dataLen,
+SOFTBUS_VISIBILITY void DiscCoapUpdateAbilityPacked(uint32_t capability, const char *capabilityData, uint32_t dataLen,
     bool isPublish, bool isStart)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
@@ -136,7 +137,7 @@ void DiscCoapUpdateAbilityPacked(uint32_t capability, const char *capabilityData
 }
 #endif /* DSOFTBUS_FEATURE_DISC_COAP */
 
-int32_t DiscCoapExtInitPacked(void)
+SOFTBUS_VISIBILITY int32_t DiscCoapExtInitPacked(void)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
     if (DiscCheckFuncPointer((void *)pfnDiscEnhanceFuncList->discCoapExtInit) != SOFTBUS_OK) {
@@ -145,7 +146,7 @@ int32_t DiscCoapExtInitPacked(void)
     return pfnDiscEnhanceFuncList->discCoapExtInit();
 }
 
-void DiscCoapExtDeinitPacked(void)
+SOFTBUS_VISIBILITY void DiscCoapExtDeinitPacked(void)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
     if (DiscCheckFuncPointer((void *)pfnDiscEnhanceFuncList->discCoapExtDeinit) != SOFTBUS_OK) {
@@ -154,7 +155,7 @@ void DiscCoapExtDeinitPacked(void)
     return pfnDiscEnhanceFuncList->discCoapExtDeinit();
 }
 
-int32_t DiscFillBtypePacked(uint32_t capability, uint32_t allCap, NSTACKX_DiscoverySettings *discSet)
+SOFTBUS_VISIBILITY int32_t DiscFillBtypePacked(uint32_t capability, uint32_t allCap, NSTACKX_DiscoverySettings *discSet)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
     if (DiscCheckFuncPointer((void *)pfnDiscEnhanceFuncList->discFillBtype) != SOFTBUS_OK) {
@@ -301,7 +302,7 @@ DiscoveryBleDispatcherInterface *DiscVLinkBleInitPacked(DiscInnerCallback *discI
     return pfnDiscEnhanceFuncList->discVLinkBleInit(discInnerCb);
 }
 
-void DiscShareBleDeinitPacked(void)
+SOFTBUS_VISIBILITY void DiscShareBleDeinitPacked(void)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
     if (DiscCheckFuncPointer((void *)pfnDiscEnhanceFuncList->discShareBleDeinit) != SOFTBUS_OK) {
@@ -310,7 +311,7 @@ void DiscShareBleDeinitPacked(void)
     return pfnDiscEnhanceFuncList->discShareBleDeinit();
 }
 
-void DiscApproachBleDeinitPacked(void)
+SOFTBUS_VISIBILITY void DiscApproachBleDeinitPacked(void)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
     if (DiscCheckFuncPointer((void *)pfnDiscEnhanceFuncList->discApproachBleDeinit) != SOFTBUS_OK) {
@@ -319,7 +320,7 @@ void DiscApproachBleDeinitPacked(void)
     return pfnDiscEnhanceFuncList->discApproachBleDeinit();
 }
 
-void DiscVLinkBleDeinitPacked(void)
+SOFTBUS_VISIBILITY void DiscVLinkBleDeinitPacked(void)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
     if (DiscCheckFuncPointer((void *)pfnDiscEnhanceFuncList->discVLinkBleDeinit) != SOFTBUS_OK) {
@@ -328,7 +329,7 @@ void DiscVLinkBleDeinitPacked(void)
     return pfnDiscEnhanceFuncList->discVLinkBleDeinit();
 }
 
-void DiscTouchBleDeinitPacked(void)
+SOFTBUS_VISIBILITY void DiscTouchBleDeinitPacked(void)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
     if (DiscCheckFuncPointer((void *)pfnDiscEnhanceFuncList->discTouchBleDeinit) != SOFTBUS_OK) {
@@ -337,7 +338,7 @@ void DiscTouchBleDeinitPacked(void)
     return pfnDiscEnhanceFuncList->discTouchBleDeinit();
 }
 
-void DiscOopBleDeinitPacked(void)
+SOFTBUS_VISIBILITY void DiscOopBleDeinitPacked(void)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
     if (DiscCheckFuncPointer((void *)pfnDiscEnhanceFuncList->discOopBleDeinit) != SOFTBUS_OK) {
@@ -346,7 +347,7 @@ void DiscOopBleDeinitPacked(void)
     return pfnDiscEnhanceFuncList->discOopBleDeinit();
 }
 
-void PcCollaborationManagerDeinitPacked(void)
+SOFTBUS_VISIBILITY void PcCollaborationManagerDeinitPacked(void)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
     if (DiscCheckFuncPointer((void *)pfnDiscEnhanceFuncList->pcCollaborationManagerDeinit) != SOFTBUS_OK) {
@@ -355,7 +356,7 @@ void PcCollaborationManagerDeinitPacked(void)
     return pfnDiscEnhanceFuncList->pcCollaborationManagerDeinit();
 }
  
-void DiscPcCollaborationEventDeinitPacked(void)
+SOFTBUS_VISIBILITY void DiscPcCollaborationEventDeinitPacked(void)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
     if (DiscCheckFuncPointer((void *)pfnDiscEnhanceFuncList->pcCollaborationEventDeinit) != SOFTBUS_OK) {
@@ -364,7 +365,7 @@ void DiscPcCollaborationEventDeinitPacked(void)
     return pfnDiscEnhanceFuncList->pcCollaborationEventDeinit();
 }
 
-void DiscCoapReportNotificationPacked(const NSTACKX_NotificationConfig *notification)
+SOFTBUS_VISIBILITY void DiscCoapReportNotificationPacked(const NSTACKX_NotificationConfig *notification)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
     if (DiscCheckFuncPointer((void *)pfnDiscEnhanceFuncList->discCoapReportNotification) != SOFTBUS_OK) {
@@ -375,7 +376,7 @@ void DiscCoapReportNotificationPacked(const NSTACKX_NotificationConfig *notifica
 }
 
 #ifdef DSOFTBUS_FEATURE_DISC_COAP
-int32_t DiscCoapFillServiceDataPacked(const PublishOption *option, char *outData, uint32_t outDataLen,
+SOFTBUS_VISIBILITY int32_t DiscCoapFillServiceDataPacked(const PublishOption *option, char *outData, uint32_t outDataLen,
     uint32_t allCap)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
@@ -386,7 +387,7 @@ int32_t DiscCoapFillServiceDataPacked(const PublishOption *option, char *outData
 }
 #endif /* DSOFTBUS_FEATURE_DISC_COAP */
 
-int32_t DiscApproachBleEventInitPacked(void)
+SOFTBUS_VISIBILITY int32_t DiscApproachBleEventInitPacked(void)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
     if (DiscCheckFuncPointer((void *)pfnDiscEnhanceFuncList->discApproachBleEventInit) != SOFTBUS_OK) {
@@ -395,7 +396,7 @@ int32_t DiscApproachBleEventInitPacked(void)
     return pfnDiscEnhanceFuncList->discApproachBleEventInit();
 }
 
-int32_t DiscVLinkBleEventInitPacked(void)
+SOFTBUS_VISIBILITY int32_t DiscVLinkBleEventInitPacked(void)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
     if (DiscCheckFuncPointer((void *)pfnDiscEnhanceFuncList->discVLinkBleEventInit) != SOFTBUS_OK) {
@@ -404,7 +405,7 @@ int32_t DiscVLinkBleEventInitPacked(void)
     return pfnDiscEnhanceFuncList->discVLinkBleEventInit();
 }
 
-int32_t DiscTouchBleEventInitPacked(void)
+SOFTBUS_VISIBILITY int32_t DiscTouchBleEventInitPacked(void)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
     if (DiscCheckFuncPointer((void *)pfnDiscEnhanceFuncList->discTouchBleEventInit) != SOFTBUS_OK) {
@@ -413,7 +414,7 @@ int32_t DiscTouchBleEventInitPacked(void)
     return pfnDiscEnhanceFuncList->discTouchBleEventInit();
 }
 
-int32_t DiscOopBleEventInitPacked(void)
+SOFTBUS_VISIBILITY int32_t DiscOopBleEventInitPacked(void)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
     if (DiscCheckFuncPointer((void *)pfnDiscEnhanceFuncList->discOopBleEventInit) != SOFTBUS_OK) {
@@ -422,7 +423,7 @@ int32_t DiscOopBleEventInitPacked(void)
     return pfnDiscEnhanceFuncList->discOopBleEventInit();
 }
 
-int32_t DiscPcCollaborationEventInitPacked(void)
+SOFTBUS_VISIBILITY int32_t DiscPcCollaborationEventInitPacked(void)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
     if (DiscCheckFuncPointer((void *)pfnDiscEnhanceFuncList->discPcCollaborationEventInit) != SOFTBUS_OK) {
@@ -431,7 +432,7 @@ int32_t DiscPcCollaborationEventInitPacked(void)
     return pfnDiscEnhanceFuncList->discPcCollaborationEventInit();
 }
 
-void DiscTouchBleEventDeinitPacked(void)
+SOFTBUS_VISIBILITY void DiscTouchBleEventDeinitPacked(void)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
     if (DiscCheckFuncPointer((void *)pfnDiscEnhanceFuncList->discTouchBleEventDeinit) != SOFTBUS_OK) {
@@ -440,7 +441,7 @@ void DiscTouchBleEventDeinitPacked(void)
     return pfnDiscEnhanceFuncList->discTouchBleEventDeinit();
 }
 
-void DiscApproachBleEventDeinitPacked(void)
+SOFTBUS_VISIBILITY void DiscApproachBleEventDeinitPacked(void)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
     if (DiscCheckFuncPointer((void *)pfnDiscEnhanceFuncList->discApproachBleEventDeinit) != SOFTBUS_OK) {
@@ -449,7 +450,7 @@ void DiscApproachBleEventDeinitPacked(void)
     return pfnDiscEnhanceFuncList->discApproachBleEventDeinit();
 }
 
-void DiscVLinkBleEventDeinitPacked(void)
+SOFTBUS_VISIBILITY void DiscVLinkBleEventDeinitPacked(void)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
     if (DiscCheckFuncPointer((void *)pfnDiscEnhanceFuncList->discVLinkBleEventDeinit) != SOFTBUS_OK) {
@@ -458,7 +459,7 @@ void DiscVLinkBleEventDeinitPacked(void)
     return pfnDiscEnhanceFuncList->discVLinkBleEventDeinit();
 }
 
-void DiscOopBleEventDeinitPacked(void)
+SOFTBUS_VISIBILITY void DiscOopBleEventDeinitPacked(void)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
     if (DiscCheckFuncPointer((void *)pfnDiscEnhanceFuncList->discOopBleEventDeinit) != SOFTBUS_OK) {
@@ -467,7 +468,7 @@ void DiscOopBleEventDeinitPacked(void)
     return pfnDiscEnhanceFuncList->discOopBleEventDeinit();
 }
 
-int32_t DiscShareNfcEventInitPacked(void)
+SOFTBUS_VISIBILITY int32_t DiscShareNfcEventInitPacked(void)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
     if (DiscCheckFuncPointer((void *)pfnDiscEnhanceFuncList->discShareNfcEventInit) != SOFTBUS_OK) {
@@ -476,7 +477,7 @@ int32_t DiscShareNfcEventInitPacked(void)
     return pfnDiscEnhanceFuncList->discShareNfcEventInit();
 }
 
-void DiscShareNfcEventDeinitPacked(void)
+SOFTBUS_VISIBILITY void DiscShareNfcEventDeinitPacked(void)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
     if (DiscCheckFuncPointer((void *)pfnDiscEnhanceFuncList->discShareNfcEventDeinit) != SOFTBUS_OK) {
@@ -494,7 +495,7 @@ DiscoveryNfcDispatcherInterface *DiscShareNfcInitPacked(DiscInnerCallback *discI
     return pfnDiscEnhanceFuncList->discShareNfcInit(discInnerCb);
 }
 
-void DiscShareNfcDeinitPacked(void)
+SOFTBUS_VISIBILITY void DiscShareNfcDeinitPacked(void)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
     if (DiscCheckFuncPointer((void *)pfnDiscEnhanceFuncList->discShareNfcDeinit) != SOFTBUS_OK) {
@@ -595,7 +596,7 @@ DiscoveryUsbDispatcherInterface *DiscUsbInitPacked(DiscInnerCallback *discInnerC
     return pfnDiscEnhanceFuncList->discUsbInit(discInnerCb);
 }
 
-void DiscUsbDeinitPacked(void)
+SOFTBUS_VISIBILITY void DiscUsbDeinitPacked(void)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
     if (DiscCheckFuncPointer((void *)pfnDiscEnhanceFuncList->discUsbDeinit) != SOFTBUS_OK) {
@@ -604,7 +605,7 @@ void DiscUsbDeinitPacked(void)
     return pfnDiscEnhanceFuncList->discUsbDeinit();
 }
 
-int32_t DistUpdatePublishParamPacked(const char *cust, const char *extCust, bool isStart)
+SOFTBUS_VISIBILITY int32_t DistUpdatePublishParamPacked(const char *cust, const char *extCust, bool isStart)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
 
@@ -613,7 +614,7 @@ int32_t DistUpdatePublishParamPacked(const char *cust, const char *extCust, bool
     return pfnDiscEnhanceFuncList->distUpdatePublishParam(cust, extCust, isStart);
 }
 
-int32_t DistDiscoveryStartActionPreLinkPacked(void)
+SOFTBUS_VISIBILITY int32_t DistDiscoveryStartActionPreLinkPacked(void)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
 
@@ -622,7 +623,7 @@ int32_t DistDiscoveryStartActionPreLinkPacked(void)
     return pfnDiscEnhanceFuncList->distDiscoveryStartActionPreLink();
 }
 
-int32_t DistDiscoveryStopActionPreLinkPacked(void)
+SOFTBUS_VISIBILITY int32_t DistDiscoveryStopActionPreLinkPacked(void)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
 
@@ -631,7 +632,7 @@ int32_t DistDiscoveryStopActionPreLinkPacked(void)
     return pfnDiscEnhanceFuncList->distDiscoveryStopActionPreLink();
 }
 
-int32_t DistPublishStopActionPreLinkPacked(void)
+SOFTBUS_VISIBILITY int32_t DistPublishStopActionPreLinkPacked(void)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
 
@@ -640,7 +641,7 @@ int32_t DistPublishStopActionPreLinkPacked(void)
     return pfnDiscEnhanceFuncList->distPublishStopActionPreLink();
 }
 
-void DistGetActionParamPacked(DiscActionParam *action)
+SOFTBUS_VISIBILITY void DistGetActionParamPacked(DiscActionParam *action)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
 
@@ -649,7 +650,7 @@ void DistGetActionParamPacked(DiscActionParam *action)
     return pfnDiscEnhanceFuncList->distGetActionParam(action);
 }
 
-bool DistActionProcessConPacketPacked(DeviceWrapper *wrapperDevice, const uint8_t *key, uint32_t len)
+SOFTBUS_VISIBILITY bool DistActionProcessConPacketPacked(DeviceWrapper *wrapperDevice, const uint8_t *key, uint32_t len)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
 
@@ -658,7 +659,7 @@ bool DistActionProcessConPacketPacked(DeviceWrapper *wrapperDevice, const uint8_
     return pfnDiscEnhanceFuncList->distActionProcessConPacket(wrapperDevice, key, len);
 }
 
-int32_t DistActionInitPacked(DiscActionUpdateBleCallback *updateAdvCb, DiscInnerCallback *innerCb)
+SOFTBUS_VISIBILITY int32_t DistActionInitPacked(DiscActionUpdateBleCallback *updateAdvCb, DiscInnerCallback *innerCb)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
 
@@ -667,7 +668,7 @@ int32_t DistActionInitPacked(DiscActionUpdateBleCallback *updateAdvCb, DiscInner
     return pfnDiscEnhanceFuncList->distActionInit(updateAdvCb, innerCb);
 }
 
-void DistActionDeinitPacked(void)
+SOFTBUS_VISIBILITY void DistActionDeinitPacked(void)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
 
@@ -676,7 +677,7 @@ void DistActionDeinitPacked(void)
     return pfnDiscEnhanceFuncList->distActionDeinit();
 }
 
-bool IsUnknownDevicePacked(const char *bleMacAddr)
+SOFTBUS_VISIBILITY bool IsUnknownDevicePacked(const char *bleMacAddr)
 {
     DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
 

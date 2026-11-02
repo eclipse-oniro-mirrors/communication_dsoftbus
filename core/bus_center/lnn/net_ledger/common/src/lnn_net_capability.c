@@ -23,7 +23,7 @@
 #define DEFAUTL_LNN_CAPBILITY 0x16
 #define DEFAUTL_LNN_STATIC_CAPABILITY 0xFF
 
-bool LnnHasCapability(uint32_t capability, NetCapability type)
+SOFTBUS_VISIBILITY bool LnnHasCapability(uint32_t capability, NetCapability type)
 {
     if (type >= BIT_COUNT) {
         LNN_LOGE(LNN_LEDGER, "in para error");
@@ -37,7 +37,7 @@ bool LnnHasCapability(uint32_t capability, NetCapability type)
     return false;
 }
 
-int32_t LnnSetNetCapability(uint32_t *capability, NetCapability type)
+SOFTBUS_VISIBILITY int32_t LnnSetNetCapability(uint32_t *capability, NetCapability type)
 {
     if (capability == NULL || type >= BIT_COUNT) {
         LNN_LOGE(LNN_LEDGER, "in para error");
@@ -47,7 +47,7 @@ int32_t LnnSetNetCapability(uint32_t *capability, NetCapability type)
     return SOFTBUS_OK;
 }
 
-int32_t LnnClearNetCapability(uint32_t *capability, NetCapability type)
+SOFTBUS_VISIBILITY int32_t LnnClearNetCapability(uint32_t *capability, NetCapability type)
 {
     if (capability == NULL || type >= BIT_COUNT) {
         LNN_LOGE(LNN_LEDGER, "in para error");
@@ -57,7 +57,7 @@ int32_t LnnClearNetCapability(uint32_t *capability, NetCapability type)
     return SOFTBUS_OK;
 }
 
-uint32_t LnnGetNetCapabilty(void)
+SOFTBUS_VISIBILITY uint32_t LnnGetNetCapabilty(void)
 {
     uint32_t capability = 0;
     uint32_t configValue;
@@ -106,7 +106,7 @@ bool LnnHasStaticNetCap(uint32_t capability, StaticNetCapability type)
     return false;
 }
 
-int32_t LnnSetStaticNetCap(uint32_t *capability, StaticNetCapability type)
+SOFTBUS_VISIBILITY int32_t LnnSetStaticNetCap(uint32_t *capability, StaticNetCapability type)
 {
     if (capability == NULL || type >= STATIC_CAP_BIT_COUNT) {
         LNN_LOGE(LNN_LEDGER, "in para error");
@@ -116,7 +116,7 @@ int32_t LnnSetStaticNetCap(uint32_t *capability, StaticNetCapability type)
     return SOFTBUS_OK;
 }
 
-int32_t LnnClearStaticNetCap(uint32_t *capability, StaticNetCapability type)
+SOFTBUS_VISIBILITY int32_t LnnClearStaticNetCap(uint32_t *capability, StaticNetCapability type)
 {
     if (capability == NULL || type >= STATIC_CAP_BIT_COUNT) {
         LNN_LOGE(LNN_LEDGER, "in para error");

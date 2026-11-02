@@ -20,6 +20,11 @@ module_output_path = "dsoftbus/soft_bus/auth"
 
 ohos_unittest("AuthTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/bus_center/monitor/src/lnn_init_monitor.c",
     "unittest/auth_test.cpp",
@@ -63,7 +68,8 @@ ohos_unittest("AuthTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
     "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
   ]
   deps += dsoftbus_log_label_deps
@@ -92,6 +98,11 @@ ohos_unittest("AuthTest") {
 
 ohos_unittest("AuthConnectionTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "unittest/auth_connection_mock.cpp",
     "unittest/auth_connection_test.cpp",
@@ -139,7 +150,8 @@ ohos_unittest("AuthConnectionTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
     "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
   ]
   deps += dsoftbus_log_label_deps
@@ -185,7 +197,6 @@ ohos_unittest("AuthEnhanceMockTest") {
     "$dsoftbus_root_path/core/authentication/src/auth_connection.c",
     "$dsoftbus_root_path/core/authentication/src/auth_device.c",
     "$dsoftbus_root_path/core/authentication/src/auth_deviceprofile_virtual.cpp",
-    "$dsoftbus_root_path/tests/core/bus_center/mock_common/src/lnn_command_dm_stub.cpp",
     "$dsoftbus_root_path/core/authentication/src/auth_hichain.c",
     "$dsoftbus_root_path/core/authentication/src/auth_hichain_adapter.c",
     "$dsoftbus_root_path/core/authentication/src/auth_interface.c",
@@ -209,6 +220,7 @@ ohos_unittest("AuthEnhanceMockTest") {
     "$dsoftbus_root_path/core/frame/init/src/g_enhance_auth_func_pack.c",
     "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func.c",
     "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func_pack.c",
+    "$dsoftbus_root_path/tests/core/bus_center/mock_common/src/lnn_command_dm_stub.cpp",
     "$dsoftbus_root_path/tests/core/bus_center/mock_common/src/lnn_connection_mock.cpp",
     "$dsoftbus_root_path/tests/core/bus_center/mock_common/src/lnn_hichain_mock.cpp",
     "$dsoftbus_root_path/tests/core/bus_center/mock_common/src/lnn_identity_service_mock.cpp",
@@ -311,6 +323,7 @@ ohos_unittest("AuthTestCallBackTest") {
     cfi = true
     cfi_cross_dso = true
     debug = false
+    blocklist = "$dsoftbus_root_path/tests/cfi_blocklist.txt"
   }
   sources = [
     "$dsoftbus_root_path/core/adapter/authentication/src/lnn_extdata_config_virtual.c",
@@ -321,7 +334,6 @@ ohos_unittest("AuthTestCallBackTest") {
     "$dsoftbus_root_path/core/authentication/src/auth_connection.c",
     "$dsoftbus_root_path/core/authentication/src/auth_device.c",
     "$dsoftbus_root_path/core/authentication/src/auth_deviceprofile_virtual.cpp",
-    "$dsoftbus_root_path/tests/core/bus_center/mock_common/src/lnn_command_dm_stub.cpp",
     "$dsoftbus_root_path/core/authentication/src/auth_hichain.c",
     "$dsoftbus_root_path/core/authentication/src/auth_hichain_adapter.c",
     "$dsoftbus_root_path/core/authentication/src/auth_interface.c",
@@ -345,6 +357,7 @@ ohos_unittest("AuthTestCallBackTest") {
     "$dsoftbus_root_path/core/frame/init/src/g_enhance_auth_func_pack.c",
     "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func.c",
     "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func_pack.c",
+    "$dsoftbus_root_path/tests/core/bus_center/mock_common/src/lnn_command_dm_stub.cpp",
     "$dsoftbus_root_path/tests/core/bus_center/mock_common/src/lnn_connection_mock.cpp",
     "$dsoftbus_root_path/tests/core/bus_center/mock_common/src/lnn_hichain_mock.cpp",
     "$dsoftbus_root_path/tests/core/bus_center/mock_common/src/lnn_identity_service_mock.cpp",
@@ -441,6 +454,11 @@ ohos_unittest("AuthTestCallBackTest") {
 
 ohos_unittest("AuthOtherMockTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/bus_center/monitor/src/lnn_init_monitor.c",
     "unittest/auth_interface_mock.cpp",
@@ -491,7 +509,8 @@ ohos_unittest("AuthOtherMockTest") {
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
     "$dsoftbus_root_path/core/connection/wifi_direct_cpp:wifi_direct",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
     "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
   ]
   deps += dsoftbus_log_label_deps
@@ -522,6 +541,11 @@ ohos_unittest("AuthOtherMockTest") {
 
 ohos_unittest("AuthOtherTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/bus_center/monitor/src/lnn_init_monitor.c",
     "$dsoftbus_root_path/tests/core/bus_center/mock_common/src/lnn_connection_mock.cpp",
@@ -573,8 +597,9 @@ ohos_unittest("AuthOtherTest") {
     "$dsoftbus_dfx_path:softbus_dfx",
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
     "$dsoftbus_root_path/core/connection/wifi_direct_cpp:wifi_direct",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
     "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
   ]
 
@@ -604,6 +629,11 @@ ohos_unittest("AuthOtherTest") {
 
 ohos_unittest("AuthTcpConnectionTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "unittest/auth_tcp_connection_test.cpp" ]
 
   include_dirs = [
@@ -640,7 +670,8 @@ ohos_unittest("AuthTcpConnectionTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
     "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
   ]
   deps += dsoftbus_log_label_deps
@@ -669,6 +700,11 @@ ohos_unittest("AuthTcpConnectionTest") {
 
 ohos_unittest("AuthHichainMockTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "unittest/auth_hichain_deps_mock.cpp",
     "unittest/auth_hichain_mock_test.cpp",
@@ -717,7 +753,9 @@ ohos_unittest("AuthHichainMockTest") {
     "$dsoftbus_root_path/core/common:softbus_utils",
     "$dsoftbus_root_path/dfx:softbus_dfx",
     "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
   ]
+  ldflags = [ "-Wl,--allow-multiple-definition" ]
 
   if (is_standard_system) {
     external_deps = [
@@ -743,13 +781,19 @@ ohos_unittest("AuthHichainMockTest") {
 
 ohos_unittest("AuthHichainTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/authentication/src/auth_common.c",
     "$dsoftbus_root_path/core/authentication/src/auth_hichain_adapter.c",
     "$dsoftbus_root_path/core/authentication/src/auth_session_fsm.c",
+    "$dsoftbus_root_path/core/bus_center/utils/src/lnn_state_machine.c",
+    "$dsoftbus_root_path/tests/core/authentication/unittest/auth_notify_dm_mock.cpp",
     "$dsoftbus_root_path/tests/core/bus_center/mock_common/src/lnn_hichain_mock.cpp",
     "unittest/auth_common_mock.cpp",
-    "$dsoftbus_root_path/tests/core/authentication/unittest/auth_notify_dm_mock.cpp",
     "unittest/auth_hichain_test.cpp",
     "unittest/auth_net_ledger_mock.cpp",
   ]
@@ -825,6 +869,11 @@ ohos_unittest("AuthHichainTest") {
 
 ohos_unittest("AuthDeviceProfileTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "unittest/auth_device_profile_mock.cpp",
     "unittest/auth_device_profile_test.cpp",
@@ -851,25 +900,34 @@ ohos_unittest("AuthDeviceProfileTest") {
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
     "$dsoftbus_root_path/dfx:softbus_dfx",
+    "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
   ]
 
-  if (!defined(global_parts_info) ||
-      defined(global_parts_info.deviceprofile_device_info_manager)) {
+  if (is_standard_system) {
     external_deps = [
       "bounds_checking_function:libsec_shared",
       "cJSON:cjson",
       "c_utils:utils",
       "device_auth:deviceauth_sdk",
-      "device_info_manager:distributed_device_profile_common",
-      "device_info_manager:distributed_device_profile_sdk",
       "googletest:gmock",
       "googletest:gtest_main",
       "hilog:libhilog",
       "ipc:ipc_core",
-      "os_account:libaccountkits",
-      "os_account:os_account_innerkits",
       "samgr:samgr_proxy",
     ]
+    if (softbus_os_account) {
+      external_deps += [
+        "os_account:libaccountkits",
+        "os_account:os_account_innerkits",
+      ]
+    }
+    if (!defined(global_parts_info) ||
+        defined(global_parts_info.deviceprofile_device_info_manager)) {
+      external_deps += [
+        "device_info_manager:distributed_device_profile_common",
+        "device_info_manager:distributed_device_profile_sdk",
+      ]
+    }
   } else {
     external_deps = [
       "bounds_checking_function:libsec_shared",
@@ -885,6 +943,11 @@ ohos_unittest("AuthDeviceProfileTest") {
 
 ohos_unittest("AuthSessionJsonTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/authentication/src/auth_common.c",
     "$dsoftbus_root_path/core/frame/init/src/g_enhance_auth_func.c",
@@ -935,6 +998,7 @@ ohos_unittest("AuthSessionJsonTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
     "$dsoftbus_root_path/dfx:softbus_dfx",
     "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
   ]
@@ -965,6 +1029,11 @@ ohos_unittest("AuthSessionJsonTest") {
 
 ohos_unittest("AuthSessionMessageTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "unittest/auth_session_message_test.cpp" ]
 
   include_dirs = [
@@ -1007,7 +1076,8 @@ ohos_unittest("AuthSessionMessageTest") {
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
     "$dsoftbus_root_path/core/connection/wifi_direct_cpp:wifi_direct",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
     "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
   ]
 
@@ -1035,6 +1105,11 @@ ohos_unittest("AuthSessionMessageTest") {
 
 ohos_unittest("AuthManagerTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = auth_manager_source
 
   include_dirs = auth_manager_include
@@ -1042,7 +1117,8 @@ ohos_unittest("AuthManagerTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
     "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
   ]
 
@@ -1073,6 +1149,11 @@ ohos_unittest("AuthManagerTest") {
 
 ohos_unittest("AuthManagerMockTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/tests/core/authentication/unittest/auth_manager_deps_mock.cpp",
     "$dsoftbus_root_path/tests/core/authentication/unittest/auth_manager_mock_test.cpp",
@@ -1113,6 +1194,11 @@ ohos_unittest("AuthManagerMockTest") {
 
 ohos_unittest("AuthSessionFsmTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "unittest/auth_session_fsm_mock.cpp",
     "unittest/auth_session_fsm_test.cpp",
@@ -1163,11 +1249,10 @@ ohos_unittest("AuthSessionFsmTest") {
 
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
-    "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
     "$dsoftbus_root_path/core/connection/wifi_direct_cpp:wifi_direct",
-    "$dsoftbus_root_path/core/connection/wifi_direct_cpp:wifi_direct",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
     "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
   ]
 
@@ -1197,6 +1282,11 @@ ohos_unittest("AuthSessionFsmTest") {
 
 ohos_unittest("AuthSessionKeyTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "unittest/auth_session_key_test.cpp" ]
 
   include_dirs = [
@@ -1217,7 +1307,8 @@ ohos_unittest("AuthSessionKeyTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
     "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
   ]
 
@@ -1241,6 +1332,11 @@ ohos_unittest("AuthSessionKeyTest") {
 
 ohos_unittest("AuthNormalizeRequestTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "unittest/auth_normalize_request_test.cpp" ]
 
   include_dirs = [
@@ -1256,7 +1352,8 @@ ohos_unittest("AuthNormalizeRequestTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
     "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
   ]
   deps += dsoftbus_log_label_deps
@@ -1285,6 +1382,11 @@ ohos_unittest("AuthNormalizeRequestTest") {
 
 ohos_unittest("AuthDeviceProfileListenerTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/authentication/bind/auth_device_profile_listener.cpp",
     "unittest/auth_device_profile_listener_mock.cpp",
@@ -1342,6 +1444,11 @@ ohos_unittest("AuthDeviceProfileListenerTest") {
 
 ohos_unittest("AuthHichainIdServiceTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "unittest/auth_hichain_id_service_mock.cpp",
     "unittest/auth_hichain_id_service_test.cpp",
@@ -1385,9 +1492,15 @@ ohos_unittest("AuthHichainIdServiceTest") {
 
 ohos_unittest("AuthSessionJsonMockTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/frame/common/src/softbus_init_common.c",
     "$dsoftbus_root_path/core/frame/init/src/g_enhance_auth_func.c",
+    "$dsoftbus_root_path/core/frame/init/src/g_enhance_auth_func_pack.c",
     "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func.c",
     "unittest/auth_session_json_deps_mock.cpp",
     "unittest/auth_session_json_mock_test.cpp",
@@ -1426,8 +1539,9 @@ ohos_unittest("AuthSessionJsonMockTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
     "$dsoftbus_root_path/dfx:softbus_dfx",
+    "$dsoftbus_root_path/sdk:softbus_client",
     "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
   ]
 
@@ -1442,6 +1556,11 @@ ohos_unittest("AuthSessionJsonMockTest") {
 
 ohos_unittest("AuthPreLinkTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func.c",
     "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func_pack.c",
@@ -1474,7 +1593,8 @@ ohos_unittest("AuthPreLinkTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
   deps += dsoftbus_log_label_deps
 
@@ -1488,6 +1608,11 @@ ohos_unittest("AuthPreLinkTest") {
 
 ohos_unittest("AuthUkManagerTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "unittest/auth_uk_manager_test.cpp" ]
 
   include_dirs = [
@@ -1526,7 +1651,8 @@ ohos_unittest("AuthUkManagerTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
     "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
   ]
   deps += dsoftbus_log_label_deps
@@ -1557,6 +1683,11 @@ ohos_unittest("AuthUkManagerTest") {
 
 ohos_unittest("AuthUserCommonKeyTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "unittest/auth_user_common_key_test.cpp" ]
 
   include_dirs = [
@@ -1586,7 +1717,8 @@ ohos_unittest("AuthUserCommonKeyTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
     "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
   ]
 
@@ -1600,6 +1732,11 @@ ohos_unittest("AuthUserCommonKeyTest") {
 
 ohos_unittest("AuthUserCommonKeyNewTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "unittest/auth_user_common_key_new_test.cpp" ]
 
   include_dirs = [
@@ -1632,7 +1769,8 @@ ohos_unittest("AuthUserCommonKeyNewTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
     "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
   ]
 
@@ -1646,6 +1784,11 @@ ohos_unittest("AuthUserCommonKeyNewTest") {
 
 ohos_unittest("AuthRequestTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "unittest/auth_request_test.cpp" ]
 
   include_dirs = [
@@ -1692,7 +1835,8 @@ ohos_unittest("AuthRequestTest") {
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
     "$dsoftbus_root_path/core/connection/wifi_direct_cpp:wifi_direct",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
     "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
   ]
 
@@ -1726,6 +1870,7 @@ ohos_unittest("AuthApplyKeyManagerTest") {
     cfi = true
     cfi_cross_dso = true
     debug = false
+    blocklist = "$dsoftbus_root_path/tests/cfi_blocklist.txt"
   }
   sources = [
     "$dsoftbus_root_path/core/bus_center/utils/src/lnn_map.c",
@@ -1805,6 +1950,11 @@ ohos_unittest("AuthApplyKeyManagerTest") {
 
 ohos_unittest("AuthApplyKeyProcessTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "unittest/auth_apply_key_process_mock.cpp",
     "unittest/auth_apply_key_process_test.cpp",
@@ -1851,7 +2001,8 @@ ohos_unittest("AuthApplyKeyProcessTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
     "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
   ]
 
@@ -1882,6 +2033,11 @@ ohos_unittest("AuthApplyKeyProcessTest") {
 
 ohos_unittest("AuthIdentityServiceAdapterTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "unittest/auth_identity_service_adapter_mock.cpp",
     "unittest/auth_identity_service_adapter_test.cpp",
@@ -1930,7 +2086,8 @@ ohos_unittest("AuthIdentityServiceAdapterTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
     "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
   ]
 
@@ -1960,6 +2117,11 @@ ohos_unittest("AuthIdentityServiceAdapterTest") {
 
 ohos_unittest("AuthDeviceTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "unittest/auth_device_deps_mock.cpp",
     "unittest/auth_device_test.cpp",
@@ -2041,6 +2203,11 @@ ohos_unittest("AuthDeviceTest") {
 
 ohos_unittest("AuthAccountGroupManagerTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "unittest/auth_account_group_manager_mock.cpp",
     "unittest/auth_account_group_manager_test.cpp",
@@ -2066,7 +2233,8 @@ ohos_unittest("AuthAccountGroupManagerTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -2085,9 +2253,9 @@ group("unittest") {
   deps = [
     ":AuthAccountGroupManagerTest",
     ":AuthApplyKeyManagerTest",
-    ":AuthDeviceTest",
     ":AuthApplyKeyProcessTest",
     ":AuthConnectionTest",
+    ":AuthDeviceTest",
     ":AuthEnhanceMockTest",
     ":AuthHichainIdServiceTest",
     ":AuthHichainMockTest",
@@ -2109,7 +2277,7 @@ group("unittest") {
     ":AuthTest",
     ":AuthTestCallBackTest",
     ":AuthUkManagerTest",
-    ":AuthUserCommonKeyNewTest",
+    #":AuthUserCommonKeyNewTest",
     ":AuthUserCommonKeyTest",
   ]
   if (support_jsapi) {

@@ -38,13 +38,19 @@ if (defined(ohos_lite)) {
   module_output_path = "dsoftbus/soft_bus/common"
   ohos_unittest("SequenceVerificationTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = [ "unittest/sequence_verification_test.cpp" ]
 
     include_dirs = [ "$dsoftbus_root_path/core/common/include" ]
 
     deps = [
       "$dsoftbus_root_path/core/common:softbus_utils",
-      "$dsoftbus_root_path/core/frame:softbus_server",
+      "$dsoftbus_root_path/core/frame:softbus_server_test",
+      "$dsoftbus_root_path/sdk:softbus_client",
     ]
     external_deps = [
       "c_utils:utils",

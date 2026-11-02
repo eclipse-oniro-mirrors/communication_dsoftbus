@@ -20,14 +20,15 @@
 #include "lnn_trans_lane.h"
 
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
-LinkConflictType GetConflictTypeWithErrcode(int32_t conflictErrcode)
+SOFTBUS_VISIBILITY LinkConflictType GetConflictTypeWithErrcode(int32_t conflictErrcode)
 {
     (void)conflictErrcode;
     return CONFLICT_BUTT;
 }
 
-uint64_t GenerateLaneId(const char *localUdid, const char *remoteUdid, LaneLinkType linkType)
+SOFTBUS_VISIBILITY uint64_t GenerateLaneId(const char *localUdid, const char *remoteUdid, LaneLinkType linkType)
 {
     (void)localUdid;
     (void)remoteUdid;
@@ -35,7 +36,7 @@ uint64_t GenerateLaneId(const char *localUdid, const char *remoteUdid, LaneLinkT
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t UpdateLaneResourceLaneId(uint64_t oldLaneId, uint64_t newLaneId, const char *peerUdid)
+SOFTBUS_VISIBILITY int32_t UpdateLaneResourceLaneId(uint64_t oldLaneId, uint64_t newLaneId, const char *peerUdid)
 {
     (void)oldLaneId;
     (void)newLaneId;
@@ -62,7 +63,7 @@ void LaneDeleteP2pAddress(const char *networkId, bool isDestroy)
     (void)isDestroy;
 }
 
-void HandleForceDownWifiDirectTrans(const char *udidhashStr, LinkConflictType conflictType)
+SOFTBUS_SYMBOL_EXPORT void HandleForceDownWifiDirectTrans(const char *udidhashStr, LinkConflictType conflictType)
 {
     (void)udidhashStr;
     (void)conflictType;
@@ -75,11 +76,12 @@ int32_t UpdateLaneBusinessInfoItem(uint64_t oldLaneId, uint64_t newLaneId)
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-LnnLaneManager *GetLaneManager(void)
+SOFTBUS_VISIBILITY LnnLaneManager *GetLaneManager(void)
 {
     return NULL;
 }
 
+SOFTBUS_VISIBILITY
 int32_t LnnRequestLane(uint32_t laneReqId, const LaneRequestOption *request, const ILaneListener *listener)
 {
     (void)laneReqId;
@@ -88,13 +90,13 @@ int32_t LnnRequestLane(uint32_t laneReqId, const LaneRequestOption *request, con
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnFreeLane(uint32_t laneReqId)
+SOFTBUS_VISIBILITY int32_t LnnFreeLane(uint32_t laneReqId)
 {
     (void)laneReqId;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t UpdateReqListLaneId(uint64_t oldLaneId, uint64_t newLaneId)
+SOFTBUS_SYMBOL_EXPORT int32_t UpdateReqListLaneId(uint64_t oldLaneId, uint64_t newLaneId)
 {
     (void)oldLaneId;
     (void)newLaneId;

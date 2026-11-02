@@ -22,6 +22,11 @@ softbus_adapter_common = "${dsoftbus_root_path}/adapter/common"
 
 ohos_unittest("TransProxyChannelTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "trans_proxy_channel_test.cpp" ]
 
   include_dirs = [
@@ -75,7 +80,8 @@ ohos_unittest("TransProxyChannelTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
   deps += dsoftbus_log_label_deps
 
@@ -90,6 +96,11 @@ ohos_unittest("TransProxyChannelTest") {
 
 ohos_unittest("SoftbusTransProxyManagerTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = trans_comm_mock_src
   sources += [ "softbus_trans_proxy_manager_test.cpp" ]
 
@@ -124,7 +135,8 @@ ohos_unittest("SoftbusTransProxyManagerTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -139,6 +151,11 @@ ohos_unittest("SoftbusTransProxyManagerTest") {
 
 ohos_unittest("SoftbusTransProxyMessageTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = trans_comm_mock_src
   sources += [ "softbus_trans_proxy_message_test.cpp" ]
 
@@ -173,7 +190,7 @@ ohos_unittest("SoftbusTransProxyMessageTest") {
 
   deps = [
     "$dsoftbus_core_path/common:softbus_utils",
-    "$dsoftbus_core_path/frame:softbus_server",
+    "$dsoftbus_core_path/frame:softbus_server_test",
     "$dsoftbus_root_path/adapter:softbus_adapter",
   ]
   deps += dsoftbus_log_label_deps
@@ -188,6 +205,11 @@ ohos_unittest("SoftbusTransProxyMessageTest") {
 
 ohos_unittest("SoftbusProxyChannelManagerTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = softbus_proxy_channel_manager_ut_sources
   defines += softbus_proxy_channel_manager_ut_defines
 
@@ -196,7 +218,8 @@ ohos_unittest("SoftbusProxyChannelManagerTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -211,6 +234,11 @@ ohos_unittest("SoftbusProxyChannelManagerTest") {
 
 ohos_unittest("SoftbusProxyChannelMessageTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "softbus_proxychannel_message_test.cpp" ]
 
   include_dirs = [
@@ -262,7 +290,8 @@ ohos_unittest("SoftbusProxyChannelMessageTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -277,6 +306,11 @@ ohos_unittest("SoftbusProxyChannelMessageTest") {
 
 ohos_unittest("SoftbusProxyChannelMetaNodeMessageTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "softbus_proxychannel_metanode_message_test.cpp" ]
 
   include_dirs = [
@@ -329,7 +363,7 @@ ohos_unittest("SoftbusProxyChannelMetaNodeMessageTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
     "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
@@ -344,6 +378,11 @@ ohos_unittest("SoftbusProxyChannelMetaNodeMessageTest") {
 
 ohos_unittest("SoftbusProxyNetworkTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "mock/softbus_proxy_network_mock_test.cpp",
     "softbus_proxy_network_test.cpp",
@@ -362,7 +401,8 @@ ohos_unittest("SoftbusProxyNetworkTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -374,6 +414,11 @@ ohos_unittest("SoftbusProxyNetworkTest") {
 
 ohos_unittest("SoftbusProxySessionTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "softbus_proxy_session_test.cpp" ]
 
   include_dirs = [
@@ -426,7 +471,8 @@ ohos_unittest("SoftbusProxySessionTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -440,6 +486,11 @@ ohos_unittest("SoftbusProxySessionTest") {
 
 ohos_unittest("SoftbusProxyTransceiverTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "softbus_trans_proxy_transceiver_test.cpp" ]
 
   include_dirs = [
@@ -493,7 +544,8 @@ ohos_unittest("SoftbusProxyTransceiverTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -507,6 +559,11 @@ ohos_unittest("SoftbusProxyTransceiverTest") {
 
 ohos_unittest("SoftbusProxyChannelListenerTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$trans_comm_mock_path/src/trans_auth_mock.cpp",
     "softbus_proxychannel_listener_test.cpp",
@@ -567,7 +624,8 @@ ohos_unittest("SoftbusProxyChannelListenerTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -582,6 +640,11 @@ ohos_unittest("SoftbusProxyChannelListenerTest") {
 
 ohos_unittest("SoftbusProxyChannelPipelineTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "softbus_proxychannel_pipeline_test.cpp" ]
 
   include_dirs = [
@@ -597,7 +660,8 @@ ohos_unittest("SoftbusProxyChannelPipelineTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -610,6 +674,11 @@ ohos_unittest("SoftbusProxyChannelPipelineTest") {
 
 ohos_unittest("TransProxyNetworkTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "trans_proxy_network_test.cpp" ]
 
   include_dirs = [
@@ -657,7 +726,8 @@ ohos_unittest("TransProxyNetworkTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -669,6 +739,11 @@ ohos_unittest("TransProxyNetworkTest") {
 
 ohos_unittest("SoftbusTransProxyChannelManagerTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "mock/softbus_proxychannel_manager_mock_test.cpp",
     "softbus_trans_proxy_channel_manager_test.cpp",
@@ -708,7 +783,8 @@ ohos_unittest("SoftbusTransProxyChannelManagerTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
   deps += dsoftbus_log_label_deps
 
@@ -721,6 +797,11 @@ ohos_unittest("SoftbusTransProxyChannelManagerTest") {
 
 ohos_unittest("TransProxySessionStaticTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "softbus_proxychannel_session_static_test.cpp" ]
 
   include_dirs = [
@@ -752,7 +833,8 @@ ohos_unittest("TransProxySessionStaticTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -765,6 +847,11 @@ ohos_unittest("TransProxySessionStaticTest") {
 
 ohos_unittest("SoftbusProxyChannelControlPagingTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "mock/softbus_proxychannel_control_paging_test_mock.cpp",
     "softbus_proxychannel_control_paging_test.cpp",
@@ -793,7 +880,8 @@ ohos_unittest("SoftbusProxyChannelControlPagingTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -808,6 +896,11 @@ ohos_unittest("SoftbusProxyChannelControlPagingTest") {
 
 ohos_unittest("SoftbusProxyChannelManagerPagingTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "mock/softbus_proxychannel_manager_paging_test_mock.cpp",
     "softbus_proxychannel_manager_paging_test.cpp",
@@ -846,7 +939,8 @@ ohos_unittest("SoftbusProxyChannelManagerPagingTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -861,6 +955,11 @@ ohos_unittest("SoftbusProxyChannelManagerPagingTest") {
 
 ohos_unittest("SoftbusProxyChannelMessagePagingTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "mock/softbus_proxychannel_message_paging_test_mock.cpp",
     "softbus_proxychannel_message_paging_test.cpp",
@@ -899,7 +998,8 @@ ohos_unittest("SoftbusProxyChannelMessagePagingTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -914,6 +1014,11 @@ ohos_unittest("SoftbusProxyChannelMessagePagingTest") {
 
 ohos_unittest("SoftbusProxyChannelTransceiverPagingTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "mock/softbus_proxychannel_transceiver_paging_test_mock.cpp",
     "softbus_proxychannel_transceiver_paging_test.cpp",
@@ -952,7 +1057,8 @@ ohos_unittest("SoftbusProxyChannelTransceiverPagingTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -967,6 +1073,11 @@ ohos_unittest("SoftbusProxyChannelTransceiverPagingTest") {
 
 ohos_unittest("TransProxySessionTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "mock/softbus_proxy_network_mock_test.cpp",
     "trans_proxy_session_test.cpp",
@@ -991,7 +1102,8 @@ ohos_unittest("TransProxySessionTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -1003,6 +1115,11 @@ ohos_unittest("TransProxySessionTest") {
 
 ohos_unittest("SoftbusProxyProfileDeletedTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "softbus_proxy_profile_deleted_test.cpp" ]
 
   include_dirs = [
@@ -1052,7 +1169,7 @@ ohos_unittest("SoftbusProxyProfileDeletedTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
   ]
 
   external_deps = [

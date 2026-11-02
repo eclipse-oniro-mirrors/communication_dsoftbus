@@ -46,6 +46,7 @@
 #include "softbus_json_utils.h"
 #include "softbus_utils.h"
 #include "softbus_init_common.h"
+#include "softbus_def.h"
 
 #define BLE_PUBLISH                    0x0
 #define BLE_SUBSCRIBE                  0x2
@@ -2606,7 +2607,7 @@ static int32_t InitBleListener(void)
     return SOFTBUS_OK;
 }
 
-void DiscSoftbusBleSetHandleId(uint32_t handleId)
+SOFTBUS_SYMBOL_EXPORT void DiscSoftbusBleSetHandleId(uint32_t handleId)
 {
     DISC_LOGI(DISC_INIT, "enter, handle=%{public}d", handleId);
 

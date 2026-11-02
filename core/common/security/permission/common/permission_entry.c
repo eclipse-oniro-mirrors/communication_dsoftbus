@@ -23,6 +23,7 @@
 #include "softbus_adapter_mem.h"
 #include "softbus_json_utils.h"
 #include "softbus_utils.h"
+#include "softbus_def.h"
 
 #define ENFORCING 1
 
@@ -427,7 +428,7 @@ static bool HaveGrantedPermission(const char *sessionName)
     return false;
 }
 
-int32_t LoadPermissionJson(const char *fileName)
+SOFTBUS_SYMBOL_EXPORT int32_t LoadPermissionJson(const char *fileName)
 {
     COMM_CHECK_AND_RETURN_RET_LOGE(fileName != NULL, SOFTBUS_INVALID_PARAM, COMM_PERM, "fileName is null.");
     char *permissonBuf = (char *)SoftBusCalloc(PERMISSION_JSON_LEN);

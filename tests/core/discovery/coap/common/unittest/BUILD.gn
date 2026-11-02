@@ -20,6 +20,11 @@ module_output_path = "dsoftbus/soft_bus/discovery"
 
 ohos_unittest("DiscCoapParserTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/discovery/coap/common/src/disc_coap_parser.c",
     "disc_coap_parser_test.cpp",
@@ -29,8 +34,8 @@ ohos_unittest("DiscCoapParserTest") {
 
   deps = [
     "$dsoftbus_dfx_path:softbus_dfx",
-    "$dsoftbus_root_path/core/common:softbus_utils",
     "$dsoftbus_root_path/adapter:softbus_adapter",
+    "$dsoftbus_root_path/core/common:softbus_utils",
   ]
 
   external_deps = [

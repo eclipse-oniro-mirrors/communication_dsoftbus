@@ -17,6 +17,7 @@
 
 #include "client_trans_proxy_manager.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 int32_t ClinetTransProxyFileManagerInit(void)
 {
@@ -28,6 +29,7 @@ void ClinetTransProxyFileManagerDeinit(void)
     return;
 }
 
+SOFTBUS_VISIBILITY
 int32_t ProcessFileFrameData(int32_t sessionId, int32_t channelId, const char *data, uint32_t len, int32_t type)
 {
     (void)sessionId;

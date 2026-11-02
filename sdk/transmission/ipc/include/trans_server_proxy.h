@@ -16,6 +16,7 @@
 #ifndef TRANS_SERVER_PROXY_H
 #define TRANS_SERVER_PROXY_H
 
+#include "softbus_app_info.h"
 #include "softbus_common.h"
 #include "softbus_trans_def.h"
 
@@ -44,6 +45,7 @@ int32_t ServerIpcRippleStats(int32_t channelId, int32_t channelType, const Traff
 int32_t ServerIpcEvaluateQos(const char *peerNetworkId, TransDataType dataType, const QosTV *qos, uint32_t qosCount);
 int32_t ServerIpcProcessInnerEvent(int32_t eventType, uint8_t *buf, uint32_t len);
 int32_t ServerIpcSetWirelessLinkCtrl(int32_t socket);
+int32_t ServerIpcSetDisconnectPolicy(int32_t channelId, DisconnectPolicy policy);
 int32_t ServerIpcPrivilegeCloseChannel(uint64_t tokenId, int32_t pid, const char *peerNetworkId);
 int32_t ServerIpcOpenBrProxy(const char *brMac, const char *uuid);
 int32_t ServerIpcCloseBrProxy(int32_t channelId);

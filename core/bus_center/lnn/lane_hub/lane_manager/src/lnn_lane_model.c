@@ -20,6 +20,7 @@
 #include "lnn_lane_common.h"
 #include "lnn_log.h"
 #include "softbus_adapter_mem.h"
+#include "softbus_def.h"
 
 #define LINK_TYPE_SHIFT 26
 #define TRANS_TYPE_SHIFT 22
@@ -55,7 +56,7 @@ static void ModelUnlock(void)
  * |  LinkType |TxType |  Pri  |              Reserved             |
  * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  */
-uint32_t GenerateLaneProfileId(const LaneGenerateParam *param)
+SOFTBUS_VISIBILITY uint32_t GenerateLaneProfileId(const LaneGenerateParam *param)
 {
     uint32_t laneProfileId = 0;
     laneProfileId |= ((param->linkType << LINK_TYPE_SHIFT) |
@@ -132,7 +133,7 @@ static int32_t AddLaneModel(uint64_t laneId, uint32_t profileId, LaneProfile *la
     return SOFTBUS_OK;
 }
 
-int32_t BindLaneIdToProfile(uint64_t laneId, LaneProfile *profile)
+SOFTBUS_VISIBILITY int32_t BindLaneIdToProfile(uint64_t laneId, LaneProfile *profile)
 {
     if (profile == NULL) {
         LNN_LOGE(LNN_LANE, "profile is null");
@@ -169,7 +170,7 @@ void UnbindLaneIdFromProfile(uint64_t laneId, uint32_t profileId)
     ModelUnlock();
 }
 
-int32_t GetLaneProfile(uint32_t profileId, LaneProfile *profile)
+SOFTBUS_SYMBOL_EXPORT int32_t GetLaneProfile(uint32_t profileId, LaneProfile *profile)
 {
     if (profile == NULL) {
         LNN_LOGE(LNN_LANE, "profile is null");
@@ -193,7 +194,7 @@ int32_t GetLaneProfile(uint32_t profileId, LaneProfile *profile)
     return SOFTBUS_OK;
 }
 
-int32_t GetLaneIdList(uint32_t profileId, uint64_t **laneIdList, uint32_t *listSize)
+SOFTBUS_SYMBOL_EXPORT int32_t GetLaneIdList(uint32_t profileId, uint64_t **laneIdList, uint32_t *listSize)
 {
     if (ModelLock() != SOFTBUS_OK) {
         LNN_LOGE(LNN_LANE, "get lock fail");

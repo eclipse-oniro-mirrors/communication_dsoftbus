@@ -18,6 +18,15 @@ ohos_shared_library("conversation") {
   sources = []
   deps = []
   external_deps = []
+  cflags = [
+    "-fvisibility=hidden",
+    "-Oz",
+    "-fmerge-all-constants",
+  ]
+  ldflags = [
+    "-Wl,--exclude-libs,ALL",
+    "-Wl,--hash-style=gnu",
+  ]
   if (!dsoftbus_feature_compile_guard) {
     include_dirs = [
       "$dsoftbus_root_path/interfaces/kits/bus_center",

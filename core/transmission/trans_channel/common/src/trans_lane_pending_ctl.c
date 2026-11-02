@@ -36,6 +36,7 @@
 #include "lnn_distributed_net_ledger.h"
 #include "permission_entry.h"
 #include "softbus_init_common.h"
+#include "softbus_def.h"
 #include "softbus_proxychannel_manager.h"
 #include "softbus_proxychannel_network.h"
 #include "softbus_utils.h"
@@ -1641,7 +1642,7 @@ int32_t TransGetLaneInfoByOption(const LaneRequestOption *requestOption, LaneCon
     return errCode;
 }
 
-int32_t TransGetLaneInfo(const SessionParam *param, LaneConnInfo *connInfo, uint32_t *laneHandle)
+SOFTBUS_VISIBILITY int32_t TransGetLaneInfo(const SessionParam *param, LaneConnInfo *connInfo, uint32_t *laneHandle)
 {
     if (param == NULL || connInfo == NULL || laneHandle == NULL) {
         TRANS_LOGE(TRANS_SVC, "get lane info param error.");
@@ -1856,7 +1857,8 @@ int32_t TransAsyncGetLaneInfoByExt(const SessionParam *param, uint32_t *laneHand
     return SOFTBUS_OK;
 }
 
-int32_t TransAsyncGetLaneInfo(const SessionParam *param, uint32_t *laneHandle, const AppInfo *appInfo)
+SOFTBUS_VISIBILITY int32_t TransAsyncGetLaneInfo(const SessionParam *param, uint32_t *laneHandle,
+    const AppInfo *appInfo)
 {
     if (param == NULL || laneHandle == NULL || appInfo == NULL) {
         TRANS_LOGE(TRANS_SVC, "async get lane info param error.");
@@ -1889,7 +1891,7 @@ int32_t TransAsyncGetLaneInfo(const SessionParam *param, uint32_t *laneHandle, c
     return SOFTBUS_OK;
 }
 
-int32_t TransAsyncGetLaneReserveInfo(
+SOFTBUS_VISIBILITY int32_t TransAsyncGetLaneReserveInfo(
     const SessionParam *param, uint32_t *laneHandle, uint64_t laneId, const AppInfo *info, bool onlyFirstPriority)
 {
     if (param == NULL || laneHandle == NULL) {
@@ -2047,7 +2049,7 @@ static int32_t SetP2pExtConnInfo(const P2pConnInfo *p2pInfo, ConnectOption *conn
     return SOFTBUS_OK;
 }
 
-int32_t TransGetConnectOptByConnInfo(const LaneConnInfo *info, ConnectOption *connOpt)
+SOFTBUS_VISIBILITY int32_t TransGetConnectOptByConnInfo(const LaneConnInfo *info, ConnectOption *connOpt)
 {
     if (info == NULL || connOpt == NULL) {
         TRANS_LOGW(TRANS_SVC, "invalid param.");
@@ -2079,7 +2081,7 @@ int32_t TransGetConnectOptByConnInfo(const LaneConnInfo *info, ConnectOption *co
     return SOFTBUS_TRANS_GET_CONN_OPT_FAILED;
 }
 
-bool TransGetAuthTypeByNetWorkId(const char *peerNetWorkId)
+SOFTBUS_VISIBILITY bool TransGetAuthTypeByNetWorkId(const char *peerNetWorkId)
 {
     int32_t value = 0;
     int32_t ret = LnnGetRemoteNumInfo(peerNetWorkId, NUM_KEY_META_NODE, &value);

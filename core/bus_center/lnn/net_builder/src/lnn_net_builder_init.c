@@ -39,6 +39,7 @@
 #include "lnn_init_monitor.h"
 #include "softbus_adapter_mem.h"
 #include "softbus_feature_config.h"
+#include "softbus_def.h"
 #include "trans_channel_manager.h"
 
 #define DEFAULT_PKG_NAME                 "com.huawei.nearby"
@@ -202,7 +203,7 @@ static AuthVerifyCallback g_reAuthVerifyCallback = {
     .onVerifyFailed = OnReAuthVerifyFailed,
 };
 
-AuthVerifyCallback *LnnGetReAuthVerifyCallback(void)
+SOFTBUS_VISIBILITY AuthVerifyCallback *LnnGetReAuthVerifyCallback(void)
 {
     return &g_reAuthVerifyCallback;
 }
@@ -923,7 +924,7 @@ static int32_t InitSyncInfoReg(void)
     return SOFTBUS_OK;
 }
 
-int32_t LnnInitNetBuilder(void)
+SOFTBUS_VISIBILITY int32_t LnnInitNetBuilder(void)
 {
     if (LnnGetNetBuilder()->isInit == true) {
         LNN_LOGI(LNN_INIT, "init net builder repeatly");
@@ -974,7 +975,7 @@ int32_t LnnInitNetBuilder(void)
     return InitNetBuilderLooper();
 }
 
-int32_t LnnInitNetBuilderDelay(void)
+SOFTBUS_VISIBILITY int32_t LnnInitNetBuilderDelay(void)
 {
     char udid[UDID_BUF_LEN] = { 0 };
     // set master weight and master udid

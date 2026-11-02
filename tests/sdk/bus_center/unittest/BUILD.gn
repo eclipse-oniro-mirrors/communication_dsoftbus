@@ -41,11 +41,20 @@ bus_center_sdk_test_inc = [
   "$dsoftbus_root_path/sdk/frame/common/include",
   "$dsoftbus_root_path/tests/sdk/common/include",
 ]
-bus_center_sdk_test_deps = [
-  "$dsoftbus_root_path/adapter:softbus_adapter",
-  "$dsoftbus_root_path/core/common:softbus_utils",
-  "$dsoftbus_root_path/core/frame:softbus_server",
-]
+if (defined(ohos_lite)) {
+  bus_center_sdk_test_deps = [
+    "$dsoftbus_root_path/adapter:softbus_adapter",
+    "$dsoftbus_root_path/core/common:softbus_utils",
+    "$dsoftbus_root_path/core/frame:softbus_server",
+  ]
+} else {
+  bus_center_sdk_test_deps = [
+    "$dsoftbus_root_path/adapter:softbus_adapter",
+    "$dsoftbus_root_path/core/common:softbus_utils",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
+  ]
+}
 
 if (dsoftbus_feature_lnn_ble) {
   bus_center_sdk_test_inc += [
@@ -105,6 +114,11 @@ if (defined(ohos_lite)) {
   module_output_path = "dsoftbus/soft_bus/bus_center"
   ohos_unittest("BusCenterSdkTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = [ "bus_center_sdk_test.cpp" ]
     include_dirs = bus_center_sdk_test_inc
     include_dirs += [ "unittest/common/" ]
@@ -133,6 +147,11 @@ if (defined(ohos_lite)) {
 
   ohos_unittest("ClientBusCenterSdkTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = [ "softbus_center_sdk_test.cpp" ]
     include_dirs = bus_center_sdk_test_inc
     include_dirs += [ "unittest/common/" ]
@@ -161,6 +180,11 @@ if (defined(ohos_lite)) {
 
   ohos_unittest("ClientBusMangerTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = [ "client_bus_center_test.cpp" ]
     include_dirs = bus_center_sdk_test_inc
     include_dirs += [ "unittest/common/" ]
@@ -189,6 +213,11 @@ if (defined(ohos_lite)) {
 
   ohos_unittest("BusCenterSdkDdosTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = [ "bus_center_sdk_ddos_test.cpp" ]
     include_dirs = bus_center_sdk_test_inc
     include_dirs += [
@@ -223,10 +252,15 @@ if (defined(ohos_lite)) {
 
   ohos_unittest("BusCenterHeartbeatSdkTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = [
       "$dsoftbus_root_path/core/bus_center/service/src/bus_center_manager.c",
-      "bus_center_heartbeat_sdk_test.cpp",
       "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func.c",
+      "bus_center_heartbeat_sdk_test.cpp",
     ]
     include_dirs = bus_center_sdk_test_inc
     include_dirs += [
@@ -262,6 +296,11 @@ if (defined(ohos_lite)) {
 
   ohos_unittest("BusCenterMetaNodeSdkTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = [ "bus_center_meta_node_sdk_test.cpp" ]
     include_dirs = bus_center_sdk_test_inc
     include_dirs += [ "unittest/common/" ]
@@ -289,6 +328,11 @@ if (defined(ohos_lite)) {
 
   ohos_unittest("ClientBusCentManagerTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = [
       "client_bus_center_manager_mock.cpp",
       "client_bus_center_manager_test.cpp",
@@ -319,7 +363,8 @@ if (defined(ohos_lite)) {
     deps = [
       "$dsoftbus_root_path/adapter:softbus_adapter",
       "$dsoftbus_root_path/core/common:softbus_utils",
-      "$dsoftbus_root_path/core/frame:softbus_server",
+      "$dsoftbus_root_path/core/frame:softbus_server_test",
+      "$dsoftbus_root_path/sdk:softbus_client",
       "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
     ]
     if (is_standard_system) {
@@ -350,6 +395,11 @@ if (defined(ohos_lite)) {
 
   ohos_unittest("BusCenterServerTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = [ "bus_center_server_test.cpp" ]
     include_dirs = bus_center_sdk_test_inc
     include_dirs += [ "unittest/common/" ]
@@ -378,6 +428,11 @@ if (defined(ohos_lite)) {
 
   ohos_unittest("BusCenterServerProxyStandardTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = [ "bus_center_server_standard_test.cpp" ]
     include_dirs = bus_center_sdk_test_inc
     include_dirs += [ "unittest/common/" ]
@@ -406,6 +461,11 @@ if (defined(ohos_lite)) {
 
   ohos_unittest("BusCenterServerProxyTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = [ "bus_center_server_proxy_test.cpp" ]
     include_dirs = bus_center_sdk_test_inc
     include_dirs += [ "unittest/common/" ]

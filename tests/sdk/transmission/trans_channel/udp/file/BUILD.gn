@@ -95,6 +95,7 @@ if (defined(ohos_lite)) {
       "$dsoftbus_root_path/sdk/transmission/trans_channel/udp/stream/include",
       "$dsoftbus_root_path/sdk/transmission/trans_channel/udp/common/src",
       "$dsoftbus_root_path/sdk/transmission/ipc/include",
+
       #"$dsoftbus_root_path/components/nstackx/nstackx_core/dfile/interface",
       "$dsoftbus_root_path/components/nstackx/nstackx_core/dfile/core",
       "dsoftbus_root_path/components/nstackx_enhanced/nstackx_core/dfile/interface",
@@ -106,12 +107,13 @@ if (defined(ohos_lite)) {
 
     deps = [
       "$dsoftbus_root_path/core/common:softbus_utils",
-      "$dsoftbus_root_path/core/frame:softbus_server",
+      "$dsoftbus_root_path/core/frame:softbus_server_test",
+      "$dsoftbus_root_path/sdk:softbus_client",
       "$dsoftbus_root_path/tests/sdk:softbus_client_static",
     ]
 
     if (!defined(global_parts_info) ||
-      defined(global_parts_info.communication_dsoftbus_service_ext)) {
+        defined(global_parts_info.communication_dsoftbus_service_ext)) {
       deps += [ "$dsoftbus_root_path/components/nstackx_enhanced/nstackx_core/dfile:nstackx_dfile" ]
     } else {
       deps += [ "$dsoftbus_root_path/components/nstackx/nstackx_core/dfile:nstackx_dfile.open" ]
@@ -148,6 +150,7 @@ if (defined(ohos_lite)) {
       "$dsoftbus_root_path/sdk/transmission/trans_channel/udp/stream/include",
       "$dsoftbus_root_path/sdk/transmission/trans_channel/udp/common/src",
       "$dsoftbus_root_path/sdk/transmission/ipc/include",
+
       #"$dsoftbus_root_path/components/nstackx/nstackx_core/dfile/interface",
       "$dsoftbus_root_path/components/nstackx/nstackx_core/dfile/core",
       "dsoftbus_root_path/components/nstackx_enhanced/nstackx_core/dfile/interface",
@@ -159,12 +162,12 @@ if (defined(ohos_lite)) {
 
     deps = [
       "$dsoftbus_root_path/core/common:softbus_utils",
-      "$dsoftbus_root_path/core/frame:softbus_server",
+      "$dsoftbus_root_path/core/frame:softbus_server_test",
       "$dsoftbus_root_path/tests/sdk:softbus_client_static",
     ]
 
     if (!defined(global_parts_info) ||
-      defined(global_parts_info.communication_dsoftbus_service_ext)) {
+        defined(global_parts_info.communication_dsoftbus_service_ext)) {
       deps += [ "$dsoftbus_root_path/components/nstackx_enhanced/nstackx_core/dfile:nstackx_dfile" ]
     } else {
       deps += [ "$dsoftbus_root_path/components/nstackx/nstackx_core/dfile:nstackx_dfile.open" ]
@@ -201,6 +204,7 @@ if (defined(ohos_lite)) {
       "$dsoftbus_root_path/sdk/transmission/trans_channel/tcp_direct/include",
       "$dsoftbus_root_path/adapter/common/security/access_token/include",
       "$dsoftbus_root_path/tests/sdk/common/include",
+
       # Add current directory for mock headers
       "$dsoftbus_root_path/tests/sdk/transmission/trans_channel/udp/file",
     ]
@@ -208,11 +212,12 @@ if (defined(ohos_lite)) {
     deps = [
       "$dsoftbus_root_path/adapter:softbus_adapter",
       "$dsoftbus_root_path/core/common:softbus_utils",
-      "$dsoftbus_root_path/core/frame:softbus_server",
+      "$dsoftbus_root_path/core/frame:softbus_server_test",
+      "$dsoftbus_root_path/sdk:softbus_client",
     ]
 
     if (!defined(global_parts_info) ||
-      defined(global_parts_info.communication_dsoftbus_service_ext)) {
+        defined(global_parts_info.communication_dsoftbus_service_ext)) {
       deps += [ "$dsoftbus_root_path/components/nstackx_enhanced/nstackx_core/dfile:nstackx_dfile" ]
     } else {
       deps += [ "$dsoftbus_root_path/components/nstackx/nstackx_core/dfile:nstackx_dfile.open" ]
@@ -228,9 +233,7 @@ if (defined(ohos_lite)) {
 
   group("unittest") {
     testonly = true
-    deps = [
-      ":ClientTransFileTest",
-    ]
+    deps = [ ":ClientTransFileTest" ]
     if (dsoftbus_feature_trans_udp == true) {
       if (dsoftbus_feature_trans_udp_stream == true) {
         if (!defined(ohos_lite)) {

@@ -306,7 +306,7 @@ static int32_t TranCheckSinkAccessControl(const AppInfo *appInfo, uint64_t myTok
     return CheckSinkAccessControl(appInfo, myTokenId, appUserId, myDeviceId);
 }
 
-int32_t TransCheckServerAccessControl(const AppInfo *appInfo)
+SOFTBUS_VISIBILITY int32_t TransCheckServerAccessControl(const AppInfo *appInfo)
 {
     if (appInfo == nullptr) {
         return SOFTBUS_INVALID_PARAM;

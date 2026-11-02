@@ -27,7 +27,7 @@ using namespace std;
 using namespace testing::ext;
 
 namespace OHOS {
-const char *g_FileName = "example.txt";
+const char *g_FileName = "/data/local/tmp/example.txt";
 
 class AdapterDsoftbusOtherTest : public testing::Test {
 protected:

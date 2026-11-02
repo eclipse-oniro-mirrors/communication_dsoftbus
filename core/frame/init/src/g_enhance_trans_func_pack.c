@@ -17,8 +17,9 @@
 #include "g_enhance_trans_func.h"
 #include "softbus_error_code.h"
 #include "softbus_init_common.h"
+#include "softbus_def.h"
 
-int32_t SetDefaultQdiscPacked(void)
+SOFTBUS_VISIBILITY int32_t SetDefaultQdiscPacked(void)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
     if (TransCheckFuncPointer((void *)pfnTransEnhanceFuncList->setDefaultQdisc) != SOFTBUS_OK) {
@@ -27,7 +28,7 @@ int32_t SetDefaultQdiscPacked(void)
     return pfnTransEnhanceFuncList->setDefaultQdisc();
 }
 
-int32_t InitQosPacked(void)
+SOFTBUS_VISIBILITY int32_t InitQosPacked(void)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
     if (TransCheckFuncPointer((void *)pfnTransEnhanceFuncList->initQos) != SOFTBUS_OK) {
@@ -36,7 +37,7 @@ int32_t InitQosPacked(void)
     return pfnTransEnhanceFuncList->initQos();
 }
 
-void NotifyQosChannelClosedPacked(int32_t channelId, int32_t channelType)
+SOFTBUS_VISIBILITY void NotifyQosChannelClosedPacked(int32_t channelId, int32_t channelType)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
     if (TransCheckFuncPointer((void *)pfnTransEnhanceFuncList->notifyQosChannelClosed) != SOFTBUS_OK) {
@@ -45,7 +46,7 @@ void NotifyQosChannelClosedPacked(int32_t channelId, int32_t channelType)
     return pfnTransEnhanceFuncList->notifyQosChannelClosed(channelId, channelType);
 }
 
-void GetExtQosInfoPacked(const SessionParam *param, QosInfo *qosInfo, uint32_t index, AllocExtendInfo *extendInfo)
+SOFTBUS_VISIBILITY void GetExtQosInfoPacked(const SessionParam *param, QosInfo *qosInfo, uint32_t index, AllocExtendInfo *extendInfo)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
     if (TransCheckFuncPointer((void *)pfnTransEnhanceFuncList->getExtQosInfo) != SOFTBUS_OK) {
@@ -54,7 +55,7 @@ void GetExtQosInfoPacked(const SessionParam *param, QosInfo *qosInfo, uint32_t i
     return pfnTransEnhanceFuncList->getExtQosInfo(param, qosInfo, index, extendInfo);
 }
 
-int32_t NotifyQosChannelOpenedPacked(const ChannelInfo *chanInfo)
+SOFTBUS_VISIBILITY int32_t NotifyQosChannelOpenedPacked(const ChannelInfo *chanInfo)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
     if (TransCheckFuncPointer((void *)pfnTransEnhanceFuncList->notifyQosChannelOpened) != SOFTBUS_OK) {
@@ -63,6 +64,7 @@ int32_t NotifyQosChannelOpenedPacked(const ChannelInfo *chanInfo)
     return pfnTransEnhanceFuncList->notifyQosChannelOpened(chanInfo);
 }
 
+SOFTBUS_VISIBILITY
 int32_t TransReversePullUpPacked(const uint32_t chatMode, const uint32_t businessFlag, const char *pkgName)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
@@ -72,6 +74,7 @@ int32_t TransReversePullUpPacked(const uint32_t chatMode, const uint32_t busines
     return pfnTransEnhanceFuncList->transReversePullUp(chatMode, businessFlag, pkgName);
 }
 
+SOFTBUS_VISIBILITY
 int32_t TransGetPkgnameByBusinessFlagPacked(const uint32_t businessFlag, char *pkgName, const uint32_t pkgLen)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
@@ -81,7 +84,7 @@ int32_t TransGetPkgnameByBusinessFlagPacked(const uint32_t businessFlag, char *p
     return pfnTransEnhanceFuncList->transGetPkgnameByBusinessFlag(businessFlag, pkgName, pkgLen);
 }
 
-int32_t InitSoftbusPagingResPullPacked(void)
+SOFTBUS_VISIBILITY int32_t InitSoftbusPagingResPullPacked(void)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
     if (TransCheckFuncPointer((void *)pfnTransEnhanceFuncList->initSoftbusPagingResPull) != SOFTBUS_OK) {
@@ -90,7 +93,7 @@ int32_t InitSoftbusPagingResPullPacked(void)
     return pfnTransEnhanceFuncList->initSoftbusPagingResPull();
 }
 
-void DeInitSoftbusPagingResPullPacked(void)
+SOFTBUS_VISIBILITY void DeInitSoftbusPagingResPullPacked(void)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
     if (TransCheckFuncPointer((void *)pfnTransEnhanceFuncList->deInitSoftbusPagingResPull) != SOFTBUS_OK) {
@@ -99,7 +102,7 @@ void DeInitSoftbusPagingResPullPacked(void)
     return pfnTransEnhanceFuncList->deInitSoftbusPagingResPull();
 }
 
-int32_t InitSoftbusPagingPacked(void)
+SOFTBUS_VISIBILITY int32_t InitSoftbusPagingPacked(void)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
     if (TransCheckFuncPointer((void *)pfnTransEnhanceFuncList->initSoftbusPaging) != SOFTBUS_OK) {
@@ -108,7 +111,7 @@ int32_t InitSoftbusPagingPacked(void)
     return pfnTransEnhanceFuncList->initSoftbusPaging();
 }
 
-void DeInitSoftbusPagingPacked(void)
+SOFTBUS_VISIBILITY void DeInitSoftbusPagingPacked(void)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
     if (TransCheckFuncPointer((void *)pfnTransEnhanceFuncList->deInitSoftbusPaging) != SOFTBUS_OK) {
@@ -117,7 +120,7 @@ void DeInitSoftbusPagingPacked(void)
     return pfnTransEnhanceFuncList->deInitSoftbusPaging();
 }
 
-void TransPagingDeathCallbackPacked(const char *pkgName, int32_t pid)
+SOFTBUS_VISIBILITY void TransPagingDeathCallbackPacked(const char *pkgName, int32_t pid)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
     if (TransCheckFuncPointer((void *)pfnTransEnhanceFuncList->transPagingDeathCallback) != SOFTBUS_OK) {
@@ -126,7 +129,7 @@ void TransPagingDeathCallbackPacked(const char *pkgName, int32_t pid)
     return pfnTransEnhanceFuncList->transPagingDeathCallback(pkgName, pid);
 }
 
-bool TransPagingHasListenAndGetInfoPacked(ProxyChannelInfo *info)
+SOFTBUS_VISIBILITY bool TransPagingHasListenAndGetInfoPacked(ProxyChannelInfo *info)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
     if (TransCheckFuncPointer((void *)pfnTransEnhanceFuncList->transPagingHasListenAndGetInfo) != SOFTBUS_OK) {
@@ -135,7 +138,7 @@ bool TransPagingHasListenAndGetInfoPacked(ProxyChannelInfo *info)
     return pfnTransEnhanceFuncList->transPagingHasListenAndGetInfo(info);
 }
 
-int32_t TransPagingGetPidAndDataByFlgPacked(
+SOFTBUS_VISIBILITY int32_t TransPagingGetPidAndDataByFlgPacked(
     bool isClient, uint32_t businessFlag, int32_t *pid, char *data, uint32_t *len)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
@@ -145,7 +148,7 @@ int32_t TransPagingGetPidAndDataByFlgPacked(
     return pfnTransEnhanceFuncList->transPagingGetPidAndDataByFlg(isClient, businessFlag, pid, data, len);
 }
 
-int32_t TransDelPagingInfoByBusinessFlagPacked(uint32_t businessFlag)
+SOFTBUS_VISIBILITY int32_t TransDelPagingInfoByBusinessFlagPacked(uint32_t businessFlag)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
     if (TransCheckFuncPointer((void *)pfnTransEnhanceFuncList->transDelPagingInfoByBusinessFlag) != SOFTBUS_OK) {
@@ -154,7 +157,7 @@ int32_t TransDelPagingInfoByBusinessFlagPacked(uint32_t businessFlag)
     return pfnTransEnhanceFuncList->transDelPagingInfoByBusinessFlag(businessFlag);
 }
 
-int32_t ClientOpenHtpChannelPacked(int32_t channelId, int64_t requestId, const char *localMac, const char *remoteMac)
+SOFTBUS_VISIBILITY int32_t ClientOpenHtpChannelPacked(int32_t channelId, int64_t requestId, const char *localMac, const char *remoteMac)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
     if (TransCheckFuncPointer((void *)pfnTransEnhanceFuncList->clientOpenHtpChannel) != SOFTBUS_OK) {
@@ -163,7 +166,7 @@ int32_t ClientOpenHtpChannelPacked(int32_t channelId, int64_t requestId, const c
     return pfnTransEnhanceFuncList->clientOpenHtpChannel(channelId, requestId, localMac, remoteMac);
 }
 
-int32_t ServerOpenHtpChannelPacked(const char *remoteIp, int64_t flIdentity)
+SOFTBUS_VISIBILITY int32_t ServerOpenHtpChannelPacked(const char *remoteIp, int64_t flIdentity)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
     if (TransCheckFuncPointer((void *)pfnTransEnhanceFuncList->serverOpenHtpChannel) != SOFTBUS_OK) {
@@ -172,7 +175,7 @@ int32_t ServerOpenHtpChannelPacked(const char *remoteIp, int64_t flIdentity)
     return pfnTransEnhanceFuncList->serverOpenHtpChannel(remoteIp, flIdentity);
 }
 
-int32_t CloseHtpChannelPacked(int32_t channelId)
+SOFTBUS_VISIBILITY int32_t CloseHtpChannelPacked(int32_t channelId)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
     if (TransCheckFuncPointer((void *)pfnTransEnhanceFuncList->closeHtpChannel) != SOFTBUS_OK) {
@@ -181,7 +184,7 @@ int32_t CloseHtpChannelPacked(int32_t channelId)
     return pfnTransEnhanceFuncList->closeHtpChannel(channelId);
 }
 
-void ServerUpdateHtpChannelPacked(int64_t flIdentity, int32_t channelId)
+SOFTBUS_VISIBILITY void ServerUpdateHtpChannelPacked(int64_t flIdentity, int32_t channelId)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
     if (TransCheckFuncPointer((void *)pfnTransEnhanceFuncList->serverUpdateHtpChannel) != SOFTBUS_OK) {
@@ -190,7 +193,7 @@ void ServerUpdateHtpChannelPacked(int64_t flIdentity, int32_t channelId)
     return pfnTransEnhanceFuncList->serverUpdateHtpChannel(flIdentity, channelId);
 }
 
-bool CheckHtpPermissionPacked(int32_t uid)
+SOFTBUS_VISIBILITY bool CheckHtpPermissionPacked(int32_t uid)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
     if (TransCheckFuncPointer((void *)pfnTransEnhanceFuncList->checkHtpPermission) != SOFTBUS_OK) {
@@ -199,7 +202,7 @@ bool CheckHtpPermissionPacked(int32_t uid)
     return pfnTransEnhanceFuncList->checkHtpPermission(uid);
 }
 
-void TransProcessGroupTalkieInfoPacked(const char *pkgName)
+SOFTBUS_VISIBILITY void TransProcessGroupTalkieInfoPacked(const char *pkgName)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
     if (TransCheckFuncPointer((void *)pfnTransEnhanceFuncList->transProcessGroupTalkieInfo) != SOFTBUS_OK) {
@@ -208,7 +211,7 @@ void TransProcessGroupTalkieInfoPacked(const char *pkgName)
     return pfnTransEnhanceFuncList->transProcessGroupTalkieInfo(pkgName);
 }
 
-bool IsMultipathWhitelistPacked(const char *processName, bool *isWhitelist)
+SOFTBUS_VISIBILITY bool IsMultipathWhitelistPacked(const char *processName, bool *isWhitelist)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
     if (pfnTransEnhanceFuncList == NULL) {
@@ -220,7 +223,7 @@ bool IsMultipathWhitelistPacked(const char *processName, bool *isWhitelist)
     return pfnTransEnhanceFuncList->isMultipathWhitelist(processName, isWhitelist);
 }
 
-bool CancelEncryptionCheckPacked(const char *processName, pid_t callingUid)
+SOFTBUS_VISIBILITY bool CancelEncryptionCheckPacked(const char *processName, pid_t callingUid)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
     if (pfnTransEnhanceFuncList == NULL) {
@@ -232,7 +235,7 @@ bool CancelEncryptionCheckPacked(const char *processName, pid_t callingUid)
     return pfnTransEnhanceFuncList->cancelEncryptionCheck(processName, callingUid);
 }
 
-bool PermissionCheckPacked(void)
+SOFTBUS_VISIBILITY bool PermissionCheckPacked(void)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
     if (pfnTransEnhanceFuncList == NULL) {
@@ -244,7 +247,7 @@ bool PermissionCheckPacked(void)
     return pfnTransEnhanceFuncList->permissionCheck();
 }
 
-bool CheckAuthChannelSessionNameValidPacked(const char *sessionName)
+SOFTBUS_VISIBILITY bool CheckAuthChannelSessionNameValidPacked(const char *sessionName)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
     if (pfnTransEnhanceFuncList == NULL) {
@@ -256,7 +259,7 @@ bool CheckAuthChannelSessionNameValidPacked(const char *sessionName)
     return pfnTransEnhanceFuncList->checkAuthChannelSessionNameValid(sessionName);
 }
 
-bool TransCheckNetworkDelegatePacked(const char *sessionName)
+SOFTBUS_VISIBILITY bool TransCheckNetworkDelegatePacked(const char *sessionName)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
     if (pfnTransEnhanceFuncList == NULL) {
@@ -268,7 +271,7 @@ bool TransCheckNetworkDelegatePacked(const char *sessionName)
     return pfnTransEnhanceFuncList->transCheckNetworkDelegate(sessionName);
 }
 
-bool TransCheckP2pOnlyPacked(const char *sessionName)
+SOFTBUS_VISIBILITY bool TransCheckP2pOnlyPacked(const char *sessionName)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
     if (pfnTransEnhanceFuncList == NULL) {
@@ -280,7 +283,7 @@ bool TransCheckP2pOnlyPacked(const char *sessionName)
     return pfnTransEnhanceFuncList->transCheckP2pOnly(sessionName);
 }
 
-bool TransCheckDcTriggerVirtualLinkPacked(const char *sessionName, const char *peerNetworkId)
+SOFTBUS_VISIBILITY bool TransCheckDcTriggerVirtualLinkPacked(const char *sessionName, const char *peerNetworkId)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
     if (pfnTransEnhanceFuncList == NULL) {
@@ -292,7 +295,7 @@ bool TransCheckDcTriggerVirtualLinkPacked(const char *sessionName, const char *p
     return pfnTransEnhanceFuncList->transCheckDcTriggerVirtualLink(sessionName, peerNetworkId);
 }
 
-int32_t LoadTransPermissionJsonPacked(void)
+SOFTBUS_VISIBILITY int32_t LoadTransPermissionJsonPacked(void)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
     if (pfnTransEnhanceFuncList == NULL) {
@@ -304,7 +307,7 @@ int32_t LoadTransPermissionJsonPacked(void)
     return pfnTransEnhanceFuncList->loadTransPermissionJson();
 }
 
-void TransD2dQosUnregisterPacked(int32_t channelId, char *sleMac, uint32_t macLen)
+SOFTBUS_VISIBILITY void TransD2dQosUnregisterPacked(int32_t channelId, char *sleMac, uint32_t macLen)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
     if (pfnTransEnhanceFuncList == NULL) {
@@ -316,7 +319,7 @@ void TransD2dQosUnregisterPacked(int32_t channelId, char *sleMac, uint32_t macLe
     return pfnTransEnhanceFuncList->transD2dQosUnregister(channelId, sleMac, macLen);
 }
 
-void TransCloseAllMetaSocketPacked(void)
+SOFTBUS_VISIBILITY void TransCloseAllMetaSocketPacked(void)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();
     if (pfnTransEnhanceFuncList == NULL) {
@@ -328,7 +331,7 @@ void TransCloseAllMetaSocketPacked(void)
     return pfnTransEnhanceFuncList->transCloseAllMetaSocket();
 }
 
-void TransCloseAllD2DChannelPacked(
+SOFTBUS_VISIBILITY void TransCloseAllD2DChannelPacked(
     const char *networkId, const char *uuid, const char *udid, const char *peerIp, int32_t type)
 {
     TransEnhanceFuncList *pfnTransEnhanceFuncList = TransEnhanceFuncListGet();

@@ -15,8 +15,9 @@
 
 #include "lnn_huks_utils.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
-int32_t LnnGenerateKeyByHuks(struct HksBlob *keyAlias)
+SOFTBUS_VISIBILITY int32_t LnnGenerateKeyByHuks(struct HksBlob *keyAlias)
 {
     (void)keyAlias;
     return SOFTBUS_NOT_IMPLEMENT;
@@ -29,7 +30,7 @@ int32_t LnnGenerateCeKeyByHuks(struct HksBlob *keyAlias, bool isUnlocked)
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnDeleteKeyByHuks(struct HksBlob *keyAlias)
+SOFTBUS_VISIBILITY int32_t LnnDeleteKeyByHuks(struct HksBlob *keyAlias)
 {
     (void)keyAlias;
     return SOFTBUS_NOT_IMPLEMENT;
@@ -42,6 +43,7 @@ int32_t LnnDeleteCeKeyByHuks(struct HksBlob *keyAlias, bool isUnlocked)
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
+SOFTBUS_VISIBILITY
 int32_t LnnEncryptDataByHuks(const struct HksBlob *keyAlias, const struct HksBlob *inData, struct HksBlob *outData)
 {
     (void)keyAlias;
@@ -50,6 +52,7 @@ int32_t LnnEncryptDataByHuks(const struct HksBlob *keyAlias, const struct HksBlo
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
+SOFTBUS_VISIBILITY
 int32_t LnnDecryptDataByHuks(const struct HksBlob *keyAlias, const struct HksBlob *inData, struct HksBlob *outData)
 {
     (void)keyAlias;
@@ -58,6 +61,7 @@ int32_t LnnDecryptDataByHuks(const struct HksBlob *keyAlias, const struct HksBlo
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
+SOFTBUS_VISIBILITY
 int32_t LnnCeEncryptDataByHuks(const struct HksBlob *keyAlias, const struct HksBlob *inData, struct HksBlob *outData)
 {
     (void)keyAlias;
@@ -66,6 +70,7 @@ int32_t LnnCeEncryptDataByHuks(const struct HksBlob *keyAlias, const struct HksB
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
+SOFTBUS_VISIBILITY
 int32_t LnnCeDecryptDataByHuks(const struct HksBlob *keyAlias, const struct HksBlob *inData, struct HksBlob *outData)
 {
     (void)keyAlias;
@@ -74,7 +79,7 @@ int32_t LnnCeDecryptDataByHuks(const struct HksBlob *keyAlias, const struct HksB
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnGenerateRandomByHuks(uint8_t *randomKey, uint32_t len)
+SOFTBUS_VISIBILITY int32_t LnnGenerateRandomByHuks(uint8_t *randomKey, uint32_t len)
 {
     (void)randomKey;
     (void)len;

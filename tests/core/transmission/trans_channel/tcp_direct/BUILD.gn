@@ -20,6 +20,11 @@ softbus_adapter_common = "${dsoftbus_root_path}/adapter/common"
 
 ohos_unittest("TransServerTcpDirectTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "unittest/mock/trans_tcp_direct_common_mock.cpp",
     "unittest/trans_server_tcp_direct_test.cpp",
@@ -94,7 +99,8 @@ ohos_unittest("TransServerTcpDirectTest") {
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
     "$dsoftbus_root_path/core/connection/wifi_direct_cpp:wifi_direct",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   if (is_standard_system) {
@@ -119,13 +125,12 @@ ohos_unittest("TransServerTcpDirectTest") {
 }
 
 ohos_unittest("TransCoreTcpDirectTest") {
+  module_out_path = module_output_path
   sanitize = {
     cfi = true
     cfi_cross_dso = true
     debug = false
-    blocklist = "$dsoftbus_root_path/tests/cfi_blocklist.txt"
   }
-  module_out_path = module_output_path
   sources = [
     "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func.c",
     "unittest/mock/trans_tcp_direct_common_mock.cpp",
@@ -190,7 +195,8 @@ ohos_unittest("TransCoreTcpDirectTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
   deps += dsoftbus_log_label_deps
 
@@ -217,6 +223,11 @@ ohos_unittest("TransCoreTcpDirectTest") {
 
 ohos_unittest("TransTcpDirectMessageTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "unittest/trans_tcp_direct_message_test.cpp" ]
 
   include_dirs = [
@@ -281,7 +292,8 @@ ohos_unittest("TransTcpDirectMessageTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -295,6 +307,11 @@ ohos_unittest("TransTcpDirectMessageTest") {
 
 ohos_unittest("TransTcpDirectMessageAppendTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "unittest/mock/trans_tcp_direct_message_test_mock.cpp",
     "unittest/trans_tcp_direct_message_append_test.cpp",
@@ -371,7 +388,8 @@ ohos_unittest("TransTcpDirectMessageAppendTest") {
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
     "$dsoftbus_root_path/core/connection/wifi_direct_cpp:wifi_direct",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -387,6 +405,11 @@ ohos_unittest("TransTcpDirectMessageAppendTest") {
 
 ohos_unittest("TransTcpDirectP2pMockTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "unittest/mock/trans_tcp_direct_p2p_test_mock.cpp",
     "unittest/trans_tcp_direct_p2p_mock_test.cpp",
@@ -432,7 +455,8 @@ ohos_unittest("TransTcpDirectP2pMockTest") {
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
     "$dsoftbus_root_path/core/connection/wifi_direct_cpp:wifi_direct",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -448,6 +472,11 @@ ohos_unittest("TransTcpDirectP2pMockTest") {
 
 ohos_unittest("TransTcpDirectP2pTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "unittest/mock/trans_tcp_direct_common_mock.cpp",
     "unittest/trans_tcp_direct_p2p_test.cpp",
@@ -510,7 +539,8 @@ ohos_unittest("TransTcpDirectP2pTest") {
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
     "$dsoftbus_root_path/core/connection/wifi_direct_cpp:wifi_direct",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
   deps += dsoftbus_log_label_deps
 
@@ -525,6 +555,11 @@ ohos_unittest("TransTcpDirectP2pTest") {
 
 ohos_unittest("TransTcpDirectMessageStaticTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "unittest/trans_tcp_direct_message_static_test.cpp" ]
 
   include_dirs = [
@@ -596,7 +631,8 @@ ohos_unittest("TransTcpDirectMessageStaticTest") {
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
     "$dsoftbus_root_path/core/connection/wifi_direct_cpp:wifi_direct",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -610,6 +646,11 @@ ohos_unittest("TransTcpDirectMessageStaticTest") {
 
 ohos_unittest("TransTcpDirectCallbackTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "unittest/trans_tcp_direct_callback_test.cpp" ]
 
   include_dirs = [
@@ -641,7 +682,8 @@ ohos_unittest("TransTcpDirectCallbackTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -655,6 +697,11 @@ ohos_unittest("TransTcpDirectCallbackTest") {
 
 ohos_unittest("TransTcpDirectJsonTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "unittest/trans_tcp_direct_json_test.cpp" ]
 
   include_dirs = [
@@ -684,7 +731,8 @@ ohos_unittest("TransTcpDirectJsonTest") {
 
   deps = [
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -698,6 +746,11 @@ ohos_unittest("TransTcpDirectJsonTest") {
 
 ohos_unittest("TransTcpDirectWifiTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   include_dirs = [
     "$dsoftbus_dfx_path/interface/include",
@@ -763,6 +816,11 @@ ohos_unittest("TransTcpDirectWifiTest") {
 
 ohos_unittest("TransTcpDirectListenerTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "unittest/trans_tcp_direct_listener_test.cpp" ]
 
   include_dirs = [
@@ -799,7 +857,8 @@ ohos_unittest("TransTcpDirectListenerTest") {
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
     "$dsoftbus_root_path/core/connection/wifi_direct_cpp:wifi_direct",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -812,6 +871,11 @@ ohos_unittest("TransTcpDirectListenerTest") {
 
 ohos_unittest("TransTcpDirectListenerMockTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "unittest/mock/trans_tcp_direct_listener_test_mock.cpp",
     "unittest/trans_tcp_direct_listener_mock_test.cpp",
@@ -845,7 +909,8 @@ ohos_unittest("TransTcpDirectListenerMockTest") {
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
     "$dsoftbus_root_path/core/connection/wifi_direct_cpp:wifi_direct",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -857,6 +922,11 @@ ohos_unittest("TransTcpDirectListenerMockTest") {
 
 ohos_unittest("TransTcpDirectJsonMockTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "unittest/mock/trans_tcp_direct_json_test_mock.cpp",
     "unittest/trans_tcp_direct_json_mock_test.cpp",
@@ -887,7 +957,8 @@ ohos_unittest("TransTcpDirectJsonMockTest") {
 
   deps = [
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -901,9 +972,14 @@ ohos_unittest("TransTcpDirectJsonMockTest") {
 
 ohos_unittest("TransTcpDirectSessionConnTest") {
   module_out_path = module_output_path
-  sources = [ 
-    "unittest/trans_tcp_direct_sessionconn_test.cpp",
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+  sources = [
     "unittest/mock/trans_tcp_direct_sessionconn_mock.cpp",
+    "unittest/trans_tcp_direct_sessionconn_test.cpp",
   ]
 
   include_dirs = [
@@ -924,9 +1000,10 @@ ohos_unittest("TransTcpDirectSessionConnTest") {
   ]
 
   deps = [
-    "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
     "$dsoftbus_root_path/adapter:softbus_adapter",
+    "$dsoftbus_root_path/core/common:softbus_utils",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -953,7 +1030,7 @@ group("unittest") {
     ":TransTcpDirectMessageTest",
     ":TransTcpDirectP2pMockTest",
     ":TransTcpDirectP2pTest",
-    ":TransTcpDirectWifiTest",
     ":TransTcpDirectSessionConnTest",
+    ":TransTcpDirectWifiTest",
   ]
 }

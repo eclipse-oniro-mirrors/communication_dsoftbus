@@ -14,8 +14,8 @@
 group("fuzztest") {
   testonly = true
   deps = [
-    "softbusserverstub_fuzzer:fuzztest",
     "softbusserverstub2_fuzzer:fuzztest",
-    "softbusserverstub3_fuzzer:fuzztest"
+    "softbusserverstub3_fuzzer:fuzztest",
+    "softbusserverstub_fuzzer:fuzztest",
   ]
 }

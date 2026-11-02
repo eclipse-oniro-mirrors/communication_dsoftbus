@@ -15,6 +15,7 @@
 
 #include "trans_auth_lane_pending_ctl.h"
 
+#include "softbus_def.h"
 #include <securec.h>
 
 #include "trans_log.h"
@@ -77,7 +78,7 @@ static int32_t FillTransAuthWithParaNode(TransAuthWithParaNode *item, uint32_t l
     return SOFTBUS_OK;
 }
 
-int32_t TransAuthWithParaAddLaneReqToList(uint32_t laneReqId, const char *sessionName,
+SOFTBUS_SYMBOL_EXPORT int32_t TransAuthWithParaAddLaneReqToList(uint32_t laneReqId, const char *sessionName,
     bool accountInfo, int32_t channelId)
 {
     int32_t errCode = SOFTBUS_TRANS_CHANNEL_OPEN_FAILED;
@@ -126,7 +127,7 @@ ERR_EXIT:
     return errCode;
 }
 
-int32_t TransAuthWithParaDelLaneReqById(uint32_t laneReqId)
+SOFTBUS_SYMBOL_EXPORT int32_t TransAuthWithParaDelLaneReqById(uint32_t laneReqId)
 {
     TRANS_LOGD(TRANS_SVC, "laneReqId=%{public}u", laneReqId);
     if (g_authWithParaAsyncReqLaneList == NULL) {
@@ -158,8 +159,8 @@ int32_t TransAuthWithParaDelLaneReqById(uint32_t laneReqId)
     return SOFTBUS_TRANS_AUTH_CHANNEL_NOT_FOUND;
 }
 
-int32_t TransUpdateAuthWithParaLaneConnInfo(uint32_t laneHandle, bool bSucc, const LaneConnInfo *connInfo,
-    int32_t errCode)
+SOFTBUS_SYMBOL_EXPORT int32_t TransUpdateAuthWithParaLaneConnInfo(uint32_t laneHandle, bool bSucc,
+    const LaneConnInfo *connInfo, int32_t errCode)
 {
     if (g_authWithParaAsyncReqLaneList == NULL) {
         TRANS_LOGE(TRANS_SVC, "lane pending list no init.");
@@ -190,7 +191,8 @@ int32_t TransUpdateAuthWithParaLaneConnInfo(uint32_t laneHandle, bool bSucc, con
     return SOFTBUS_TRANS_NODE_NOT_FOUND;
 }
 
-int32_t TransAuthWithParaGetLaneReqByLaneReqId(uint32_t laneReqId, TransAuthWithParaNode *paraNode)
+SOFTBUS_SYMBOL_EXPORT int32_t TransAuthWithParaGetLaneReqByLaneReqId(uint32_t laneReqId,
+    TransAuthWithParaNode *paraNode)
 {
     if (paraNode == NULL) {
         TRANS_LOGE(TRANS_CTRL, "invalid paraNode");

@@ -47,6 +47,8 @@
 #include "softbus_client_frame_manager.h"
 #include "trans_server_proxy.h"
 
+#include "trans_split_serviceid.h"
+
 typedef int32_t (*SessionOptionRead)(int32_t channelId, int32_t type, void *value, uint32_t valueSize);
 typedef int32_t (*SessionOptionWrite)(int32_t channelId, int32_t type, void *value, uint32_t valueSize);
 
@@ -797,7 +799,7 @@ static const ConfigTypeMap g_configTypeMap[] = {
     {CHANNEL_TYPE_PROXY, BUSINESS_TYPE_D2D_MESSAGE, SOFTBUS_INT_D2D_MAX_MESSAGE_LENGTH},
 };
 
-int32_t GetDefaultConfigType(int32_t channelType, int32_t businessType)
+SOFTBUS_VISIBILITY int32_t GetDefaultConfigType(int32_t channelType, int32_t businessType)
 {
     const uint32_t nums = sizeof(g_configTypeMap) / sizeof(ConfigTypeMap);
     for (uint32_t i = 0; i < nums; i++) {
@@ -1152,6 +1154,7 @@ static int32_t SocketCheckAndSetSessionState(int32_t socket)
     return SOFTBUS_OK;
 }
 
+SOFTBUS_VISIBILITY
 int32_t ClientBind(int32_t socket, const QosTV qos[], uint32_t qosCount, const ISocketListener *listener, bool isAsync)
 {
     if (!IsValidSessionId(socket) || !IsValidSocketListener(listener, false) ||

@@ -23,6 +23,7 @@
 #include "g_enhance_lnn_func_pack.h"
 #include "lnn_feature_capability.h"
 #include "lnn_heartbeat_utils.h"
+#include "softbus_def.h"
 #include "softbus_utils.h"
 #define INVALID_META_TYPE (-1)
 static uint64_t GetCurrentTime(void)
@@ -331,7 +332,7 @@ static int32_t DlGetNodeBleMac(const char *networkId, bool checkOnline, void *bu
     return SOFTBUS_OK;
 }
 
-void LnnUpdateNodeBleMac(const char *networkId, char *bleMac, uint32_t len)
+SOFTBUS_SYMBOL_EXPORT void LnnUpdateNodeBleMac(const char *networkId, char *bleMac, uint32_t len)
 {
     if ((networkId == NULL) || (bleMac == NULL) || (len != MAC_LEN)) {
         LNN_LOGE(LNN_LEDGER, "invalid arg");
@@ -967,7 +968,7 @@ static DistributedLedgerKeyByIfname g_dlKeyByIfnameTable[] = {
     {NUM_KEY_PROXY_PORT, DlGetProxyPort},
 };
 
-bool LnnSetDLDeviceInfoName(const char *udid, const char *name)
+SOFTBUS_VISIBILITY bool LnnSetDLDeviceInfoName(const char *udid, const char *name)
 {
     DoubleHashMap *map = &(LnnGetDistributedNetLedger()->distributedInfo);
     NodeInfo *info = NULL;
@@ -1000,7 +1001,7 @@ EXIT:
     return false;
 }
 
-bool LnnSetDLDeviceNickName(const char *networkId, const char *name)
+SOFTBUS_VISIBILITY bool LnnSetDLDeviceNickName(const char *networkId, const char *name)
 {
     NodeInfo *node = NULL;
     if (networkId == NULL || name == NULL) {
@@ -1026,7 +1027,7 @@ EXIT:
     return false;
 }
 
-int32_t LnnSetDLUnifiedDeviceName(const char *udid, const char *name)
+SOFTBUS_VISIBILITY int32_t LnnSetDLUnifiedDeviceName(const char *udid, const char *name)
 {
     DoubleHashMap *map = &(LnnGetDistributedNetLedger()->distributedInfo);
     NodeInfo *info = NULL;
@@ -1060,7 +1061,7 @@ EXIT:
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t LnnSetDLUnifiedDefaultDeviceName(const char *udid, const char *name)
+SOFTBUS_VISIBILITY int32_t LnnSetDLUnifiedDefaultDeviceName(const char *udid, const char *name)
 {
     DoubleHashMap *map = &(LnnGetDistributedNetLedger()->distributedInfo);
     NodeInfo *info = NULL;
@@ -1094,7 +1095,7 @@ EXIT:
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t LnnSetDLDeviceNickNameByUdid(const char *udid, const char *name)
+SOFTBUS_VISIBILITY int32_t LnnSetDLDeviceNickNameByUdid(const char *udid, const char *name)
 {
     DoubleHashMap *map = &(LnnGetDistributedNetLedger()->distributedInfo);
     NodeInfo *info = NULL;
@@ -1128,7 +1129,7 @@ EXIT:
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t LnnSetDLDeviceStateVersion(const char *udid, int32_t stateVersion)
+SOFTBUS_VISIBILITY int32_t LnnSetDLDeviceStateVersion(const char *udid, int32_t stateVersion)
 {
     DoubleHashMap *map = &(LnnGetDistributedNetLedger()->distributedInfo);
     NodeInfo *info = NULL;
@@ -1158,7 +1159,7 @@ EXIT:
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t LnnSetDLDeviceBroadcastCipherKey(const char *udid, const void *cipherKey)
+SOFTBUS_VISIBILITY int32_t LnnSetDLDeviceBroadcastCipherKey(const char *udid, const void *cipherKey)
 {
     DoubleHashMap *map = &(LnnGetDistributedNetLedger()->distributedInfo);
     NodeInfo *info = NULL;
@@ -1187,7 +1188,7 @@ EXIT:
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t LnnSetDLDeviceBroadcastCipherIv(const char *udid, const void *cipherIv)
+SOFTBUS_VISIBILITY int32_t LnnSetDLDeviceBroadcastCipherIv(const char *udid, const void *cipherIv)
 {
     DoubleHashMap *map = &(LnnGetDistributedNetLedger()->distributedInfo);
     NodeInfo *info = NULL;
@@ -1216,7 +1217,7 @@ EXIT:
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t LnnSetDLDeviceSparkCheck(const char *udid, const void *sparkCheck)
+SOFTBUS_VISIBILITY int32_t LnnSetDLDeviceSparkCheck(const char *udid, const void *sparkCheck)
 {
     if (udid == NULL || sparkCheck == NULL) {
         LNN_LOGE(LNN_LEDGER, "param error");
@@ -1243,7 +1244,7 @@ int32_t LnnSetDLDeviceSparkCheck(const char *udid, const void *sparkCheck)
     return SOFTBUS_OK;
 }
 
-bool LnnSetDLP2pInfo(const char *networkId, const P2pInfo *info)
+SOFTBUS_VISIBILITY bool LnnSetDLP2pInfo(const char *networkId, const P2pInfo *info)
 {
     NodeInfo *node = NULL;
     if (networkId == NULL || info == NULL) {
@@ -1321,7 +1322,7 @@ bool LnnSetDlPtk(const char *networkId, const char *remotePtk)
     return true;
 }
 
-int32_t LnnGetRemoteStrInfo(const char *networkId, InfoKey key, char *info, uint32_t len)
+SOFTBUS_VISIBILITY int32_t LnnGetRemoteStrInfo(const char *networkId, InfoKey key, char *info, uint32_t len)
 {
     uint32_t i;
     int32_t ret;
@@ -1354,6 +1355,7 @@ int32_t LnnGetRemoteStrInfo(const char *networkId, InfoKey key, char *info, uint
     return SOFTBUS_NOT_FIND;
 }
 
+SOFTBUS_VISIBILITY
 int32_t LnnGetRemoteStrInfoByIfnameIdx(const char *networkId, InfoKey key, char *info, uint32_t len, int32_t ifIdx)
 {
     uint32_t i;
@@ -1387,7 +1389,7 @@ int32_t LnnGetRemoteStrInfoByIfnameIdx(const char *networkId, InfoKey key, char 
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t LnnGetRemoteNumInfo(const char *networkId, InfoKey key, int32_t *info)
+SOFTBUS_VISIBILITY int32_t LnnGetRemoteNumInfo(const char *networkId, InfoKey key, int32_t *info)
 {
     uint32_t i;
     int32_t ret;
@@ -1421,6 +1423,7 @@ int32_t LnnGetRemoteNumInfo(const char *networkId, InfoKey key, int32_t *info)
     return SOFTBUS_NOT_FIND;
 }
 
+SOFTBUS_VISIBILITY
 int32_t LnnGetRemoteNumInfoByIfnameIdx(const char *networkId, InfoKey key, int32_t *info, int32_t ifIdx)
 {
     uint32_t i;
@@ -1455,7 +1458,7 @@ int32_t LnnGetRemoteNumInfoByIfnameIdx(const char *networkId, InfoKey key, int32
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t LnnGetRemoteNumU32Info(const char *networkId, InfoKey key, uint32_t *info)
+SOFTBUS_VISIBILITY int32_t LnnGetRemoteNumU32Info(const char *networkId, InfoKey key, uint32_t *info)
 {
     uint32_t i;
     int32_t ret;
@@ -1489,7 +1492,7 @@ int32_t LnnGetRemoteNumU32Info(const char *networkId, InfoKey key, uint32_t *inf
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t LnnGetRemoteNumU64Info(const char *networkId, InfoKey key, uint64_t *info)
+SOFTBUS_VISIBILITY int32_t LnnGetRemoteNumU64Info(const char *networkId, InfoKey key, uint64_t *info)
 {
     uint32_t i;
     int32_t ret;
@@ -1522,7 +1525,7 @@ int32_t LnnGetRemoteNumU64Info(const char *networkId, InfoKey key, uint64_t *inf
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t LnnGetRemoteNum16Info(const char *networkId, InfoKey key, int16_t *info)
+SOFTBUS_VISIBILITY int32_t LnnGetRemoteNum16Info(const char *networkId, InfoKey key, int16_t *info)
 {
     uint32_t i;
     int32_t ret;
@@ -1588,7 +1591,7 @@ static int32_t LnnGetRemoteBoolInfoCommon(const char *networkId, bool checkOnlin
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t LnnGetRemoteBoolInfo(const char *networkId, InfoKey key, bool *info)
+SOFTBUS_VISIBILITY int32_t LnnGetRemoteBoolInfo(const char *networkId, InfoKey key, bool *info)
 {
     return LnnGetRemoteBoolInfoCommon(networkId, true, key, info);
 }
@@ -1598,7 +1601,7 @@ int32_t LnnGetRemoteBoolInfoIgnoreOnline(const char *networkId, InfoKey key, boo
     return LnnGetRemoteBoolInfoCommon(networkId, false, key, info);
 }
 
-int32_t LnnGetRemoteByteInfo(const char *networkId, InfoKey key, uint8_t *info, uint32_t len)
+SOFTBUS_SYMBOL_EXPORT int32_t LnnGetRemoteByteInfo(const char *networkId, InfoKey key, uint8_t *info, uint32_t len)
 {
     uint32_t i;
     int32_t ret;
@@ -1628,7 +1631,7 @@ int32_t LnnGetRemoteByteInfo(const char *networkId, InfoKey key, uint8_t *info, 
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t LnnGetNetworkIdByBtMac(const char *btMac, char *buf, uint32_t len)
+SOFTBUS_VISIBILITY int32_t LnnGetNetworkIdByBtMac(const char *btMac, char *buf, uint32_t len)
 {
     if (btMac == NULL || btMac[0] == '\0' || buf == NULL) {
         LNN_LOGE(LNN_LEDGER, "btMac is empty");
@@ -1669,6 +1672,7 @@ int32_t LnnGetNetworkIdByBtMac(const char *btMac, char *buf, uint32_t len)
     return SOFTBUS_NOT_FIND;
 }
 
+SOFTBUS_VISIBILITY
 int32_t LnnGetNetworkIdByUdidHash(const uint8_t *udidHash, uint32_t udidHashLen, char *buf, uint32_t len,
     bool needOnline)
 {
@@ -1718,7 +1722,7 @@ int32_t LnnGetNetworkIdByUdidHash(const uint8_t *udidHash, uint32_t udidHashLen,
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t LnnGetConnSubFeatureByUdidHashStr(const char *udidHashStr, uint64_t *connSubFeature)
+SOFTBUS_VISIBILITY int32_t LnnGetConnSubFeatureByUdidHashStr(const char *udidHashStr, uint64_t *connSubFeature)
 {
     if (udidHashStr == NULL || udidHashStr[0] == '\0' || connSubFeature == NULL) {
         LNN_LOGE(LNN_LEDGER, "para is empty");
@@ -1761,7 +1765,7 @@ int32_t LnnGetConnSubFeatureByUdidHashStr(const char *udidHashStr, uint64_t *con
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t LnnGetNetworkIdByUuid(const char *uuid, char *buf, uint32_t len)
+SOFTBUS_VISIBILITY int32_t LnnGetNetworkIdByUuid(const char *uuid, char *buf, uint32_t len)
 {
     if (!IsValidString(uuid, ID_MAX_LEN)) {
         LNN_LOGE(LNN_LEDGER, "uuid is invalid");
@@ -1791,7 +1795,7 @@ int32_t LnnGetNetworkIdByUuid(const char *uuid, char *buf, uint32_t len)
     return SOFTBUS_OK;
 }
 
-int32_t LnnGetNetworkIdByUdid(const char *udid, char *buf, uint32_t len)
+SOFTBUS_VISIBILITY int32_t LnnGetNetworkIdByUdid(const char *udid, char *buf, uint32_t len)
 {
     if (!IsValidString(udid, ID_MAX_LEN)) {
         LNN_LOGE(LNN_LEDGER, "udid is invalid");
@@ -1838,7 +1842,7 @@ int32_t LnnGetDLOnlineTimestamp(const char *networkId, uint64_t *timestamp)
     return SOFTBUS_OK;
 }
 
-int32_t LnnGetDLHeartbeatTimestamp(const char *networkId, uint64_t *timestamp)
+SOFTBUS_VISIBILITY int32_t LnnGetDLHeartbeatTimestamp(const char *networkId, uint64_t *timestamp)
 {
     if (SoftBusMutexLock(&(LnnGetDistributedNetLedger()->lock)) != SOFTBUS_OK) {
         LNN_LOGE(LNN_LEDGER, "lock mutex fail");
@@ -1855,7 +1859,7 @@ int32_t LnnGetDLHeartbeatTimestamp(const char *networkId, uint64_t *timestamp)
     return SOFTBUS_OK;
 }
 
-int32_t LnnSetDLHeartbeatTimestamp(const char *networkId, uint64_t timestamp)
+SOFTBUS_VISIBILITY int32_t LnnSetDLHeartbeatTimestamp(const char *networkId, uint64_t timestamp)
 {
     if (SoftBusMutexLock(&(LnnGetDistributedNetLedger()->lock)) != SOFTBUS_OK) {
         LNN_LOGE(LNN_LEDGER, "lock mutex fail");
@@ -1872,7 +1876,7 @@ int32_t LnnSetDLHeartbeatTimestamp(const char *networkId, uint64_t timestamp)
     return SOFTBUS_OK;
 }
 
-int32_t LnnSetDLSleHbTimestamp(const char *networkId, const uint64_t timestamp)
+SOFTBUS_VISIBILITY int32_t LnnSetDLSleHbTimestamp(const char *networkId, const uint64_t timestamp)
 {
     LNN_CHECK_AND_RETURN_RET_LOGE(networkId != NULL, SOFTBUS_INVALID_PARAM, LNN_LEDGER, "invalid param");
     if (SoftBusMutexLock(&(LnnGetDistributedNetLedger()->lock)) != SOFTBUS_OK) {
@@ -1890,7 +1894,7 @@ int32_t LnnSetDLSleHbTimestamp(const char *networkId, const uint64_t timestamp)
     return SOFTBUS_OK;
 }
 
-int32_t LnnGetDLSleHbTimestamp(const char *networkId, uint64_t *timestamp)
+SOFTBUS_VISIBILITY int32_t LnnGetDLSleHbTimestamp(const char *networkId, uint64_t *timestamp)
 {
     if (networkId == NULL || timestamp == NULL) {
         LNN_LOGE(LNN_LEDGER, "invalid param");
@@ -1953,7 +1957,7 @@ int32_t LnnGetDLUpdateTimestamp(const char *udid, uint64_t *timestamp)
     return SOFTBUS_OK;
 }
 
-int32_t LnnGetDLAuthCapacity(const char *networkId, uint32_t *authCapacity)
+SOFTBUS_VISIBILITY int32_t LnnGetDLAuthCapacity(const char *networkId, uint32_t *authCapacity)
 {
     if (SoftBusMutexLock(&(LnnGetDistributedNetLedger()->lock)) != SOFTBUS_OK) {
         LNN_LOGE(LNN_LEDGER, "lock mutex fail");
@@ -1987,7 +1991,7 @@ int32_t LnnSetDLBleDirectTimestamp(const char *networkId, uint64_t timestamp)
     return SOFTBUS_OK;
 }
 
-int32_t LnnSetDLConnCapability(const char *networkId, uint32_t connCapability)
+SOFTBUS_VISIBILITY int32_t LnnSetDLConnCapability(const char *networkId, uint32_t connCapability)
 {
     NodeInfo recoveryInfo;
     (void)memset_s(&recoveryInfo, sizeof(NodeInfo), 0, sizeof(NodeInfo));
@@ -2027,7 +2031,7 @@ int32_t LnnSetDLConnCapability(const char *networkId, uint32_t connCapability)
     return SOFTBUS_OK;
 }
 
-int32_t LnnSetDLConnUserIdCheckSum(const char *networkId, int32_t userIdCheckSum)
+SOFTBUS_VISIBILITY int32_t LnnSetDLConnUserIdCheckSum(const char *networkId, int32_t userIdCheckSum)
 {
     if (networkId == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -2059,7 +2063,7 @@ int32_t LnnSetDLConnUserIdCheckSum(const char *networkId, int32_t userIdCheckSum
     return SOFTBUS_OK;
 }
 
-int32_t LnnSetDLConnUserId(const char *networkId, int32_t userId)
+SOFTBUS_VISIBILITY int32_t LnnSetDLConnUserId(const char *networkId, int32_t userId)
 {
     if (networkId == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -2085,7 +2089,7 @@ int32_t LnnSetDLConnUserId(const char *networkId, int32_t userId)
     return SOFTBUS_OK;
 }
 
-int32_t LnnSetDLBatteryInfo(const char *networkId, const BatteryInfo *info)
+SOFTBUS_VISIBILITY int32_t LnnSetDLBatteryInfo(const char *networkId, const BatteryInfo *info)
 {
     if (networkId == NULL || info == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -2106,7 +2110,7 @@ int32_t LnnSetDLBatteryInfo(const char *networkId, const BatteryInfo *info)
     return SOFTBUS_OK;
 }
 
-int32_t LnnSetDLBssTransInfo(const char *networkId, const BssTransInfo *info)
+SOFTBUS_VISIBILITY int32_t LnnSetDLBssTransInfo(const char *networkId, const BssTransInfo *info)
 {
     if (networkId == NULL || info == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -2130,7 +2134,7 @@ int32_t LnnSetDLBssTransInfo(const char *networkId, const BssTransInfo *info)
     return SOFTBUS_OK;
 }
 
-int32_t LnnSetDLNodeAddr(const char *id, IdCategory type, const char *addr)
+SOFTBUS_VISIBILITY int32_t LnnSetDLNodeAddr(const char *id, IdCategory type, const char *addr)
 {
     if (SoftBusMutexLock(&(LnnGetDistributedNetLedger()->lock)) != SOFTBUS_OK) {
         LNN_LOGE(LNN_LEDGER, "lock mutex fail");
@@ -2150,7 +2154,7 @@ int32_t LnnSetDLNodeAddr(const char *id, IdCategory type, const char *addr)
     return ret == EOK ? SOFTBUS_OK : SOFTBUS_STRCPY_ERR;
 }
 
-int32_t LnnSetDLProxyPort(const char *id, IdCategory type, int32_t proxyPort)
+SOFTBUS_VISIBILITY int32_t LnnSetDLProxyPort(const char *id, IdCategory type, int32_t proxyPort)
 {
     if (SoftBusMutexLock(&(LnnGetDistributedNetLedger()->lock)) != SOFTBUS_OK) {
         LNN_LOGE(LNN_LEDGER, "lock mutex fail");
@@ -2167,7 +2171,7 @@ int32_t LnnSetDLProxyPort(const char *id, IdCategory type, int32_t proxyPort)
     return SOFTBUS_OK;
 }
 
-int32_t LnnSetDLSessionPort(const char *id, IdCategory type, int32_t sessionPort)
+SOFTBUS_VISIBILITY int32_t LnnSetDLSessionPort(const char *id, IdCategory type, int32_t sessionPort)
 {
     if (SoftBusMutexLock(&(LnnGetDistributedNetLedger()->lock)) != SOFTBUS_OK) {
         LNN_LOGE(LNN_LEDGER, "lock mutex fail");
@@ -2184,7 +2188,7 @@ int32_t LnnSetDLSessionPort(const char *id, IdCategory type, int32_t sessionPort
     return SOFTBUS_OK;
 }
 
-int32_t LnnSetDLAuthPort(const char *id, IdCategory type, int32_t authPort)
+SOFTBUS_VISIBILITY int32_t LnnSetDLAuthPort(const char *id, IdCategory type, int32_t authPort)
 {
     if (SoftBusMutexLock(&(LnnGetDistributedNetLedger()->lock)) != SOFTBUS_OK) {
         LNN_LOGE(LNN_LEDGER, "lock mutex fail");
@@ -2201,7 +2205,7 @@ int32_t LnnSetDLAuthPort(const char *id, IdCategory type, int32_t authPort)
     return SOFTBUS_OK;
 }
 
-int32_t LnnSetDLP2pIp(const char *id, IdCategory type, const char *p2pIp)
+SOFTBUS_VISIBILITY int32_t LnnSetDLP2pIp(const char *id, IdCategory type, const char *p2pIp)
 {
     if (id == NULL || p2pIp == NULL) {
         LNN_LOGE(LNN_LEDGER, "invalid param");
@@ -2226,7 +2230,7 @@ int32_t LnnSetDLP2pIp(const char *id, IdCategory type, const char *p2pIp)
     return SOFTBUS_OK;
 }
 
-bool LnnSetDLWifiDirectAddr(const char *networkId, const char *addr)
+SOFTBUS_VISIBILITY bool LnnSetDLWifiDirectAddr(const char *networkId, const char *addr)
 {
     NodeInfo *node = NULL;
     if (networkId == NULL || addr == NULL) {

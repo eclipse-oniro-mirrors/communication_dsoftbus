@@ -18,6 +18,11 @@ dsoftbus_root_path = "../../../../../.."
 
 ohos_unittest("dsoftbus_auth_ble_phone") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "ble_auth_channel_phone_test.cpp" ]
   include_dirs = [
     "$dsoftbus_root_path/core/common/inner_communication",

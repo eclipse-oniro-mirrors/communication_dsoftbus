@@ -20,6 +20,11 @@ softbus_adapter_common = "${dsoftbus_root_path}/adapter/common"
 
 ohos_unittest("ConnectionManagerTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   if (support_bluetooth && dsoftbus_feature_conn_br) {
     defines += [ "connection_enable_br_test" ]
@@ -42,9 +47,10 @@ ohos_unittest("ConnectionManagerTest") {
   ]
 
   deps = [
-    "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
     "$dsoftbus_root_path/adapter:softbus_adapter",
+    "$dsoftbus_root_path/core/common:softbus_utils",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -63,6 +69,11 @@ ohos_unittest("ConnectionManagerTest") {
 
 ohos_unittest("SoftbusConnectionManagerTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   if (support_bluetooth && dsoftbus_feature_conn_br) {
     defines += [ "connection_enable_br_test" ]
@@ -88,20 +99,21 @@ ohos_unittest("SoftbusConnectionManagerTest") {
   ]
 
   deps = [
-    "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
     "$dsoftbus_root_path/adapter:softbus_adapter",
+    "$dsoftbus_root_path/core/common:softbus_utils",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
     "bounds_checking_function:libsec_shared",
     "c_utils:utils",
+    "googletest:gmock_main",
     "googletest:gtest_main",
     "hilog:libhilog",
-    "googletest:gmock_main",
   ]
   sources = [
-    "$dsoftbus_root_path/tests/core/connection/manager/unittest/manager_test/mock/softbus_conn_manager_mock.cpp",
     "$dsoftbus_root_path/tests/core/connection/manager/unittest/manager_test/conn_manager_test.cpp",
+    "$dsoftbus_root_path/tests/core/connection/manager/unittest/manager_test/mock/softbus_conn_manager_mock.cpp",
   ]
 }

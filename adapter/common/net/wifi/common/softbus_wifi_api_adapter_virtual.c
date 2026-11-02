@@ -15,22 +15,23 @@
 
 #include <stdlib.h>
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 #include "softbus_wifi_api_adapter.h"
 
-int32_t SoftBusGetWifiDeviceConfig(SoftBusWifiDevConf *configList, uint32_t *num)
+SOFTBUS_VISIBILITY int32_t SoftBusGetWifiDeviceConfig(SoftBusWifiDevConf *configList, uint32_t *num)
 {
     (void)configList;
     (void)num;
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusConnectToDevice(const SoftBusWifiDevConf *wifiConfig)
+SOFTBUS_VISIBILITY int32_t SoftBusConnectToDevice(const SoftBusWifiDevConf *wifiConfig)
 {
     (void)wifiConfig;
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusDisconnectDevice(void)
+SOFTBUS_VISIBILITY int32_t SoftBusDisconnectDevice(void)
 {
     return SOFTBUS_OK;
 }
@@ -40,7 +41,7 @@ int32_t SoftBusStartWifiScan(void)
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t SoftBusRegisterWifiEvent(ISoftBusScanResult *cb)
+SOFTBUS_VISIBILITY int32_t SoftBusRegisterWifiEvent(ISoftBusScanResult *cb)
 {
     (void)cb;
     return SOFTBUS_NOT_IMPLEMENT;
@@ -53,25 +54,25 @@ int32_t SoftBusGetWifiScanList(SoftBusWifiScanInfo **result, uint32_t *size)
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t SoftBusUnRegisterWifiEvent(ISoftBusScanResult *cb)
+SOFTBUS_VISIBILITY int32_t SoftBusUnRegisterWifiEvent(ISoftBusScanResult *cb)
 {
     (void)cb;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t SoftBusGetChannelListFor5G(int32_t *channelList, int32_t num)
+SOFTBUS_VISIBILITY int32_t SoftBusGetChannelListFor5G(int32_t *channelList, int32_t num)
 {
     (void)channelList;
     (void)num;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-SoftBusBand SoftBusGetLinkBand(void)
+SOFTBUS_VISIBILITY SoftBusBand SoftBusGetLinkBand(void)
 {
     return BAND_UNKNOWN;
 }
 
-int32_t SoftBusGetLinkedInfo(SoftBusWifiLinkedInfo *info)
+SOFTBUS_VISIBILITY int32_t SoftBusGetLinkedInfo(SoftBusWifiLinkedInfo *info)
 {
     (void)info;
     return SOFTBUS_OK;
@@ -83,27 +84,27 @@ int32_t SoftBusGetCurrentGroup(SoftBusWifiP2pGroupInfo *groupInfo)
     return SOFTBUS_OK;
 }
 
-bool SoftBusHasWifiDirectCapability(void)
+SOFTBUS_VISIBILITY bool SoftBusHasWifiDirectCapability(void)
 {
     return true;
 }
 
-bool SoftBusIsWifiTripleMode(void)
+SOFTBUS_VISIBILITY bool SoftBusIsWifiTripleMode(void)
 {
     return false;
 }
 
-char* SoftBusGetWifiInterfaceCoexistCap(void)
+SOFTBUS_VISIBILITY char* SoftBusGetWifiInterfaceCoexistCap(void)
 {
     return NULL;
 }
 
-bool SoftBusIsWifiActive(void)
+SOFTBUS_VISIBILITY bool SoftBusIsWifiActive(void)
 {
     return true;
 }
 
-SoftBusWifiDetailState SoftBusGetWifiState(void)
+SOFTBUS_VISIBILITY SoftBusWifiDetailState SoftBusGetWifiState(void)
 {
     return SOFTBUS_WIFI_STATE_ACTIVED;
 }

@@ -33,6 +33,7 @@
 #include "lnn_ohos_account.h"
 #include "softbus_adapter_mem.h"
 #include "legacy/softbus_hidumper_buscenter.h"
+#include "softbus_def.h"
 
 DistributedNetLedger g_distributedNetLedger;
 
@@ -377,7 +378,7 @@ void PostOnlineNodesToCb(const INodeStateCb *callBack)
     LnnMapDeinitIterator(it);
 }
 
-NodeInfo *LnnGetNodeInfoById(const char *id, IdCategory type)
+SOFTBUS_VISIBILITY NodeInfo *LnnGetNodeInfoById(const char *id, IdCategory type)
 {
     NodeInfo *info = NULL;
     DoubleHashMap *map = &g_distributedNetLedger.distributedInfo;
@@ -465,7 +466,7 @@ static NodeInfo *LnnGetNodeInfoByDeviceId(const char *id)
     return NULL;
 }
 
-int32_t LnnGetRemoteNodeInfoById(const char *id, IdCategory type, NodeInfo *info)
+SOFTBUS_VISIBILITY int32_t LnnGetRemoteNodeInfoById(const char *id, IdCategory type, NodeInfo *info)
 {
     if (id == NULL || info == NULL) {
         LNN_LOGE(LNN_LEDGER, "param error");
@@ -494,7 +495,7 @@ int32_t LnnGetRemoteNodeInfoById(const char *id, IdCategory type, NodeInfo *info
 }
 
 /* key means networkId/udid/uuid/macAddr/ip */
-int32_t LnnGetRemoteNodeInfoByKey(const char *key, NodeInfo *info)
+SOFTBUS_VISIBILITY int32_t LnnGetRemoteNodeInfoByKey(const char *key, NodeInfo *info)
 {
     if (key == NULL || info == NULL) {
         LNN_LOGE(LNN_LEDGER, "param error");
@@ -518,7 +519,7 @@ int32_t LnnGetRemoteNodeInfoByKey(const char *key, NodeInfo *info)
     return SOFTBUS_OK;
 }
 
-bool LnnGetOnlineStateById(const char *id, IdCategory type)
+SOFTBUS_VISIBILITY bool LnnGetOnlineStateById(const char *id, IdCategory type)
 {
     bool state = false;
     if (!IsValidString(id, ID_MAX_LEN)) {
@@ -606,7 +607,7 @@ static void RemoveCnnCode(Map *cnnCode, const char *uuid, DiscoveryType type)
     return;
 }
 
-short LnnGetCnnCode(const char *uuid, DiscoveryType type)
+SOFTBUS_VISIBILITY short LnnGetCnnCode(const char *uuid, DiscoveryType type)
 {
     char *key = CreateCnnCodeKey(uuid, type);
     if (key == NULL) {
@@ -657,7 +658,7 @@ static void MergeLnnInfo(const NodeInfo *oldInfo, NodeInfo *info)
     }
 }
 
-int32_t LnnUpdateNetworkId(const NodeInfo *newInfo)
+SOFTBUS_VISIBILITY int32_t LnnUpdateNetworkId(const NodeInfo *newInfo)
 {
     const char *udid = NULL;
     DoubleHashMap *map = NULL;
@@ -859,7 +860,7 @@ static int32_t RemoteNodeInfoRetrieve(NodeInfo *newInfo, int32_t connectionType)
     return SOFTBUS_OK;
 }
 
-bool LnnIsLocalSupportMcuFeature(void)
+SOFTBUS_VISIBILITY bool LnnIsLocalSupportMcuFeature(void)
 {
     uint64_t localFeature = 0;
     if (LnnGetLocalNumU64Info(NUM_KEY_FEATURE_CAPA, &localFeature) != SOFTBUS_OK) {
@@ -891,7 +892,7 @@ static void UpdateDeviceInfoToMlps(const char *udid)
     }
 }
 
-int32_t LnnUpdateNodeInfo(NodeInfo *newInfo, int32_t connectionType)
+SOFTBUS_VISIBILITY int32_t LnnUpdateNodeInfo(NodeInfo *newInfo, int32_t connectionType)
 {
     const char *udid = NULL;
     DoubleHashMap *map = NULL;
@@ -936,7 +937,7 @@ int32_t LnnUpdateNodeInfo(NodeInfo *newInfo, int32_t connectionType)
     return ret;
 }
 
-int32_t LnnAddMetaInfo(NodeInfo *info)
+SOFTBUS_VISIBILITY int32_t LnnAddMetaInfo(NodeInfo *info)
 {
     if (info == NULL) {
         LNN_LOGE(LNN_LEDGER, "param error");
@@ -988,7 +989,7 @@ int32_t LnnAddMetaInfo(NodeInfo *info)
     return SOFTBUS_OK;
 }
 
-int32_t LnnDeleteMetaInfo(const char *udid, AuthLinkType type)
+SOFTBUS_VISIBILITY int32_t LnnDeleteMetaInfo(const char *udid, AuthLinkType type)
 {
     NodeInfo *info = NULL;
     DiscoveryType discType = ConvertToDiscoveryType(type);
@@ -1419,7 +1420,7 @@ static void UpdateTrustedDb(int64_t accountId, const char *deviceId)
     }
 }
 
-ReportCategory LnnAddOnlineNode(NodeInfo *info)
+SOFTBUS_VISIBILITY ReportCategory LnnAddOnlineNode(NodeInfo *info)
 {
     if (info == NULL) {
         return REPORT_NONE;
@@ -1470,7 +1471,7 @@ ReportCategory LnnAddOnlineNode(NodeInfo *info)
     return REPORT_NONE;
 }
 
-int32_t LnnUpdateAccountInfo(const NodeInfo *info)
+SOFTBUS_VISIBILITY int32_t LnnUpdateAccountInfo(const NodeInfo *info)
 {
     if (info == NULL) {
         LNN_LOGE(LNN_LEDGER, "info is null");
@@ -1501,7 +1502,7 @@ int32_t LnnUpdateAccountInfo(const NodeInfo *info)
     return SOFTBUS_OK;
 }
 
-int32_t LnnUpdateRemoteDeviceName(const NodeInfo *info)
+SOFTBUS_VISIBILITY int32_t LnnUpdateRemoteDeviceName(const NodeInfo *info)
 {
     if (info == NULL) {
         LNN_LOGE(LNN_LEDGER, "info is null");
@@ -1556,7 +1557,7 @@ int32_t LnnUpdateRemoteDeviceName(const NodeInfo *info)
     return SOFTBUS_OK;
 }
 
-int32_t LnnUpdateGroupType(const NodeInfo *info)
+SOFTBUS_VISIBILITY int32_t LnnUpdateGroupType(const NodeInfo *info)
 {
     if (info == NULL) {
         LNN_LOGE(LNN_LEDGER, "info is null");
@@ -1636,7 +1637,7 @@ static void LnnClearIpInfo(NodeInfo *info, ConnectionAddrType type)
     LnnClearDiscoveryType(info, LnnConvAddrTypeToDiscType(type));
 }
 
-ReportCategory LnnSetNodeOffline(const char *udid, ConnectionAddrType type, int32_t authId)
+SOFTBUS_VISIBILITY ReportCategory LnnSetNodeOffline(const char *udid, ConnectionAddrType type, int32_t authId)
 {
     NodeInfo *info = NULL;
     uint64_t lastCommTimestamp = 0;
@@ -1688,7 +1689,7 @@ ReportCategory LnnSetNodeOffline(const char *udid, ConnectionAddrType type, int3
     return REPORT_OFFLINE;
 }
 
-int32_t LnnGetBasicInfoByUdid(const char *udid, NodeBasicInfo *basicInfo)
+SOFTBUS_VISIBILITY int32_t LnnGetBasicInfoByUdid(const char *udid, NodeBasicInfo *basicInfo)
 {
     if (udid == NULL || basicInfo == NULL) {
         LNN_LOGE(LNN_LEDGER, "PARA ERROR");
@@ -1705,7 +1706,7 @@ int32_t LnnGetBasicInfoByUdid(const char *udid, NodeBasicInfo *basicInfo)
     return ret;
 }
 
-void LnnRemoveNode(const char *udid)
+SOFTBUS_VISIBILITY void LnnRemoveNode(const char *udid)
 {
     DoubleHashMap *map = &g_distributedNetLedger.distributedInfo;
     if (udid == NULL) {
@@ -1719,7 +1720,7 @@ void LnnRemoveNode(const char *udid)
     SoftBusMutexUnlock(&g_distributedNetLedger.lock);
 }
 
-int32_t LnnConvertDLidToUdid(const char *id, IdCategory type, char *udid, uint32_t len)
+SOFTBUS_VISIBILITY int32_t LnnConvertDLidToUdid(const char *id, IdCategory type, char *udid, uint32_t len)
 {
     NodeInfo *info = NULL;
     const char *tmpUdid = NULL;
@@ -1749,7 +1750,7 @@ int32_t LnnConvertDLidToUdid(const char *id, IdCategory type, char *udid, uint32
     return SOFTBUS_OK;
 }
 
-int32_t LnnConvertDlId(const char *srcId, IdCategory srcIdType, IdCategory dstIdType,
+SOFTBUS_VISIBILITY int32_t LnnConvertDlId(const char *srcId, IdCategory srcIdType, IdCategory dstIdType,
     char *dstIdBuf, uint32_t dstIdBufLen)
 {
     NodeInfo *info = NULL;
@@ -1795,7 +1796,7 @@ int32_t LnnConvertDlId(const char *srcId, IdCategory srcIdType, IdCategory dstId
     return rc;
 }
 
-int32_t LnnGetLnnRelation(const char *id, IdCategory type, uint8_t *relation, uint32_t len)
+SOFTBUS_VISIBILITY int32_t LnnGetLnnRelation(const char *id, IdCategory type, uint8_t *relation, uint32_t len)
 {
     NodeInfo *info = NULL;
 
@@ -1947,7 +1948,7 @@ static bool IsIgnoreUpdateToLedger(
     return isIgnore;
 }
 
-int32_t LnnUpdateDistributedNodeInfo(NodeInfo *newInfo, const char *udid)
+SOFTBUS_VISIBILITY int32_t LnnUpdateDistributedNodeInfo(NodeInfo *newInfo, const char *udid)
 {
     if (newInfo == NULL || udid == NULL) {
         LNN_LOGE(LNN_LEDGER, "param error");
@@ -1982,7 +1983,7 @@ int32_t LnnUpdateDistributedNodeInfo(NodeInfo *newInfo, const char *udid)
     return SOFTBUS_OK;
 }
 
-void LnnUpdateAclState(const char *udid, AclWriteState aclState)
+SOFTBUS_VISIBILITY void LnnUpdateAclState(const char *udid, AclWriteState aclState)
 {
     if (udid == NULL) {
         LNN_LOGE(LNN_LEDGER, "param error");
@@ -2050,7 +2051,7 @@ static int32_t GetAllOnlineAndMetaNodeInfo(NodeBasicInfo **info, int32_t *infoNu
     return ret;
 }
 
-bool LnnIsLSANode(const NodeBasicInfo *info)
+SOFTBUS_VISIBILITY bool LnnIsLSANode(const NodeBasicInfo *info)
 {
     NodeInfo nodeInfo;
     (void)memset_s(&nodeInfo, sizeof(NodeInfo), 0, sizeof(NodeInfo));
@@ -2061,7 +2062,7 @@ bool LnnIsLSANode(const NodeBasicInfo *info)
     return false;
 }
 
-int32_t LnnGetAllOnlineNodeNum(int32_t *nodeNum)
+SOFTBUS_VISIBILITY int32_t LnnGetAllOnlineNodeNum(int32_t *nodeNum)
 {
     if (nodeNum == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -2190,17 +2191,17 @@ int32_t LnnGetOnlineAndOfflineWithinTimeUdids(char **udids, int32_t *udidNum, ui
     return ret;
 }
 
-int32_t LnnGetAllOnlineNodeInfo(NodeBasicInfo **info, int32_t *infoNum)
+SOFTBUS_VISIBILITY int32_t LnnGetAllOnlineNodeInfo(NodeBasicInfo **info, int32_t *infoNum)
 {
     return GetAllOnlineAndMetaNodeInfo(info, infoNum, false);
 }
 
-int32_t LnnGetAllOnlineAndMetaNodeInfo(NodeBasicInfo **info, int32_t *infoNum)
+SOFTBUS_VISIBILITY int32_t LnnGetAllOnlineAndMetaNodeInfo(NodeBasicInfo **info, int32_t *infoNum)
 {
     return GetAllOnlineAndMetaNodeInfo(info, infoNum, true);
 }
 
-int32_t SoftBusDumpBusCenterRemoteDeviceInfo(int32_t fd)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusDumpBusCenterRemoteDeviceInfo(int32_t fd)
 {
     SOFTBUS_DPRINTF(fd, "-----RemoteDeviceInfo-----\n");
     NodeBasicInfo *remoteNodeInfo = NULL;
@@ -2327,7 +2328,7 @@ void LnnRefreshDeviceOnlineStateAndDevIdInfo(const char *pkgName, DeviceInfo *de
     }
 }
 
-int32_t LnnGetOsTypeByNetworkId(const char *networkId, int32_t *osType)
+SOFTBUS_VISIBILITY int32_t LnnGetOsTypeByNetworkId(const char *networkId, int32_t *osType)
 {
     if (networkId == NULL || osType == NULL) {
         LNN_LOGE(LNN_LEDGER, "invalid param");
@@ -2395,7 +2396,7 @@ bool IsRemoteDeviceSupportBleGuide(const char *id, IdCategory type)
     return true;
 }
 
-bool LnnIsRemoteSupportAuthCapBit(const char *networkid, AuthCapability capaBit)
+SOFTBUS_VISIBILITY bool LnnIsRemoteSupportAuthCapBit(const char *networkid, AuthCapability capaBit)
 {
     if (networkid == NULL) {
         LNN_LOGE(LNN_LEDGER, "invalid param");
@@ -2444,7 +2445,7 @@ static int32_t AuthDeviceGetNetworkId(const char *udid, char **networkIds, uint3
     return SOFTBUS_OK;
 }
 
-int32_t AuthGetAllNetworkId(const char *udid, char **networkIds, uint32_t *networkIdCount)
+SOFTBUS_VISIBILITY int32_t AuthGetAllNetworkId(const char *udid, char **networkIds, uint32_t *networkIdCount)
 {
     if (udid == NULL || networkIds == NULL || networkIdCount == NULL) {
         LNN_LOGE(LNN_LEDGER, "invalid param");

@@ -34,6 +34,11 @@ test_external_deps = [
 
 ohos_unittest("LnnWifiServiceMonitorTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "$dsoftbus_root_path/tests/adapter/common/src/lnn_wifiservice_monitor_test.cpp" ]
 
   include_dirs = [
@@ -76,6 +81,11 @@ ohos_unittest("LnnWifiServiceMonitorTest") {
 
 ohos_unittest("LnnLinkWatchTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/adapter/common/bus_center/network/lnn_linkwatch.c",
     "$dsoftbus_root_path/tests/adapter/common/src/lnn_linkwatch_test.cpp",

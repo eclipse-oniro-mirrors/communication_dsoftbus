@@ -17,8 +17,9 @@
 
 #include "lnn_log.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
-int32_t LnnStartTimeSync(const char *pkgName, int32_t callingPid, const char *targetNetworkId,
+SOFTBUS_VISIBILITY int32_t LnnStartTimeSync(const char *pkgName, int32_t callingPid, const char *targetNetworkId,
     TimeSyncAccuracy accuracy, TimeSyncPeriod period)
 {
     (void)pkgName;
@@ -29,7 +30,7 @@ int32_t LnnStartTimeSync(const char *pkgName, int32_t callingPid, const char *ta
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnStopTimeSync(const char *pkgName, const char *targetNetworkId, int32_t callingPid)
+SOFTBUS_VISIBILITY int32_t LnnStopTimeSync(const char *pkgName, const char *targetNetworkId, int32_t callingPid)
 {
     (void)pkgName;
     (void)targetNetworkId;

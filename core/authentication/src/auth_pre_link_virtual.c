@@ -17,19 +17,20 @@
 
 #include "auth_log.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 int32_t InitAuthPreLinkList(void)
 {
     return SOFTBUS_OK;
 }
 
-bool IsAuthPreLinkNodeExist(uint32_t requestId)
+SOFTBUS_VISIBILITY bool IsAuthPreLinkNodeExist(uint32_t requestId)
 {
     (void)requestId;
     return false;
 }
 
-int32_t AddToAuthPreLinkList(uint32_t requestId, int32_t fd, ConnectionAddr *connAddr)
+SOFTBUS_VISIBILITY int32_t AddToAuthPreLinkList(uint32_t requestId, int32_t fd, ConnectionAddr *connAddr)
 {
     (void)requestId;
     (void)fd;

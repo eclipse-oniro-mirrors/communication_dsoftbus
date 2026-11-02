@@ -173,7 +173,7 @@ static void FillExtraByProxyChannelErrorEnd(TransEventExtra *extra, const AppInf
     extra->localUdid = localUdid;
 }
 
-int32_t OnProxyChannelOpened(int32_t channelId, const AppInfo *appInfo, unsigned char isServer)
+SOFTBUS_VISIBILITY int32_t OnProxyChannelOpened(int32_t channelId, const AppInfo *appInfo, unsigned char isServer)
 {
     int32_t ret = SOFTBUS_TRANS_PROXY_ERROR_APP_TYPE;
     if (appInfo == NULL) {
@@ -255,7 +255,7 @@ static int32_t TransProxyNotifyOpenFailedByType(
     }
 }
 
-int32_t OnProxyChannelBind(int32_t channelId, const AppInfo *appInfo)
+SOFTBUS_VISIBILITY int32_t OnProxyChannelBind(int32_t channelId, const AppInfo *appInfo)
 {
 #ifdef DSOFTBUS_FEATURE_PROXY_CHANNEL
     int32_t ret = SOFTBUS_TRANS_PROXY_ERROR_APP_TYPE;
@@ -340,7 +340,7 @@ static void TransProxyReportOpenChannelFailEvent(int32_t channelId, const AppInf
     SoftbusRecordOpenSessionKpi(appInfo->myData.pkgName, appInfo->linkType, SOFTBUS_EVT_OPEN_SESSION_FAIL, timediff);
 }
 
-int32_t OnProxyChannelOpenFailed(int32_t channelId, const AppInfo *appInfo, int32_t errCode)
+SOFTBUS_VISIBILITY int32_t OnProxyChannelOpenFailed(int32_t channelId, const AppInfo *appInfo, int32_t errCode)
 {
     if (appInfo == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -357,7 +357,7 @@ int32_t OnProxyChannelOpenFailed(int32_t channelId, const AppInfo *appInfo, int3
     return TransProxyNotifyOpenFailedByType(appInfo, appInfo->appType, channelId, errCode);
 }
 
-int32_t OnProxyChannelClosed(int32_t channelId, const AppInfo *appInfo)
+SOFTBUS_VISIBILITY int32_t OnProxyChannelClosed(int32_t channelId, const AppInfo *appInfo)
 {
     if (appInfo == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -381,7 +381,7 @@ int32_t OnProxyChannelClosed(int32_t channelId, const AppInfo *appInfo)
     return ret;
 }
 
-int32_t OnProxyChannelMsgReceived(int32_t channelId, const AppInfo *appInfo, const char *data,
+SOFTBUS_VISIBILITY int32_t OnProxyChannelMsgReceived(int32_t channelId, const AppInfo *appInfo, const char *data,
     uint32_t len)
 {
     int32_t ret = SOFTBUS_OK;
@@ -447,7 +447,7 @@ EXIT_ERR:
 }
 
 
-int32_t TransOpenNetWorkingChannel(
+SOFTBUS_VISIBILITY int32_t TransOpenNetWorkingChannel(
     const char *sessionName, const char *peerNetworkId, const LanePreferredLinkList *preferred)
 {
     if (!IsValidStringSafe(sessionName, SESSION_NAME_SIZE_MAX) ||
@@ -473,7 +473,7 @@ int32_t TransOpenNetWorkingChannel(
     return channelId;
 }
 
-int32_t TransSendNetworkingMessage(int32_t channelId, const char *data, uint32_t dataLen,
+SOFTBUS_VISIBILITY int32_t TransSendNetworkingMessage(int32_t channelId, const char *data, uint32_t dataLen,
     int32_t priority)
 {
     ProxyChannelInfo *info = (ProxyChannelInfo *)SoftBusCalloc(sizeof(ProxyChannelInfo));
@@ -509,7 +509,7 @@ int32_t TransSendNetworkingMessage(int32_t channelId, const char *data, uint32_t
     return ret;
 }
 
-int32_t TransCloseNetWorkingChannel(int32_t channelId)
+SOFTBUS_VISIBILITY int32_t TransCloseNetWorkingChannel(int32_t channelId)
 {
     return TransProxyCloseProxyChannel(channelId);
 }

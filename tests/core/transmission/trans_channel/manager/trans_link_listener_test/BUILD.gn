@@ -18,6 +18,11 @@ module_output_path = "dsoftbus/soft_bus/transmission"
 
 ohos_unittest("TransLinkListenerTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "../mock/trans_manager_mock.cpp",
     "trans_link_listener_test.cpp",
@@ -45,7 +50,7 @@ ohos_unittest("TransLinkListenerTest") {
 
   deps = [
     "$dsoftbus_core_path/common:softbus_utils",
-    "$dsoftbus_core_path/frame:softbus_server",
+    "$dsoftbus_core_path/frame:softbus_server_test",
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/connection/wifi_direct_cpp:wifi_direct",
   ]

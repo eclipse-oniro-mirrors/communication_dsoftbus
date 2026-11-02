@@ -44,6 +44,7 @@ if (defined(ohos_lite)) {
       if (!use_libfuzzer) {
         deps += [
           "adapter:unittest",
+          "br_proxy:unittest",
           "core/adapter:unittest",
           "core/authentication:unittest",
           "core/broadcast:unittest",
@@ -61,7 +62,6 @@ if (defined(ohos_lite)) {
           "sdk/frame/common:unittest",
           "sdk/frame/standard:unittest",
           "sdk/transmission:unittest",
-          "br_proxy:unittest",
         ]
       }
     }

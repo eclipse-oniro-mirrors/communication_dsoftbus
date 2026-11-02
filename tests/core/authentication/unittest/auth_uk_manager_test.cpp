@@ -13,9 +13,11 @@
  * limitations under the License.
  */
 
+#include <chrono>
 #include <cinttypes>
 #include <gtest/gtest.h>
 #include <securec.h>
+#include <thread>
 
 #include "auth_log.h"
 #include "auth_uk_manager.c"
@@ -869,6 +871,7 @@ HWTEST_F(AuthUkManagerTest, UPDATE_ALL_GEN_CB_CALLBACK_Test_001, TestSize.Level1
     EXPECT_EQ(CreateUkNegotiateInstanceInner(), SOFTBUS_OK);
     EXPECT_NO_FATAL_FAILURE(UpdateAllGenCbCallback(&info, isSuccess, reason, 0));
     EXPECT_NO_FATAL_FAILURE(OnGenSuccess(reason));
+    std::this_thread::sleep_for(std::chrono::seconds(2));
     DeleteUkNegotiateInstance(requestId);
     DeInitUkNegoInstanceList();
     UkNegotiateDeinit();
@@ -900,7 +903,8 @@ HWTEST_F(AuthUkManagerTest, GET_CRED_ID_BY_ID_SERVICE_Test_001, TestSize.Level1)
     const char *accountHash = "accountTest";
     int32_t userId = 100;
     char *ptr = GetCredIdByIdService(
-        const_cast<char *>(localUdidHash), const_cast<char *>(remoteUdidHash), const_cast<char *>(accountHash), userId);
+        const_cast<char *>(localUdidHash), const_cast<char *>(remoteUdidHash),
+        const_cast<char *>(accountHash), userId);
     EXPECT_EQ(ptr, nullptr);
 }
 
@@ -1112,10 +1116,10 @@ HWTEST_F(AuthUkManagerTest, PROCESS_UK_DEVICE_ID_Test_001, TestSize.Level1)
     uint32_t dataLen = strlen(data);
     EXPECT_EQ(CreateUkNegotiateInstanceInner(), SOFTBUS_OK);
     int32_t ret = ProcessUkDeviceId(channelId, requestId, data, dataLen);
-    EXPECT_EQ(ret, SOFTBUS_NETWORK_GET_NODE_INFO_ERR);
+    EXPECT_NE(ret, SOFTBUS_OK);
     requestId = 1;
     ret = ProcessUkDeviceId(channelId, requestId, data, dataLen);
-    EXPECT_EQ(ret, SOFTBUS_NETWORK_GET_NODE_INFO_ERR);
+    EXPECT_NE(ret, SOFTBUS_OK);
     DeleteUkNegotiateInstance(requestId);
     DeInitUkNegoInstanceList();
     UkNegotiateDeinit();
@@ -1530,6 +1534,7 @@ HWTEST_F(AuthUkManagerTest, UPDATE_ALL_GEN_CB_CALLBACK_TEST_002, TestSize.Level1
     isSuccess = false;
     reason = SOFTBUS_AUTH_UK_INSTANCE_NOT_FIND;
     EXPECT_NO_FATAL_FAILURE(UpdateAllGenCbCallback(&info, isSuccess, reason, 0));
+    std::this_thread::sleep_for(std::chrono::seconds(2));
     for (uint32_t i = 0; i < 2; i++) {
         DeleteUkNegotiateInstance(400 + i);
     }

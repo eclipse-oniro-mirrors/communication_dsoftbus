@@ -2713,4 +2713,63 @@ HWTEST_F(SoftbusServerStubTest, CheckAccountConstraintTest006, TestSize.Level1)
         EXPECT_EQ(ret, SOFTBUS_OK);
     }
 }
+
+/*
+ * @tc.name: SoftbusServerStubTestSetWirelessLinkCtrl001
+ * @tc.desc: Verify SetWirelessLinkCtrlInner returns SOFTBUS_TRANS_PROXY_READINT_FAILED
+ *           when data.ReadInt32(socket) fails (empty parcel).
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusServerStubTest, SoftbusServerStubTestSetWirelessLinkCtrl001, TestSize.Level1)
+{
+    sptr<OHOS::SoftBusServerStub> softBusServer = new OHOS::SoftBusServer(SOFTBUS_SERVER_SA_ID, true);
+    ASSERT_NE(nullptr, softBusServer);
+    MessageParcel datas;
+    MessageParcel reply;
+    int32_t ret = softBusServer->SetWirelessLinkCtrlInner(datas, reply);
+    EXPECT_EQ(SOFTBUS_TRANS_PROXY_READINT_FAILED, ret);
+}
+
+/*
+ * @tc.name: SoftbusServerStubTestSetWirelessLinkCtrl002
+ * @tc.desc: Verify SetWirelessLinkCtrlInner writes error code to reply and returns it
+ *           when TransProcessWirelessLinkCtrl fails (socket=0 triggers SOFTBUS_INVALID_PARAM).
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusServerStubTest, SoftbusServerStubTestSetWirelessLinkCtrl002, TestSize.Level1)
+{
+    sptr<OHOS::SoftBusServerStub> softBusServer = new OHOS::SoftBusServer(SOFTBUS_SERVER_SA_ID, true);
+    ASSERT_NE(nullptr, softBusServer);
+    MessageParcel datas;
+    MessageParcel reply;
+    EXPECT_TRUE(datas.WriteInt32(0));
+    int32_t ret = softBusServer->SetWirelessLinkCtrlInner(datas, reply);
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
+    int32_t replyVal = 0;
+    EXPECT_TRUE(reply.ReadInt32(replyVal));
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, replyVal);
+}
+
+/*
+ * @tc.name: SoftbusServerStubTestSetWirelessLinkCtrl003
+ * @tc.desc: Verify SetWirelessLinkCtrlInner writes SOFTBUS_OK to reply and returns SOFTBUS_OK
+ *           when TransProcessWirelessLinkCtrl succeeds (socket=1).
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusServerStubTest, SoftbusServerStubTestSetWirelessLinkCtrl003, TestSize.Level1)
+{
+    sptr<OHOS::SoftBusServerStub> softBusServer = new OHOS::SoftBusServer(SOFTBUS_SERVER_SA_ID, true);
+    ASSERT_NE(nullptr, softBusServer);
+    MessageParcel datas;
+    MessageParcel reply;
+    EXPECT_TRUE(datas.WriteInt32(1));
+    int32_t ret = softBusServer->SetWirelessLinkCtrlInner(datas, reply);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    int32_t replyVal = -1;
+    EXPECT_TRUE(reply.ReadInt32(replyVal));
+    EXPECT_EQ(SOFTBUS_OK, replyVal);
+}
 }

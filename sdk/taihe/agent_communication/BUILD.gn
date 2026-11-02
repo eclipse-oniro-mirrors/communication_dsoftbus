@@ -44,6 +44,15 @@ ohos_taihe("run_conversation_taihe") {
 
 taihe_shared_library("conversation_taihe_native") {
   public_configs = [ ":conversation_taihe_config" ]
+  cflags = [
+    "-fvisibility=hidden",
+    "-Oz",
+    "-fmerge-all-constants",
+  ]
+  ldflags = [
+    "-Wl,--exclude-libs,ALL",
+    "-Wl,--hash-style=gnu",
+  ]
   sources = get_target_outputs(":run_conversation_taihe")
 
   if (dsoftbus_feature_compile_guard) {

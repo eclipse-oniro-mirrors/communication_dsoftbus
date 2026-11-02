@@ -35,7 +35,7 @@ const int32_t CMD_EXIT = 0x11001100;
 const int32_t CMD_RECV = 0x22002200;
 const int32_t CMD_REPLY = 0x33003300;
 const int32_t SET_SIZE = 100;
-const int32_t WLAN_INDEX = 4;
+const int32_t LO_INDEX = 1;
 
 SoftBusSockAddrIn g_serAddr = { .sinFamily = SOFTBUS_AF_INET,
     .sinPort = SoftBusHtoNs(TEST_PORT),
@@ -2303,7 +2303,7 @@ HWTEST_F(AdapterDsoftbusSocketTest, SoftBusIndexToIfNameTest001, TestSize.Level0
 }
 
 /*
- * @tc.name: SoftBusIndexToIfNameTest001
+ * @tc.name: SoftBusIndexToIfNameTest002
  * @tc.desc: invalidIndex
  * @tc.type: FUNC
  * @tc.require: SOFTBUS_INVALID_PARAM
@@ -2317,15 +2317,15 @@ HWTEST_F(AdapterDsoftbusSocketTest, SoftBusIndexToIfNameTest002, TestSize.Level0
 }
 
 /*
- * @tc.name: SoftBusIndexToIfNameTest001
- * @tc.desc: WLAN_INDEX
+ * @tc.name: SoftBusIndexToIfNameTest003
+ * @tc.desc: LO_INDEX
  * @tc.type: FUNC
  * @tc.require: SOFTBUS_ADAPTER_OK
  */
 HWTEST_F(AdapterDsoftbusSocketTest, SoftBusIndexToIfNameTest003, TestSize.Level0)
 {
     char ifname[IF_NAME_SIZE] = { 0 };
-    int32_t ret = SoftBusIndexToIfName(WLAN_INDEX, ifname, IF_NAME_SIZE);
+    int32_t ret = SoftBusIndexToIfName(LO_INDEX, ifname, IF_NAME_SIZE);
     EXPECT_EQ(SOFTBUS_ADAPTER_OK, ret);
 }
 

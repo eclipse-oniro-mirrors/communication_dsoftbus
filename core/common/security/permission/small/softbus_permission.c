@@ -71,12 +71,12 @@ void TransPermissionDeinit(void)
     DeinitPermissionJson();
 }
 
-int32_t LnnInitPermission(void)
+SOFTBUS_VISIBILITY int32_t LnnInitPermission(void)
 {
     return SOFTBUS_OK;
 }
 
-int32_t CheckLnnPermission(const char *interfaceName, const char *processName)
+SOFTBUS_VISIBILITY int32_t CheckLnnPermission(const char *interfaceName, const char *processName)
 {
     (void)interfaceName;
     (void)processName;
@@ -85,7 +85,7 @@ int32_t CheckLnnPermission(const char *interfaceName, const char *processName)
 
 void LnnDeinitPermission(void) { }
 
-int32_t CheckTransPermission(pid_t callingUid, pid_t callingPid,
+SOFTBUS_VISIBILITY int32_t CheckTransPermission(pid_t callingUid, pid_t callingPid,
     const char *pkgName, const char *sessionName, uint32_t actions)
 {
     int32_t permType = GetPermType(callingUid, callingPid, pkgName);
@@ -105,7 +105,7 @@ int32_t CheckTransPermission(pid_t callingUid, pid_t callingPid,
     return SOFTBUS_PERMISSION_DENIED;
 }
 
-int32_t CheckTransSecLevel(const char *mySessionName, const char *peerSessionName)
+SOFTBUS_VISIBILITY int32_t CheckTransSecLevel(const char *mySessionName, const char *peerSessionName)
 {
     if (mySessionName == NULL || peerSessionName == NULL) {
         COMM_LOGI(COMM_PERM, "invalid param");

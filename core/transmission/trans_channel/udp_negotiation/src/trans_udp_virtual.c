@@ -15,6 +15,7 @@
 
 #include "trans_udp_negotiation.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 int32_t TransUdpChannelInit(IServerChannelCallBack *callback)
 {
@@ -27,7 +28,7 @@ void TransUdpChannelDeinit(void)
     return;
 }
 
-int32_t TransOpenUdpChannel(AppInfo* appInfo, const ConnectOption *connOpt, int32_t *channelId)
+SOFTBUS_VISIBILITY int32_t TransOpenUdpChannel(AppInfo* appInfo, const ConnectOption *connOpt, int32_t *channelId)
 {
     (void)appInfo;
     (void)connOpt;

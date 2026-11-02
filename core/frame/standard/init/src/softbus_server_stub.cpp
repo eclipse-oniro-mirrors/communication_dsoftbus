@@ -224,6 +224,7 @@ void SoftBusServerStub::InitMemberFuncMap()
     memberFuncMap_[SERVER_GET_DM_EX_OBJ] = &SoftBusServerStub::GetBusCenterExObjInner;
     memberFuncMap_[SERVER_PROCESS_INNER_EVENT] = &SoftBusServerStub::ProcessInnerEventInner;
     memberFuncMap_[SERVER_SET_WIRELESS_LINK_CTRL] = &SoftBusServerStub::SetWirelessLinkCtrlInner;
+    memberFuncMap_[SERVER_SET_DISCONNECT_POLICY] = &SoftBusServerStub::SetDisconnectPolicyInner;
     memberFuncMap_[SERVER_PRIVILEGE_CLOSE_CHANNEL] = &SoftBusServerStub::PrivilegeCloseChannelInner;
     memberFuncMap_[SERVER_SET_DISPLAY_NAME] = &SoftBusServerStub::SetDisplayNameInner;
     memberFuncMap_[SERVER_CREATE_GROUP_OWNER] = &SoftBusServerStub::CreateGroupOwnerInner;
@@ -299,6 +300,7 @@ void SoftBusServerStub::InitMemberPermissionMap()
     memberPermissionMap_[SERVER_EVALUATE_QOS] = OHOS_PERMISSION_DISTRIBUTED_DATASYNC;
     memberPermissionMap_[SERVER_PROCESS_INNER_EVENT] = OHOS_PERMISSION_DISTRIBUTED_DATASYNC;
     memberPermissionMap_[SERVER_SET_WIRELESS_LINK_CTRL] = OHOS_PERMISSION_DISTRIBUTED_DATASYNC;
+    memberPermissionMap_[SERVER_SET_DISCONNECT_POLICY] = OHOS_PERMISSION_DISTRIBUTED_DATASYNC;
     memberPermissionMap_[SERVER_PRIVILEGE_CLOSE_CHANNEL] = OHOS_PERMISSION_DISTRIBUTED_DATASYNC;
     memberPermissionMap_[SERVER_SET_DISPLAY_NAME] = OHOS_PERMISSION_DISTRIBUTED_SOFTBUS_CENTER;
     memberPermissionMap_[SERVER_CREATE_GROUP_OWNER] = OHOS_PERMISSION_DISTRIBUTED_SOFTBUS_CENTER;
@@ -2237,6 +2239,29 @@ int32_t SoftBusServerStub::SetWirelessLinkCtrlInner(MessageParcel &data, Message
             return SOFTBUS_TRANS_PROXY_WRITEINT_FAILED;
         }
         return ret;
+    }
+    if (!reply.WriteInt32(ret)) {
+        COMM_LOGE(COMM_SVC, "write reply failed!");
+        return SOFTBUS_TRANS_PROXY_WRITEINT_FAILED;
+    }
+    return ret;
+}
+
+int32_t SoftBusServerStub::SetDisconnectPolicyInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t channelId = 0;
+    if (!data.ReadInt32(channelId)) {
+        COMM_LOGE(COMM_SVC, "read channelId failed!");
+        return SOFTBUS_TRANS_PROXY_READINT_FAILED;
+    }
+    int32_t policy = 0;
+    if (!data.ReadInt32(policy)) {
+        COMM_LOGE(COMM_SVC, "read policy failed!");
+        return SOFTBUS_TRANS_PROXY_READINT_FAILED;
+    }
+    int32_t ret = TransProcessDisconnectPolicy(channelId, (DisconnectPolicy)policy);
+    if (ret != SOFTBUS_OK) {
+        COMM_LOGE(COMM_SVC, "failed, channelId=%{public}d, ret=%{public}d", channelId, ret);
     }
     if (!reply.WriteInt32(ret)) {
         COMM_LOGE(COMM_SVC, "write reply failed!");

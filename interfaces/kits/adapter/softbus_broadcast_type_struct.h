@@ -400,6 +400,7 @@ typedef struct {
     BroadcastPayload bcData;
     BroadcastPayload rspData;
     BroadcastPayload uuidData;
+    bool isIncludeDeviceName;
 } BroadcastPacket;
 
 /**
@@ -470,6 +471,7 @@ typedef struct {
     uint8_t linkRole;
     uint8_t frameType;
     uint8_t businessType;
+    bool isIncludeDeviceName;
 } BroadcastParam;
 
 /**

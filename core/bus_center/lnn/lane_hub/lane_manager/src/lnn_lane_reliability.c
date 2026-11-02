@@ -22,6 +22,7 @@
 #include "lnn_trans_lane.h"
 #include "softbus_adapter_mem.h"
 #include "softbus_base_listener.h"
+#include "softbus_def.h"
 #include "softbus_socket.h"
 
 #define WLAN_DETECT_TIMEOUT 3000
@@ -348,6 +349,7 @@ static int32_t LaneDetectOnDataEvent(ListenerModule module, int32_t events, int3
     return SOFTBUS_OK;
 }
 
+SOFTBUS_VISIBILITY
 int32_t LaneDetectReliability(uint32_t laneReqId, const LaneLinkInfo *linkInfo, const LaneLinkCb *callback)
 {
     if (laneReqId == INVALID_LANE_REQ_ID || linkInfo == NULL || callback == NULL) {

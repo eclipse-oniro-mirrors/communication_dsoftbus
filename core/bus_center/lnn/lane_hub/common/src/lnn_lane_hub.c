@@ -19,10 +19,11 @@
 #include "lnn_lane.h"
 #include "lnn_time_sync_manager.h"
 #include "perception_manager.h"
+#include "softbus_def.h"
 
 #define LNN_DUMP_CONTROL_LANE_GEOUP_INFO "control_lane_group_info"
 
-int32_t LnnInitLaneHub(void)
+SOFTBUS_VISIBILITY int32_t LnnInitLaneHub(void)
 {
     if (InitLane() != SOFTBUS_OK) {
         LNN_LOGE(LNN_INIT, "init lane fail");
@@ -58,7 +59,7 @@ int32_t LnnInitLaneHub(void)
     return SOFTBUS_OK;
 }
 
-int32_t LnnInitLaneHubDelay(void)
+SOFTBUS_VISIBILITY int32_t LnnInitLaneHubDelay(void)
 {
     if (LnnStartHeartbeatFrameDelay() != SOFTBUS_OK) {
         LNN_LOGE(LNN_INIT, "start heartbeat delay fail");

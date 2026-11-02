@@ -19,10 +19,11 @@
 #include <dlfcn.h>
 
 #include "lnn_log.h"
+#include "softbus_def.h"
 
 LnnEnhanceFuncList g_lnnEnhanceFuncList = { NULL };
 
-LnnEnhanceFuncList *LnnEnhanceFuncListGet(void)
+SOFTBUS_VISIBILITY LnnEnhanceFuncList *LnnEnhanceFuncListGet(void)
 {
     return &g_lnnEnhanceFuncList;
 }
@@ -300,6 +301,12 @@ void Register6thPartFunc(void *soHandle)
     g_lnnEnhanceFuncList.perceptionEnhanceInit = dlsym(soHandle, "PerceptionEnhanceInit");
     g_lnnEnhanceFuncList.perceptionEnhanceDeinit = dlsym(soHandle, "PerceptionEnhanceDeinit");
     g_lnnEnhanceFuncList.lnnGetAllDevicesUdid = dlsym(soHandle, "LnnGetAllDevicesUdid");
+    g_lnnEnhanceFuncList.dcWifiDirectExclusiveCancelByDeviceId =
+        dlsym(soHandle, "DcWifiDirectExclusiveCancelByDeviceId");
+    g_lnnEnhanceFuncList.dcWifiDirectExclusiveClearByPid =
+        dlsym(soHandle, "DcWifiDirectExclusiveClearByPid");
+    g_lnnEnhanceFuncList.dcWifiDirectExclusiveCancelBySessionName =
+        dlsym(soHandle, "DcWifiDirectExclusiveCancelBySessionName");
 }
 
 int32_t LnnRegisterEnhanceFunc(void *soHandle)

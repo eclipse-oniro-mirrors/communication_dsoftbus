@@ -18,6 +18,7 @@
 #define INTERFACES_INNERKITS_TRANS_SERVER_PROXY_STANDARD_H_
 
 #include "if_softbus_server.h"
+#include "softbus_app_info.h"
 
 namespace OHOS {
 class TransServerProxy : public IRemoteProxy<ISoftBusServer> {
@@ -76,6 +77,7 @@ public:
     int32_t GetProxyChannelState(int32_t uid, bool *isEnable);
     int32_t RegisterPushHook();
     int32_t SetWirelessLinkCtrl(int32_t socket);
+    int32_t SetDisconnectPolicy(int32_t channelId, DisconnectPolicy policy);
 private:
     static inline BrokerDelegator<TransServerProxy> delegator_;
 };

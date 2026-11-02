@@ -486,7 +486,7 @@ HWTEST_F(SoftbusGEnhanceTest, SoftbusGEnhanceTest013, TestSize.Level1)
     ret = LnnInitCipherKeyManagerPacked();
     EXPECT_EQ(ret, SOFTBUS_OK);
     ret = LnnSendNotTrustedInfoPacked(nullptr, 0, nullptr);
-    EXPECT_EQ(ret, SOFTBUS_NOT_IMPLEMENT);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
     RegisterOOBEMonitorPacked(nullptr);
     ret = LnnLinkFinderInitPacked();
     EXPECT_EQ(ret, SOFTBUS_NOT_IMPLEMENT);
@@ -952,28 +952,6 @@ HWTEST_F(SoftbusGEnhanceTest, SoftbusGEnhanceTest029, TestSize.Level1)
     pfnDiscEnhanceFuncList->discCoapProcessDeviceInfo = DiscCoapProcessDeviceInfoStub;
     ret = DiscCoapProcessDeviceInfoPacked(nullptr, nullptr, discCb);
     EXPECT_EQ(ret, SOFTBUS_OK);
-#if !defined(__G_ENHANCE_DISC_FUNC_PACK_INNER_DISC_COAP_VIRTUAL)
-    pfnDiscEnhanceFuncList->discCoapAssembleBdata = nullptr;
-    ret = DiscCoapAssembleBdataPacked(nullptr, 0, nullptr, 0);
-    EXPECT_EQ(ret, SOFTBUS_OK);
-    pfnDiscEnhanceFuncList->discCoapAssembleBdata = DiscCoapAssembleBdataStub;
-    ret = DiscCoapAssembleBdataPacked(nullptr, 0, nullptr, 0);
-    EXPECT_EQ(ret, SOFTBUS_OK);
-#ifdef DSOFTBUS_FEATURE_DISC_SHARED_COAP
-    pfnDiscEnhanceFuncList->discCoapAssembleCapData = nullptr;
-    ret = DiscCoapAssembleCapDataPacked(0, nullptr, 0, nullptr, 0);
-    EXPECT_EQ(ret, SOFTBUS_FUNC_NOT_SUPPORT);
-    pfnDiscEnhanceFuncList->discCoapAssembleCapData = DiscCoapAssembleCapDataStub;
-    ret = DiscCoapAssembleCapDataPacked(0, nullptr, 0, nullptr, 0);
-    EXPECT_EQ(ret, SOFTBUS_OK);
-#endif
-#endif
-    pfnDiscEnhanceFuncList->discFillBtype = nullptr;
-    ret = DiscFillBtypePacked(0, 0, nullptr);
-    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
-    pfnDiscEnhanceFuncList->discFillBtype = DiscFillBtypeStub;
-    ret = DiscFillBtypePacked(0, 0, nullptr);
-    EXPECT_EQ(ret, SOFTBUS_OK);
 }
 #endif
 
@@ -1244,5 +1222,119 @@ HWTEST_F(SoftbusGEnhanceTest, SoftbusGEnhanceTest038, TestSize.Level1)
     EXPECT_EQ(ret, SOFTBUS_NOT_IMPLEMENT);
     ret = AuthMetaOpenConnWithOtherOsTypePacked(nullptr, nullptr, 0, nullptr);
     EXPECT_EQ(ret, SOFTBUS_NOT_IMPLEMENT);
+}
+
+/*
+ * @tc.name: SoftbusGEnhanceTest039
+ * @tc.desc: DiscCoapAssembleBdataPacked and DiscCoapAssembleCapDataPacked test
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+#ifdef SUPPORT_JSAPI
+HWTEST_F(SoftbusGEnhanceTest, SoftbusGEnhanceTest039, TestSize.Level1)
+{
+    DiscEnhanceFuncList *pfnDiscEnhanceFuncList = DiscEnhanceFuncListGet();
+    uint32_t ret = 0;
+#if !defined(__G_ENHANCE_DISC_FUNC_PACK_INNER_DISC_COAP_VIRTUAL)
+#ifdef DSOFTBUS_FEATURE_DISC_COAP_CUSTDATA
+    ret = DiscCoapAssembleBdataPacked(nullptr, 0, nullptr, 0);
+    EXPECT_EQ(ret, SOFTBUS_MEM_ERR);
+#else
+    pfnDiscEnhanceFuncList->discCoapAssembleBdata = nullptr;
+    ret = DiscCoapAssembleBdataPacked(nullptr, 0, nullptr, 0);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    pfnDiscEnhanceFuncList->discCoapAssembleBdata = DiscCoapAssembleBdataStub;
+    ret = DiscCoapAssembleBdataPacked(nullptr, 0, nullptr, 0);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+#endif
+#ifdef DSOFTBUS_FEATURE_DISC_SHARED_COAP
+    pfnDiscEnhanceFuncList->discCoapAssembleCapData = nullptr;
+    ret = DiscCoapAssembleCapDataPacked(0, nullptr, 0, nullptr, 0);
+    EXPECT_EQ(ret, SOFTBUS_FUNC_NOT_SUPPORT);
+    pfnDiscEnhanceFuncList->discCoapAssembleCapData = DiscCoapAssembleCapDataStub;
+    ret = DiscCoapAssembleCapDataPacked(0, nullptr, 0, nullptr, 0);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+#endif
+#endif
+    pfnDiscEnhanceFuncList->discFillBtype = nullptr;
+    ret = DiscFillBtypePacked(0, 0, nullptr);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+    pfnDiscEnhanceFuncList->discFillBtype = DiscFillBtypeStub;
+    ret = DiscFillBtypePacked(0, 0, nullptr);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+}
+#endif
+
+static int32_t DcWifiDirectExclusiveCancelByDeviceIdStub(const char *deviceId)
+{
+    (void)deviceId;
+    return SOFTBUS_OK;
+}
+
+static void DcWifiDirectExclusiveClearByPidStub(int32_t pid)
+{
+    (void)pid;
+}
+
+static int32_t DcWifiDirectExclusiveCancelBySessionNameStub(const char *sessionName)
+{
+    (void)sessionName;
+    return SOFTBUS_OK;
+}
+
+/*
+ * @tc.name: DcWifiDirectExclusiveCancelByDeviceIdPackedTest001
+ * @tc.desc: DcWifiDirectExclusiveCancelByDeviceIdPacked function test
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(SoftbusGEnhanceTest, DcWifiDirectExclusiveCancelByDeviceIdPackedTest001, TestSize.Level1)
+{
+    LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
+    pfnLnnEnhanceFuncList->dcWifiDirectExclusiveCancelByDeviceId = nullptr;
+    int32_t ret = DcWifiDirectExclusiveCancelByDeviceIdPacked(TEST_NETWORK_ID);
+    EXPECT_EQ(ret, SOFTBUS_NOT_IMPLEMENT);
+
+    pfnLnnEnhanceFuncList->dcWifiDirectExclusiveCancelByDeviceId = DcWifiDirectExclusiveCancelByDeviceIdStub;
+    ret = DcWifiDirectExclusiveCancelByDeviceIdPacked(TEST_NETWORK_ID);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+}
+
+/*
+ * @tc.name: DcWifiDirectExclusiveClearByPidPackedTest001
+ * @tc.desc: DcWifiDirectExclusiveClearByPidPacked function test
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(SoftbusGEnhanceTest, DcWifiDirectExclusiveClearByPidPackedTest001, TestSize.Level1)
+{
+    LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
+    pfnLnnEnhanceFuncList->dcWifiDirectExclusiveClearByPid = nullptr;
+    EXPECT_NO_FATAL_FAILURE(DcWifiDirectExclusiveClearByPidPacked(TEST_PID));
+
+    pfnLnnEnhanceFuncList->dcWifiDirectExclusiveClearByPid = DcWifiDirectExclusiveClearByPidStub;
+    EXPECT_NO_FATAL_FAILURE(DcWifiDirectExclusiveClearByPidPacked(TEST_PID));
+}
+
+/*
+ * @tc.name: DcWifiDirectExclusiveCancelBySessionNamePackedTest001
+ * @tc.desc: DcWifiDirectExclusiveCancelBySessionNamePacked function test
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(SoftbusGEnhanceTest, DcWifiDirectExclusiveCancelBySessionNamePackedTest001, TestSize.Level1)
+{
+    LnnEnhanceFuncList *pfnLnnEnhanceFuncList = LnnEnhanceFuncListGet();
+    pfnLnnEnhanceFuncList->dcWifiDirectExclusiveCancelBySessionName = nullptr;
+    int32_t ret = DcWifiDirectExclusiveCancelBySessionNamePacked(TEST_PKG_NAME);
+    EXPECT_EQ(ret, SOFTBUS_NOT_IMPLEMENT);
+
+    pfnLnnEnhanceFuncList->dcWifiDirectExclusiveCancelBySessionName = DcWifiDirectExclusiveCancelBySessionNameStub;
+    ret = DcWifiDirectExclusiveCancelBySessionNamePacked(TEST_PKG_NAME);
+    EXPECT_EQ(ret, SOFTBUS_OK);
 }
 }

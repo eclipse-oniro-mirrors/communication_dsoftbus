@@ -14,6 +14,7 @@
  */
 
 #include "disc_coap_capability_public.h"
+#include "softbus_def.h"
 
 #include "anonymizer.h"
 #include "cJSON.h"
@@ -24,8 +25,8 @@
 #include "softbus_error_code.h"
 #include "softbus_utils.h"
 
-int32_t DiscCoapAssembleCapData(uint32_t capability, const char *capabilityData, uint32_t dataLen, char *outData,
-    uint32_t outLen)
+SOFTBUS_SYMBOL_EXPORT int32_t DiscCoapAssembleCapData(uint32_t capability, const char *capabilityData,
+    uint32_t dataLen, char *outData, uint32_t outLen)
 {
     (void)capability;
     (void)capabilityData;
@@ -36,7 +37,8 @@ int32_t DiscCoapAssembleCapData(uint32_t capability, const char *capabilityData,
 }
 
 #ifdef DSOFTBUS_FEATURE_DISC_COAP
-int32_t DiscCoapFillServiceData(const PublishOption *option, char *outData, uint32_t outDataLen, uint32_t allCap)
+SOFTBUS_SYMBOL_EXPORT int32_t DiscCoapFillServiceData(const PublishOption *option, char *outData, uint32_t outDataLen,
+    uint32_t allCap)
 {
     (void)option;
     (void)outData;
@@ -46,7 +48,7 @@ int32_t DiscCoapFillServiceData(const PublishOption *option, char *outData, uint
 }
 #endif /* DSOFTBUS_FEATURE_DISC_COAP */
 
-int32_t DiscFillBtype(uint32_t capability, uint32_t allCap, NSTACKX_DiscoverySettings *discSet)
+SOFTBUS_SYMBOL_EXPORT int32_t DiscFillBtype(uint32_t capability, uint32_t allCap, NSTACKX_DiscoverySettings *discSet)
 {
     (void)allCap;
     DISC_CHECK_AND_RETURN_RET_LOGW(discSet != NULL, SOFTBUS_INVALID_PARAM, DISC_COAP, "discSet is NULL");
@@ -77,7 +79,7 @@ int32_t DiscFillBtype(uint32_t capability, uint32_t allCap, NSTACKX_DiscoverySet
     return SOFTBUS_OK;
 }
 
-int32_t DiscCoapProcessDeviceInfo(const NSTACKX_DeviceInfo *nstackxInfo, DeviceInfo *devInfo,
+SOFTBUS_SYMBOL_EXPORT int32_t DiscCoapProcessDeviceInfo(const NSTACKX_DeviceInfo *nstackxInfo, DeviceInfo *devInfo,
     const DiscInnerCallback discCb)
 {
     DISC_CHECK_AND_RETURN_RET_LOGE(nstackxInfo != NULL, SOFTBUS_INVALID_PARAM, DISC_COAP, "nstackx devInfo is NULL");
@@ -124,7 +126,7 @@ int32_t DiscCoapProcessDeviceInfo(const NSTACKX_DeviceInfo *nstackxInfo, DeviceI
 }
 
 #ifdef DSOFTBUS_FEATURE_DISC_COAP_CUSTDATA
-int32_t DiscCoapAssembleBdata(const unsigned char *capabilityData, uint32_t dataLen,
+SOFTBUS_SYMBOL_EXPORT int32_t DiscCoapAssembleBdata(const unsigned char *capabilityData, uint32_t dataLen,
     char *businessData, uint32_t businessDataLen)
 {
     cJSON *json = cJSON_CreateObject();

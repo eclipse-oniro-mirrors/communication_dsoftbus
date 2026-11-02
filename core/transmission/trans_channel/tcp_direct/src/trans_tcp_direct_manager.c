@@ -286,7 +286,7 @@ static int32_t TransUpdateAppInfo(AppInfo *appInfo, const ConnectOption *connInf
     return SOFTBUS_OK;
 }
 
-int32_t TransOpenDirectChannel(AppInfo *appInfo, const ConnectOption *connInfo, int32_t *channelId)
+SOFTBUS_VISIBILITY int32_t TransOpenDirectChannel(AppInfo *appInfo, const ConnectOption *connInfo, int32_t *channelId)
 {
     TRANS_LOGD(TRANS_CTRL, "enter.");
     if (appInfo == NULL || connInfo == NULL || channelId == NULL) {

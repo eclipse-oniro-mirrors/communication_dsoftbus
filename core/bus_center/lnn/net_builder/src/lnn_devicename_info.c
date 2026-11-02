@@ -29,6 +29,7 @@
 #include "lnn_settingdata_event_monitor.h"
 #include "softbus_adapter_mem.h"
 #include "softbus_adapter_json.h"
+#include "softbus_def.h"
 
 #define KEY_NICK_NAME "KEY_NICK_NAME"
 #define KEY_ACCOUNT "KEY_ACCOUNT"
@@ -259,7 +260,7 @@ void LnnInitDeviceNameStatusSet(InitDepsStatus status)
     }
 }
 
-int32_t LnnSetLocalDeviceName(const char *displayName)
+SOFTBUS_VISIBILITY int32_t LnnSetLocalDeviceName(const char *displayName)
 {
     if (displayName == NULL || strnlen(displayName, DEVICE_NAME_BUF_LEN) == 0 ||
         strnlen(displayName, DEVICE_NAME_BUF_LEN) == DEVICE_NAME_BUF_LEN) {
@@ -304,7 +305,7 @@ int32_t LnnSetLocalDeviceName(const char *displayName)
     return SOFTBUS_OK;
 }
 
-int32_t LnnInitDevicename(void)
+SOFTBUS_VISIBILITY int32_t LnnInitDevicename(void)
 {
     int32_t ret = LnnRegSyncInfoHandler(LNN_INFO_TYPE_DEVICE_NAME, OnReceiveDeviceName);
     if (ret != SOFTBUS_OK) {
@@ -313,7 +314,7 @@ int32_t LnnInitDevicename(void)
     return LnnRegSyncInfoHandler(LNN_INFO_TYPE_NICK_NAME, OnReceiveDeviceNickName);
 }
 
-void LnnDeinitDevicename(void)
+SOFTBUS_VISIBILITY void LnnDeinitDevicename(void)
 {
     (void)LnnUnregSyncInfoHandler(LNN_INFO_TYPE_DEVICE_NAME, OnReceiveDeviceName);
     (void)LnnUnregSyncInfoHandler(LNN_INFO_TYPE_NICK_NAME, OnReceiveDeviceNickName);

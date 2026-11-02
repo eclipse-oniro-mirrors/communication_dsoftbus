@@ -17,6 +17,7 @@
 #include "common_event_manager.h"
 #include "common_event_support.h"
 #include "comm_log.h"
+#include "softbus_def.h"
 #include "softbus_error_code.h"
 #include "br_proxy_server_manager.h"
 #include "trans_event.h"
@@ -57,7 +58,7 @@ public:
     }
 };
 
-extern "C" int32_t RegisterHapUninstallEvent(void)
+extern "C" SOFTBUS_VISIBILITY int32_t RegisterHapUninstallEvent(void)
 {
     MatchingSkills matchingSkills;
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED);

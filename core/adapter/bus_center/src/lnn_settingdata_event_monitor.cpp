@@ -45,7 +45,7 @@ static std::string ReadSystemParameter(const char *paramKey)
     return "";
 }
 
-int32_t LnnGetUnifiedDeviceName(char *unifiedName, uint32_t len)
+SOFTBUS_VISIBILITY int32_t LnnGetUnifiedDeviceName(char *unifiedName, uint32_t len)
 {
     (void)unifiedName;
     (void)len;
@@ -82,6 +82,7 @@ static bool IsZHLanguage(void)
     return true;
 }
 
+SOFTBUS_VISIBILITY
 int32_t LnnGetDeviceDisplayName(const char *nickName, const char *defaultName, char *deviceName, uint32_t len)
 {
     if (nickName == nullptr || defaultName == nullptr || deviceName == nullptr || len == 0) {

@@ -27,6 +27,7 @@
 #include "softbus_broadcast_utils_struct.h"
 #include "softbus_broadcast_type.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 #define GATT_ADV_MAX_NUM            21
 #define LP_BT_UUID_BURST            "43d4a49f-604d-45b5-9302-4ddbbfd538fd"
@@ -739,6 +740,7 @@ static int32_t SoftbusSetAdvData(int32_t advId, const SoftbusBroadcastData *data
     }
     SoftBusMutexUnlock(&g_advLock);
     StartAdvRawData advRawData = {};
+    advRawData.rspIncludeDeviceName = data->isIncludeDeviceName;
     advRawData.advData = (unsigned char *)AssembleAdvData(data, (uint16_t *)&advRawData.advDataLen);
     if (advRawData.advData == NULL) {
         DISC_LOGE(DISC_BLE_ADAPTER, "assemble adv data failed, advId=%{public}d, bt-advId=%{public}d",
@@ -1210,7 +1212,7 @@ static SoftBusBtStateListener g_softbusBcAdapterBtStateListener = {
     .OnBtAclStateChanged = NULL,
 };
 
-void SoftbusBleAdapterInit(void)
+SOFTBUS_SYMBOL_EXPORT void SoftbusBleAdapterInit(void)
 {
     DISC_LOGI(DISC_BLE_ADAPTER, "enter");
     static SoftbusBroadcastMediumInterface interface = {
@@ -1252,7 +1254,7 @@ void SoftbusBleAdapterInit(void)
     }
 }
 
-void SoftbusBleAdapterDeInit(void)
+SOFTBUS_SYMBOL_EXPORT void SoftbusBleAdapterDeInit(void)
 {
     if (g_adapterBtStateListenerId != -1) {
         int32_t ret = SoftBusRemoveBtStateListener(g_adapterBtStateListenerId);

@@ -31,8 +31,8 @@ if (!defined(ohos_lite)) {
 
   bc_gatt_test_deps = [
     "$dsoftbus_dfx_path:softbus_dfx",
-    "$dsoftbus_root_path/core/common:softbus_utils",
     "$dsoftbus_root_path/adapter:softbus_adapter",
+    "$dsoftbus_root_path/core/common:softbus_utils",
   ]
 
   bc_gatt_test_external_deps = [
@@ -49,6 +49,11 @@ if (!defined(ohos_lite)) {
 
   ohos_unittest("SoftbusBleGattTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = bc_gatt_test_sources
     sources += [ "softbus_ble_gatt_test.cpp" ]
 
@@ -60,15 +65,18 @@ if (!defined(ohos_lite)) {
 
   ohos_unittest("SoftbusBleUtilsTest") {
     module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
     sources = bc_gatt_test_sources
     sources += [ "softbus_ble_utils_test.cpp" ]
 
     include_dirs = bc_gatt_test_inc
     deps = bc_gatt_test_deps
     external_deps = bc_gatt_test_external_deps
-    external_deps += [
-      "bounds_checking_function:libsec_static",
-    ]
+    external_deps += [ "bounds_checking_function:libsec_static" ]
     deps += dsoftbus_log_label_deps
   }
 

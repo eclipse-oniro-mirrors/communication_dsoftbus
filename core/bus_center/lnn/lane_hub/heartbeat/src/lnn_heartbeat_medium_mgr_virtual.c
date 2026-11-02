@@ -16,6 +16,7 @@
 #include "lnn_heartbeat_medium_mgr.h"
 #include "lnn_log.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 int32_t LnnHbMediumMgrSetParam(void *param)
 {
@@ -73,7 +74,7 @@ void LnnHbMediumMgrDeinit(void)
 {
 }
 
-int32_t LnnRegistHeartbeatMediumMgr(LnnHeartbeatMediumMgr *mgr)
+SOFTBUS_SYMBOL_EXPORT int32_t LnnRegistHeartbeatMediumMgr(LnnHeartbeatMediumMgr *mgr)
 {
     (void)mgr;
 

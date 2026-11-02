@@ -18,6 +18,11 @@ module_output_path = "dsoftbus/soft_bus/transmission"
 
 ohos_unittest("TransLaneManagerTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "trans_lane_manager_test.cpp" ]
 
   include_dirs = [
@@ -32,6 +37,7 @@ ohos_unittest("TransLaneManagerTest") {
     "$dsoftbus_core_path/connection/wifi_direct_cpp",
     "$dsoftbus_core_path/discovery/interface",
     "$dsoftbus_core_path/discovery/manager/include",
+    "$dsoftbus_core_path/frame/init/include",
     "$dsoftbus_core_path/transmission/ipc/include",
     "$dsoftbus_core_path/transmission/session/cpp/include",
     "$dsoftbus_core_path/transmission/session/include",
@@ -53,7 +59,7 @@ ohos_unittest("TransLaneManagerTest") {
 
   deps = [
     "$dsoftbus_core_path/common:softbus_utils",
-    "$dsoftbus_core_path/frame:softbus_server",
+    "$dsoftbus_core_path/frame:softbus_server_test",
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/connection/wifi_direct_cpp:wifi_direct",
   ]

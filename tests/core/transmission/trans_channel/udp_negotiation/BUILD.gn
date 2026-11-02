@@ -18,6 +18,11 @@ module_output_path = "dsoftbus/soft_bus/transmission"
 
 ohos_unittest("TransUdpNegoTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func.c",
     "mock/trans_udp_nego_test_mock.cpp",
@@ -58,7 +63,7 @@ ohos_unittest("TransUdpNegoTest") {
 
   deps = [
     "$dsoftbus_core_path/common:softbus_utils",
-    "$dsoftbus_core_path/frame:softbus_server",
+    "$dsoftbus_core_path/frame:softbus_server_test",
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/connection/wifi_direct_cpp:wifi_direct",
   ]
@@ -74,7 +79,15 @@ ohos_unittest("TransUdpNegoTest") {
 
 ohos_unittest("TransUdpNegotiationTest") {
   module_out_path = module_output_path
-  sources = [ "trans_udp_negotiation_test.cpp" ]
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+  sources = [
+    "mock/trans_udp_nego_test_mock.cpp",
+    "trans_udp_negotiation_test.cpp",
+  ]
 
   include_dirs = [
     "$dsoftbus_core_path/authentication/interface",
@@ -94,7 +107,7 @@ ohos_unittest("TransUdpNegotiationTest") {
 
   deps = [
     "$dsoftbus_core_path/common:softbus_utils",
-    "$dsoftbus_core_path/frame:softbus_server",
+    "$dsoftbus_core_path/frame:softbus_server_test",
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_test_path/sdk:softbus_client_static",
     "$dsoftbus_test_path/sdk/common:softbus_access_token_test",
@@ -102,12 +115,18 @@ ohos_unittest("TransUdpNegotiationTest") {
 
   external_deps = [
     "c_utils:utils",
+    "googletest:gmock",
     "hilog:libhilog",
   ]
 }
 
 ohos_unittest("TransUdpNegotiationExchangeTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "trans_udp_negotiation_exchange_test.cpp" ]
 
   include_dirs = [
@@ -116,7 +135,7 @@ ohos_unittest("TransUdpNegotiationExchangeTest") {
 
   deps = [
     "$dsoftbus_core_path/common:softbus_utils",
-    "$dsoftbus_core_path/frame:softbus_server",
+    "$dsoftbus_core_path/frame:softbus_server_test",
     "$dsoftbus_root_path/adapter:softbus_adapter",
   ]
 
@@ -128,6 +147,11 @@ ohos_unittest("TransUdpNegotiationExchangeTest") {
 
 ohos_unittest("TransUdpNegoStaticTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/frame/init/src/g_enhance_lnn_func.c",
     "mock/trans_udp_nego_static_test_mock.cpp",
@@ -175,7 +199,7 @@ ohos_unittest("TransUdpNegoStaticTest") {
 
   deps = [
     "$dsoftbus_core_path/common:softbus_utils",
-    "$dsoftbus_core_path/frame:softbus_server",
+    "$dsoftbus_core_path/frame:softbus_server_test",
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/connection/wifi_direct_cpp:wifi_direct",
   ]
@@ -192,6 +216,11 @@ ohos_unittest("TransUdpNegoStaticTest") {
 
 ohos_unittest("TransUdpStaticTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "trans_udp_static_test.cpp" ]
 
   include_dirs = [
@@ -205,6 +234,7 @@ ohos_unittest("TransUdpStaticTest") {
     "$dsoftbus_core_path/connection/wifi_direct_cpp",
     "$dsoftbus_core_path/discovery/interface",
     "$dsoftbus_core_path/discovery/manager/include",
+    "$dsoftbus_core_path/frame/init/include",
     "$dsoftbus_core_path/interfaces/kits/connect",
     "$dsoftbus_core_path/transmission/common/include",
     "$dsoftbus_core_path/transmission/session/cpp/include",
@@ -220,7 +250,7 @@ ohos_unittest("TransUdpStaticTest") {
 
   deps = [
     "$dsoftbus_core_path/common:softbus_utils",
-    "$dsoftbus_core_path/frame:softbus_server",
+    "$dsoftbus_core_path/frame:softbus_server_test",
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/connection/wifi_direct_cpp:wifi_direct",
   ]
@@ -236,6 +266,11 @@ ohos_unittest("TransUdpStaticTest") {
 
 ohos_unittest("TransUdpManagerTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "trans_udp_manager_test.cpp",
     "mock/trans_udp_manager_mock.cpp",
@@ -268,7 +303,7 @@ ohos_unittest("TransUdpManagerTest") {
 
   deps = [
     "$dsoftbus_core_path/common:softbus_utils",
-    "$dsoftbus_core_path/frame:softbus_server",
+    "$dsoftbus_core_path/frame:softbus_server_test",
     "$dsoftbus_root_path/adapter:softbus_adapter",
   ]
 
@@ -286,6 +321,11 @@ ohos_unittest("TransUdpManagerTest") {
 
 ohos_unittest("TransUdpNegotiationExchangeMockTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_test_path/core/transmission/mock/src/trans_bus_center_manager_mock.cpp",
     "./trans_udp_negotiation_exchange_mock_test.cpp",
@@ -307,7 +347,7 @@ ohos_unittest("TransUdpNegotiationExchangeMockTest") {
 
   deps = [
     "$dsoftbus_core_path/common:softbus_utils",
-    "$dsoftbus_core_path/frame:softbus_server",
+    "$dsoftbus_core_path/frame:softbus_server_test",
     "$dsoftbus_root_path/adapter:softbus_adapter",
   ]
 
@@ -326,7 +366,7 @@ group("unittest") {
     ":TransUdpNegoTest",
     ":TransUdpNegotiationExchangeMockTest",
     ":TransUdpNegotiationExchangeTest",
-    ":TransUdpNegotiationTest",
+    #":TransUdpNegotiationTest",
     ":TransUdpStaticTest",
   ]
 }

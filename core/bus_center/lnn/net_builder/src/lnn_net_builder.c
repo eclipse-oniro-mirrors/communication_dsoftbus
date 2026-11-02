@@ -34,6 +34,7 @@
 #include "softbus_adapter_bt_common.h"
 #include "softbus_adapter_json.h"
 #include "softbus_adapter_mem.h"
+#include "softbus_def.h"
 #include "softbus_wifi_api_adapter.h"
 #include "trans_auth_manager.h"
 
@@ -68,7 +69,7 @@ void SetWatchdogFlag(bool flag)
     g_watchdogFlag = flag;
 }
 
-bool GetWatchdogFlag(void)
+SOFTBUS_VISIBILITY bool GetWatchdogFlag(void)
 {
     return g_watchdogFlag;
 }
@@ -1023,7 +1024,7 @@ int32_t JoinLnnWithNodeInfo(ConnectionAddr *addr, NodeInfo *info, bool isSession
     return SOFTBUS_OK;
 }
 
-int32_t LnnServerJoin(ConnectionAddr *addr, const char *pkgName, bool isForceJoin)
+SOFTBUS_VISIBILITY int32_t LnnServerJoin(ConnectionAddr *addr, const char *pkgName, bool isForceJoin)
 {
     JoinLnnMsgPara *para = NULL;
 
@@ -1086,7 +1087,7 @@ static int32_t PostJoinLnnExtMsg(ConnectionAddr *addr, int32_t connId)
     return SOFTBUS_OK;
 }
 
-int32_t LnnServerJoinExt(ConnectionAddr *addr, LnnServerJoinExtCallBack *callback)
+SOFTBUS_VISIBILITY int32_t LnnServerJoinExt(ConnectionAddr *addr, LnnServerJoinExtCallBack *callback)
 {
     if (callback == NULL || addr == NULL || (addr->type != CONNECTION_ADDR_SESSION &&
         addr->type != CONNECTION_ADDR_SESSION_WITH_KEY)) {
@@ -1132,7 +1133,7 @@ int32_t LnnSetReSyncDeviceName(void)
     return SOFTBUS_OK;
 }
 
-int32_t LnnServerLeave(const char *networkId, const char *pkgName)
+SOFTBUS_VISIBILITY int32_t LnnServerLeave(const char *networkId, const char *pkgName)
 {
     (void)pkgName;
     char *para = NULL;
@@ -1155,7 +1156,7 @@ int32_t LnnServerLeave(const char *networkId, const char *pkgName)
     return SOFTBUS_OK;
 }
 
-int32_t LnnNotifyDiscoveryDevice(
+SOFTBUS_VISIBILITY int32_t LnnNotifyDiscoveryDevice(
     const ConnectionAddr *addr, const LnnDfxDeviceInfoReport *infoReport, bool isNeedConnect, int32_t peerUserId,
     int32_t localUserId)
 {
@@ -1280,7 +1281,7 @@ int32_t LnnNotifyNodeStateChanged(const ConnectionAddr *addr)
     return SOFTBUS_OK;
 }
 
-int32_t LnnNotifyMasterElect(const char *networkId, const char *masterUdid, int32_t masterWeight)
+SOFTBUS_VISIBILITY int32_t LnnNotifyMasterElect(const char *networkId, const char *masterUdid, int32_t masterWeight)
 {
     ElectMsgPara *para = NULL;
 
@@ -1338,7 +1339,7 @@ int32_t LnnNotifyAuthHandleLeaveLNN(AuthHandle authHandle)
     return SOFTBUS_OK;
 }
 
-int32_t LnnRequestLeaveByAddrType(const bool *type, uint32_t typeLen, bool hasMcuRequestDisable)
+SOFTBUS_VISIBILITY int32_t LnnRequestLeaveByAddrType(const bool *type, uint32_t typeLen, bool hasMcuRequestDisable)
 {
     if (type == NULL) {
         LNN_LOGE(LNN_BUILDER, "para is null");
@@ -1375,6 +1376,7 @@ int32_t LnnRequestLeaveByAddrType(const bool *type, uint32_t typeLen, bool hasMc
     return SOFTBUS_OK;
 }
 
+SOFTBUS_VISIBILITY
 int32_t LnnRequestLeaveSpecific(const char *networkId, ConnectionAddrType addrType, DeviceLeaveReason leaveReason)
 {
     SpecificLeaveMsgPara *para = NULL;
@@ -1480,7 +1482,7 @@ static bool LnnBleReportExtraMapInit(void)
     return true;
 }
 
-void AddNodeToLnnBleReportExtraMap(const char *udidHash, const LnnBleReportExtra *bleExtra)
+SOFTBUS_VISIBILITY void AddNodeToLnnBleReportExtraMap(const char *udidHash, const LnnBleReportExtra *bleExtra)
 {
     if (!g_lnnDfxReportIsInit || udidHash == NULL || bleExtra == NULL) {
         LNN_LOGE(LNN_BUILDER, "invalid param");
@@ -1498,7 +1500,7 @@ void AddNodeToLnnBleReportExtraMap(const char *udidHash, const LnnBleReportExtra
     (void)SoftBusMutexUnlock(&g_lnnDfxReportMutex);
 }
 
-int32_t GetNodeFromLnnBleReportExtraMap(const char *udidHash, LnnBleReportExtra *bleExtra)
+SOFTBUS_VISIBILITY int32_t GetNodeFromLnnBleReportExtraMap(const char *udidHash, LnnBleReportExtra *bleExtra)
 {
     if (!g_lnnDfxReportIsInit || udidHash == NULL || bleExtra == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -1523,7 +1525,7 @@ int32_t GetNodeFromLnnBleReportExtraMap(const char *udidHash, LnnBleReportExtra 
     return SOFTBUS_OK;
 }
 
-bool IsExistLnnDfxNodeByUdidHash(const char *udidHash, LnnBleReportExtra *bleExtra)
+SOFTBUS_VISIBILITY bool IsExistLnnDfxNodeByUdidHash(const char *udidHash, LnnBleReportExtra *bleExtra)
 {
     if (udidHash == NULL || bleExtra == NULL) {
         LNN_LOGE(LNN_BUILDER, "invalid param");
@@ -1543,7 +1545,7 @@ bool IsExistLnnDfxNodeByUdidHash(const char *udidHash, LnnBleReportExtra *bleExt
     return true;
 }
 
-void DeleteNodeFromLnnBleReportExtraMap(const char *udidHash)
+SOFTBUS_VISIBILITY void DeleteNodeFromLnnBleReportExtraMap(const char *udidHash)
 {
     if (!g_lnnDfxReportIsInit || udidHash == NULL) {
         LNN_LOGE(LNN_BUILDER, "invalid param");
@@ -1562,7 +1564,7 @@ void DeleteNodeFromLnnBleReportExtraMap(const char *udidHash)
     (void)SoftBusMutexUnlock(&g_lnnDfxReportMutex);
 }
 
-void ClearLnnBleReportExtraMap(void)
+SOFTBUS_VISIBILITY void ClearLnnBleReportExtraMap(void)
 {
     if (!g_lnnDfxReportIsInit) {
         return;
@@ -1614,7 +1616,7 @@ void AddNodeToPcRestrictMap(const char *udidHash)
     AnonymizeFree(anonyUdid);
 }
 
-void ClearPcRestrictMap(void)
+SOFTBUS_VISIBILITY void ClearPcRestrictMap(void)
 {
     if (!g_lnnDfxPcIsInit) {
         return;
@@ -1651,7 +1653,7 @@ void DeleteNodeFromPcRestrictMap(const char *udidHash)
     AnonymizeFree(anonyUdid);
 }
 
-int32_t GetNodeFromPcRestrictMap(const char *udidHash, uint32_t *count)
+SOFTBUS_VISIBILITY int32_t GetNodeFromPcRestrictMap(const char *udidHash, uint32_t *count)
 {
     if (!g_lnnDfxPcIsInit || udidHash == NULL || count == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -1710,7 +1712,7 @@ int32_t AuthFailNotifyProofInfo(int32_t errCode, const char *errorReturn, uint32
     return SOFTBUS_OK;
 }
 
-void NotifyForegroundUseridChange(char *networkId, uint32_t discoveryType, bool isChange)
+SOFTBUS_VISIBILITY void NotifyForegroundUseridChange(char *networkId, uint32_t discoveryType, bool isChange)
 {
     cJSON *json = cJSON_CreateObject();
     if (json == NULL) {

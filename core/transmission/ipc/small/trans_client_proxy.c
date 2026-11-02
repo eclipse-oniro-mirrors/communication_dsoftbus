@@ -118,7 +118,7 @@ int32_t ClientIpcOnChannelBind(ChannelMsg *data)
     return ret;
 }
 
-int32_t ClientIpcOnChannelOpenFailed(ChannelMsg *data, int32_t errCode)
+SOFTBUS_VISIBILITY int32_t ClientIpcOnChannelOpenFailed(ChannelMsg *data, int32_t errCode)
 {
     if (data == NULL) {
         TRANS_LOGE(TRANS_CTRL, "ClientIpcOnChannelOpenFailed data is null.");
@@ -178,7 +178,7 @@ int32_t ClientIpcOnChannelLinkDown(ChannelMsg *data, const char *networkId, cons
     return SOFTBUS_OK;
 }
 
-int32_t ClientIpcOnChannelClosed(ChannelMsg *data)
+SOFTBUS_VISIBILITY int32_t ClientIpcOnChannelClosed(ChannelMsg *data)
 {
     if (data == NULL) {
         TRANS_LOGE(TRANS_CTRL, "ClientIpcOnChannelClosed data is null.");
@@ -251,7 +251,7 @@ int32_t ClientIpcOnChannelQosEvent(const char *pkgName, const QosParam *param)
     return SOFTBUS_FUNC_NOT_SUPPORT;
 }
 
-int32_t ClientIpcSetChannelInfo(
+SOFTBUS_VISIBILITY int32_t ClientIpcSetChannelInfo(
     const char *pkgName, const char *sessionName, int32_t sessionId, const TransInfo *transInfo, int32_t pid)
 {
     if (pkgName == NULL || sessionName == NULL || transInfo == NULL) {

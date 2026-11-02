@@ -32,6 +32,7 @@
 #include "lnn_connection_fsm.h"
 #include "lnn_distributed_net_ledger.h"
 #include "lnn_ohos_account_adapter.h"
+#include "softbus_def.h"
 
 #define AUTH_APPID "softbus_auth"
 #define GROUPID_BUF_LEN 65
@@ -157,7 +158,7 @@ static void OnFinish(int64_t authSeq, int operationCode, const char *returnData)
     (void)AuthSessionHandleAuthFinish(authSeq, aclState);
 }
 
-void GetSoftbusHichainAuthErrorCode(uint32_t hichainErrCode, uint32_t *softbusErrCode)
+SOFTBUS_VISIBILITY void GetSoftbusHichainAuthErrorCode(uint32_t hichainErrCode, uint32_t *softbusErrCode)
 {
     if (softbusErrCode == NULL) {
         AUTH_LOGE(AUTH_HICHAIN, "softbusErrCode is null");

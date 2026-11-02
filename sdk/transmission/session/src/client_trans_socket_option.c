@@ -224,6 +224,41 @@ static int32_t TransSetWirelessLinkCtrl(
     return ServerIpcSetWirelessLinkCtrl(socket);
 }
 
+static int32_t TransSetDisconnectPolicy(
+    int32_t socket, OptLevel level, OptType optType, void *optValue, int32_t optValueSize)
+{
+    (void)optType;
+    if (socket <= 0) {
+        TRANS_LOGE(TRANS_SDK, "invalid socket=%{public}d", socket);
+        return SOFTBUS_INVALID_PARAM;
+    }
+    if (level != OPT_LEVEL_SOFTBUS) {
+        TRANS_LOGE(TRANS_SDK, "invalid level=%{public}d, socket=%{public}d", level, socket);
+        return SOFTBUS_INVALID_PARAM;
+    }
+    if (optValueSize != (int32_t)sizeof(DisconnectPolicy)) {
+        TRANS_LOGE(TRANS_SDK, "invalid optValueSize=%{public}d, socket=%{public}d", optValueSize, socket);
+        return SOFTBUS_INVALID_PARAM;
+    }
+    DisconnectPolicy policy = *(DisconnectPolicy *)optValue;
+    if (policy < DISCONNECT_POLICY_DEFAULT || policy >= DISCONNECT_POLICY_BUTT) {
+        TRANS_LOGE(TRANS_SDK, "invalid policy=%{public}d, socket=%{public}d", policy, socket);
+        return SOFTBUS_INVALID_PARAM;
+    }
+    int32_t channelId = INVALID_CHANNEL_ID;
+    int32_t type = CHANNEL_TYPE_BUTT;
+    int32_t ret = ClientGetChannelBySessionId(socket, &channelId, &type, NULL);
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_SDK, "get channel fail, socket=%{public}d, ret=%{public}d", socket, ret);
+        return ret;
+    }
+    if (type != CHANNEL_TYPE_PROXY) {
+        TRANS_LOGE(TRANS_SDK, "not proxy channel, socket=%{public}d, type=%{public}d", socket, type);
+        return SOFTBUS_TRANS_INVALID_CHANNEL_TYPE;
+    }
+    return ServerIpcSetDisconnectPolicy(channelId, policy);
+}
+
 static SocketOptMap g_socketOptMap[] = {
     { OPT_TYPE_MAX_BUFFER, TransGetSocketMaxBufferLen, NULL },
     { OPT_TYPE_FIRST_PACKAGE, NULL, NULL },
@@ -234,6 +269,7 @@ static SocketOptMap g_socketOptMap[] = {
     { OPT_TYPE_KEY_TYPE, TransGetKeyType, TransSetKeyType },
     { OPT_TYPE_GROUP_ID, NULL, TransSetGroupId },
     { OPT_TYPE_WIRELESS_LINK_CTRL, NULL, TransSetWirelessLinkCtrl },
+    { OPT_TYPE_DISCONNECT_POLICY, NULL, TransSetDisconnectPolicy },
 };
 
 int32_t GetCommonSocketOpt(int32_t socket, OptLevel level, OptType optType, void *optValue, int32_t *optValueSize)

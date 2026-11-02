@@ -19,7 +19,8 @@ import("../../../../../dsoftbus.gni")
 dsoftbus_fuzz_common = {
   module_out_path = dsoftbus_fuzz_out_path
 
-  fuzz_config_file = "$dsoftbus_test_path/sdk/frame/fuzztest/softbusclientstub_fuzzer"
+  fuzz_config_file =
+      "$dsoftbus_test_path/sdk/frame/fuzztest/softbusclientstub_fuzzer"
 
   include_dirs = [
     "$dsoftbus_core_path/transmission/common/include",
@@ -50,7 +51,6 @@ dsoftbus_fuzz_common = {
 }
 
 ohos_fuzztest("SoftbusClientOnAcceptConnectFuzzTest") {
-
   sources = [ "softbusclientonacceptconnect_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -62,7 +62,6 @@ ohos_fuzztest("SoftbusClientOnAcceptConnectFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnBrProxyDataRecvFuzzTest") {
-
   sources = [ "softbusclientonbrproxydatarecv_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -74,7 +73,6 @@ ohos_fuzztest("SoftbusClientOnBrProxyDataRecvFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnBrProxyOpenedFuzzTest") {
-
   sources = [ "softbusclientonbrproxyopened_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -86,7 +84,6 @@ ohos_fuzztest("SoftbusClientOnBrProxyOpenedFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnBrProxyQueryPermissionFuzzTest") {
-
   sources = [ "softbusclientonbrproxyquerypermission_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -98,7 +95,6 @@ ohos_fuzztest("SoftbusClientOnBrProxyQueryPermissionFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnBrProxyStateChangedFuzzTest") {
-
   sources = [ "softbusclientonbrproxystatechanged_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -110,7 +106,6 @@ ohos_fuzztest("SoftbusClientOnBrProxyStateChangedFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnChannelBindFuzzTest") {
-
   sources = [ "softbusclientonchannelbind_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -122,7 +117,6 @@ ohos_fuzztest("SoftbusClientOnChannelBindFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnChannelClosedFuzzTest") {
-
   sources = [ "softbusclientonchannelclosed_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -134,7 +128,6 @@ ohos_fuzztest("SoftbusClientOnChannelClosedFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnChannelLinkDownFuzzTest") {
-
   sources = [ "softbusclientonchannellinkdown_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -146,7 +139,6 @@ ohos_fuzztest("SoftbusClientOnChannelLinkDownFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnChannelMsgReceivedFuzzTest") {
-
   sources = [ "softbusclientonchannelmsgreceived_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -158,7 +150,6 @@ ohos_fuzztest("SoftbusClientOnChannelMsgReceivedFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnChannelOnQosFuzzTest") {
-
   sources = [ "softbusclientonchannelonqos_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -170,7 +161,6 @@ ohos_fuzztest("SoftbusClientOnChannelOnQosFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnChannelOpenedFuzzTest") {
-
   sources = [ "softbusclientonchannelopened_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -182,7 +172,6 @@ ohos_fuzztest("SoftbusClientOnChannelOpenedFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnChannelOpenFailedFuzzTest") {
-
   sources = [ "softbusclientonchannelopenfailed_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -194,7 +183,6 @@ ohos_fuzztest("SoftbusClientOnChannelOpenFailedFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnChannelQosEventFuzzTest") {
-
   sources = [ "softbusclientonchannelqosevent_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -206,7 +194,6 @@ ohos_fuzztest("SoftbusClientOnChannelQosEventFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnCheckCollabRelationFuzzTest") {
-
   sources = [ "softbusclientoncheckcollabrelation_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -218,7 +205,6 @@ ohos_fuzztest("SoftbusClientOnCheckCollabRelationFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnClientPermissionChangeFuzzTest") {
-
   sources = [ "softbusclientonclientpermissionchange_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -230,7 +216,6 @@ ohos_fuzztest("SoftbusClientOnClientPermissionChangeFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnClientTransLimitChangeFuzzTest") {
-
   sources = [ "softbusclientonclienttranslimitchange_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -242,7 +227,6 @@ ohos_fuzztest("SoftbusClientOnClientTransLimitChangeFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnConnectionStateChangeFuzzTest") {
-
   sources = [ "softbusclientonconnectionstatechange_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -254,7 +238,6 @@ ohos_fuzztest("SoftbusClientOnConnectionStateChangeFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnDataReceivedFuzzTest") {
-
   sources = [ "softbusclientondatareceived_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -266,7 +249,6 @@ ohos_fuzztest("SoftbusClientOnDataReceivedFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnHichainProofExceptionFuzzTest") {
-
   sources = [ "softbusclientonhichainproofexception_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -278,7 +260,6 @@ ohos_fuzztest("SoftbusClientOnHichainProofExceptionFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnJoinLNNResultFuzzTest") {
-
   sources = [ "softbusclientonjoinlnnresult_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -290,7 +271,6 @@ ohos_fuzztest("SoftbusClientOnJoinLNNResultFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnJoinMetaNodeResultFuzzTest") {
-
   sources = [ "softbusclientonjoinmetanoderesult_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -302,7 +282,6 @@ ohos_fuzztest("SoftbusClientOnJoinMetaNodeResultFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnLeaveLNNResultFuzzTest") {
-
   sources = [ "softbusclientonleavelnnresult_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -314,7 +293,6 @@ ohos_fuzztest("SoftbusClientOnLeaveLNNResultFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnLeaveMetaNodeResultFuzzTest") {
-
   sources = [ "softbusclientonleavemetanoderesult_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -326,7 +304,6 @@ ohos_fuzztest("SoftbusClientOnLeaveMetaNodeResultFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnNodeBasicInfoChangedFuzzTest") {
-
   sources = [ "softbusclientonnodebasicInfochanged_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -338,7 +315,6 @@ ohos_fuzztest("SoftbusClientOnNodeBasicInfoChangedFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnNodeOnlineStateChangedFuzzTest") {
-
   sources = [ "softbusclientonnodeonlinestatechanged_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -350,7 +326,6 @@ ohos_fuzztest("SoftbusClientOnNodeOnlineStateChangedFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnNodeStatusChangedFuzzTest") {
-
   sources = [ "softbusclientonnodestatuschanged_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -362,7 +337,6 @@ ohos_fuzztest("SoftbusClientOnNodeStatusChangedFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnPublishLNNResultFuzzTest") {
-
   sources = [ "softbusclientonpublishlnnresult_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -374,7 +348,6 @@ ohos_fuzztest("SoftbusClientOnPublishLNNResultFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnRefreshDeviceFoundFuzzTest") {
-
   sources = [ "softbusclientonrefreshdevicefound_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -386,7 +359,6 @@ ohos_fuzztest("SoftbusClientOnRefreshDeviceFoundFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnRefreshLNNResultFuzzTest") {
-
   sources = [ "softbusclientonrefreshlnnresult_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -398,7 +370,6 @@ ohos_fuzztest("SoftbusClientOnRefreshLNNResultFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnTimeSyncResultFuzzTest") {
-
   sources = [ "softbusclientontimesyncresult_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -410,7 +381,6 @@ ohos_fuzztest("SoftbusClientOnTimeSyncResultFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientSetChannelInfoFuzzTest") {
-
   sources = [ "softbusclientsetchannelinfo_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -422,7 +392,6 @@ ohos_fuzztest("SoftbusClientSetChannelInfoFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnNodeDeviceTrustedChangeFuzzTest") {
-
   sources = [ "softbusonnodedevicetrustedchange_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -434,7 +403,6 @@ ohos_fuzztest("SoftbusClientOnNodeDeviceTrustedChangeFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnTransmitAuthResultFuzzTest") {
-
   sources = [ "softbusclientontransmitauthresult_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -446,7 +414,6 @@ ohos_fuzztest("SoftbusClientOnTransmitAuthResultFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnSessionKeyAuthResultFuzzTest") {
-
   sources = [ "softbusclientonsessionkeyauthresult_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -458,7 +425,6 @@ ohos_fuzztest("SoftbusClientOnSessionKeyAuthResultFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnFinishAuthResultFuzzTest") {
-
   sources = [ "softbusclientonfinishauthresult_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -470,7 +436,6 @@ ohos_fuzztest("SoftbusClientOnFinishAuthResultFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnErrorAuthResultFuzzTest") {
-
   sources = [ "softbusclientonerrorauthresult_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -482,7 +447,6 @@ ohos_fuzztest("SoftbusClientOnErrorAuthResultFuzzTest") {
 }
 
 ohos_fuzztest("SoftbusClientOnServerStoppedInnerFuzzTest") {
-
   sources = [ "softbusclientonserverstopped_fuzzer.cpp" ]
 
   include_dirs = dsoftbus_fuzz_common.include_dirs
@@ -507,33 +471,33 @@ group("fuzztest") {
     ":SoftbusClientOnChannelLinkDownFuzzTest",
     ":SoftbusClientOnChannelMsgReceivedFuzzTest",
     ":SoftbusClientOnChannelOnQosFuzzTest",
-    ":SoftbusClientOnChannelOpenedFuzzTest",
     ":SoftbusClientOnChannelOpenFailedFuzzTest",
+    ":SoftbusClientOnChannelOpenedFuzzTest",
     ":SoftbusClientOnChannelQosEventFuzzTest",
     ":SoftbusClientOnCheckCollabRelationFuzzTest",
     ":SoftbusClientOnClientPermissionChangeFuzzTest",
     ":SoftbusClientOnClientTransLimitChangeFuzzTest",
     ":SoftbusClientOnConnectionStateChangeFuzzTest",
     ":SoftbusClientOnDataReceivedFuzzTest",
+    ":SoftbusClientOnErrorAuthResultFuzzTest",
+    ":SoftbusClientOnFinishAuthResultFuzzTest",
     ":SoftbusClientOnHichainProofExceptionFuzzTest",
     ":SoftbusClientOnJoinLNNResultFuzzTest",
     ":SoftbusClientOnJoinMetaNodeResultFuzzTest",
     ":SoftbusClientOnLeaveLNNResultFuzzTest",
     ":SoftbusClientOnLeaveMetaNodeResultFuzzTest",
     ":SoftbusClientOnNodeBasicInfoChangedFuzzTest",
+    ":SoftbusClientOnNodeDeviceTrustedChangeFuzzTest",
     ":SoftbusClientOnNodeOnlineStateChangedFuzzTest",
     ":SoftbusClientOnNodeStatusChangedFuzzTest",
     ":SoftbusClientOnPublishLNNResultFuzzTest",
     ":SoftbusClientOnRefreshDeviceFoundFuzzTest",
     ":SoftbusClientOnRefreshLNNResultFuzzTest",
-    ":SoftbusClientOnTimeSyncResultFuzzTest",
-    ":SoftbusClientSetChannelInfoFuzzTest",
-    ":SoftbusClientOnNodeDeviceTrustedChangeFuzzTest",
-    ":SoftbusClientOnTransmitAuthResultFuzzTest",
+    ":SoftbusClientOnServerStoppedInnerFuzzTest",
     ":SoftbusClientOnSessionKeyAuthResultFuzzTest",
-    ":SoftbusClientOnFinishAuthResultFuzzTest",
-    ":SoftbusClientOnErrorAuthResultFuzzTest",
-    ":SoftbusClientOnServerStoppedInnerFuzzTest"
+    ":SoftbusClientOnTimeSyncResultFuzzTest",
+    ":SoftbusClientOnTransmitAuthResultFuzzTest",
+    ":SoftbusClientSetChannelInfoFuzzTest",
   ]
 }
 ###############################################################################

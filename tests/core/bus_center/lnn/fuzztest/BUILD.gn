@@ -14,12 +14,12 @@
 group("fuzztest") {
   testonly = true
   deps = [
-    "lnnnetbuilder_fuzzer:LnnNetBuilderFuzzTest",
-    "lnnslecapability_fuzzer:LnnSleCapabilityFuzzTest",
-    "lnnsyncinfomanager_fuzzer:LnnSyncInfoManagerFuzzTest",
     "handleconversationpost_fuzzer:HandleConversationPostFuzzTest",
     "handleconversationregisterlistener_fuzzer:HandleConversationRegisterListenerFuzzTest",
     "handleconversationremovelistener_fuzzer:HandleConversationRemoveListenerFuzzTest",
     "handlegettrusteddevices_fuzzer:HandleGetTrustedDevicesFuzzTest",
+    "lnnnetbuilder_fuzzer:LnnNetBuilderFuzzTest",
+    "lnnslecapability_fuzzer:LnnSleCapabilityFuzzTest",
+    "lnnsyncinfomanager_fuzzer:LnnSyncInfoManagerFuzzTest",
   ]
 }

@@ -19,6 +19,11 @@ dsoftbus_root_path = "../../../.."
 
 ohos_unittest("LNNConnAddrUtilsTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "lnn_bus_center_utils_test.cpp" ]
   include_dirs = [
     "$dsoftbus_dfx_path/interface/include/form",
@@ -60,7 +65,8 @@ ohos_unittest("LNNConnAddrUtilsTest") {
     "$dsoftbus_dfx_path:softbus_dfx",
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
   if (is_standard_system) {
     external_deps = [
@@ -83,6 +89,11 @@ ohos_unittest("LNNConnAddrUtilsTest") {
 
 ohos_unittest("LNNFileUtilsTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   defines += [ "ENABLE_OS_ACCOUNT_CONSTRAINT" ]
   sources = [
     "$dsoftbus_root_path/tests/core/bus_center/lnn/net_ledger/lnn_decision_db_deps_mock.cpp",
@@ -112,7 +123,8 @@ ohos_unittest("LNNFileUtilsTest") {
     "$dsoftbus_dfx_path:softbus_dfx",
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
   if (is_standard_system) {
     external_deps = [
@@ -136,6 +148,11 @@ ohos_unittest("LNNFileUtilsTest") {
 
 ohos_unittest("BusCenterUtilsTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/bus_center/utils/src/lnn_compress.c",
     "bus_center_utils_mock.cpp",
@@ -155,7 +172,8 @@ ohos_unittest("BusCenterUtilsTest") {
     "$dsoftbus_dfx_path:softbus_dfx",
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
   external_deps = [
     "bounds_checking_function:libsec_static",
@@ -170,6 +188,11 @@ ohos_unittest("BusCenterUtilsTest") {
 
 ohos_unittest("LNNAsyncCallbackUtilsTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/bus_center/utils/src/lnn_async_callback_utils.c",
     "lnn_async_callback_utils_test.cpp",
@@ -187,7 +210,8 @@ ohos_unittest("LNNAsyncCallbackUtilsTest") {
     "$dsoftbus_dfx_path:softbus_dfx",
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
   external_deps = [
     "c_utils:utils",
@@ -199,6 +223,11 @@ ohos_unittest("LNNAsyncCallbackUtilsTest") {
 
 ohos_unittest("LNNCommonUtilsTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/bus_center/utils/src/lnn_common_utils.c",
     "lnn_common_utils_test.cpp",
@@ -218,7 +247,8 @@ ohos_unittest("LNNCommonUtilsTest") {
     "$dsoftbus_dfx_path:softbus_dfx",
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
   external_deps = [
     "bounds_checking_function:libsec_static",

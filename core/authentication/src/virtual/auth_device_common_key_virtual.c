@@ -15,19 +15,21 @@
 
 #include "auth_device_common_key.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
-void AuthLoadDeviceKey(void)
+SOFTBUS_SYMBOL_EXPORT void AuthLoadDeviceKey(void)
 {
 }
 
-void AuthUpdateCreateTime(const char *udidHash, int32_t keyType, bool isServer)
+SOFTBUS_SYMBOL_EXPORT void AuthUpdateCreateTime(const char *udidHash, int32_t keyType, bool isServer)
 {
     (void)udidHash;
     (void)keyType;
     (void)isServer;
 }
 
-int32_t AuthInsertDeviceKey(const NodeInfo *deviceInfo, const AuthDeviceKeyInfo *deviceKey, AuthLinkType type)
+SOFTBUS_SYMBOL_EXPORT int32_t AuthInsertDeviceKey(const NodeInfo *deviceInfo, const AuthDeviceKeyInfo *deviceKey,
+    AuthLinkType type)
 {
     (void)deviceInfo;
     (void)deviceKey;
@@ -35,12 +37,12 @@ int32_t AuthInsertDeviceKey(const NodeInfo *deviceInfo, const AuthDeviceKeyInfo 
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-void AuthRemoveDeviceKeyByUdid(const char *udidOrHash)
+SOFTBUS_SYMBOL_EXPORT void AuthRemoveDeviceKeyByUdid(const char *udidOrHash)
 {
     (void)udidOrHash;
 }
 
-int32_t AuthFindDeviceKey(const char *udidHash, int32_t keyType, AuthDeviceKeyInfo *deviceKey)
+SOFTBUS_SYMBOL_EXPORT int32_t AuthFindDeviceKey(const char *udidHash, int32_t keyType, AuthDeviceKeyInfo *deviceKey)
 {
     (void)udidHash;
     (void)keyType;
@@ -48,11 +50,12 @@ int32_t AuthFindDeviceKey(const char *udidHash, int32_t keyType, AuthDeviceKeyIn
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-void AuthClearDeviceKey(void)
+SOFTBUS_SYMBOL_EXPORT void AuthClearDeviceKey(void)
 {
 }
 
-int32_t AuthFindLatestNormalizeKey(const char *udidHash, AuthDeviceKeyInfo *deviceKey, bool clearOldKey)
+SOFTBUS_SYMBOL_EXPORT int32_t AuthFindLatestNormalizeKey(const char *udidHash, AuthDeviceKeyInfo *deviceKey,
+    bool clearOldKey)
 {
     (void)udidHash;
     (void)deviceKey;
@@ -60,7 +63,8 @@ int32_t AuthFindLatestNormalizeKey(const char *udidHash, AuthDeviceKeyInfo *devi
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-void AuthUpdateNormalizeKeyIndex(const char *udidHash, int64_t index, AuthLinkType type, SessionKey *normalizedKey,
+SOFTBUS_SYMBOL_EXPORT void AuthUpdateNormalizeKeyIndex(const char *udidHash, int64_t index, AuthLinkType type,
+    SessionKey *normalizedKey,
     bool isServer)
 {
     (void)udidHash;
@@ -70,7 +74,7 @@ void AuthUpdateNormalizeKeyIndex(const char *udidHash, int64_t index, AuthLinkTy
     (void)isServer;
 }
 
-void AuthUpdateKeyIndex(const char *udidHash, int32_t keyType, int64_t index, bool isServer)
+SOFTBUS_SYMBOL_EXPORT void AuthUpdateKeyIndex(const char *udidHash, int32_t keyType, int64_t index, bool isServer)
 {
     (void)udidHash;
     (void)keyType;
@@ -78,7 +82,8 @@ void AuthUpdateKeyIndex(const char *udidHash, int32_t keyType, int64_t index, bo
     (void)isServer;
 }
 
-int32_t AuthFindNormalizeKeyByServerSide(const char *udidHash, bool isServer, AuthDeviceKeyInfo *deviceKey)
+SOFTBUS_SYMBOL_EXPORT int32_t AuthFindNormalizeKeyByServerSide(const char *udidHash, bool isServer,
+    AuthDeviceKeyInfo *deviceKey)
 {
     (void)udidHash;
     (void)isServer;

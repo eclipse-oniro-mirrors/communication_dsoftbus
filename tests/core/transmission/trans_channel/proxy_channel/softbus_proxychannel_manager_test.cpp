@@ -2724,4 +2724,31 @@ HWTEST_F(SoftbusProxyChannelManagerTest, TransProxyUpdateSinkAccessInfo002, Test
 
     TransProxyDelChanByReqId(channelInfo->reqId, 1);
 }
+
+/*
+ * @tc.name: TransProxySetDisconnectPolicyTest001
+ * @tc.desc: test TransProxySetDisconnectPolicy with invalid params
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusProxyChannelManagerTest, TransProxySetDisconnectPolicyTest001, TestSize.Level1)
+{
+    int32_t ret = TransProxySetDisconnectPolicy(-1, DISCONNECT_POLICY_DEFAULT);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+
+    ret = TransProxySetDisconnectPolicy(1, DISCONNECT_POLICY_BUTT);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+}
+
+/*
+ * @tc.name: TransProxySetDisconnectPolicyTest002
+ * @tc.desc: test TransProxySetDisconnectPolicy with channel not found
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusProxyChannelManagerTest, TransProxySetDisconnectPolicyTest002, TestSize.Level1)
+{
+    int32_t ret = TransProxySetDisconnectPolicy(99999, DISCONNECT_POLICY_FORCE);
+    EXPECT_EQ(ret, SOFTBUS_TRANS_NODE_NOT_FOUND);
+}
 } // namespace OHOS

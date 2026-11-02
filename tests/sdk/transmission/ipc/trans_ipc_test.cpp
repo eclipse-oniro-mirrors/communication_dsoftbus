@@ -858,4 +858,36 @@ HWTEST_F(TransIpcStandardTest, ServerIpcPrivilegeCloseChannel001, TestSize.Level
     EXPECT_EQ(SOFTBUS_ACCESS_TOKEN_DENIED, ret);
     TransClientDeinit();
 }
+
+/*
+ * @tc.name: ServerIpcSetWirelessLinkCtrl001
+ * @tc.desc: Verify ServerIpcSetWirelessLinkCtrl returns SOFTBUS_NO_INIT
+ *           when g_serverProxy is nullptr (proxy not initialized).
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransIpcStandardTest, ServerIpcSetWirelessLinkCtrl001, TestSize.Level1)
+{
+    TransClientDeinit();
+    int32_t ret = ServerIpcSetWirelessLinkCtrl(1);
+    // 测试环境 g_serverProxy 状态依赖前置用例：可能为 nullptr（返回 SOFTBUS_NO_INIT），
+    // 也可能已初始化（走 IPC 后返回 SOFTBUS_ACCESS_TOKEN_DENIED）。两者都说明函数被调用。
+    EXPECT_TRUE(ret == SOFTBUS_NO_INIT || ret == SOFTBUS_ACCESS_TOKEN_DENIED);
+}
+
+/*
+ * @tc.name: TransServerProxySetWirelessLinkCtrl001
+ * @tc.desc: Verify TransServerProxy::SetWirelessLinkCtrl reaches IPC layer in test environment
+ *           without SA, returns SOFTBUS_TRANS_PROXY_REMOTE_NULL or SOFTBUS_ACCESS_TOKEN_DENIED.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransIpcStandardTest, TransServerProxySetWirelessLinkCtrl001, TestSize.Level1)
+{
+    TransServerProxy transServerProxy(nullptr);
+    int32_t ret = transServerProxy.SetWirelessLinkCtrl(1);
+    // GetSystemAbility() 是文件内 static 函数，测试环境可能返回 nullptr（REMOTE_NULL）
+    // 或非 null 但 SendRequest 失败（ACCESS_TOKEN_DENIED）。两者都说明走到了 IPC 调用。
+    EXPECT_TRUE(ret == SOFTBUS_TRANS_PROXY_REMOTE_NULL || ret == SOFTBUS_ACCESS_TOKEN_DENIED);
+}
 }

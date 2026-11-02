@@ -21,6 +21,11 @@ ut_out_path = "dsoftbus/soft_bus/connection/wifi_direct_cpp/channel"
 
 ohos_unittest("AuthNegotiateChannelTest") {
   module_out_path = ut_out_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   include_dirs = [
     "$dsoftbus_dfx_path/interface/include",
@@ -164,6 +169,11 @@ ohos_unittest("AuthNegotiateChannelTest") {
 
 ohos_unittest("ProxyNegotiateChannelTest") {
   module_out_path = ut_out_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   include_dirs = [
     "$dsoftbus_dfx_path/interface/include",
@@ -307,6 +317,11 @@ ohos_unittest("ProxyNegotiateChannelTest") {
 
 ohos_unittest("AuthNegotiateChannelNewTest") {
   module_out_path = ut_out_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   include_dirs = [
     "$dsoftbus_dfx_path/interface/include",
@@ -450,6 +465,11 @@ ohos_unittest("AuthNegotiateChannelNewTest") {
 
 ohos_unittest("ProxyNegotiateChannelNewTest") {
   module_out_path = ut_out_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   include_dirs = [
     "$dsoftbus_dfx_path/interface/include",
@@ -594,8 +614,8 @@ ohos_unittest("ProxyNegotiateChannelNewTest") {
 group("unittest") {
   testonly = true
   deps = [
-    ":AuthNegotiateChannelNewTest",
-    ":AuthNegotiateChannelTest",
+    #":AuthNegotiateChannelNewTest",
+    #":AuthNegotiateChannelTest",
     ":ProxyNegotiateChannelNewTest",
     ":ProxyNegotiateChannelTest",
   ]

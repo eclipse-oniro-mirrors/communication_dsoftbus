@@ -21,6 +21,7 @@
 #include "lnn_log.h"
 #include "lnn_network_id.h"
 #include "softbus_adapter_mem.h"
+#include "softbus_def.h"
 #include "softbus_utils.h"
 
 typedef struct {
@@ -78,7 +79,7 @@ static MetaNodeStorageInfo *CreateMetaNodeStorageInfo(const MetaNodeConfigInfo *
     return storageInfo;
 }
 
-int32_t LnnActiveMetaNode(const MetaNodeConfigInfo *info, char *metaNodeId)
+SOFTBUS_VISIBILITY int32_t LnnActiveMetaNode(const MetaNodeConfigInfo *info, char *metaNodeId)
 {
     MetaNodeStorageInfo *storageInfo = NULL;
     int32_t rc = SOFTBUS_NETWORK_ACTIVE_META_NODE_ERR;
@@ -128,7 +129,7 @@ int32_t LnnActiveMetaNode(const MetaNodeConfigInfo *info, char *metaNodeId)
     return rc;
 }
 
-int32_t LnnDeactiveMetaNode(const char *metaNodeId)
+SOFTBUS_VISIBILITY int32_t LnnDeactiveMetaNode(const char *metaNodeId)
 {
     MetaNodeStorageInfo *storageInfo = NULL;
     int32_t rc = SOFTBUS_OK;
@@ -158,7 +159,7 @@ int32_t LnnDeactiveMetaNode(const char *metaNodeId)
     return rc;
 }
 
-int32_t LnnGetAllMetaNodeInfo(MetaNodeInfo *infos, int32_t *infoNum)
+SOFTBUS_VISIBILITY int32_t LnnGetAllMetaNodeInfo(MetaNodeInfo *infos, int32_t *infoNum)
 {
     MetaNodeStorageInfo *item = NULL;
     int32_t i = 0;

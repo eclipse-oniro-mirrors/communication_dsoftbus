@@ -111,7 +111,7 @@ int32_t DiscBleGetDeviceName(char *deviceName, uint32_t size)
     return SOFTBUS_OK;
 }
 
-uint16_t DiscBleGetDeviceType(void)
+SOFTBUS_SYMBOL_EXPORT uint16_t DiscBleGetDeviceType(void)
 {
     char type[DEVICE_TYPE_BUF_LEN] = {0};
     int32_t ret = LnnGetLocalStrInfo(STRING_KEY_DEV_TYPE, type, DEVICE_TYPE_BUF_LEN);
@@ -122,7 +122,7 @@ uint16_t DiscBleGetDeviceType(void)
     return typeId;
 }
 
-int32_t DiscBleGetDeviceIdHash(uint8_t *devIdHash, uint32_t len)
+SOFTBUS_SYMBOL_EXPORT int32_t DiscBleGetDeviceIdHash(uint8_t *devIdHash, uint32_t len)
 {
     DISC_CHECK_AND_RETURN_RET_LOGE(devIdHash != NULL && len <= DISC_MAX_DEVICE_ID_LEN,
         SOFTBUS_INVALID_PARAM, DISC_BLE, "invalid param");
@@ -139,7 +139,7 @@ int32_t DiscBleGetDeviceIdHash(uint8_t *devIdHash, uint32_t len)
     return SOFTBUS_OK;
 }
 
-int32_t DiscBleGetShortUserIdHash(uint8_t *hashStr, uint32_t len)
+SOFTBUS_SYMBOL_EXPORT int32_t DiscBleGetShortUserIdHash(uint8_t *hashStr, uint32_t len)
 {
     DISC_CHECK_AND_RETURN_RET_LOGE(hashStr != NULL && len <= SHORT_USER_ID_HASH_LEN,
         SOFTBUS_INVALID_PARAM, DISC_BLE, "invalid param");

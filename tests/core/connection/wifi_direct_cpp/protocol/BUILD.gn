@@ -58,6 +58,11 @@ config("protocol_test_include_dirs") {
 
 ohos_unittest("JsonProtocolTest") {
   module_out_path = ut_out_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   configs = [
     ":protocol_test_include_dirs",
     "//build/config/compiler:exceptions",
@@ -105,6 +110,11 @@ ohos_unittest("JsonProtocolTest") {
 
 ohos_unittest("TlvProtocolTest") {
   module_out_path = ut_out_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   configs = [
     ":protocol_test_include_dirs",
     "//build/config/compiler:exceptions",

@@ -137,18 +137,17 @@ ohos_fuzztest("SocketDataTypeFuzzTest") {
   ]
 }
 
-
 ###############################################################################
 group("fuzztest") {
   testonly = true
   deps = [
     # deps file
+    ":SocketDataTypeFuzzTest",
     ":SocketFuzzTest",
     ":SocketNameFuzzTest",
+    ":SocketNetworkIdFuzzTest",
     ":SocketPeerNameFuzzTest",
     ":SocketPkgNameFuzzTest",
-    ":SocketNetworkIdFuzzTest",
-    ":SocketDataTypeFuzzTest",
   ]
 }
 ###############################################################################

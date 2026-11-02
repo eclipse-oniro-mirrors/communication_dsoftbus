@@ -19,6 +19,7 @@
 #include "lnn_log.h"
 #include "lnn_net_builder.h"
 #include "legacy/softbus_hisysevt_bus_center.h"
+#include "softbus_def.h"
 
 static void DeviceFound(const ConnectionAddr *addr, const LnnDfxDeviceInfoReport *infoReport);
 
@@ -70,7 +71,7 @@ static void DeviceFound(const ConnectionAddr *addr, const LnnDfxDeviceInfoReport
     }
 }
 
-int32_t LnnInitDiscoveryManager(void)
+SOFTBUS_VISIBILITY int32_t LnnInitDiscoveryManager(void)
 {
     uint32_t i;
 
@@ -86,7 +87,7 @@ int32_t LnnInitDiscoveryManager(void)
     return SOFTBUS_OK;
 }
 
-int32_t LnnStartPublish(void)
+SOFTBUS_VISIBILITY int32_t LnnStartPublish(void)
 {
     uint32_t i;
 
@@ -103,7 +104,7 @@ int32_t LnnStartPublish(void)
     return SOFTBUS_OK;
 }
 
-void LnnStopPublish(void)
+SOFTBUS_VISIBILITY void LnnStopPublish(void)
 {
     uint32_t i;
 
@@ -126,7 +127,7 @@ static void ReportStartDiscoveryResultEvt(void)
     }
 }
 
-int32_t LnnStartDiscovery(void)
+SOFTBUS_VISIBILITY int32_t LnnStartDiscovery(void)
 {
     uint32_t i;
 
@@ -144,7 +145,7 @@ int32_t LnnStartDiscovery(void)
     return SOFTBUS_OK;
 }
 
-void LnnStopDiscovery(void)
+SOFTBUS_VISIBILITY void LnnStopDiscovery(void)
 {
     uint32_t i;
 

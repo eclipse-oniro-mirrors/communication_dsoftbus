@@ -120,6 +120,7 @@ static void ConvertBcParams(const BroadcastParam *srcParam, SoftbusBroadcastPara
     dstParam->duration = srcParam->duration;
     dstParam->txPower = srcParam->txPower;
     dstParam->isSupportRpa = srcParam->isSupportRpa;
+    dstParam->isIncludeDeviceName = srcParam->isIncludeDeviceName;
     if (memcpy_s(dstParam->ownIrk, SOFTBUS_IRK_LEN, srcParam->ownIrk, BC_IRK_LEN) != EOK) {
         DISC_LOGE(DISC_BROADCAST, "memcpy ownIrk failed");
         return;

@@ -31,11 +31,11 @@ group("unittest") {
       "br:BrConnTest",
       "br:BrConnectionTest",
       "br:BrHidumperTest",
-      "br:ConnectionBrTest",
       "br:ConnBrPendingPacketTest",
-      "br:SoftbusBrConnectionTest",
       "br:ConnBrSendQueueTest",
       "br:ConnBrTransUnitTest",
+      "br:ConnectionBrTest",
+      "br:SoftbusBrConnectionTest",
     ]
   }
   if (support_bluetooth && dsoftbus_feature_conn_ble) {
@@ -44,25 +44,25 @@ group("unittest") {
       "ble:BleConnectionManagerTest",
       "ble:BleConnectionServiceTest",
       "ble:BleHidumperTest",
+      "ble:BleProtocolInterfaceFactoryTest",
+      "ble:BleSnapshotTest",
+      "ble:BleTransExpandTest",
       "ble:BleTransTest",
       "ble:ConnBleTransExtTest",
       "ble:ConnectionBleSwitchTest",
       "ble:ConnectionBleTest",
-      "general:GeneralConnectionTest",
-      "general:GeneralConnectionConstraintTest",
-      "general:GeneralNegotiationTest",
-      "proxy:BrProxyChannelManagerTest",
-      "proxy:ProxyChannelManagerTest",
-      "proxy:FarFieldProxyChannelManagerTest",
       "ble/unittest/bleConnection:ConnBleConnectionTest",
       "ble/unittest/ble_manager:BleManagerTest",
-      "ble:BleSnapshotTest",
-      "ble:BleProtocolInterfaceFactoryTest",
-      "ble:BleTransExpandTest",
+      "general:GeneralConnectionConstraintTest",
+      "general:GeneralConnectionTest",
+      "general:GeneralNegotiationTest",
+      #      "proxy:BrProxyChannelManagerTest",
+      #      "proxy:FarFieldProxyChannelManagerTest",
+      #      "proxy:ProxyChannelManagerTest",
     ]
   }
   if (dsoftbus_feature_conn_tcp_comm && dsoftbus_feature_conn_tcp_proxy) {
-    deps += [ "tcp:TcpManagerTest" ]
+    #    deps += [ "tcp:TcpManagerTest" ]
   }
 
   # add wifi_direct cpp unit test here

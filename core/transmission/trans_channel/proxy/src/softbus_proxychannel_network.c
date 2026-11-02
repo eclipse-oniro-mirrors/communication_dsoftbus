@@ -179,6 +179,7 @@ void NotifyNetworkingMsgReceived(const char *sessionName, int32_t channelId, con
     }
 }
 
+SOFTBUS_VISIBILITY
 int32_t TransRegisterNetworkingChannelListener(const char *sessionName, const INetworkingListener *listener)
 {
     if (sessionName == NULL) {

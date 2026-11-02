@@ -187,26 +187,5 @@ bool ExistsLaneLinkByType(LaneLinkType linkType)
 {
     return GetLaneLinkDepsInterface()->ExistsLaneLinkByType(linkType);
 }
-
-int32_t CreateWDLinkInfo(uint32_t p2pRequestId, const struct WifiDirectLink *link, LaneLinkInfo *linkInfo)
-{
-    return GetLaneLinkDepsInterface()->CreateWDLinkInfo(p2pRequestId, link, linkInfo);
-}
-
-void TryDelPreLinkByConnReqId(uint32_t connReqId)
-{
-    return GetLaneLinkDepsInterface()->TryDelPreLinkByConnReqId(connReqId);
-}
-
-int32_t CheckTransReqInfo(const LinkRequest *request, uint32_t laneReqId)
-{
-    return GetLaneLinkDepsInterface()->CheckTransReqInfo(request, laneReqId);
-}
-
-int32_t GetWifiDirectParamWithReuse(const LinkRequest *request, uint32_t laneReqId,
-    struct WifiDirectConnectInfo *wifiDirectInfo)
-{
-    return GetLaneLinkDepsInterface()->GetWifiDirectParamWithReuse(request, laneReqId, wifiDirectInfo);
-}
 }
 } // namespace OHOS

@@ -196,7 +196,7 @@ static void FsmStateMsgHandler(SoftBusMessage *msg)
     }
 
     if (msg->what != FSM_CTRL_MSG_DATA) {
-        LNN_LOGI(LNN_STATE, "process fsm ctrl msgType=%{public}d", msg->what);
+        LNN_LOGD(LNN_STATE, "process fsm ctrl msgType=%{public}d", msg->what);
     }
     switch (msg->what) {
         case FSM_CTRL_MSG_START:
@@ -245,7 +245,7 @@ static int32_t RemoveMessageFunc(const SoftBusMessage *msg, void *para)
     }
     msgType = (int32_t)(intptr_t)para;
     if (msg->what == FSM_CTRL_MSG_DATA && (int32_t)msg->arg1 == msgType) {
-        LNN_LOGI(LNN_STATE, "remove fsm data msgType=%{public}d", msgType);
+        LNN_LOGD(LNN_STATE, "remove fsm data msgType=%{public}d", msgType);
         FreeFsmHandleMsgObj((FsmCtrlMsgObj *)msg->obj);
         return 0;
     }
@@ -341,7 +341,7 @@ int32_t LnnFsmPostMessageDelay(FsmStateMachine *fsm, uint32_t msgType,
     return SOFTBUS_OK;
 }
 
-int32_t LnnFsmRemoveMessageByType(FsmStateMachine *fsm, int32_t what)
+SOFTBUS_VISIBILITY int32_t LnnFsmRemoveMessageByType(FsmStateMachine *fsm, int32_t what)
 {
     if (fsm == NULL || fsm->looper == NULL || fsm->looper->RemoveMessage == NULL) {
         return SOFTBUS_INVALID_PARAM;

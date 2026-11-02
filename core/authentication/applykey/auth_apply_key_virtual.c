@@ -17,6 +17,7 @@
 #include "auth_apply_key_process.h"
 
 #include "auth_log.h"
+#include "softbus_def.h"
 
 #define INVALID_KEY_SEQ 0
 
@@ -31,7 +32,7 @@ void DeInitApplyKeyManager(void)
     AUTH_LOGI(AUTH_CONN, "not support");
 }
 
-int32_t AuthInsertApplyKey(
+SOFTBUS_VISIBILITY int32_t AuthInsertApplyKey(
     const RequestBusinessInfo *info, const uint8_t *uk, uint32_t ukLen, uint64_t time, char *accountHash)
 {
     (void)info;
@@ -43,7 +44,7 @@ int32_t AuthInsertApplyKey(
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t GetApplyKeyByBusinessInfo(
+SOFTBUS_VISIBILITY int32_t GetApplyKeyByBusinessInfo(
     const RequestBusinessInfo *info, uint8_t *uk, uint32_t ukLen, char *accountHash, uint32_t accountHashLen)
 {
     (void)info;
@@ -72,7 +73,7 @@ void AuthClearAccountApplyKey(void)
     AUTH_LOGI(AUTH_CONN, "not support");
 }
 
-int32_t AuthFindApplyKey(
+SOFTBUS_VISIBILITY int32_t AuthFindApplyKey(
     const RequestBusinessInfo *info, uint8_t *applyKey, char *accountHash, uint32_t accountHashLen)
 {
     (void)info;
@@ -83,7 +84,7 @@ int32_t AuthFindApplyKey(
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t AuthGenApplyKey(
+SOFTBUS_VISIBILITY int32_t AuthGenApplyKey(
     const RequestBusinessInfo *info, uint32_t requestId, uint32_t connId, const GenApplyKeyCallback *genCb)
 {
     (void)info;

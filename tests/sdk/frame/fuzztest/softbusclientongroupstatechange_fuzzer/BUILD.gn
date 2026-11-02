@@ -17,10 +17,9 @@ import("../../../../../dsoftbus.gni")
 
 ##############################fuzztest##########################################
 ohos_fuzztest("SoftbusClientOnGroupStateChangeFuzzTest") {
-
   sources = [ "softbusclientongroupstatechange_fuzzer.cpp" ]
 
-    module_out_path = dsoftbus_fuzz_out_path
+  module_out_path = dsoftbus_fuzz_out_path
 
   fuzz_config_file = "$dsoftbus_test_path/sdk/frame/fuzztest/softbusclientongroupstatechange_fuzzer"
 
@@ -55,8 +54,6 @@ ohos_fuzztest("SoftbusClientOnGroupStateChangeFuzzTest") {
 ###############################################################################
 group("fuzztest") {
   testonly = true
-  deps = [
-    ":SoftbusClientOnGroupStateChangeFuzzTest"
-  ]
+  deps = [ ":SoftbusClientOnGroupStateChangeFuzzTest" ]
 }
 ###############################################################################

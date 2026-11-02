@@ -147,7 +147,8 @@ static void PrintSessionInfo(const char *pkgName, const char *sessionName, int32
     AnonymizeFree(tmpName);
 }
 
-int32_t TransCreateSessionServer(const char *pkgName, const char *sessionName, int32_t uid, int32_t pid)
+SOFTBUS_SYMBOL_EXPORT int32_t TransCreateSessionServer(const char *pkgName, const char *sessionName, int32_t uid,
+    int32_t pid)
 {
     if (!IsValidStringSafe(pkgName, PKG_NAME_SIZE_MAX) || !IsValidStringSafe(sessionName, SESSION_NAME_SIZE_MAX)) {
         return SOFTBUS_INVALID_PARAM;

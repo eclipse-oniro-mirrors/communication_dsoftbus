@@ -202,7 +202,7 @@ static BtGapCallBacks g_softbusGapCb = {
     .pairConfiremedCallback = WrapperPairConfiremedCallback
 };
 
-int SoftBusAddBtStateListener(const SoftBusBtStateListener *listener, int *listenerId)
+SOFTBUS_VISIBILITY int SoftBusAddBtStateListener(const SoftBusBtStateListener *listener, int *listenerId)
 {
     if (listener == NULL || listenerId == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -220,7 +220,7 @@ int SoftBusAddBtStateListener(const SoftBusBtStateListener *listener, int *liste
     return SOFTBUS_COMM_BLUETOOTH_ADD_STATE_LISTENER_ERR;
 }
 
-int SoftBusRemoveBtStateListener(int listenerId)
+SOFTBUS_VISIBILITY int SoftBusRemoveBtStateListener(int listenerId)
 {
     if (listenerId < 0 || listenerId >= STATE_LISTENER_MAX_NUM) {
         return SOFTBUS_INVALID_PARAM;
@@ -230,7 +230,7 @@ int SoftBusRemoveBtStateListener(int listenerId)
     return SOFTBUS_OK;
 }
 
-int SoftBusEnableBt(void)
+SOFTBUS_VISIBILITY int SoftBusEnableBt(void)
 {
     if (EnableBle()) {
         return SOFTBUS_OK;
@@ -238,7 +238,7 @@ int SoftBusEnableBt(void)
     return SOFTBUS_COMM_BLE_ENABLE_ERR;
 }
 
-int SoftBusDisableBt(void)
+SOFTBUS_VISIBILITY int SoftBusDisableBt(void)
 {
     if (DisableBle()) {
         return SOFTBUS_OK;
@@ -246,7 +246,7 @@ int SoftBusDisableBt(void)
     return SOFTBUS_COMM_BLE_DISABLE_ERR;
 }
 
-int SoftBusGetBtState(void)
+SOFTBUS_VISIBILITY int SoftBusGetBtState(void)
 {
     if (IsBleEnabled()) {
         return BLE_ENABLE;
@@ -254,7 +254,7 @@ int SoftBusGetBtState(void)
     return BLE_DISABLE;
 }
 
-int SoftBusGetBrState(void)
+SOFTBUS_VISIBILITY int SoftBusGetBrState(void)
 {
     if (GetBtState() == OHOS_GAP_STATE_TURN_ON) {
         return BR_ENABLE;
@@ -262,7 +262,7 @@ int SoftBusGetBrState(void)
     return BR_DISABLE;
 }
 
-int SoftBusGetBtMacAddr(SoftBusBtAddr *mac)
+SOFTBUS_VISIBILITY int SoftBusGetBtMacAddr(SoftBusBtAddr *mac)
 {
     if (mac == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -274,14 +274,14 @@ int SoftBusGetBtMacAddr(SoftBusBtAddr *mac)
     return SOFTBUS_OK;
 }
 
-int SoftBusGetBtName(unsigned char *name, unsigned int *len)
+SOFTBUS_VISIBILITY int SoftBusGetBtName(unsigned char *name, unsigned int *len)
 {
     (void)name;
     (void)len;
     return SOFTBUS_OK;
 }
 
-int SoftBusSetBtName(const char *name)
+SOFTBUS_VISIBILITY int SoftBusSetBtName(const char *name)
 {
     if (name == NULL) {
         COMM_LOGE(COMM_ADAPTER, "invalid parameter");
@@ -329,7 +329,7 @@ void SoftBusComputeWaitBleSendDataTime(uint32_t waitMillis, SoftBusSysTime *outt
     outtime->usec = time % (USECTONSEC * USECTONSEC);
 }
 
-int SoftBusBtInit(void)
+SOFTBUS_VISIBILITY int SoftBusBtInit(void)
 {
     if (SoftBusMutexInit(&g_lock, NULL) != SOFTBUS_OK) {
         COMM_LOGE(COMM_ADAPTER, "init lock error");

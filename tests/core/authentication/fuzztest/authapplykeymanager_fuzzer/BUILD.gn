@@ -19,7 +19,6 @@ import("../../unittest/authmanager.gni")
 
 ##############################fuzztest##########################################
 
-
 ohos_fuzztest("AuthApplyKeyManagerFuzzTest") {
   module_out_path = dsoftbus_fuzz_out_path
   fuzz_config_file = "$dsoftbus_root_path/tests/core/authentication/fuzztest/authapplykeymanager_fuzzer"
@@ -68,7 +67,8 @@ ohos_fuzztest("AuthApplyKeyManagerFuzzTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [

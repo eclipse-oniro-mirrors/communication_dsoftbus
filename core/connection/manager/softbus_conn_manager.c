@@ -205,7 +205,7 @@ static void DelListener(ConnModule moduleId)
     return;
 }
 
-uint32_t ConnGetHeadSize(void)
+SOFTBUS_VISIBILITY uint32_t ConnGetHeadSize(void)
 {
     return sizeof(ConnPktHead);
 }
@@ -213,7 +213,7 @@ uint32_t ConnGetHeadSize(void)
 SoftBusMutex g_ReqLock;
 static uint32_t g_ReqId = 1;
 
-uint32_t ConnGetNewRequestId(ConnModule moduleId)
+SOFTBUS_VISIBILITY uint32_t ConnGetNewRequestId(ConnModule moduleId)
 {
 #define REQID_MAX 1000000
     (void)moduleId;
@@ -307,7 +307,7 @@ void ConnManagerDisconnected(uint32_t connectionId, const ConnectionInfo *info)
     return;
 }
 
-int32_t ConnSetConnectCallback(ConnModule moduleId, const ConnectCallback *callback)
+SOFTBUS_VISIBILITY int32_t ConnSetConnectCallback(ConnModule moduleId, const ConnectCallback *callback)
 {
     if (ModuleCheck(moduleId) != SOFTBUS_OK) {
         CONN_LOGE(CONN_COMMON, "module check fail, moduleId=%{public}d", moduleId);
@@ -326,7 +326,7 @@ int32_t ConnSetConnectCallback(ConnModule moduleId, const ConnectCallback *callb
     return AddListener(moduleId, callback);
 }
 
-void ConnUnSetConnectCallback(ConnModule moduleId)
+SOFTBUS_VISIBILITY void ConnUnSetConnectCallback(ConnModule moduleId)
 {
     DelListener(moduleId);
     return;
@@ -337,12 +337,12 @@ void ConnDeathCallback(const char *pkgName, int32_t pid)
     ClearGeneralConnection(pkgName, pid);
 }
 
-int32_t ConnTypeIsSupport(ConnectType type)
+SOFTBUS_VISIBILITY int32_t ConnTypeIsSupport(ConnectType type)
 {
     return ConnTypeCheck(type);
 }
 
-int32_t ConnConnectDevice(const ConnectOption *info, uint32_t requestId, const ConnectResult *result)
+SOFTBUS_VISIBILITY int32_t ConnConnectDevice(const ConnectOption *info, uint32_t requestId, const ConnectResult *result)
 {
     if (info == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -378,7 +378,7 @@ int32_t ConnConnectDevice(const ConnectOption *info, uint32_t requestId, const C
     return g_connManager[info->type]->ConnectDevice(info, requestId, result);
 }
 
-int32_t ConnGetTypeByConnectionId(uint32_t connectionId, ConnectType *type)
+SOFTBUS_VISIBILITY int32_t ConnGetTypeByConnectionId(uint32_t connectionId, ConnectType *type)
 {
     CONN_CHECK_AND_RETURN_RET_LOGW(type != NULL, SOFTBUS_INVALID_PARAM, CONN_COMMON, "param error");
 
@@ -391,7 +391,7 @@ int32_t ConnGetTypeByConnectionId(uint32_t connectionId, ConnectType *type)
     return SOFTBUS_OK;
 }
 
-int32_t ConnPostBytes(uint32_t connectionId, ConnPostData *data)
+SOFTBUS_VISIBILITY int32_t ConnPostBytes(uint32_t connectionId, ConnPostData *data)
 {
     ConnectType type;
     ConnPktHead *head = NULL;
@@ -426,7 +426,7 @@ int32_t ConnPostBytes(uint32_t connectionId, ConnPostData *data)
         connectionId, (uint8_t *)data->buf, data->len, data->pid, data->flag, data->module, data->seq);
 }
 
-int32_t ConnDisconnectDevice(uint32_t connectionId)
+SOFTBUS_VISIBILITY int32_t ConnDisconnectDevice(uint32_t connectionId)
 {
     ConnectType type;
     if (ConnGetTypeByConnectionId(connectionId, &type) != SOFTBUS_OK) {
@@ -439,7 +439,7 @@ int32_t ConnDisconnectDevice(uint32_t connectionId)
     return g_connManager[type]->DisconnectDevice(connectionId);
 }
 
-int32_t ConnDisconnectDeviceAllConn(const ConnectOption *option)
+SOFTBUS_VISIBILITY int32_t ConnDisconnectDeviceAllConn(const ConnectOption *option)
 {
     if (option == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -469,7 +469,7 @@ int32_t ConnSetKeepaliveByConnectionId(uint32_t connectionId, bool needKeepalive
     return TcpConnSetKeepalive(info.socketInfo.fd, needKeepalive);
 }
 
-int32_t ConnGetConnectionInfo(uint32_t connectionId, ConnectionInfo *info)
+SOFTBUS_VISIBILITY int32_t ConnGetConnectionInfo(uint32_t connectionId, ConnectionInfo *info)
 {
     ConnectType type;
     if (ConnGetTypeByConnectionId(connectionId, &type) != SOFTBUS_OK) {
@@ -483,7 +483,7 @@ int32_t ConnGetConnectionInfo(uint32_t connectionId, ConnectionInfo *info)
     return g_connManager[type]->GetConnectionInfo(connectionId, info);
 }
 
-int32_t ConnStartLocalListening(const LocalListenerInfo *info)
+SOFTBUS_VISIBILITY int32_t ConnStartLocalListening(const LocalListenerInfo *info)
 {
     if (info == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -500,7 +500,7 @@ int32_t ConnStartLocalListening(const LocalListenerInfo *info)
     return g_connManager[info->type]->StartLocalListening(info);
 }
 
-int32_t ConnStopLocalListening(const LocalListenerInfo *info)
+SOFTBUS_VISIBILITY int32_t ConnStopLocalListening(const LocalListenerInfo *info)
 {
     if (info == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -621,7 +621,7 @@ void ConnServerDeinit(void)
     atomic_store_explicit(&g_isInited, false, memory_order_release);
 }
 
-bool CheckActiveConnection(const ConnectOption *info, bool needOccupy)
+SOFTBUS_VISIBILITY bool CheckActiveConnection(const ConnectOption *info, bool needOccupy)
 {
     if (info == NULL) {
         return false;
@@ -639,7 +639,7 @@ bool CheckActiveConnection(const ConnectOption *info, bool needOccupy)
     return g_connManager[info->type]->CheckActiveConnection(info, needOccupy);
 }
 
-int32_t ConnUpdateConnection(uint32_t connectionId, UpdateOption *option)
+SOFTBUS_VISIBILITY int32_t ConnUpdateConnection(uint32_t connectionId, UpdateOption *option)
 {
     if (option == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -671,7 +671,7 @@ int32_t ConnPreventConnection(const ConnectOption *option, uint32_t time)
     return g_connManager[option->type]->PreventConnection(option, time);
 }
 
-int32_t ConnConfigPostLimit(const LimitConfiguration *configuration)
+SOFTBUS_SYMBOL_EXPORT int32_t ConnConfigPostLimit(const LimitConfiguration *configuration)
 {
     if (configuration == NULL) {
         return SOFTBUS_INVALID_PARAM;

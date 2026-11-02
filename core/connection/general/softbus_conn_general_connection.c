@@ -31,6 +31,7 @@
 #include "bus_center_manager.h"
 #include "bus_center_event.h"
 #include "lnn_ohos_account_adapter.h"
+#include "softbus_def.h"
 
 #define INVALID_UNDERLAY_HANDLE            (-1)
 #define GENERAL_CONNECT_TIMEOUT_MILLIS     (10 * 1000)
@@ -1441,7 +1442,7 @@ static GeneralConnectionManager g_manager = {
     .cleanupGeneralConnection = ClearAllGeneralConnection,
 };
 
-GeneralConnectionManager *GetGeneralConnectionManager(void)
+SOFTBUS_VISIBILITY GeneralConnectionManager *GetGeneralConnectionManager(void)
 {
     return &g_manager;
 }

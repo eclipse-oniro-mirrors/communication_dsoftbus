@@ -19,6 +19,7 @@
 #include <securec.h>
 #include "bus_center_adapter.h"
 #include "lnn_log.h"
+#include "softbus_def.h"
 
 #define DEVICE_TYPE_MAX_LENGTH 3
 #define LEFT_SHIFT_DEVICE_TYPE_LENGTH  (DEVICE_TYPE_MAX_LENGTH * 4)
@@ -47,7 +48,7 @@ static TypeToId g_typeToIdMap[] = {
 
 static __thread char g_stringTypeId[DEVICE_TYPE_MAX_LENGTH + 1] = {0};
 
-const char *LnnGetDeviceName(const DeviceBasicInfo *info)
+SOFTBUS_VISIBILITY const char *LnnGetDeviceName(const DeviceBasicInfo *info)
 {
     if (info == NULL) {
         LNN_LOGE(LNN_LEDGER, "para error");
@@ -130,7 +131,7 @@ static char *ConvertIntToHexString(uint16_t typeId)
     return g_stringTypeId;
 }
 
-int32_t LnnConvertDeviceTypeToId(const char *deviceType, uint16_t *typeId)
+SOFTBUS_VISIBILITY int32_t LnnConvertDeviceTypeToId(const char *deviceType, uint16_t *typeId)
 {
     int mstRet;
     if (deviceType == NULL || typeId == NULL) {
@@ -162,7 +163,7 @@ int32_t LnnConvertDeviceTypeToId(const char *deviceType, uint16_t *typeId)
     return SOFTBUS_NETWORK_INVALID_DEV_INFO;
 }
 
-char *LnnConvertIdToDeviceType(uint16_t typeId)
+SOFTBUS_VISIBILITY char *LnnConvertIdToDeviceType(uint16_t typeId)
 {
     uint32_t count = sizeof(g_typeToIdMap) / sizeof(TypeToId);
     for (uint32_t i = 0; i < count; i++) {

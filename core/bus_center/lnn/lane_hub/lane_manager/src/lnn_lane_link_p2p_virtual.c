@@ -15,26 +15,27 @@
 
 #include "lnn_lane_link_p2p.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
-int32_t LnnConnectP2p(const LinkRequest *request, uint32_t laneReqId, const LaneLinkCb *callback)
+SOFTBUS_VISIBILITY int32_t LnnConnectP2p(const LinkRequest *request, uint32_t laneReqId, const LaneLinkCb *callback)
 {
     (void)request;
     (void)laneReqId;
     (void)callback;
     return SOFTBUS_P2P_NOT_SUPPORT;
 }
-int32_t LnnDisconnectP2p(const char *networkId, uint32_t laneReqId)
+SOFTBUS_VISIBILITY int32_t LnnDisconnectP2p(const char *networkId, uint32_t laneReqId)
 {
     (void)networkId;
     (void)laneReqId;
     return SOFTBUS_P2P_NOT_SUPPORT;
 }
-void LnnDestroyP2p(void)
+SOFTBUS_VISIBILITY void LnnDestroyP2p(void)
 {
     return;
 }
 
-void LnnCancelWifiDirect(uint32_t laneReqId)
+SOFTBUS_VISIBILITY void LnnCancelWifiDirect(uint32_t laneReqId)
 {
     (void)laneReqId;
     return;
@@ -47,13 +48,13 @@ int32_t CheckIsAuthSessionServer(const char *peerIp, bool *isServer)
     return SOFTBUS_P2P_NOT_SUPPORT;
 }
 
-int32_t RemoveAuthSessionServer(const char *peerIp)
+SOFTBUS_VISIBILITY int32_t RemoveAuthSessionServer(const char *peerIp)
 {
     (void)peerIp;
     return SOFTBUS_P2P_NOT_SUPPORT;
 }
 
-void LnnDisconnectP2pWithoutLnn(uint32_t laneReqId)
+SOFTBUS_VISIBILITY void LnnDisconnectP2pWithoutLnn(uint32_t laneReqId)
 {
     (void)laneReqId;
     return;

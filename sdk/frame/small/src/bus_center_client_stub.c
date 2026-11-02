@@ -23,7 +23,7 @@
 #include "softbus_def.h"
 #include "softbus_error_code.h"
 
-int32_t ClientOnJoinLNNResult(IpcIo *data, IpcIo *reply)
+SOFTBUS_VISIBILITY int32_t ClientOnJoinLNNResult(IpcIo *data, IpcIo *reply)
 {
     if (data == NULL) {
         LNN_LOGE(LNN_EVENT, "invalid param");
@@ -67,7 +67,7 @@ int32_t ClientOnJoinMetaNodeResult(IpcIo *data, IpcIo *reply)
     return SOFTBUS_OK;
 }
 
-int32_t ClientOnLeaveLNNResult(IpcIo *data, IpcIo *reply)
+SOFTBUS_VISIBILITY int32_t ClientOnLeaveLNNResult(IpcIo *data, IpcIo *reply)
 {
     if (data == NULL) {
         LNN_LOGE(LNN_EVENT, "invalid param");
@@ -154,7 +154,7 @@ int32_t ClientOnNodeBasicInfoChanged(IpcIo *data, IpcIo *reply)
     return SOFTBUS_OK;
 }
 
-int32_t ClientOnTimeSyncResult(IpcIo *data, IpcIo *reply)
+SOFTBUS_VISIBILITY int32_t ClientOnTimeSyncResult(IpcIo *data, IpcIo *reply)
 {
     if (data == NULL) {
         LNN_LOGE(LNN_EVENT, "invalid param");
@@ -183,7 +183,7 @@ int32_t ClientOnTimeSyncResult(IpcIo *data, IpcIo *reply)
     return SOFTBUS_OK;
 }
 
-void ClientOnPublishLNNResult(IpcIo *data, IpcIo *reply)
+SOFTBUS_VISIBILITY void ClientOnPublishLNNResult(IpcIo *data, IpcIo *reply)
 {
     if (reply == NULL) {
         LNN_LOGE(LNN_EVENT, "invalid param");
@@ -196,7 +196,7 @@ void ClientOnPublishLNNResult(IpcIo *data, IpcIo *reply)
     LnnOnPublishLNNResult(publishId, reason);
 }
 
-void ClientOnRefreshLNNResult(IpcIo *data, IpcIo *reply)
+SOFTBUS_VISIBILITY void ClientOnRefreshLNNResult(IpcIo *data, IpcIo *reply)
 {
     if (data == NULL) {
         LNN_LOGE(LNN_EVENT, "invalid param");
@@ -209,7 +209,7 @@ void ClientOnRefreshLNNResult(IpcIo *data, IpcIo *reply)
     LnnOnRefreshLNNResult(refreshId, reason);
 }
 
-void ClientOnRefreshDeviceFound(IpcIo *data, IpcIo *reply)
+SOFTBUS_VISIBILITY void ClientOnRefreshDeviceFound(IpcIo *data, IpcIo *reply)
 {
     if (data == NULL) {
         LNN_LOGE(LNN_EVENT, "invalid param");

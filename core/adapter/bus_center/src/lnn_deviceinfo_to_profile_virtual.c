@@ -14,6 +14,7 @@
  */
 
 #include "lnn_deviceinfo_to_profile.h"
+#include "softbus_def.h"
 
 void InsertToProfile(NodeInfo *info)
 {
@@ -25,7 +26,7 @@ void InsertMetaNodeInfoToProfile(MetaNodeInfo *info)
     (void)info;
 }
 
-void UpdateProfile(const NodeInfo *info)
+SOFTBUS_VISIBILITY void UpdateProfile(const NodeInfo *info)
 {
     (void)info;
 }
@@ -35,7 +36,7 @@ void UpdateMetaNodeProfile(MetaNodeInfo *info)
     (void)info;
 }
 
-void DeleteFromProfile(const char *udid)
+SOFTBUS_VISIBILITY void DeleteFromProfile(const char *udid)
 {
     (void)udid;
 }

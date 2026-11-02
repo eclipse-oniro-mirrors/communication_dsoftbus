@@ -35,6 +35,7 @@
 #include "lnn_network_id.h"
 #include "lnn_net_builder.h"
 #include "lnn_init_monitor.h"
+#include "softbus_def.h"
 #include "softbus_utils.h"
 
 #define RETRY_TIMES                      5
@@ -43,7 +44,7 @@
 static bool g_isRestore = false;
 static bool g_isDeviceInfoSet = false;
 
-int32_t LnnInitNetLedger(void)
+SOFTBUS_VISIBILITY int32_t LnnInitNetLedger(void)
 {
     if (LnnInitModuleNotifyWithRetrySync(INIT_DEPS_HUKS, LnnInitHuksInterface, RETRY_TIMES, DELAY_REG_DP_TIME) !=
         SOFTBUS_OK) {
@@ -333,7 +334,7 @@ void LnnLedgerInfoStatusSet(void)
     }
 }
 
-void RestoreLocalDeviceInfo(void)
+SOFTBUS_VISIBILITY void RestoreLocalDeviceInfo(void)
 {
     LNN_LOGI(LNN_LEDGER, "restore local device info enter");
     LnnSetLocalFeature();
@@ -380,7 +381,7 @@ void RestoreRemoteUserInfo(void)
     }
 }
 
-int32_t LnnInitNetLedgerDelay(void)
+SOFTBUS_VISIBILITY int32_t LnnInitNetLedgerDelay(void)
 {
     AuthLoadDeviceKeyPacked();
     int32_t ret = LnnInitLocalLedgerDelay();
@@ -391,7 +392,7 @@ int32_t LnnInitNetLedgerDelay(void)
     return SOFTBUS_OK;
 }
 
-int32_t LnnInitEventMoniterDelay(void)
+SOFTBUS_VISIBILITY int32_t LnnInitEventMoniterDelay(void)
 {
     int32_t ret = LnnInitCommonEventMonitorImpl();
     if (ret != SOFTBUS_OK) {
@@ -401,7 +402,7 @@ int32_t LnnInitEventMoniterDelay(void)
     return SOFTBUS_OK;
 }
 
-int32_t LnnInitHuksCeParamsDelay(void)
+SOFTBUS_VISIBILITY int32_t LnnInitHuksCeParamsDelay(void)
 {
     int32_t ret = LnnGenerateCeParams(false);
     if (ret != SOFTBUS_OK) {
@@ -513,7 +514,7 @@ static int32_t LnnGetNodeKeyInfoRemote(const char *networkId, int key, uint8_t *
     }
 }
 
-int32_t LnnGetNodeKeyInfo(const char *networkId, int key, uint8_t *info, uint32_t infoLen)
+SOFTBUS_VISIBILITY int32_t LnnGetNodeKeyInfo(const char *networkId, int key, uint8_t *info, uint32_t infoLen)
 {
     bool isLocalNetworkId = false;
     char localNetworkId[NETWORK_ID_BUF_LEN] = {0};
@@ -535,7 +536,7 @@ int32_t LnnGetNodeKeyInfo(const char *networkId, int key, uint8_t *info, uint32_
     }
 }
 
-int32_t LnnSetNodeKeyInfo(const char *networkId, int32_t key, uint8_t *info, uint32_t infoLen)
+SOFTBUS_VISIBILITY int32_t LnnSetNodeKeyInfo(const char *networkId, int32_t key, uint8_t *info, uint32_t infoLen)
 {
     if (networkId == NULL || info == NULL || infoLen == 0 || infoLen > SERVICE_FIND_CAP_LEN) {
         LNN_LOGE(LNN_LEDGER, "params are null, infoLen=%{public}u", infoLen);
@@ -615,7 +616,7 @@ static int32_t LnnGetPrivateNodeKeyInfo(const char *networkId, InfoKey key, uint
     }
 }
 
-int32_t LnnSetNodeDataChangeFlag(const char *networkId, uint16_t dataChangeFlag)
+SOFTBUS_VISIBILITY int32_t LnnSetNodeDataChangeFlag(const char *networkId, uint16_t dataChangeFlag)
 {
     bool isLocalNetworkId = false;
     char localNetworkId[NETWORK_ID_BUF_LEN] = {0};
@@ -1212,7 +1213,7 @@ int32_t LnnUpdateLocalDeviceInfo(void)
     return SOFTBUS_OK;
 }
 
-int32_t InitUdidChangedEvent(void)
+SOFTBUS_VISIBILITY int32_t InitUdidChangedEvent(void)
 {
     return HandleDeviceInfoIfUdidChanged();
 }

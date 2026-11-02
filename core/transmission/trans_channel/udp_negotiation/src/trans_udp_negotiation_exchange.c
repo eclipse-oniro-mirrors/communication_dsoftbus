@@ -187,7 +187,7 @@ static void TransGetCapabilityFromJson(const cJSON *msg, AppInfo *appInfo)
         appInfo->udpChannelCapability, remoteUdpChannelCapability);
 }
 
-int32_t TransUnpackRequestUdpInfo(const cJSON *msg, AppInfo *appInfo)
+SOFTBUS_VISIBILITY int32_t TransUnpackRequestUdpInfo(const cJSON *msg, AppInfo *appInfo)
 {
     TRANS_LOGI(TRANS_CTRL, "unpack request udp info in negotiation.");
     TRANS_CHECK_AND_RETURN_RET_LOGW(msg != NULL, SOFTBUS_INVALID_PARAM, TRANS_CTRL, "Invalid param");

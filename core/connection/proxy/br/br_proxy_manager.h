@@ -34,7 +34,7 @@ typedef struct {
     void (*onProxyChannelDataReceived)(struct ProxyChannel *channel, const uint8_t *data, uint32_t dataLen);
     void (*onProxyChannelDisconnected)(struct ProxyChannel *channel, int32_t reason);
     void (*onProxyChannelReconnected)(const char *addr, struct ProxyChannel *channel);
-    void (*onBrProxyStateChanged)(uint32_t requestId, const char *addr);
+    void (*onBrProxyStateChanged)(uint32_t requestId, const char *addr, bool *isSupportFarField);
 } BrProxyListener;
 
 // ProxyConnectInfo and ProxyConnection moved here from proxy_manager.h

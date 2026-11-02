@@ -14,6 +14,7 @@
  */
 
 #include "softbus_conn_general_connection.h"
+#include "softbus_def.h"
 
 static int32_t RegisterListener(const GeneralConnectionListener *listener)
 {
@@ -81,7 +82,7 @@ static GeneralConnectionManager g_manager = {
     .cleanupGeneralConnection = ClearAllGeneralConnection,
 };
 
-GeneralConnectionManager *GetGeneralConnectionManager(void)
+SOFTBUS_VISIBILITY GeneralConnectionManager *GetGeneralConnectionManager(void)
 {
     return &g_manager;
 }

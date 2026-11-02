@@ -15,6 +15,7 @@
 #include "lnn_settingdata_event_monitor.h"
 
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 int32_t LnnGetUnifiedDisplayDeviceName(char *unifiedDisplayName, uint32_t len)
 {
@@ -23,7 +24,7 @@ int32_t LnnGetUnifiedDisplayDeviceName(char *unifiedDisplayName, uint32_t len)
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnGetUnifiedDeviceName(char *unifiedName, uint32_t len)
+SOFTBUS_VISIBILITY int32_t LnnGetUnifiedDeviceName(char *unifiedName, uint32_t len)
 {
     (void)unifiedName;
     (void)len;
@@ -46,6 +47,7 @@ int32_t LnnGetSettingNickName(const char *defaultName, const char *unifiedName, 
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
+SOFTBUS_VISIBILITY
 int32_t LnnGetDeviceDisplayName(const char *nickName, const char *defaultName, char *deviceName, uint32_t len)
 {
     (void)nickName;

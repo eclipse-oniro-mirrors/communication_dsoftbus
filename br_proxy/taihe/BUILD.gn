@@ -34,6 +34,15 @@ ohos_taihe("run_proxychannelmanager_taihe") {
 }
 
 taihe_shared_library("proxychannelmanager_taihe_native") {
+  cflags = [
+    "-fvisibility=hidden",
+    "-Oz",
+    "-fmerge-all-constants",
+  ]
+  ldflags = [
+    "-Wl,--exclude-libs,ALL",
+    "-Wl,--hash-style=gnu",
+  ]
   sanitize = {
     cfi = true
     cfi_cross_dso = true

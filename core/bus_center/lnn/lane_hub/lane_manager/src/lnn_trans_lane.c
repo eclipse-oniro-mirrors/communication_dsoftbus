@@ -29,6 +29,7 @@
 #include "lnn_trans_free_lane.h"
 #include "meta_socket_struct.h"
 #include "softbus_adapter_mem.h"
+#include "softbus_def.h"
 
 #define DEFAULT_LINK_LATENCY 30000
 #define WIFI_DIRECET_NUM_LIMIT 4
@@ -342,6 +343,7 @@ static int32_t TriggerLink(uint32_t laneReqId, TransOption *request,
     Unlock();
     int32_t ret = LnnLanePostMsgToHandler(MSG_TYPE_LANE_TRIGGER_LINK, laneReqId, 0, NULL, 0);
     if (ret != SOFTBUS_OK) {
+        linkNode->linkList = NULL;
         DeleteLaneLinkNode(laneReqId);
         return ret;
     }
@@ -406,7 +408,7 @@ int32_t DeleteRequestNode(uint32_t laneReqId)
     return SOFTBUS_LANE_NOT_FOUND;
 }
 
-bool CheckVirtualLinkByLaneReqId(uint32_t laneReqId)
+SOFTBUS_VISIBILITY bool CheckVirtualLinkByLaneReqId(uint32_t laneReqId)
 {
     if (laneReqId == INVALID_LANE_REQ_ID) {
         LNN_LOGE(LNN_LANE, "laneHandle is invalid parameter");
@@ -506,6 +508,7 @@ static int32_t TriggerLinkWithQos(uint32_t laneReqId, const LaneAllocInfo *alloc
     Unlock();
     int32_t ret = LnnLanePostMsgToHandler(MSG_TYPE_LANE_TRIGGER_LINK, laneReqId, 0, NULL, 0);
     if (ret != SOFTBUS_OK) {
+        linkNode->linkList = NULL;
         DeleteLaneLinkNode(laneReqId);
         return ret;
     }
@@ -993,7 +996,7 @@ static int32_t ParseLaneTypeByLaneReqId(uint32_t laneReqId, LaneType *laneType)
     return SOFTBUS_OK;
 }
 
-int32_t PostNotifyFreeLaneResult(uint32_t laneReqId, int32_t errCode, uint64_t delayMillis)
+SOFTBUS_VISIBILITY int32_t PostNotifyFreeLaneResult(uint32_t laneReqId, int32_t errCode, uint64_t delayMillis)
 {
     LNN_LOGI(LNN_LANE, "post notify free lane result message, laneReqId=%{public}u, errCode=%{public}d",
         laneReqId, errCode);
@@ -1047,7 +1050,7 @@ int32_t UpdateReqListLaneId(uint64_t oldLaneId, uint64_t newLaneId)
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t UpdateAndGetReqInfoByFree(uint32_t laneReqId, TransReqInfo *reqInfo)
+SOFTBUS_VISIBILITY int32_t UpdateAndGetReqInfoByFree(uint32_t laneReqId, TransReqInfo *reqInfo)
 {
     if (Lock() != SOFTBUS_OK) {
         LNN_LOGE(LNN_LANE, "get lock fail");
@@ -1909,7 +1912,7 @@ LaneInterface *TransLaneGetInstance(void)
     return &g_transLaneObject;
 }
 
-int32_t GetTransReqInfoByLaneReqId(uint32_t laneReqId, TransReqInfo *reqInfo)
+SOFTBUS_VISIBILITY int32_t GetTransReqInfoByLaneReqId(uint32_t laneReqId, TransReqInfo *reqInfo)
 {
     if (reqInfo == NULL || laneReqId == INVALID_LANE_REQ_ID) {
         return SOFTBUS_INVALID_PARAM;
@@ -1960,7 +1963,7 @@ void RemoveDetectTimeoutMessage(uint32_t detectId)
         RemoveDetectTimeout, &detectId);
 }
 
-int32_t PostDelayDestroyMessage(uint32_t laneReqId, uint64_t laneId, uint64_t delayMillis)
+SOFTBUS_VISIBILITY int32_t PostDelayDestroyMessage(uint32_t laneReqId, uint64_t laneId, uint64_t delayMillis)
 {
     LNN_LOGI(LNN_LANE, "post delay destroy message. laneReqId=%{public}u, laneId=%{public}" PRIu64 "",
         laneReqId, laneId);
@@ -2010,13 +2013,13 @@ static int32_t RemoveDelayDestroy(const SoftBusMessage *msg, void *data)
     return SOFTBUS_INVALID_PARAM;
 }
 
-void RemoveDelayDestroyMessage(uint64_t laneId)
+SOFTBUS_VISIBILITY void RemoveDelayDestroyMessage(uint64_t laneId)
 {
     g_laneLoopHandler.looper->RemoveMessageCustom(g_laneLoopHandler.looper, &g_laneLoopHandler,
         RemoveDelayDestroy, &laneId);
 }
 
-void DelLogicAndLaneRelationship(uint64_t laneId)
+SOFTBUS_VISIBILITY void DelLogicAndLaneRelationship(uint64_t laneId)
 {
     if (Lock() != SOFTBUS_OK) {
         LNN_LOGE(LNN_LANE, "get lock fail");

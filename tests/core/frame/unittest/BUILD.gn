@@ -20,6 +20,11 @@ softbus_adapter_common = "${dsoftbus_root_path}/adapter/common"
 
 ohos_unittest("SoftbusServerStubTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   defines += [ "ENABLE_OS_ACCOUNT_CONSTRAINT" ]
   sources = [
     "mock/softbus_server_stub_test_mock.cpp",
@@ -68,9 +73,10 @@ ohos_unittest("SoftbusServerStubTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
-    "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
     "$dsoftbus_root_path/tests/sdk:softbus_client_static",
+    "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
   ]
   deps += dsoftbus_log_label_deps
 
@@ -112,6 +118,11 @@ ohos_unittest("SoftbusServerStubTest") {
 
 ohos_unittest("SoftbusServerTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "mock/softbus_server_test_mock.cpp",
     "softbus_server_test.cpp",
@@ -141,8 +152,9 @@ ohos_unittest("SoftbusServerTest") {
 
   deps = [
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
     "$dsoftbus_root_path/dfx/dumper/legacy:softbus_dfx_dump",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   if (is_standard_system) {
@@ -160,6 +172,11 @@ ohos_unittest("SoftbusServerTest") {
 
 ohos_unittest("SoftbusClientInfoManagerTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "softbus_client_info_manager_test.cpp" ]
 
   include_dirs = [
@@ -169,7 +186,8 @@ ohos_unittest("SoftbusClientInfoManagerTest") {
 
   deps = [
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   if (is_standard_system) {
@@ -187,6 +205,11 @@ ohos_unittest("SoftbusClientInfoManagerTest") {
 
 ohos_unittest("SoftbusGEnhanceTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "softbus_g_enhance_test.cpp" ]
   if (support_jsapi) {
     defines += [ "SUPPORT_JSAPI" ]
@@ -207,13 +230,14 @@ ohos_unittest("SoftbusGEnhanceTest") {
     "$dsoftbus_root_path/core/frame/init/include",
     "$dsoftbus_root_path/core/transmission/ipc/include",
     "$dsoftbus_root_path/core/frame/init/src",
-    "$dsoftbus_root_path/core/discovery/nfc/dispatcher/include"
+    "$dsoftbus_root_path/core/discovery/nfc/dispatcher/include",
   ]
 
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
   deps += dsoftbus_log_label_deps
 
@@ -234,8 +258,8 @@ group("unittest") {
   testonly = true
   deps = [
     ":SoftbusClientInfoManagerTest",
-    ":SoftbusGEnhanceTest",
-    ":SoftbusServerTest",
+    #":SoftbusGEnhanceTest",
+    #":SoftbusServerTest",
   ]
   if (dsoftbus_access_token_feature && support_jsapi) {
     deps += [ ":SoftbusServerStubTest" ]

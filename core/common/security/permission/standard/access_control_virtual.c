@@ -17,6 +17,7 @@
 
 #include "access_control.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 int32_t TransCheckClientAccessControl(const char *peerNetworkId)
 {
@@ -31,7 +32,7 @@ int32_t CheckSecLevelPublic(const char *mySessionName, const char *peerSessionNa
     return SOFTBUS_OK;
 }
 
-int32_t TransCheckServerAccessControl(const AppInfo *appInfo)
+SOFTBUS_VISIBILITY int32_t TransCheckServerAccessControl(const AppInfo *appInfo)
 {
     (void)appInfo;
     return SOFTBUS_OK;

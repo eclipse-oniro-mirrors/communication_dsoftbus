@@ -33,6 +33,7 @@
 #include "lnn_net_builder.h"
 #include "legacy/softbus_adapter_hitrace.h"
 #include "softbus_adapter_mem.h"
+#include "softbus_def.h"
 
 #define DELAY_AUTH_TIME                    (8 * 1000L)
 #define MAX_AUTH_LIMIT_MAP_SIZE            500
@@ -128,7 +129,7 @@ static int32_t GetNodeFromAuthLimitMap(const char *udidHash, uint64_t *time)
     return SOFTBUS_OK;
 }
 
-bool IsNeedAuthLimit(const char *udidHash)
+SOFTBUS_VISIBILITY bool IsNeedAuthLimit(const char *udidHash)
 {
     if (udidHash == NULL) {
         AUTH_LOGE(AUTH_FSM, "invalid param");
@@ -170,7 +171,7 @@ void AuthDeleteLimitMap(const char *udidHash)
     (void)SoftBusMutexUnlock(&g_authLimitMutex);
 }
 
-void ClearAuthLimitMap(void)
+SOFTBUS_VISIBILITY void ClearAuthLimitMap(void)
 {
     if (!g_isInit) {
         return;
@@ -273,7 +274,8 @@ int32_t AuthDeviceEncrypt(AuthHandle *authHandle, const uint8_t *inData, uint32_
     return SOFTBUS_OK;
 }
 
-int32_t AuthDeviceDecrypt(AuthHandle *authHandle, const uint8_t *inData, uint32_t inLen, uint8_t *outData,
+SOFTBUS_VISIBILITY int32_t AuthDeviceDecrypt(AuthHandle *authHandle, const uint8_t *inData, uint32_t inLen,
+    uint8_t *outData,
     uint32_t *outLen)
 {
     if (authHandle == NULL || inData == NULL || inLen == 0 || outData == NULL || outLen == NULL ||
@@ -467,7 +469,7 @@ int32_t AuthNotifyDeviceNotTrusted(const char *peerUdid, int32_t localUserId)
     return SOFTBUS_OK;
 }
 
-int32_t RegAuthVerifyListener(const AuthVerifyListener *listener)
+SOFTBUS_VISIBILITY int32_t RegAuthVerifyListener(const AuthVerifyListener *listener)
 {
     if (listener == NULL) {
         AUTH_LOGE(AUTH_CONN, "invalid listener");
@@ -477,7 +479,7 @@ int32_t RegAuthVerifyListener(const AuthVerifyListener *listener)
     return SOFTBUS_OK;
 }
 
-void UnregAuthVerifyListener(void)
+SOFTBUS_VISIBILITY void UnregAuthVerifyListener(void)
 {
     (void)memset_s(&g_verifyListener, sizeof(AuthVerifyListener), 0, sizeof(AuthVerifyListener));
 }
@@ -542,7 +544,7 @@ int32_t RegTrustListenerOnHichainSaStart(void)
     return SOFTBUS_OK;
 }
 
-int32_t RegGroupChangeListener(const GroupChangeListener *listener)
+SOFTBUS_VISIBILITY int32_t RegGroupChangeListener(const GroupChangeListener *listener)
 {
     if (listener == NULL) {
         AUTH_LOGE(AUTH_CONN, "listener is null");
@@ -554,7 +556,7 @@ int32_t RegGroupChangeListener(const GroupChangeListener *listener)
     return SOFTBUS_OK;
 }
 
-void UnregGroupChangeListener(void)
+SOFTBUS_VISIBILITY void UnregGroupChangeListener(void)
 {
     g_groupChangeListener.onGroupCreated = NULL;
     g_groupChangeListener.onGroupDeleted = NULL;
@@ -844,7 +846,7 @@ void AuthDeviceCloseConn(AuthHandle authHandle)
     return;
 }
 
-int32_t AuthStartVerify(const AuthConnInfo *connInfo, const AuthVerifyParam *authVerifyParam,
+SOFTBUS_VISIBILITY int32_t AuthStartVerify(const AuthConnInfo *connInfo, const AuthVerifyParam *authVerifyParam,
     const AuthVerifyCallback *callback)
 {
     if (connInfo == NULL || authVerifyParam == NULL || !CheckVerifyCallback(callback)) {

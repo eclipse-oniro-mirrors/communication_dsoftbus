@@ -342,11 +342,8 @@ HWTEST_F(LNNLaneLinkP2pTest, ON_WIFI_DIRECT_CONNECT_SUCCESS_TEST_001, TestSize.L
     linkInfo.type = LANE_HML;
     NiceMock<LaneLinkDepsInterfaceMock> laneLinkMock;
     NiceMock<LaneNetCapInterfaceMock> capMock;
-    EXPECT_CALL(laneLinkMock, CreateWDLinkInfo).WillRepeatedly(DoAll(SetArgPointee<LANE_MOCK_PARAM3>(linkInfo),
-        Return(SOFTBUS_OK)));
     EXPECT_CALL(capMock, SetRemoteDynamicNetCap).WillRepeatedly(Return());
     EXPECT_CALL(laneLinkMock, LnnDeleteLinkLedgerInfo).WillRepeatedly(Return());
-    EXPECT_CALL(laneLinkMock, TryDelPreLinkByConnReqId).WillRepeatedly(Return());
     EXPECT_NO_FATAL_FAILURE(OnWifiDirectConnectSuccess(REQID, &link));
     linkInfo.type = LANE_P2P_REUSE;
     EXPECT_NO_FATAL_FAILURE(OnWifiDirectConnectSuccess(REQID, &link));
@@ -382,7 +379,6 @@ HWTEST_F(LNNLaneLinkP2pTest, OPEN_BLE_TRIGGER_TO_CONN_TEST_001, TestSize.Level1)
     funcList.updateConcurrencyReuseLaneReqIdByUdid = UpdateConcurrencyReuseLaneReqIdByUdidTest;
     EXPECT_CALL(linkP2pMock, LnnEnhanceFuncListGet).WillRepeatedly(Return(&funcList));
     EXPECT_CALL(linkMock, GetWifiDirectManager).WillRepeatedly(Return(&g_manager));
-    EXPECT_CALL(laneLinkMock, CheckTransReqInfo).WillRepeatedly(Return(SOFTBUS_OK));
     EXPECT_EQ(OpenBleTriggerToConn(&request, LANEREQID, &cb), SOFTBUS_OK);
 }
 
@@ -413,7 +409,6 @@ HWTEST_F(LNNLaneLinkP2pTest, CONNECT_WIFI_DIRECT_WITH_REUSE_TEST_001, TestSize.L
     funcList.updateConcurrencyReuseLaneReqIdByUdid = UpdateConcurrencyReuseLaneReqIdByUdidTest;
     EXPECT_CALL(linkP2pMock, LnnEnhanceFuncListGet).WillRepeatedly(Return(&funcList));
     EXPECT_CALL(linkMock, GetWifiDirectManager).WillRepeatedly(Return(&g_manager));
-    EXPECT_CALL(laneLinkMock, GetWifiDirectParamWithReuse).WillRepeatedly(Return(SOFTBUS_OK));
 
     EXPECT_EQ(ConnectWifiDirectWithReuse(&request, LANEREQID, &cb), SOFTBUS_OK);
 }

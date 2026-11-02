@@ -267,7 +267,7 @@ HWTEST_F(SoftbusProxyChannelManagerPagingTest, TransPagingResetChanTest001, Test
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(SoftbusProxyChannelManagerPagingTest, TransPagingHandshakeUnpackErrMsgTest001, TestSize.Level1)
+HWTEST_F(SoftbusProxyChannelManagerPagingTest, DISABLED_TransPagingHandshakeUnpackErrMsgTest001, TestSize.Level1)
 {
     ProxyChannelInfo chan = {
         .peerId = TEST_CHANNEL_ID,

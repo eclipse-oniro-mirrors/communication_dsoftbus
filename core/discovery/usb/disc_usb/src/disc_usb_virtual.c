@@ -16,6 +16,7 @@
 #include "disc_manager.h"
 #include "disc_usb.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 static int32_t UsbDiscStartActivePublish(const PublishOption *option)
 {
@@ -106,6 +107,6 @@ DiscoveryUsbDispatcherInterface *DiscUsbInit(DiscInnerCallback *discInnerCb)
     return &g_usbDiscInterface;
 }
 
-void DiscUsbDeinit(void)
+SOFTBUS_SYMBOL_EXPORT void DiscUsbDeinit(void)
 {
 }

@@ -41,7 +41,7 @@ ohos_fuzztest("SoftbusProxychannelNetworkFuzzTest") {
 
   deps = [
     "$dsoftbus_core_path/common:softbus_utils",
-    "$dsoftbus_core_path/frame:softbus_server",
+    "$dsoftbus_core_path/frame:softbus_server_test",
   ]
 
   external_deps = [ "c_utils:utils" ]

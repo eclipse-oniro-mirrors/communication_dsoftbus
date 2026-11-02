@@ -91,7 +91,7 @@ int32_t SoftBusCondWait(SoftBusCond *cond, SoftBusMutex *mutex, SoftBusSysTime *
     return ManagerMock::GetMock()->SoftBusCondWait(cond, mutex, time);
 }
 
-bool DiscIsOsAccountConstraint()
+extern "C" bool DiscIsOsAccountConstraint()
 {
     return ManagerMock::GetMock()->DiscIsOsAccountConstraint();
 }

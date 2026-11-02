@@ -489,7 +489,7 @@ static int32_t TdcOnDataEvent(ListenerModule module, int32_t events, int32_t fd)
     return ret;
 }
 
-int32_t TransTdcStartSessionListener(ListenerModule module, const LocalListenerInfo *info)
+SOFTBUS_VISIBILITY int32_t TransTdcStartSessionListener(ListenerModule module, const LocalListenerInfo *info)
 {
     if (info == NULL || (info->type != CONNECT_TCP && info->type != CONNECT_P2P && info->type != CONNECT_HML) ||
         info->socketOption.port < 0) {
@@ -507,7 +507,7 @@ int32_t TransTdcStartSessionListener(ListenerModule module, const LocalListenerI
     return serverPort;
 }
 
-int32_t TransTdcStopSessionListener(ListenerModule module)
+SOFTBUS_VISIBILITY int32_t TransTdcStopSessionListener(ListenerModule module)
 {
     TransTdcStopSessionProc(module);
     return StopBaseListener(module);

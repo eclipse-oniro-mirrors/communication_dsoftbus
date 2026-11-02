@@ -20,6 +20,11 @@ module_output_path = "dsoftbus/soft_bus/discovery"
 
 ohos_unittest("DiscDistributedBleTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [ "disc_ble_distributed_test.cpp" ]
 
   include_dirs = [
@@ -61,9 +66,10 @@ ohos_unittest("DiscDistributedBleTest") {
   deps = [
     "$dsoftbus_dfx_path:softbus_dfx",
     "$dsoftbus_root_path/adapter:softbus_adapter",
-    "$dsoftbus_root_path/components/nstackx/nstackx_ctrl:nstackx_ctrl",
+    "$dsoftbus_root_path/components/nstackx/nstackx_ctrl",
     "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
 
   external_deps = [
@@ -75,6 +81,11 @@ ohos_unittest("DiscDistributedBleTest") {
 
 ohos_unittest("DiscBleUtilsTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/discovery/ble/softbus_ble/src/disc_ble_utils.c",
     "disc_ble_utils_test.cpp",
@@ -109,9 +120,10 @@ ohos_unittest("DiscBleUtilsTest") {
   ]
 
   deps = [
-    "$dsoftbus_root_path/core/common:softbus_utils",
-    "$dsoftbus_root_path/core/frame:softbus_server",
     "$dsoftbus_root_path/adapter:softbus_adapter",
+    "$dsoftbus_root_path/core/common:softbus_utils",
+    "$dsoftbus_root_path/core/frame:softbus_server_test",
+    "$dsoftbus_root_path/sdk:softbus_client",
   ]
   deps += dsoftbus_log_label_deps
 

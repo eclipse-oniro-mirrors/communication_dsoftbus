@@ -50,7 +50,7 @@ static LnnDeinitEventMonitorImpl g_monitorImplDeinit[MONITOR_IMPL_MAX_TYPE] = {
     LnnDeinitNetManagerMonitorImpl,
 };
 
-int32_t LnnInitEventMonitor(void)
+SOFTBUS_VISIBILITY int32_t LnnInitEventMonitor(void)
 {
     for (uint32_t i = 0; i < MONITOR_IMPL_MAX_TYPE; ++i) {
         if (g_monitorImplInit[i] == NULL) {

@@ -17,14 +17,15 @@
 #include "lnn_heartbeat_utils.h"
 #include "lnn_log.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
-int32_t LnnStartHeartbeatFrameDelay(void)
+SOFTBUS_VISIBILITY int32_t LnnStartHeartbeatFrameDelay(void)
 {
     LNN_LOGI(LNN_HEART_BEAT, "heartbeat(HB) stub process start.");
     return SOFTBUS_OK;
 }
 
-int32_t LnnSetHeartbeatMediumParam(const LnnHeartbeatMediumParam *param)
+SOFTBUS_VISIBILITY int32_t LnnSetHeartbeatMediumParam(const LnnHeartbeatMediumParam *param)
 {
     (void)param;
 
@@ -32,7 +33,7 @@ int32_t LnnSetHeartbeatMediumParam(const LnnHeartbeatMediumParam *param)
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnOfflineTimingByHeartbeat(const char *networkId, ConnectionAddrType addrType)
+SOFTBUS_VISIBILITY int32_t LnnOfflineTimingByHeartbeat(const char *networkId, ConnectionAddrType addrType)
 {
     (void)networkId;
     (void)addrType;
@@ -40,7 +41,7 @@ int32_t LnnOfflineTimingByHeartbeat(const char *networkId, ConnectionAddrType ad
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-void LnnStopOfflineTimingByHeartbeat(const char *networkId, ConnectionAddrType addrType)
+SOFTBUS_VISIBILITY void LnnStopOfflineTimingByHeartbeat(const char *networkId, ConnectionAddrType addrType)
 {
     (void)networkId;
     (void)addrType;
@@ -48,6 +49,7 @@ void LnnStopOfflineTimingByHeartbeat(const char *networkId, ConnectionAddrType a
     LNN_LOGI(LNN_HEART_BEAT, "heartbeat stop offline timing by heartbeat");
 }
 
+SOFTBUS_VISIBILITY
 int32_t LnnShiftLNNGear(const char *pkgName, const char *callerId, const char *targetNetworkId, const GearMode *mode)
 {
     (void)pkgName;
@@ -59,38 +61,39 @@ int32_t LnnShiftLNNGear(const char *pkgName, const char *callerId, const char *t
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-void LnnUpdateHeartbeatInfo(LnnHeartbeatUpdateInfoType type)
+SOFTBUS_VISIBILITY void LnnUpdateHeartbeatInfo(LnnHeartbeatUpdateInfoType type)
 {
     (void)type;
 
     LNN_LOGI(LNN_HEART_BEAT, "heartbeat stub update send info");
 }
 
-void LnnHbOnTrustedRelationIncreased(int32_t groupType)
+SOFTBUS_VISIBILITY void LnnHbOnTrustedRelationIncreased(int32_t groupType)
 {
     (void)groupType;
 
     LNN_LOGI(LNN_HEART_BEAT, "heartbeat stub process auth group created");
 }
 
-void LnnHbOnTrustedRelationReduced(void)
+SOFTBUS_VISIBILITY void LnnHbOnTrustedRelationReduced(void)
 {
     LNN_LOGI(LNN_HEART_BEAT, "heartbeat stub process auth group deleted");
 }
 
-int32_t LnnInitHeartbeat(void)
+SOFTBUS_VISIBILITY int32_t LnnInitHeartbeat(void)
 {
     LNN_LOGI(LNN_INIT, "heartbeat(HB) stub init success");
     return SOFTBUS_OK;
 }
 
-void LnnDeinitHeartbeat(void) { }
+SOFTBUS_VISIBILITY void LnnDeinitHeartbeat(void) { }
 
-SoftBusScreenState GetScreenState(void)
+SOFTBUS_VISIBILITY SoftBusScreenState GetScreenState(void)
 {
     return SOFTBUS_SCREEN_UNKNOWN;
 }
 
+SOFTBUS_VISIBILITY
 int32_t HmosShiftLNNGear(const char *callerId, const GearMode *mode, LnnHeartbeatStrategyType strategyType)
 {
     (void)callerId;
@@ -99,31 +102,31 @@ int32_t HmosShiftLNNGear(const char *callerId, const GearMode *mode, LnnHeartbea
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnTriggerHbRangeForMsdp(const char *pkgName, const RangeConfig *config)
+SOFTBUS_VISIBILITY int32_t LnnTriggerHbRangeForMsdp(const char *pkgName, const RangeConfig *config)
 {
     (void)pkgName;
     (void)config;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnTriggerDataLevelHeartbeat(void)
+SOFTBUS_VISIBILITY int32_t LnnTriggerDataLevelHeartbeat(void)
 {
     return SOFTBUS_OK;
 }
 
-int32_t LnnTriggerCloudSyncHeartbeat(void)
+SOFTBUS_VISIBILITY int32_t LnnTriggerCloudSyncHeartbeat(void)
 {
     return SOFTBUS_OK;
 }
 
-void LnnRegDataLevelChangeCb(const IDataLevelChangeCallback *callback)
+SOFTBUS_VISIBILITY void LnnRegDataLevelChangeCb(const IDataLevelChangeCallback *callback)
 {
     (void)callback;
 }
 
-void LnnUnregDataLevelChangeCb(void) { }
+SOFTBUS_VISIBILITY void LnnUnregDataLevelChangeCb(void) { }
 
-bool LnnIsCloudSyncEnd(void)
+SOFTBUS_VISIBILITY bool LnnIsCloudSyncEnd(void)
 {
     return true;
 }
@@ -133,68 +136,68 @@ int32_t __attribute__((weak)) LnnClearAllNode(void)
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-bool IsHeartbeatEnable(void)
+SOFTBUS_VISIBILITY bool IsHeartbeatEnable(void)
 {
     return false;
 }
 
-bool LnnIsNeedInterceptBroadcast(bool disableGlass)
+SOFTBUS_VISIBILITY bool LnnIsNeedInterceptBroadcast(bool disableGlass)
 {
     (void)disableGlass;
     return false;
 }
 
-SoftBusScreenLockState GetScreenLockState(void)
+SOFTBUS_VISIBILITY SoftBusScreenLockState GetScreenLockState(void)
 {
     return SOFTBUS_SCREEN_LOCK_UNKNOWN;
 }
 
-void HbEnableDiscovery(void) { }
+SOFTBUS_VISIBILITY void HbEnableDiscovery(void) { }
 
-int32_t LnnOfflineTimingBySleHb(const char *networkId, ConnectionAddrType addrType)
+SOFTBUS_VISIBILITY int32_t LnnOfflineTimingBySleHb(const char *networkId, ConnectionAddrType addrType)
 {
     (void)networkId;
     (void)addrType;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-void LnnRegBleRangeCb(const IBleRangeInnerCallback *callback)
+SOFTBUS_VISIBILITY void LnnRegBleRangeCb(const IBleRangeInnerCallback *callback)
 {
     (void)callback;
 }
 
-void LnnRequestBleDiscoveryProcess(int32_t strategy, int64_t timeout)
+SOFTBUS_VISIBILITY void LnnRequestBleDiscoveryProcess(int32_t strategy, int64_t timeout)
 {
     (void)strategy;
     (void)timeout;
 }
 
-void LnnStopOfflineTimingBySleHb(const char *networkId, ConnectionAddrType addrType)
+SOFTBUS_VISIBILITY void LnnStopOfflineTimingBySleHb(const char *networkId, ConnectionAddrType addrType)
 {
     (void)networkId;
     (void)addrType;
 }
 
-int32_t LnnStopSleHeartbeat(void)
+SOFTBUS_VISIBILITY int32_t LnnStopSleHeartbeat(void)
 {
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnTriggerDirectHeartbeat(const char *networkId, uint64_t timeout)
+SOFTBUS_VISIBILITY int32_t LnnTriggerDirectHeartbeat(const char *networkId, uint64_t timeout)
 {
     (void)networkId;
     (void)timeout;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnTriggerSleHeartbeat(void)
+SOFTBUS_VISIBILITY int32_t LnnTriggerSleHeartbeat(void)
 {
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-void LnnUnregBleRangeCb(void) { }
+SOFTBUS_VISIBILITY void LnnUnregBleRangeCb(void) { }
 
-void SetScreenState(SoftBusScreenState state)
+SOFTBUS_VISIBILITY void SetScreenState(SoftBusScreenState state)
 {
     (void)state;
 }

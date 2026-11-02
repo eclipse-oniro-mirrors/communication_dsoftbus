@@ -66,7 +66,7 @@ static int32_t GetAllClientIdentity(SvcIdentity *svc, int num)
     return SOFTBUS_OK;
 }
 
-int32_t ClientOnJoinLNNResult(const char *pkgName, void *addr, uint32_t addrTypeLen,
+SOFTBUS_VISIBILITY int32_t ClientOnJoinLNNResult(const char *pkgName, void *addr, uint32_t addrTypeLen,
     const char *networkId, int32_t retCode)
 {
     LNN_LOGI(LNN_EVENT, "enter");
@@ -99,7 +99,7 @@ int32_t ClientOnJoinLNNResult(const char *pkgName, void *addr, uint32_t addrType
     return SOFTBUS_OK;
 }
 
-int32_t ClientOnLeaveLNNResult(const char *pkgName, const char *networkId, int retCode)
+SOFTBUS_VISIBILITY int32_t ClientOnLeaveLNNResult(const char *pkgName, const char *networkId, int retCode)
 {
     LNN_LOGI(LNN_EVENT, "enter");
     if (networkId == NULL) {
@@ -127,7 +127,7 @@ int32_t ClientOnLeaveLNNResult(const char *pkgName, const char *networkId, int r
     return SOFTBUS_OK;
 }
 
-int32_t ClinetOnNodeOnlineStateChanged(bool isOnline, void *info, uint32_t infoTypeLen)
+SOFTBUS_VISIBILITY int32_t ClinetOnNodeOnlineStateChanged(bool isOnline, void *info, uint32_t infoTypeLen)
 {
     LNN_LOGI(LNN_EVENT, "enter");
     if (info == NULL) {
@@ -175,7 +175,7 @@ int32_t ClinetOnNodeOnlineStateChanged(bool isOnline, void *info, uint32_t infoT
     return SOFTBUS_OK;
 }
 
-int32_t ClinetOnNodeBasicInfoChanged(void *info, uint32_t infoTypeLen, int32_t type)
+SOFTBUS_VISIBILITY int32_t ClinetOnNodeBasicInfoChanged(void *info, uint32_t infoTypeLen, int32_t type)
 {
     LNN_LOGI(LNN_EVENT, "enter");
     if (info == NULL) {
@@ -223,7 +223,7 @@ int32_t ClinetOnNodeBasicInfoChanged(void *info, uint32_t infoTypeLen, int32_t t
     return SOFTBUS_OK;
 }
 
-int32_t ClientOnTimeSyncResult(const char *pkgName, int32_t pid, const void *info,
+SOFTBUS_VISIBILITY int32_t ClientOnTimeSyncResult(const char *pkgName, int32_t pid, const void *info,
     uint32_t infoTypeLen, int32_t retCode)
 {
     (void)pid;
@@ -254,7 +254,7 @@ int32_t ClientOnTimeSyncResult(const char *pkgName, int32_t pid, const void *inf
     return SOFTBUS_OK;
 }
 
-int32_t ClientOnPublishLNNResult(const char *pkgName, int32_t pid, int32_t publishId,
+SOFTBUS_VISIBILITY int32_t ClientOnPublishLNNResult(const char *pkgName, int32_t pid, int32_t publishId,
     int32_t reason)
 {
     (void) pid;
@@ -284,7 +284,7 @@ int32_t ClientOnPublishLNNResult(const char *pkgName, int32_t pid, int32_t publi
     return SOFTBUS_OK;
 }
 
-int32_t ClientOnRefreshLNNResult(const char *pkgName, int32_t pid, int32_t refreshId,
+SOFTBUS_VISIBILITY int32_t ClientOnRefreshLNNResult(const char *pkgName, int32_t pid, int32_t refreshId,
     int32_t reason)
 {
     (void)pid;
@@ -314,7 +314,7 @@ int32_t ClientOnRefreshLNNResult(const char *pkgName, int32_t pid, int32_t refre
     return SOFTBUS_OK;
 }
 
-int32_t ClientOnRefreshDeviceFound(const char *pkgName, int32_t pid, const void *device,
+SOFTBUS_VISIBILITY int32_t ClientOnRefreshDeviceFound(const char *pkgName, int32_t pid, const void *device,
     uint32_t deviceLen)
 {
     (void)pid;

@@ -96,7 +96,7 @@ static AsyncCallbackInfo *CreateAsyncCallbackInfo(SoftBusLooper *looper,
     return info;
 }
 
-int32_t LnnAsyncCallbackHelper(SoftBusLooper *looper, LnnAsyncCallbackFunc callback, void *para)
+SOFTBUS_SYMBOL_EXPORT int32_t LnnAsyncCallbackHelper(SoftBusLooper *looper, LnnAsyncCallbackFunc callback, void *para)
 {
     AsyncCallbackInfo *info = NULL;
 
@@ -113,7 +113,7 @@ int32_t LnnAsyncCallbackHelper(SoftBusLooper *looper, LnnAsyncCallbackFunc callb
     return SOFTBUS_OK;
 }
 
-int32_t LnnAsyncCallbackDelayHelper(SoftBusLooper *looper, LnnAsyncCallbackFunc callback,
+SOFTBUS_VISIBILITY int32_t LnnAsyncCallbackDelayHelper(SoftBusLooper *looper, LnnAsyncCallbackFunc callback,
     void *para, uint64_t delayMillis)
 {
     AsyncCallbackInfo *info = NULL;

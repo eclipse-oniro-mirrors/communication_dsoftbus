@@ -146,6 +146,7 @@ typedef struct {
     BlePriority blePriority;
     TransFlowInfo flowInfo;
     int fd;
+    DisconnectPolicy disconnectPolicy;
     AppType appType;
     ProtocolType protocol;
     int32_t pagingId;

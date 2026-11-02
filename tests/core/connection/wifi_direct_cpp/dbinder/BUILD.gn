@@ -18,6 +18,11 @@ ut_out_path = "dsoftbus/soft_bus/connection/wifi_direct_cpp/dbinder"
 wifi_direct_path = "$dsoftbus_root_path/core/connection/wifi_direct_cpp"
 ohos_unittest("WifiDirectInitTest") {
   module_out_path = ut_out_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   include_dirs = [
     "$dsoftbus_dfx_path/interface/include/form",
     "$dsoftbus_root_path/adapter/common/include",

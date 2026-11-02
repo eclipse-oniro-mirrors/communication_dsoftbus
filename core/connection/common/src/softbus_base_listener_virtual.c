@@ -16,6 +16,7 @@
 #include "softbus_base_listener.h"
 
 #include "conn_log.h"
+#include "softbus_def.h"
 
 int32_t InitBaseListener(void)
 {
@@ -29,7 +30,7 @@ void DeinitBaseListener(void)
     CONN_LOGE(CONN_COMMON, "not support");
 }
 
-int32_t StartBaseClient(ListenerModule module, const SoftbusBaseListener *listener)
+SOFTBUS_SYMBOL_EXPORT int32_t StartBaseClient(ListenerModule module, const SoftbusBaseListener *listener)
 {
     (void)module;
     (void)listener;
@@ -37,7 +38,7 @@ int32_t StartBaseClient(ListenerModule module, const SoftbusBaseListener *listen
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t AddTrigger(ListenerModule module, int32_t fd, TriggerType trigger)
+SOFTBUS_SYMBOL_EXPORT int32_t AddTrigger(ListenerModule module, int32_t fd, TriggerType trigger)
 {
     (void)module;
     (void)fd;
@@ -46,7 +47,7 @@ int32_t AddTrigger(ListenerModule module, int32_t fd, TriggerType trigger)
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t DelTrigger(ListenerModule module, int32_t fd, TriggerType trigger)
+SOFTBUS_SYMBOL_EXPORT int32_t DelTrigger(ListenerModule module, int32_t fd, TriggerType trigger)
 {
     (void)module;
     (void)fd;
@@ -77,7 +78,7 @@ bool IsListenerNodeExist(ListenerModule module)
     return false;
 }
 
-uint32_t CreateListenerModule(void)
+SOFTBUS_SYMBOL_EXPORT uint32_t CreateListenerModule(void)
 {
     return 0;
 }

@@ -17,6 +17,7 @@
 
 #include "lnn_log.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 int32_t LnnInitMetaNodeLedger(void)
 {
@@ -26,20 +27,20 @@ int32_t LnnInitMetaNodeLedger(void)
 
 void LnnDeinitMetaNodeLedger(void) { }
 
-int32_t LnnActiveMetaNode(const MetaNodeConfigInfo *info, char *metaNodeId)
+SOFTBUS_VISIBILITY int32_t LnnActiveMetaNode(const MetaNodeConfigInfo *info, char *metaNodeId)
 {
     (void)info;
     (void)metaNodeId;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnDeactiveMetaNode(const char *metaNodeId)
+SOFTBUS_VISIBILITY int32_t LnnDeactiveMetaNode(const char *metaNodeId)
 {
     (void)metaNodeId;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-int32_t LnnGetAllMetaNodeInfo(MetaNodeInfo *infos, int32_t *infoNum)
+SOFTBUS_VISIBILITY int32_t LnnGetAllMetaNodeInfo(MetaNodeInfo *infos, int32_t *infoNum)
 {
     (void)infos;
     (void)infoNum;

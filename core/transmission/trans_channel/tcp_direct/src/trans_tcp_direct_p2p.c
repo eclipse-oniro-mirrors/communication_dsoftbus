@@ -161,7 +161,7 @@ static void DelHmlListenerByMoudle(ListenerModule type)
     }
 }
 
-void StopHmlListener(ListenerModule module)
+SOFTBUS_SYMBOL_EXPORT void StopHmlListener(ListenerModule module)
 {
     if (SoftBusMutexLock(&g_hmlListenerList->lock) != SOFTBUS_OK) {
         TRANS_LOGE(TRANS_CTRL, "lock fail");

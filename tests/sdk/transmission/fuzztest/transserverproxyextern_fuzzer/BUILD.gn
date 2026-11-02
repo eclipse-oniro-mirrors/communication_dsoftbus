@@ -797,6 +797,6 @@ group("fuzztest") {
     ":TransServerSendBrProxyDataFuzzTest",
     ":TransServerSendMessageFuzzTest",
     ":TransServerSetListenerStateFuzzTest",
-    ":TransServerStreamStatsFuzzTest"
+    ":TransServerStreamStatsFuzzTest",
   ]
 }

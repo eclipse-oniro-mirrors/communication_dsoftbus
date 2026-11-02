@@ -17,6 +17,7 @@
 
 #include "disc_manager.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 static int32_t ApproachBleStartActivePublish(const PublishOption *option)
 {
@@ -107,16 +108,16 @@ DiscoveryBleDispatcherInterface *DiscApproachBleInit(DiscInnerCallback *discInne
     return &g_approachBleInterface;
 }
 
-void DiscApproachBleDeinit(void)
+SOFTBUS_SYMBOL_EXPORT void DiscApproachBleDeinit(void)
 {
 }
 
-int32_t DiscApproachBleEventInit(void)
+SOFTBUS_SYMBOL_EXPORT int32_t DiscApproachBleEventInit(void)
 {
     return SOFTBUS_OK;
 }
 
-void DiscApproachBleEventDeinit(void)
+SOFTBUS_SYMBOL_EXPORT void DiscApproachBleEventDeinit(void)
 {
 }
 

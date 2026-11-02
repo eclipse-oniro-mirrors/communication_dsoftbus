@@ -19,6 +19,11 @@ dsoftbus_root_path = "../../../../.."
 
 ohos_unittest("MessageHandlerFfrtTest") {
   module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   sources = [
     "$dsoftbus_root_path/core/common/message_handler/message_handler_ffrt.cpp",
     "message_handler_ffrt_test.cpp",
@@ -26,9 +31,9 @@ ohos_unittest("MessageHandlerFfrtTest") {
 
   include_dirs = [ "$dsoftbus_root_path/code/communication_dsoftbus_thread/core/common/include" ]
 
-  deps = [ 
-    "$dsoftbus_root_path/core/common:softbus_utils",
+  deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
+    "$dsoftbus_root_path/core/common:softbus_utils",
   ]
 
   external_deps = [

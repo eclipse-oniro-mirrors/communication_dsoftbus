@@ -29,6 +29,7 @@
 
 #include "softbus_adapter_file.h"
 #include "softbus_adapter_mem.h"
+#include "softbus_def.h"
 
 typedef struct {
     ListNode node;
@@ -125,7 +126,7 @@ static void StartCheckHukKeyTimeProc(void *para)
     }
 }
 
-int32_t EncryptStorageData(LnnEncryptDataLevel level, uint8_t *data, uint32_t len,
+SOFTBUS_SYMBOL_EXPORT int32_t EncryptStorageData(LnnEncryptDataLevel level, uint8_t *data, uint32_t len,
     uint8_t **out, uint32_t *outLen)
 {
     if (level < LNN_ENCRYPT_LEVEL_DE || level > LNN_ENCRYPT_LEVEL_ECE ||
@@ -156,7 +157,7 @@ int32_t EncryptStorageData(LnnEncryptDataLevel level, uint8_t *data, uint32_t le
     return SOFTBUS_OK;
 }
 
-int32_t DecryptStorageData(LnnEncryptDataLevel level, uint8_t *data, uint32_t len,
+SOFTBUS_SYMBOL_EXPORT int32_t DecryptStorageData(LnnEncryptDataLevel level, uint8_t *data, uint32_t len,
     uint8_t **out, uint32_t *outLen)
 {
     if (level < LNN_ENCRYPT_LEVEL_DE || level > LNN_ENCRYPT_LEVEL_ECE ||
@@ -266,7 +267,7 @@ static int32_t InsertDeviceToList(const TrustedInfo *record)
     return SOFTBUS_OK;
 }
 
-int32_t LnnInsertSpecificTrustedDevInfo(const char *udid)
+SOFTBUS_VISIBILITY int32_t LnnInsertSpecificTrustedDevInfo(const char *udid)
 {
     if (udid == NULL) {
         LNN_LOGE(LNN_LEDGER, "invalid param");
@@ -305,7 +306,7 @@ static int32_t GetAllDevNums(uint32_t *num)
     return SOFTBUS_OK;
 }
 
-int32_t LnnGetTrustedDevInfo(char **udidArray, uint32_t *num)
+SOFTBUS_VISIBILITY int32_t LnnGetTrustedDevInfo(char **udidArray, uint32_t *num)
 {
     LNN_CHECK_AND_RETURN_RET_LOGE((udidArray != NULL) && (num != NULL), SOFTBUS_INVALID_PARAM, LNN_LEDGER,
         "invalid param");
@@ -381,7 +382,7 @@ static void ClearRecoveryDeviceList(void)
     DeviceDbListUnlock();
 }
 
-int32_t UpdateRecoveryDeviceInfo(void)
+SOFTBUS_VISIBILITY int32_t UpdateRecoveryDeviceInfo(void)
 {
     if (!g_isDbListInit) {
         return SOFTBUS_NETWORK_NOT_INIT;
@@ -414,7 +415,7 @@ static bool IsDeviceTrusted(const char *udid)
     return false;
 }
 
-bool LnnIsPotentialHomeGroup(const char *udid)
+SOFTBUS_VISIBILITY bool LnnIsPotentialHomeGroup(const char *udid)
 {
     (void)udid;
 
@@ -422,7 +423,7 @@ bool LnnIsPotentialHomeGroup(const char *udid)
     return false;
 }
 
-int32_t LnnGenerateCeParams(bool isUnlocked)
+SOFTBUS_VISIBILITY int32_t LnnGenerateCeParams(bool isUnlocked)
 {
     int32_t ret = LnnGenerateCeKeyByHuks(&g_ceKeyAlias, isUnlocked);
     if (ret != SOFTBUS_OK) {
@@ -442,7 +443,7 @@ int32_t LnnCheckGenerateSoftBusKeyByHuks(void)
     return SOFTBUS_OK;
 }
 
-int32_t LnnFindDeviceUdidTrustedInfo(const char *deviceUdid)
+SOFTBUS_VISIBILITY int32_t LnnFindDeviceUdidTrustedInfo(const char *deviceUdid)
 {
     if (deviceUdid == NULL) {
         return SOFTBUS_INVALID_PARAM;
