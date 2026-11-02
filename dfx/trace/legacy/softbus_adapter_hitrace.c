@@ -18,7 +18,7 @@
 #include "hitrace/tracechain.h"
 #include "softbus_adapter_crypto.h"
 
-void SoftbusHitraceStart(uint32_t flags, uint64_t chainId)
+SOFTBUS_SYMBOL_EXPORT void SoftbusHitraceStart(uint32_t flags, uint64_t chainId)
 {
     HiTraceIdStruct pId = HiTraceChainGetId();
     pId.valid = flags;
@@ -26,17 +26,17 @@ void SoftbusHitraceStart(uint32_t flags, uint64_t chainId)
     HiTraceChainSetId(&pId);
 }
 
-void SoftbusHitraceStop(void)
+SOFTBUS_SYMBOL_EXPORT void SoftbusHitraceStop(void)
 {
     HiTraceChainClearId();
 }
 
-void SoftBusHitraceChainBegin(const char *name)
+SOFTBUS_SYMBOL_EXPORT void SoftBusHitraceChainBegin(const char *name)
 {
     HiTraceChainBegin(name, HITRACE_FLAG_DEFAULT);
 }
 
-void SoftBusHitraceChainEnd(void)
+SOFTBUS_SYMBOL_EXPORT void SoftBusHitraceChainEnd(void)
 {
     HiTraceIdStruct traceId = HiTraceChainGetId();
     HiTraceChainEnd(&traceId);

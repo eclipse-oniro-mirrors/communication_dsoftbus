@@ -233,7 +233,8 @@ static int32_t HandleError(EVP_CIPHER_CTX *ctx, const char *buf)
     return SOFTBUS_DECRYPT_ERR;
 }
 
-int32_t SoftBusBase64Encode(unsigned char *dst, size_t dlen, size_t *olen, const unsigned char *src, size_t slen)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusBase64Encode(unsigned char *dst, size_t dlen, size_t *olen,
+    const unsigned char *src, size_t slen)
 {
     if (dst == NULL || dlen == 0 || olen == NULL || src == NULL || slen == 0) {
         return SOFTBUS_INVALID_PARAM;
@@ -286,7 +287,8 @@ int32_t SoftBusBase64Encode(unsigned char *dst, size_t dlen, size_t *olen, const
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusBase64Decode(unsigned char *dst, size_t dlen, size_t *olen, const unsigned char *src, size_t slen)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusBase64Decode(unsigned char *dst, size_t dlen, size_t *olen,
+    const unsigned char *src, size_t slen)
 {
     if (dst == NULL || dlen == 0 || olen == NULL || src == NULL || slen == 0) {
         return SOFTBUS_INVALID_PARAM;
@@ -337,7 +339,7 @@ FINISHED:
     return ret;
 }
 
-int32_t SoftBusGenerateStrHash(const unsigned char *str, uint32_t len, unsigned char *hash)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusGenerateStrHash(const unsigned char *str, uint32_t len, unsigned char *hash)
 {
     if (str == NULL || hash == NULL || len == 0) {
         return SOFTBUS_INVALID_PARAM;
@@ -351,7 +353,7 @@ int32_t SoftBusGenerateStrHash(const unsigned char *str, uint32_t len, unsigned 
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusGenerateRandomArray(unsigned char *randStr, uint32_t len)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusGenerateRandomArray(unsigned char *randStr, uint32_t len)
 {
     if (randStr == NULL || len == 0) {
         return SOFTBUS_INVALID_PARAM;
@@ -383,7 +385,7 @@ int32_t SoftBusGenerateRandomArray(unsigned char *randStr, uint32_t len)
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusGenerateSessionKey(char *key, uint32_t len)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusGenerateSessionKey(char *key, uint32_t len)
 {
     if (SoftBusGenerateRandomArray((unsigned char *)key, len) != SOFTBUS_OK) {
         COMM_LOGE(COMM_ADAPTER, "generate sessionKey error.");
@@ -392,7 +394,7 @@ int32_t SoftBusGenerateSessionKey(char *key, uint32_t len)
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusEncryptData(AesGcmCipherKey *cipherKey, const unsigned char *input, uint32_t inLen,
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusEncryptData(AesGcmCipherKey *cipherKey, const unsigned char *input, uint32_t inLen,
     unsigned char *encryptData, uint32_t *encryptLen)
 {
     if (cipherKey == NULL || input == NULL || inLen == 0 || encryptData == NULL || encryptLen == NULL ||
@@ -413,8 +415,8 @@ int32_t SoftBusEncryptData(AesGcmCipherKey *cipherKey, const unsigned char *inpu
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusEncryptDataWithSeq(AesGcmCipherKey *cipherKey, const unsigned char *input, uint32_t inLen,
-    unsigned char *encryptData, uint32_t *encryptLen, int32_t seqNum)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusEncryptDataWithSeq(AesGcmCipherKey *cipherKey, const unsigned char *input,
+    uint32_t inLen, unsigned char *encryptData, uint32_t *encryptLen, int32_t seqNum)
 {
     if (cipherKey == NULL || input == NULL || inLen == 0 || encryptData == NULL || encryptLen == NULL ||
         inLen >= UINT32_MAX - OVERHEAD_LEN) {
@@ -436,7 +438,7 @@ int32_t SoftBusEncryptDataWithSeq(AesGcmCipherKey *cipherKey, const unsigned cha
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusDecryptData(AesGcmCipherKey *cipherKey, const unsigned char *input, uint32_t inLen,
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusDecryptData(AesGcmCipherKey *cipherKey, const unsigned char *input, uint32_t inLen,
     unsigned char *decryptData, uint32_t *decryptLen)
 {
     if (cipherKey == NULL || input == NULL || inLen <= OVERHEAD_LEN || decryptData == NULL || decryptLen == NULL) {
@@ -456,14 +458,14 @@ int32_t SoftBusDecryptData(AesGcmCipherKey *cipherKey, const unsigned char *inpu
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusDecryptDataWithSeq(AesGcmCipherKey *cipherKey, const unsigned char *input, uint32_t inLen,
-    unsigned char *decryptData, uint32_t *decryptLen, int32_t seqNum)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusDecryptDataWithSeq(AesGcmCipherKey *cipherKey, const unsigned char *input,
+    uint32_t inLen, unsigned char *decryptData, uint32_t *decryptLen, int32_t seqNum)
 {
     (void)seqNum;
     return SoftBusDecryptData(cipherKey, input, inLen, decryptData, decryptLen);
 }
 
-uint32_t SoftBusCryptoRand(void)
+SOFTBUS_SYMBOL_EXPORT uint32_t SoftBusCryptoRand(void)
 {
     int32_t fd = SoftBusOpenFile("/dev/urandom", SOFTBUS_O_RDONLY);
     if (fd < 0) {
@@ -481,7 +483,7 @@ uint32_t SoftBusCryptoRand(void)
     return value;
 }
 
-int32_t SoftBusEncryptDataByCtr(
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusEncryptDataByCtr(
     AesCtrCipherKey *key, const unsigned char *input, uint32_t inLen, unsigned char *encryptData, uint32_t *encryptLen)
 {
     if (key == NULL || input == NULL || inLen == 0 || encryptData == NULL || encryptLen == NULL) {
@@ -512,7 +514,7 @@ int32_t SoftBusEncryptDataByCtr(
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusDecryptDataByCtr(
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusDecryptDataByCtr(
     AesCtrCipherKey *key, const unsigned char *input, uint32_t inLen, unsigned char *decryptData, uint32_t *decryptLen)
 {
     if (key == NULL || input == NULL || inLen == 0 || decryptData == NULL || decryptLen == NULL) {
@@ -610,8 +612,8 @@ static int32_t SslAesGcm128Encrypt(const AesGcm128CipherKey *cipherkey, const un
     return (outlen + SHORT_TAG_LEN);
 }
 
-int32_t SoftBusEncryptDataByGcm128(AesGcm128CipherKey *cipherKey, const unsigned char *input, uint32_t inLen,
-    unsigned char *encryptData, uint32_t *encryptLen)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusEncryptDataByGcm128(AesGcm128CipherKey *cipherKey, const unsigned char *input,
+    uint32_t inLen, unsigned char *encryptData, uint32_t *encryptLen)
 {
     if (cipherKey == NULL || input == NULL || inLen == 0 || encryptData == NULL || encryptLen == NULL) {
         COMM_LOGE(COMM_ADAPTER, "Encrypt invalid para.");
@@ -681,8 +683,8 @@ EXIT:
     return SOFTBUS_DECRYPT_ERR;
 }
 
-int32_t SoftBusDecryptDataByGcm128(AesGcm128CipherKey *cipherKey, const unsigned char *input, uint32_t inLen,
-    unsigned char *decryptData, uint32_t *decryptLen)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusDecryptDataByGcm128(AesGcm128CipherKey *cipherKey, const unsigned char *input,
+    uint32_t inLen, unsigned char *decryptData, uint32_t *decryptLen)
 {
     if (cipherKey == NULL || input == NULL || inLen < SHORT_TAG_LEN || decryptData == NULL || decryptLen == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -697,7 +699,7 @@ int32_t SoftBusDecryptDataByGcm128(AesGcm128CipherKey *cipherKey, const unsigned
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusCalcHKDF(const uint8_t *inData, uint32_t inLen, uint8_t *outData, uint32_t outLen)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusCalcHKDF(const uint8_t *inData, uint32_t inLen, uint8_t *outData, uint32_t outLen)
 {
     if (outLen > HKDF_BYTES_LEN || inData == NULL || outData == NULL) {
         COMM_LOGE(COMM_ADAPTER, "calc HKDF invalid para.");

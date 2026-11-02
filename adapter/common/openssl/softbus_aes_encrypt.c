@@ -36,7 +36,7 @@
 #define OPENSSL_EVP_PADDING_FUNC_OPEN  (1)
 #define OPENSSL_EVP_PADDING_FUNC_CLOSE (0)
 
-int32_t SoftBusGenerateHmacHash(
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusGenerateHmacHash(
     const EncryptKey *randomKey, const uint8_t *rootKey, uint32_t rootKeyLen, uint8_t *hash, uint32_t hashLen)
 {
     uint32_t outBufLen;
@@ -173,8 +173,8 @@ static int32_t GenerateIvAndSessionKey(const EncryptKey *randomKey, EncryptKey *
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusAesCfbRootEncrypt(const AesInputData *inData, const EncryptKey *randomKey, EncryptKey *rootKey,
-    int32_t encMode, AesOutputData *outData)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusAesCfbRootEncrypt(const AesInputData *inData, const EncryptKey *randomKey,
+    EncryptKey *rootKey, int32_t encMode, AesOutputData *outData)
 {
     if (inData == NULL || inData->data == NULL || randomKey == NULL || randomKey->key == NULL || rootKey == NULL ||
         rootKey->key == NULL || outData == NULL || (encMode != ENCRYPT_MODE && encMode != DECRYPT_MODE)) {
@@ -211,7 +211,7 @@ int32_t SoftBusAesCfbRootEncrypt(const AesInputData *inData, const EncryptKey *r
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusAesCfbEncrypt(
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusAesCfbEncrypt(
     const AesInputData *inData, AesCipherKey *cipherKey, int32_t encMode, AesOutputData *outData)
 {
     uint8_t random[RANDOM_LENGTH] = { 0 };
@@ -421,7 +421,7 @@ EXIT:
     return SOFTBUS_DECRYPT_ERR;
 }
 
-int32_t SoftBusAesGcmEncrypt(
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusAesGcmEncrypt(
     const AesInputData *inData, AesCipherKey *cipherKey, int32_t encMode, AesOutputData *outData)
 {
     if (inData == NULL || inData->data == NULL || cipherKey == NULL || cipherKey->key == NULL ||

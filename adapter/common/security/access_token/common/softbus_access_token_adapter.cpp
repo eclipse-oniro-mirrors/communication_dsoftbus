@@ -27,6 +27,7 @@
 #include "softbus_def.h"
 #include "softbus_permission.h"
 #include "tokenid_kit.h"
+#include "softbus_def.h"
 
 constexpr int32_t JUDG_CNT = 1;
 constexpr int32_t DEVICE_KEY_SA_CNT = 3;
@@ -62,14 +63,14 @@ private:
 std::unordered_map<uint32_t, std::shared_ptr<SoftBusAccessTokenAdapter>> callbackPtrMap_;
 
 extern "C" {
-bool SoftBusCheckIsSystemService(uint64_t tokenId)
+SOFTBUS_SYMBOL_EXPORT bool SoftBusCheckIsSystemService(uint64_t tokenId)
 {
     auto type = AccessTokenKit::GetTokenTypeFlag((AccessTokenID)tokenId);
     COMM_LOGD(COMM_ADAPTER, "access token type=%{public}d", type);
     return type == ATokenTypeEnum::TOKEN_NATIVE;
 }
 
-bool SoftBusCheckIsNormalAppByUid(uint64_t fullTokenId, pid_t uid)
+SOFTBUS_SYMBOL_EXPORT bool SoftBusCheckIsNormalAppByUid(uint64_t fullTokenId, pid_t uid)
 {
     // The authorization of dbind and dtbcollab are granted through Samgr and DMS, and there is no control here
     if (uid == SAMGR_UID || uid == DMS_UID) {
@@ -90,7 +91,7 @@ bool SoftBusCheckIsNormalAppByUid(uint64_t fullTokenId, pid_t uid)
     return false;
 }
 
-bool SoftBusCheckIsNormalApp(uint64_t fullTokenId, const char *sessionName)
+SOFTBUS_SYMBOL_EXPORT bool SoftBusCheckIsNormalApp(uint64_t fullTokenId, const char *sessionName)
 {
     if (sessionName == nullptr) {
         COMM_LOGE(COMM_PERM, "invalid param, sessionName is nullptr");
@@ -124,7 +125,8 @@ bool SoftBusCheckIsNormalApp(uint64_t fullTokenId, const char *sessionName)
     return false;
 }
 
-SOFTBUS_VISIBILITY bool SoftBusCheckIsAccessAndRecordAccessToken(uint64_t tokenId, const char *permission)
+SOFTBUS_SYMBOL_EXPORT SOFTBUS_VISIBILITY bool SoftBusCheckIsAccessAndRecordAccessToken(uint64_t tokenId,
+    const char *permission)
 {
     if (permission == nullptr) {
         COMM_LOGE(COMM_PERM, "invalid param, permission is nullptr");
@@ -147,7 +149,7 @@ SOFTBUS_VISIBILITY bool SoftBusCheckIsAccessAndRecordAccessToken(uint64_t tokenI
     return ret == Security::AccessToken::PERMISSION_GRANTED;
 }
 
-int32_t SoftBusCalcPermType(uint64_t fullTokenId, pid_t uid, pid_t pid)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusCalcPermType(uint64_t fullTokenId, pid_t uid, pid_t pid)
 {
     if (uid == static_cast<pid_t>(getuid()) && pid == getpid()) {
         COMM_LOGI(COMM_PERM, "self app");
@@ -166,7 +168,7 @@ int32_t SoftBusCalcPermType(uint64_t fullTokenId, pid_t uid, pid_t pid)
     return NORMAL_APP;
 }
 
-int32_t SoftBusCheckDynamicPermission(uint64_t tokenId)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusCheckDynamicPermission(uint64_t tokenId)
 {
     auto tokenType = AccessTokenKit::GetTokenTypeFlag((AccessTokenID)tokenId);
     if (tokenType != ATokenTypeEnum::TOKEN_NATIVE) {
@@ -208,7 +210,8 @@ void SoftBusAccessTokenAdapter::PermStateChangeCallback(PermStateChangeInfo &res
     }
 }
 
-void SoftBusRegisterPermission(uint64_t tonkenId, const char *permissionName, const char *pkgName, int32_t pid)
+SOFTBUS_SYMBOL_EXPORT void SoftBusRegisterPermission(uint64_t tonkenId, const char *permissionName,
+    const char *pkgName, int32_t pid)
 {
     if (permissionName == nullptr || pkgName == nullptr) {
         COMM_LOGE(COMM_PERM, "invalid param, permissionName or pkgName is nullptr");
@@ -228,7 +231,7 @@ void SoftBusRegisterPermission(uint64_t tonkenId, const char *permissionName, co
     }
 }
 
-void SoftBusUnRegisterPermission(int32_t pid)
+SOFTBUS_SYMBOL_EXPORT void SoftBusUnRegisterPermission(int32_t pid)
 {
     std::shared_ptr<SoftBusAccessTokenAdapter> callbackPtr_ = nullptr;
     auto iter = callbackPtrMap_.find(pid);
@@ -243,23 +246,23 @@ void SoftBusUnRegisterPermission(int32_t pid)
     }
 }
 
-void SoftBusRegisterPermissionChangeCb(PermissionChangeCb cb)
+SOFTBUS_SYMBOL_EXPORT void SoftBusRegisterPermissionChangeCb(PermissionChangeCb cb)
 {
     g_permissionChangeCb = cb;
 }
 
-void BrProxyRegisterBtPermissionChangeCb(PermissionChangeCb cb)
+SOFTBUS_SYMBOL_EXPORT void BrProxyRegisterBtPermissionChangeCb(PermissionChangeCb cb)
 {
     g_btPermissionChangeCb = cb;
 }
 
-int32_t SoftBusGetAccessTokenType(uint64_t tokenId)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusGetAccessTokenType(uint64_t tokenId)
 {
     auto tokenType = AccessTokenKit::GetTokenTypeFlag((AccessTokenID)tokenId);
     return static_cast<int32_t>(tokenType);
 }
 
-void SoftBusGetTokenNameByTokenType(
+SOFTBUS_SYMBOL_EXPORT void SoftBusGetTokenNameByTokenType(
     char *tokenName, int32_t nameLen, uint64_t tokenId, SoftBusAccessTokenType tokenType)
 {
     if (tokenName == nullptr || nameLen <= 0) {
@@ -301,7 +304,7 @@ void SoftBusGetTokenNameByTokenType(
     }
 }
 
-int32_t SoftBusCheckDmsServerPermission(uint64_t tokenId)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusCheckDmsServerPermission(uint64_t tokenId)
 {
     auto tokenType = AccessTokenKit::GetTokenTypeFlag((AccessTokenID)tokenId);
     if (tokenType != ATokenTypeEnum::TOKEN_NATIVE) {
@@ -318,7 +321,7 @@ int32_t SoftBusCheckDmsServerPermission(uint64_t tokenId)
     return SOFTBUS_PERMISSION_DENIED;
 }
 
-bool SoftBusCheckIsCollabApp(uint64_t fullTokenId, const char *sessionName)
+SOFTBUS_SYMBOL_EXPORT bool SoftBusCheckIsCollabApp(uint64_t fullTokenId, const char *sessionName)
 {
     if (sessionName == nullptr) {
         COMM_LOGE(COMM_PERM, "invalid param, sessionName is nullptr");
@@ -337,7 +340,7 @@ bool SoftBusCheckIsCollabApp(uint64_t fullTokenId, const char *sessionName)
     return true;
 }
 
-bool SoftBusCheckIsAccess(void)
+SOFTBUS_SYMBOL_EXPORT bool SoftBusCheckIsAccess(void)
 {
     uint32_t callingTokenId = IPCSkeleton::GetCallingTokenID();
     int32_t ret = AccessTokenKit::VerifyAccessToken((AccessTokenID)callingTokenId,
@@ -346,7 +349,7 @@ bool SoftBusCheckIsAccess(void)
     return isAccessToken;
 }
 
-bool SoftBusSaCanUseDeviceKey(uint64_t tokenId)
+SOFTBUS_SYMBOL_EXPORT bool SoftBusSaCanUseDeviceKey(uint64_t tokenId)
 {
     auto tokenType = AccessTokenKit::GetTokenTypeFlag(static_cast<AccessTokenID>(tokenId));
     if (tokenType != ATokenTypeEnum::TOKEN_NATIVE) {
@@ -368,7 +371,7 @@ bool SoftBusSaCanUseDeviceKey(uint64_t tokenId)
 }
 
 // only native services can be called.
-int32_t SoftBusGetNativeProcessName(uint64_t tokenId, char *processName, int32_t processNameLen)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusGetNativeProcessName(uint64_t tokenId, char *processName, int32_t processNameLen)
 {
     COMM_CHECK_AND_RETURN_RET_LOGE(processName != nullptr, SOFTBUS_INVALID_PARAM, COMM_ADAPTER, "invalid param");
     NativeTokenInfo tokenInfo;

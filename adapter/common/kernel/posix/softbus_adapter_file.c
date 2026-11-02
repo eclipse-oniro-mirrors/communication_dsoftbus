@@ -25,6 +25,7 @@
 #include "comm_log.h"
 #include "softbus_adapter_errcode.h"
 #include "softbus_error_code.h"
+#include "softbus_def.h"
 
 static int32_t SoftBusCreateFile(const char *fileName)
 {
@@ -63,7 +64,7 @@ static int32_t SoftBusCreateFile(const char *fileName)
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusReadFile(int32_t fd, void *readBuf, uint32_t maxLen)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusReadFile(int32_t fd, void *readBuf, uint32_t maxLen)
 {
     if (readBuf == NULL) {
         COMM_LOGE(COMM_ADAPTER, "softbus read file [buff is null]");
@@ -116,18 +117,19 @@ static int32_t ReadFullFile(const char *fileName, char *readBuf, uint32_t maxLen
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusReadFullFileAndSize(const char *fileName, char *readBuf, uint32_t maxLen, int32_t *size)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusReadFullFileAndSize(const char *fileName, char *readBuf,
+    uint32_t maxLen, int32_t *size)
 {
     return ReadFullFile(fileName, readBuf, maxLen, size);
 }
 
-int32_t SoftBusReadFullFile(const char *fileName, char *readBuf, uint32_t maxLen)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusReadFullFile(const char *fileName, char *readBuf, uint32_t maxLen)
 {
     int32_t size = 0;
     return ReadFullFile(fileName, readBuf, maxLen, &size);
 }
 
-int32_t SoftBusWriteFile(const char *fileName, const char *writeBuf, uint32_t len)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusWriteFile(const char *fileName, const char *writeBuf, uint32_t len)
 {
     if (fileName == NULL || writeBuf == NULL || len == 0) {
         COMM_LOGE(COMM_ADAPTER, "softbus write file para is invalid");
@@ -154,7 +156,7 @@ int32_t SoftBusWriteFile(const char *fileName, const char *writeBuf, uint32_t le
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusWriteFileFd(int32_t fd, const char *writeBuf, uint32_t len)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusWriteFileFd(int32_t fd, const char *writeBuf, uint32_t len)
 {
     if (writeBuf == NULL || len == 0) {
         COMM_LOGE(COMM_ADAPTER, "softbus write file fd para is invalid");
@@ -168,7 +170,7 @@ int32_t SoftBusWriteFileFd(int32_t fd, const char *writeBuf, uint32_t len)
     return ret;
 }
 
-int32_t SoftBusOpenFile(const char *fileName, int32_t flags)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusOpenFile(const char *fileName, int32_t flags)
 {
     if (fileName == NULL) {
         COMM_LOGE(COMM_ADAPTER, "softbus open file [fileName is null]");
@@ -182,7 +184,7 @@ int32_t SoftBusOpenFile(const char *fileName, int32_t flags)
     return fd;
 }
 
-int32_t SoftBusOpenFileWithPerms(const char *fileName, int32_t flags, int32_t perms)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusOpenFileWithPerms(const char *fileName, int32_t flags, int32_t perms)
 {
     if (fileName == NULL) {
         COMM_LOGE(COMM_ADAPTER, "softbus open with perms file [fileName is null]");
@@ -196,7 +198,7 @@ int32_t SoftBusOpenFileWithPerms(const char *fileName, int32_t flags, int32_t pe
     return fd;
 }
 
-void SoftBusRemoveFile(const char *fileName)
+SOFTBUS_SYMBOL_EXPORT void SoftBusRemoveFile(const char *fileName)
 {
     if (fileName == NULL) {
         COMM_LOGE(COMM_ADAPTER, "softbus remove file [fileName is null]");
@@ -208,7 +210,7 @@ void SoftBusRemoveFile(const char *fileName)
     }
 }
 
-void SoftBusCloseFile(int32_t fd)
+SOFTBUS_SYMBOL_EXPORT void SoftBusCloseFile(int32_t fd)
 {
     if (fd <= SOFTBUS_INVALID_FD) {
         COMM_LOGE(COMM_ADAPTER, "softbus close file [fd is invalid]");
@@ -220,7 +222,7 @@ void SoftBusCloseFile(int32_t fd)
     }
 }
 
-int64_t SoftBusPreadFile(int32_t fd, void *buf, uint64_t readBytes, uint64_t offset)
+SOFTBUS_SYMBOL_EXPORT int64_t SoftBusPreadFile(int32_t fd, void *buf, uint64_t readBytes, uint64_t offset)
 {
     if (buf == NULL) {
         COMM_LOGE(COMM_ADAPTER, "softbus pread file [buff is null]");
@@ -233,7 +235,7 @@ int64_t SoftBusPreadFile(int32_t fd, void *buf, uint64_t readBytes, uint64_t off
     return len;
 }
 
-int64_t SoftBusPwriteFile(int32_t fd, const void *buf, uint64_t writeBytes, uint64_t offset)
+SOFTBUS_SYMBOL_EXPORT int64_t SoftBusPwriteFile(int32_t fd, const void *buf, uint64_t writeBytes, uint64_t offset)
 {
     if (buf == NULL) {
         COMM_LOGE(COMM_ADAPTER, "softbus pwrite file [buff is null]");
@@ -246,7 +248,7 @@ int64_t SoftBusPwriteFile(int32_t fd, const void *buf, uint64_t writeBytes, uint
     return len;
 }
 
-int32_t SoftBusAccessFile(const char *pathName, int32_t mode)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusAccessFile(const char *pathName, int32_t mode)
 {
     if (pathName == NULL) {
         COMM_LOGE(COMM_ADAPTER, "softbus access path [pathName is null]");
@@ -261,7 +263,7 @@ int32_t SoftBusAccessFile(const char *pathName, int32_t mode)
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusMakeDir(const char *pathName, int32_t mode)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusMakeDir(const char *pathName, int32_t mode)
 {
     if (pathName == NULL) {
         COMM_LOGE(COMM_ADAPTER, "softbus mkdir file [pathName is null]");
@@ -277,7 +279,7 @@ int32_t SoftBusMakeDir(const char *pathName, int32_t mode)
         return SOFTBUS_ADAPTER_ERR;
     }
 }
-int32_t SoftBusGetFileSize(const char *fileName, uint64_t *fileSize)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusGetFileSize(const char *fileName, uint64_t *fileSize)
 {
     if ((fileName == NULL) || (fileSize == NULL)) {
         COMM_LOGE(COMM_ADAPTER, "softbus mkdir file [fileName or fileSize is null]");
@@ -295,7 +297,7 @@ int32_t SoftBusGetFileSize(const char *fileName, uint64_t *fileSize)
     return SOFTBUS_OK;
 }
 
-char *SoftBusRealPath(const char *path, char *absPath)
+SOFTBUS_SYMBOL_EXPORT char *SoftBusRealPath(const char *path, char *absPath)
 {
     if ((path == NULL) || (absPath == NULL)) {
         COMM_LOGE(COMM_ADAPTER, "softbus realpath [path or absPath is null]");

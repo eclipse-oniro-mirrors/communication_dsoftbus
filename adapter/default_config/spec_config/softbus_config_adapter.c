@@ -22,7 +22,7 @@
 #define ENHANCE_SUPPORT_AUTH_CAPACITY 0x1FF
 #define ENHANCE_LNN_NET_IF_NAME "0:eth0,1:wlan0,2:br0,3:ble0,4:ncm0,4:wwan0"
 
-void SoftbusConfigAdapterInit(const ConfigSetProc *sets)
+SOFTBUS_SYMBOL_EXPORT void SoftbusConfigAdapterInit(const ConfigSetProc *sets)
 {
     if (sets == NULL) {
         return;

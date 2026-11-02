@@ -92,7 +92,7 @@ static int32_t SockOptErrorToSoftBusError(int32_t errorCode)
     return SOFTBUS_ERRNO(KERNELS_SUB_MODULE_CODE) + abs(errorCode);
 }
 
-int32_t SoftBusSocketCreate(int32_t domain, int32_t type, int32_t protocol, int32_t *socketFd)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusSocketCreate(int32_t domain, int32_t type, int32_t protocol, int32_t *socketFd)
 {
     if (socketFd == NULL) {
         COMM_LOGE(COMM_ADAPTER, "socketFd is null");
@@ -108,7 +108,8 @@ int32_t SoftBusSocketCreate(int32_t domain, int32_t type, int32_t protocol, int3
     }
 }
 
-int32_t SoftBusSocketSetOpt(int32_t socketFd, int32_t level, int32_t optName, const void *optVal, int32_t optLen)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusSocketSetOpt(int32_t socketFd, int32_t level, int32_t optName,
+    const void *optVal, int32_t optLen)
 {
     int32_t ret = setsockopt(socketFd, level, optName, optVal, (socklen_t)optLen);
     if (ret != 0) {
@@ -119,7 +120,8 @@ int32_t SoftBusSocketSetOpt(int32_t socketFd, int32_t level, int32_t optName, co
     return SOFTBUS_ADAPTER_OK;
 }
 
-int32_t SoftBusSocketGetOpt(int32_t socketFd, int32_t level, int32_t optName, void *optVal, int32_t *optLen)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusSocketGetOpt(int32_t socketFd, int32_t level, int32_t optName,
+    void *optVal, int32_t *optLen)
 {
     int32_t ret = getsockopt(socketFd, level, optName, optVal, (socklen_t *)optLen);
     if (ret != 0) {
@@ -129,7 +131,7 @@ int32_t SoftBusSocketGetOpt(int32_t socketFd, int32_t level, int32_t optName, vo
     return SOFTBUS_ADAPTER_OK;
 }
 
-int32_t SoftBusSocketGetError(int32_t socketFd)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusSocketGetError(int32_t socketFd)
 {
     int32_t err = 0;
     socklen_t errSize = sizeof(err);
@@ -146,7 +148,7 @@ int32_t SoftBusSocketGetError(int32_t socketFd)
     return SOFTBUS_ADAPTER_OK;
 }
 
-int32_t SoftBusSocketGetLocalName(int32_t socketFd, SoftBusSockAddr *addr)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusSocketGetLocalName(int32_t socketFd, SoftBusSockAddr *addr)
 {
     if (addr == NULL) {
         COMM_LOGE(COMM_ADAPTER, "get local name invalid input");
@@ -161,7 +163,7 @@ int32_t SoftBusSocketGetLocalName(int32_t socketFd, SoftBusSockAddr *addr)
     return SOFTBUS_ADAPTER_OK;
 }
 
-int32_t SoftBusSocketGetPeerName(int32_t socketFd, SoftBusSockAddr *addr)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusSocketGetPeerName(int32_t socketFd, SoftBusSockAddr *addr)
 {
     if (addr == NULL) {
         COMM_LOGE(COMM_ADAPTER, "get peer name invalid input");
@@ -177,7 +179,7 @@ int32_t SoftBusSocketGetPeerName(int32_t socketFd, SoftBusSockAddr *addr)
     return SOFTBUS_ADAPTER_OK;
 }
 
-int32_t SoftBusSocketBind(int32_t socketFd, SoftBusSockAddr *addr, int32_t addrLen)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusSocketBind(int32_t socketFd, SoftBusSockAddr *addr, int32_t addrLen)
 {
     if (addr == NULL || addrLen < 0) {
         COMM_LOGE(COMM_ADAPTER, "socket bind invalid input");
@@ -194,7 +196,7 @@ int32_t SoftBusSocketBind(int32_t socketFd, SoftBusSockAddr *addr, int32_t addrL
     return SOFTBUS_ADAPTER_OK;
 }
 
-int32_t SoftBusSocketListen(int32_t socketFd, int32_t backLog)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusSocketListen(int32_t socketFd, int32_t backLog)
 {
     int32_t ret = listen(socketFd, backLog);
     if (ret != 0) {
@@ -208,7 +210,7 @@ int32_t SoftBusSocketListen(int32_t socketFd, int32_t backLog)
     return SOFTBUS_ADAPTER_OK;
 }
 
-int32_t SoftBusSocketAccept(int32_t socketFd, SoftBusSockAddr *addr, int32_t *acceptFd)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusSocketAccept(int32_t socketFd, SoftBusSockAddr *addr, int32_t *acceptFd)
 {
     if (addr == NULL || acceptFd == NULL) {
         COMM_LOGE(COMM_ADAPTER, "socket accept invalid input");
@@ -228,7 +230,7 @@ int32_t SoftBusSocketAccept(int32_t socketFd, SoftBusSockAddr *addr, int32_t *ac
     return SOFTBUS_ADAPTER_OK;
 }
 
-int32_t SoftBusSocketConnect(int32_t socketFd, const SoftBusSockAddr *addr, int32_t addrLen)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusSocketConnect(int32_t socketFd, const SoftBusSockAddr *addr, int32_t addrLen)
 {
     if (addr == NULL || addrLen < 0) {
         COMM_LOGE(COMM_ADAPTER, "socket connect invalid input");
@@ -249,7 +251,7 @@ int32_t SoftBusSocketConnect(int32_t socketFd, const SoftBusSockAddr *addr, int3
     return SOFTBUS_ADAPTER_OK;
 }
 
-void SoftBusSocketFdZero(SoftBusFdSet *set)
+SOFTBUS_SYMBOL_EXPORT void SoftBusSocketFdZero(SoftBusFdSet *set)
 {
     if (set == NULL) {
         COMM_LOGE(COMM_ADAPTER, "set is null");
@@ -259,7 +261,7 @@ void SoftBusSocketFdZero(SoftBusFdSet *set)
     FD_ZERO((fd_set *)set->fdsBits);
 }
 
-void SoftBusSocketFdSet(int32_t socketFd, SoftBusFdSet *set)
+SOFTBUS_SYMBOL_EXPORT void SoftBusSocketFdSet(int32_t socketFd, SoftBusFdSet *set)
 {
     if (set == NULL) {
         COMM_LOGE(COMM_ADAPTER, "set is null");
@@ -273,7 +275,7 @@ void SoftBusSocketFdSet(int32_t socketFd, SoftBusFdSet *set)
     FD_SET(socketFd, (fd_set *)set->fdsBits);
 }
 
-void SoftBusSocketFdClr(int32_t socketFd, SoftBusFdSet *set)
+SOFTBUS_SYMBOL_EXPORT void SoftBusSocketFdClr(int32_t socketFd, SoftBusFdSet *set)
 {
     if (set == NULL) {
         COMM_LOGE(COMM_ADAPTER, "set is null");
@@ -283,7 +285,7 @@ void SoftBusSocketFdClr(int32_t socketFd, SoftBusFdSet *set)
     FD_CLR(socketFd, (fd_set *)set->fdsBits);
 }
 
-int32_t SoftBusSocketFdIsset(int32_t socketFd, SoftBusFdSet *set)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusSocketFdIsset(int32_t socketFd, SoftBusFdSet *set)
 {
     if (set == NULL) {
         COMM_LOGE(COMM_ADAPTER, "set is null");
@@ -301,7 +303,7 @@ int32_t SoftBusSocketFdIsset(int32_t socketFd, SoftBusFdSet *set)
     }
 }
 
-int32_t SoftBusSocketSelect(
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusSocketSelect(
     int32_t nfds, SoftBusFdSet *readFds, SoftBusFdSet *writeFds, SoftBusFdSet *exceptFds, SoftBusSockTimeOut *timeout)
 {
     fd_set *tempReadSet = NULL;
@@ -340,7 +342,7 @@ int32_t SoftBusSocketSelect(
     return ret;
 }
 
-int32_t SoftBusSocketIoctl(int32_t socketFd, long cmd, void *argp)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusSocketIoctl(int32_t socketFd, long cmd, void *argp)
 {
     int32_t ret = ioctl(socketFd, cmd, argp);
     if (ret < 0) {
@@ -351,7 +353,7 @@ int32_t SoftBusSocketIoctl(int32_t socketFd, long cmd, void *argp)
     return ret;
 }
 
-int32_t SoftBusSocketFcntl(int32_t socketFd, long cmd, long flag)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusSocketFcntl(int32_t socketFd, long cmd, long flag)
 {
     int32_t ret = fcntl(socketFd, cmd, flag);
     if (ret < 0) {
@@ -362,7 +364,7 @@ int32_t SoftBusSocketFcntl(int32_t socketFd, long cmd, long flag)
     return ret;
 }
 
-int32_t SoftBusSocketSend(int32_t socketFd, const void *buf, uint32_t len, uint32_t flags)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusSocketSend(int32_t socketFd, const void *buf, uint32_t len, uint32_t flags)
 {
     int32_t wrapperFlag = flags | MSG_NOSIGNAL;
     int32_t ret = send(socketFd, buf, len, wrapperFlag);
@@ -374,7 +376,7 @@ int32_t SoftBusSocketSend(int32_t socketFd, const void *buf, uint32_t len, uint3
     return ret;
 }
 
-int32_t SoftBusSocketSendTo(int32_t socketFd, const void *buf, uint32_t len, int32_t flags,
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusSocketSendTo(int32_t socketFd, const void *buf, uint32_t len, int32_t flags,
     const SoftBusSockAddr *toAddr, int32_t toAddrLen)
 {
     if ((toAddr == NULL) || (toAddrLen <= 0)) {
@@ -390,7 +392,7 @@ int32_t SoftBusSocketSendTo(int32_t socketFd, const void *buf, uint32_t len, int
     return ret;
 }
 
-int32_t SoftBusSocketRecv(int32_t socketFd, void *buf, uint32_t len, int32_t flags)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusSocketRecv(int32_t socketFd, void *buf, uint32_t len, int32_t flags)
 {
     int32_t ret = recv(socketFd, buf, len, flags);
     if (ret < 0) {
@@ -402,8 +404,8 @@ int32_t SoftBusSocketRecv(int32_t socketFd, void *buf, uint32_t len, int32_t fla
     return ret;
 }
 
-int32_t SoftBusSocketRecvFrom(int32_t socketFd, void *buf, uint32_t len, int32_t flags, SoftBusSockAddr *fromAddr,
-    int32_t *fromAddrLen)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusSocketRecvFrom(int32_t socketFd, void *buf, uint32_t len,
+    int32_t flags, SoftBusSockAddr *fromAddr, int32_t *fromAddrLen)
 {
     if ((fromAddr == NULL) || (fromAddrLen == NULL)) {
         COMM_LOGE(COMM_ADAPTER, "fromAddr or fromAddrLen is null");
@@ -419,7 +421,7 @@ int32_t SoftBusSocketRecvFrom(int32_t socketFd, void *buf, uint32_t len, int32_t
     return ret;
 }
 
-int32_t SoftBusSocketRecvMsg(int32_t socketFd, SoftBusMsgHdr *msg, int32_t flags)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusSocketRecvMsg(int32_t socketFd, SoftBusMsgHdr *msg, int32_t flags)
 {
     if (msg == NULL) {
         COMM_LOGE(COMM_ADAPTER, "msg is null");
@@ -436,7 +438,7 @@ int32_t SoftBusSocketRecvMsg(int32_t socketFd, SoftBusMsgHdr *msg, int32_t flags
     return ret;
 }
 
-int32_t SoftBusSocketShutDown(int32_t socketFd, int32_t how)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusSocketShutDown(int32_t socketFd, int32_t how)
 {
     int32_t ret = shutdown(socketFd, how);
     if (ret != 0) {
@@ -447,7 +449,7 @@ int32_t SoftBusSocketShutDown(int32_t socketFd, int32_t how)
     return SOFTBUS_ADAPTER_OK;
 }
 
-int32_t SoftBusSocketClose(int32_t socketFd)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusSocketClose(int32_t socketFd)
 {
     int32_t ret = close(socketFd);
     if (ret != 0) {
@@ -458,7 +460,7 @@ int32_t SoftBusSocketClose(int32_t socketFd)
     return SOFTBUS_ADAPTER_OK;
 }
 
-int32_t SoftBusInetPtoN(int32_t af, const char *src, void *dst)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusInetPtoN(int32_t af, const char *src, void *dst)
 {
     if (src == NULL || dst == NULL) {
         COMM_LOGE(COMM_ADAPTER, "src or dst is null");
@@ -476,42 +478,42 @@ int32_t SoftBusInetPtoN(int32_t af, const char *src, void *dst)
     }
 }
 
-const char *SoftBusInetNtoP(int32_t af, const void *src, char *dst, int32_t size)
+SOFTBUS_SYMBOL_EXPORT const char *SoftBusInetNtoP(int32_t af, const void *src, char *dst, int32_t size)
 {
     return (inet_ntop(af, src, dst, size));
 }
 
-uint32_t SoftBusHtoNl(uint32_t hostlong)
+SOFTBUS_SYMBOL_EXPORT uint32_t SoftBusHtoNl(uint32_t hostlong)
 {
     return htonl(hostlong);
 }
 
-uint16_t SoftBusHtoNs(uint16_t hostshort)
+SOFTBUS_SYMBOL_EXPORT uint16_t SoftBusHtoNs(uint16_t hostshort)
 {
     return htons(hostshort);
 }
 
-uint32_t SoftBusNtoHl(uint32_t netlong)
+SOFTBUS_SYMBOL_EXPORT uint32_t SoftBusNtoHl(uint32_t netlong)
 {
     return ntohl(netlong);
 }
 
-uint16_t SoftBusNtoHs(uint16_t netshort)
+SOFTBUS_SYMBOL_EXPORT uint16_t SoftBusNtoHs(uint16_t netshort)
 {
     return ntohs(netshort);
 }
 
-uint32_t SoftBusInetAddr(const char *cp)
+SOFTBUS_SYMBOL_EXPORT uint32_t SoftBusInetAddr(const char *cp)
 {
     return inet_addr(cp);
 }
 
-uint32_t SoftBusIfNameToIndex(const char *name)
+SOFTBUS_SYMBOL_EXPORT uint32_t SoftBusIfNameToIndex(const char *name)
 {
     return if_nametoindex(name);
 }
 
-int32_t SoftBusIndexToIfName(int32_t index, char *ifname, uint32_t nameLen)
+SOFTBUS_SYMBOL_EXPORT int32_t SoftBusIndexToIfName(int32_t index, char *ifname, uint32_t nameLen)
 {
     if (index < 0 || ifname == NULL || nameLen < IF_NAME_SIZE) {
         COMM_LOGE(COMM_ADAPTER, "Invalid parm nameLen=%{public}d", nameLen);
@@ -542,63 +544,63 @@ static void ProcByteOrder(uint8_t *value, int8_t size)
     ShiftByte(value, size);
 }
 
-uint8_t SoftBusHtoLss(uint8_t value)
+SOFTBUS_SYMBOL_EXPORT uint8_t SoftBusHtoLss(uint8_t value)
 {
     uint8_t res = value;
     ProcByteOrder(&res, (int8_t)sizeof(res));
     return res;
 }
 
-uint16_t SoftBusHtoLs(uint16_t value)
+SOFTBUS_SYMBOL_EXPORT uint16_t SoftBusHtoLs(uint16_t value)
 {
     uint16_t res = value;
     ProcByteOrder((uint8_t *)&res, (int8_t)sizeof(res));
     return res;
 }
 
-uint32_t SoftBusHtoLl(uint32_t value)
+SOFTBUS_SYMBOL_EXPORT uint32_t SoftBusHtoLl(uint32_t value)
 {
     uint32_t res = value;
     ProcByteOrder((uint8_t *)&res, (int8_t)sizeof(res));
     return res;
 }
 
-uint64_t SoftBusHtoLll(uint64_t value)
+SOFTBUS_SYMBOL_EXPORT uint64_t SoftBusHtoLll(uint64_t value)
 {
     uint64_t res = value;
     ProcByteOrder((uint8_t *)&res, (int8_t)sizeof(res));
     return res;
 }
 
-uint8_t SoftBusLtoHss(uint8_t value)
+SOFTBUS_SYMBOL_EXPORT uint8_t SoftBusLtoHss(uint8_t value)
 {
     uint8_t res = value;
     ProcByteOrder(&res, (int8_t)sizeof(res));
     return res;
 }
 
-uint16_t SoftBusLtoHs(uint16_t value)
+SOFTBUS_SYMBOL_EXPORT uint16_t SoftBusLtoHs(uint16_t value)
 {
     uint16_t res = value;
     ProcByteOrder((uint8_t *)&res, (int8_t)sizeof(res));
     return res;
 }
 
-uint32_t SoftBusLtoHl(uint32_t value)
+SOFTBUS_SYMBOL_EXPORT uint32_t SoftBusLtoHl(uint32_t value)
 {
     uint32_t res = value;
     ProcByteOrder((uint8_t *)&res, (int8_t)sizeof(res));
     return res;
 }
 
-uint64_t SoftBusLtoHll(uint64_t value)
+SOFTBUS_SYMBOL_EXPORT uint64_t SoftBusLtoHll(uint64_t value)
 {
     uint64_t res = value;
     ProcByteOrder((uint8_t *)&res, (int8_t)sizeof(res));
     return res;
 }
 
-uint16_t SoftBusLEtoBEs(uint16_t value)
+SOFTBUS_SYMBOL_EXPORT uint16_t SoftBusLEtoBEs(uint16_t value)
 {
     if (!IsLittleEndian()) {
         return value;
@@ -608,7 +610,7 @@ uint16_t SoftBusLEtoBEs(uint16_t value)
     return res;
 }
 
-uint16_t SoftBusBEtoLEs(uint16_t value)
+SOFTBUS_SYMBOL_EXPORT uint16_t SoftBusBEtoLEs(uint16_t value)
 {
     if (!IsLittleEndian()) {
         return value;
@@ -618,21 +620,21 @@ uint16_t SoftBusBEtoLEs(uint16_t value)
     return res;
 }
 
-uint64_t SoftBusLEtoBEll(uint64_t value)
+SOFTBUS_SYMBOL_EXPORT uint64_t SoftBusLEtoBEll(uint64_t value)
 {
     uint64_t res = value;
     ShiftByte((uint8_t *)&res, (int8_t)sizeof(res));
     return res;
 }
 
-uint64_t SoftBusBEtoLEll(uint64_t value)
+SOFTBUS_SYMBOL_EXPORT uint64_t SoftBusBEtoLEll(uint64_t value)
 {
     uint64_t res = value;
     ShiftByte((uint8_t *)&res, (int8_t)sizeof(res));
     return res;
 }
 
-int32_t GetErrCodeBySocketErr(int32_t transErrCode)
+SOFTBUS_SYMBOL_EXPORT int32_t GetErrCodeBySocketErr(int32_t transErrCode)
 {
     int32_t socketErrCode = SockOptErrorToSoftBusError(errno);
     if (socketErrCode == SOFTBUS_OK) {

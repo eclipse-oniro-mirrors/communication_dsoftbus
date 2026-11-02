@@ -19,9 +19,10 @@
 #include "nlohmann/json.hpp"
 #include "securec.h"
 #include "softbus_adapter_mem.h"
+#include "softbus_def.h"
 
 
-JsonObj *JSON_CreateObject(void)
+SOFTBUS_SYMBOL_EXPORT JsonObj *JSON_CreateObject(void)
 {
     JsonObj *obj = new (std::nothrow) JsonObj();
     if (obj == nullptr) {
@@ -39,7 +40,7 @@ JsonObj *JSON_CreateObject(void)
     return obj;
 }
 
-void JSON_Delete(JsonObj *obj)
+SOFTBUS_SYMBOL_EXPORT void JSON_Delete(JsonObj *obj)
 {
     if (obj == nullptr) {
         return;
@@ -55,14 +56,14 @@ void JSON_Delete(JsonObj *obj)
     obj = nullptr;
 }
 
-void JSON_Free(void *obj)
+SOFTBUS_SYMBOL_EXPORT void JSON_Free(void *obj)
 {
     if (obj != nullptr) {
         SoftBusFree(obj);
     }
 }
 
-char *JSON_PrintUnformatted(const JsonObj *obj)
+SOFTBUS_SYMBOL_EXPORT char *JSON_PrintUnformatted(const JsonObj *obj)
 {
     if (obj == nullptr) {
         COMM_LOGE(COMM_ADAPTER, "invalid param");
@@ -88,7 +89,7 @@ char *JSON_PrintUnformatted(const JsonObj *obj)
     return result;
 }
 
-JsonObj *JSON_Parse(const char *str, uint32_t len)
+SOFTBUS_SYMBOL_EXPORT JsonObj *JSON_Parse(const char *str, uint32_t len)
 {
     JsonObj *obj = JSON_CreateObject();
     if (obj == nullptr) {
@@ -114,7 +115,7 @@ JsonObj *JSON_Parse(const char *str, uint32_t len)
     return obj;
 }
 
-JsonObj *JSON_ParseArray(const char *str, uint32_t len)
+SOFTBUS_SYMBOL_EXPORT JsonObj *JSON_ParseArray(const char *str, uint32_t len)
 {
     JsonObj *obj = JSON_CreateObject();
     if (obj == nullptr) {
@@ -138,7 +139,7 @@ JsonObj *JSON_ParseArray(const char *str, uint32_t len)
     return obj;
 }
 
-int32_t JSON_GetArraySize(const JsonObj *obj)
+SOFTBUS_SYMBOL_EXPORT int32_t JSON_GetArraySize(const JsonObj *obj)
 {
     if (obj == nullptr) {
         COMM_LOGE(COMM_ADAPTER, "invalid param");
@@ -156,7 +157,7 @@ int32_t JSON_GetArraySize(const JsonObj *obj)
     return static_cast<int32_t>(json->size());
 }
 
-JsonObj *JSON_GetArrayItem(const JsonObj *obj, int32_t index)
+SOFTBUS_SYMBOL_EXPORT JsonObj *JSON_GetArrayItem(const JsonObj *obj, int32_t index)
 {
     if (obj == nullptr || index < 0) {
         COMM_LOGE(COMM_ADAPTER, "invalid param");
@@ -191,7 +192,7 @@ JsonObj *JSON_GetArrayItem(const JsonObj *obj, int32_t index)
     return itemObj;
 }
 
-bool JSON_AddBoolToObject(JsonObj *obj, const char *key, bool value)
+SOFTBUS_SYMBOL_EXPORT bool JSON_AddBoolToObject(JsonObj *obj, const char *key, bool value)
 {
     if (obj == nullptr || key == nullptr) {
         COMM_LOGE(COMM_ADAPTER, "invalid param");
@@ -206,7 +207,7 @@ bool JSON_AddBoolToObject(JsonObj *obj, const char *key, bool value)
     return true;
 }
 
-bool JSON_GetBoolFromOject(const JsonObj *obj, const char *key, bool *value)
+SOFTBUS_SYMBOL_EXPORT bool JSON_GetBoolFromOject(const JsonObj *obj, const char *key, bool *value)
 {
     if (obj == nullptr || key == nullptr || value == nullptr) {
         COMM_LOGE(COMM_ADAPTER, "invalid param");
@@ -263,12 +264,12 @@ static bool JSON_GetIntegerFromObject(const JsonObj *obj, const char *key, Integ
     return true;
 }
 
-bool JSON_AddInt16ToObject(JsonObj *obj, const char *key, int16_t value)
+SOFTBUS_SYMBOL_EXPORT bool JSON_AddInt16ToObject(JsonObj *obj, const char *key, int16_t value)
 {
     return JSON_AddIntegerToObject(obj, key, value);
 }
 
-bool JSON_GetInt16FromOject(const JsonObj *obj, const char *key, int16_t *value)
+SOFTBUS_SYMBOL_EXPORT bool JSON_GetInt16FromOject(const JsonObj *obj, const char *key, int16_t *value)
 {
     if (value == nullptr) {
         COMM_LOGE(COMM_ADAPTER, "invalid param");
@@ -277,12 +278,12 @@ bool JSON_GetInt16FromOject(const JsonObj *obj, const char *key, int16_t *value)
     return JSON_GetIntegerFromObject(obj, key, *value);
 }
 
-bool JSON_AddInt32ToObject(JsonObj *obj, const char *key, int32_t value)
+SOFTBUS_SYMBOL_EXPORT bool JSON_AddInt32ToObject(JsonObj *obj, const char *key, int32_t value)
 {
     return JSON_AddIntegerToObject(obj, key, value);
 }
 
-bool JSON_GetInt32FromOject(const JsonObj *obj, const char *key, int32_t *value)
+SOFTBUS_SYMBOL_EXPORT bool JSON_GetInt32FromOject(const JsonObj *obj, const char *key, int32_t *value)
 {
     if (value == nullptr) {
         COMM_LOGE(COMM_ADAPTER, "invalid param");
@@ -291,12 +292,12 @@ bool JSON_GetInt32FromOject(const JsonObj *obj, const char *key, int32_t *value)
     return JSON_GetIntegerFromObject(obj, key, *value);
 }
 
-bool JSON_AddInt64ToObject(JsonObj *obj, const char *key, int64_t value)
+SOFTBUS_SYMBOL_EXPORT bool JSON_AddInt64ToObject(JsonObj *obj, const char *key, int64_t value)
 {
     return JSON_AddIntegerToObject(obj, key, value);
 }
 
-bool JSON_GetInt64FromOject(const JsonObj *obj, const char *key, int64_t *value)
+SOFTBUS_SYMBOL_EXPORT bool JSON_GetInt64FromOject(const JsonObj *obj, const char *key, int64_t *value)
 {
     if (value == nullptr) {
         COMM_LOGE(COMM_ADAPTER, "invalid param");
@@ -305,7 +306,7 @@ bool JSON_GetInt64FromOject(const JsonObj *obj, const char *key, int64_t *value)
     return JSON_GetIntegerFromObject(obj, key, *value);
 }
 
-bool JSON_AddStringToObject(JsonObj *obj, const char *key, const char *value)
+SOFTBUS_SYMBOL_EXPORT bool JSON_AddStringToObject(JsonObj *obj, const char *key, const char *value)
 {
     if (obj == nullptr || key == nullptr || value == nullptr) {
         COMM_LOGE(COMM_ADAPTER, "invalid param");
@@ -320,7 +321,7 @@ bool JSON_AddStringToObject(JsonObj *obj, const char *key, const char *value)
     return true;
 }
 
-bool JSON_GetStringFromObject(const JsonObj *obj, const char *key, char *value, uint32_t size)
+SOFTBUS_SYMBOL_EXPORT bool JSON_GetStringFromObject(const JsonObj *obj, const char *key, char *value, uint32_t size)
 {
     if (obj == nullptr || key == nullptr || value == nullptr) {
         COMM_LOGE(COMM_ADAPTER, "invalid param");
@@ -345,7 +346,7 @@ bool JSON_GetStringFromObject(const JsonObj *obj, const char *key, char *value, 
     return true;
 }
 
-bool JSON_AddStringArrayToObject(JsonObj *obj, const char *key, const char **value, int32_t len)
+SOFTBUS_SYMBOL_EXPORT bool JSON_AddStringArrayToObject(JsonObj *obj, const char *key, const char **value, int32_t len)
 {
     if (value == nullptr || obj == nullptr || key == nullptr || len <= 0) {
         COMM_LOGE(COMM_ADAPTER, "input invalid");
@@ -364,7 +365,7 @@ bool JSON_AddStringArrayToObject(JsonObj *obj, const char *key, const char **val
     return true;
 }
 
-bool JSON_GetStringArrayFromOject(const JsonObj *obj, const char *key, char **value, int32_t *len)
+SOFTBUS_SYMBOL_EXPORT bool JSON_GetStringArrayFromOject(const JsonObj *obj, const char *key, char **value, int32_t *len)
 {
     if (value == nullptr || obj == nullptr || key == nullptr || len == nullptr || *len <= 0) {
         COMM_LOGE(COMM_ADAPTER, "input invalid");
@@ -409,7 +410,7 @@ bool JSON_GetStringArrayFromOject(const JsonObj *obj, const char *key, char **va
     return true;
 }
 
-bool JSON_AddBytesToObject(JsonObj *obj, const char *key, uint8_t *value, uint32_t size)
+SOFTBUS_SYMBOL_EXPORT bool JSON_AddBytesToObject(JsonObj *obj, const char *key, uint8_t *value, uint32_t size)
 {
     if (obj == nullptr || key == nullptr || value == nullptr || size == 0) {
         COMM_LOGE(COMM_ADAPTER, "input invalid");
@@ -425,7 +426,8 @@ bool JSON_AddBytesToObject(JsonObj *obj, const char *key, uint8_t *value, uint32
     return true;
 }
 
-bool JSON_GetBytesFromObject(const JsonObj *obj, const char *key, uint8_t *value, uint32_t bufLen, uint32_t *size)
+SOFTBUS_SYMBOL_EXPORT bool JSON_GetBytesFromObject(const JsonObj *obj, const char *key, uint8_t *value,
+    uint32_t bufLen, uint32_t *size)
 {
     if (obj == nullptr || key == nullptr || value == nullptr || bufLen == 0 || size == nullptr) {
         COMM_LOGE(COMM_ADAPTER, "input invalid");
@@ -464,7 +466,7 @@ bool JSON_GetBytesFromObject(const JsonObj *obj, const char *key, uint8_t *value
     return true;
 }
 
-bool JSON_IsArrayExist(const JsonObj *obj, const char *key)
+SOFTBUS_SYMBOL_EXPORT bool JSON_IsArrayExist(const JsonObj *obj, const char *key)
 {
     if (obj == nullptr || key == nullptr) {
         COMM_LOGE(COMM_ADAPTER, "input invalid");
