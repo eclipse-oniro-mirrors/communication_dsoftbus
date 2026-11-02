@@ -38,7 +38,8 @@ SOFTBUS_SYMBOL_EXPORT bool SoftBusCheckIsNormalApp(uint64_t fullTokenId, const c
     return false;
 }
 
-SOFTBUS_SYMBOL_EXPORT SOFTBUS_VISIBILITY bool SoftBusCheckIsAccessAndRecordAccessToken(uint64_t tokenId, const char *permission)
+SOFTBUS_SYMBOL_EXPORT SOFTBUS_VISIBILITY bool SoftBusCheckIsAccessAndRecordAccessToken(uint64_t tokenId,
+    const char *permission)
 {
     (void)tokenId;
     (void)permission;
