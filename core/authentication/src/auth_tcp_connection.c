@@ -30,7 +30,7 @@
 #define AUTH_PKT_HEAD_LEN        24
 #define AUTH_SOCKET_MAX_DATA_LEN (64 * 1024)
 #define TCP_KEEPALIVE_TOS_VAL    180
-#define RECV_DATA_TIMEOUT        (10 * 1000 * 1000)
+#define AUTH_SOCKET_RECV_MAX_RETRY 600
 
 typedef struct {
     int32_t keepaliveIdle;
@@ -220,7 +220,7 @@ static int32_t RecvPacketHead(ListenerModule module, int32_t fd, SocketPktHead *
     uint32_t offset = 0;
     while (offset < AUTH_PKT_HEAD_LEN) {
         ssize_t recvLen =
-            ConnRecvSocketData(fd, (char *)&buf[offset], (size_t)(sizeof(buf) - offset), RECV_DATA_TIMEOUT);
+            ConnRecvSocketData(fd, (char *)&buf[offset], (size_t)(sizeof(buf) - offset), 0);
         if (recvLen <= 0) {
             AUTH_LOGE(AUTH_CONN, "recv head fail, recvLen=%{public}zd.", recvLen);
             return SOFTBUS_INVALID_DATA_HEAD;
@@ -238,8 +238,17 @@ static uint8_t *RecvPacketData(int32_t fd, uint32_t len)
         return NULL;
     }
     uint32_t offset = 0;
+    uint32_t recvCnt = 0;
     while (offset < len) {
-        ssize_t recvLen = ConnRecvSocketData(fd, (char *)(data + offset), (size_t)(len - offset), RECV_DATA_TIMEOUT);
+        if (recvCnt > AUTH_SOCKET_RECV_MAX_RETRY) {
+            AUTH_LOGE(AUTH_CONN,
+                "recv data exceed max retry, recvCnt=%{public}u, offset=%{public}u, len=%{public}u",
+                recvCnt, offset, len);
+            SoftBusFree(data);
+            return NULL;
+        }
+        recvCnt++;
+        ssize_t recvLen = ConnRecvSocketData(fd, (char *)(data + offset), (size_t)(len - offset), 0);
         if (recvLen <= 0) {
             AUTH_LOGE(AUTH_CONN, "recv data fail, recvLen=%{public}zd.", recvLen);
             SoftBusFree(data);
