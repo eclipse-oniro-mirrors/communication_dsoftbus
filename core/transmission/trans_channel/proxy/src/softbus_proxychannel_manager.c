@@ -2646,6 +2646,18 @@ void TransProxyManagerDeinit(void)
     if (UnRegisterTimeoutCallback(SOFTBUS_PROXYCHANNEL_TIMER_FUN) != SOFTBUS_OK) {
         TRANS_LOGE(TRANS_CTRL, "unregister timeout callback failed");
     }
+    LnnUnregisterEventHandler(LNN_EVENT_SINGLE_NETWORK_OFFLINE, TransNotifySingleNetworkOffLine);
+
+    LnnUnregisterEventHandler(LNN_EVENT_NODE_NET_TYPE, TransNotifyNetworkOnline);
+
+    LnnUnregisterEventHandler(LNN_EVENT_NODE_ONLINE_STATE_CHANGED, TransNotifyOffLine);
+
+    LnnUnregisterEventHandler(LNN_EVENT_USER_SWITCHED, TransNotifyUserSwitch);
+
+    LnnUnregisterEventHandler(LNN_EVENT_CONSTRAINT_ENABLE, TransNotifyBlockModeEnable);
+
+    LnnUnregisterEventHandler(LNN_EVENT_ACCOUNT_ACL_CHANGE, TransNotifyProfileDeleted);
+
     TransProxyManagerDeinitInner();
 }
 
