@@ -106,7 +106,7 @@ extern "C" {
 
 #define NODE_ADDR_LOOPBACK "0"
 
-#define MAX_UDP_CHANNEL_ID_COUNT 20
+#define MAX_UDP_CHANNEL_ID_COUNT 32
 #define ACCOUNT_UID_STR_LEN 65
 #define CRED_ID_STR_LEN 300
 

@@ -32,7 +32,7 @@ sptr<TransServerProxy> g_serverProxy = nullptr;
 sptr<IRemoteObject> g_oldObject = nullptr;
 const std::u16string SAMANAGER_INTERFACE_TOKEN = u"ohos.samgr.accessToken";
 constexpr int32_t MIN_CHANNEL_ID = 0; // UDP channelId minmum value
-constexpr int32_t MAX_CHANNEL_ID = 19; // UDP channelId maxmum value
+constexpr int32_t MAX_CHANNEL_ID = 31; // UDP channelId maxmum value
 uint32_t g_getSystemAbilityId = 2;
 std::mutex g_mutex;
 constexpr uint32_t RETRY_COUNT = 10;    // retry count of getting proxy object
