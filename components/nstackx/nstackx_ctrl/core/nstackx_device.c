@@ -285,6 +285,10 @@ int32_t SetReservedInfoFromDeviceInfo(NSTACKX_DeviceInfo *deviceList, const Devi
     if (!cJSON_AddStringToObject(item, "hwAccountHashVal", deviceInfo->deviceHash)) {
         goto L_END;
     }
+    const char *ver = (strlen(deviceInfo->version) == 0) ? NSTACKX_DEFAULT_VER : deviceInfo->version;
+    if (!cJSON_AddStringToObject(item, "version", ver)) {
+        goto L_END;
+    }
     if (SetServiceDataFromDeviceInfo(item, deviceInfo) != NSTACKX_EOK) {
         goto L_END;
     }
@@ -309,7 +313,8 @@ L_END:
 int32_t GetNotifyDeviceInfo(NSTACKX_DeviceInfo *notifyDevice, const DeviceInfo *deviceInfo)
 {
     if ((strcpy_s(notifyDevice->deviceId, sizeof(notifyDevice->deviceId), deviceInfo->deviceId) != EOK) ||
-        (strcpy_s(notifyDevice->deviceName, sizeof(notifyDevice->deviceName), deviceInfo->deviceName) != EOK)) {
+        (strcpy_s(notifyDevice->deviceName, sizeof(notifyDevice->deviceName), deviceInfo->deviceName) != EOK) ||
+        (strcpy_s(notifyDevice->version, sizeof(notifyDevice->version), deviceInfo->version) != EOK)) {
         DFINDER_LOGE(TAG, "strcpy_s fails");
         return NSTACKX_EFAILED;
     }

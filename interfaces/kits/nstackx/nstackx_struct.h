@@ -32,6 +32,7 @@ extern "C" {
 #define NSTACKX_MAX_IP_STRING_LEN                 46
 #define NSTACKX_MAX_CAPABILITY_NUM                2
 #define NSTACKX_MAX_INTERFACE_NAME_LEN            16
+#define NSTACKX_MAX_HICOM_VERSION                 16
 #define NSTACKX_MAX_SERVICE_DATA_LEN              64
 #define NSTACKX_MAX_EXTEND_SERVICE_DATA_LEN       128
 #ifndef NSTACKX_EXTEND_BUSINESSDATA
@@ -113,6 +114,7 @@ typedef struct NSTACKX_DeviceInfo {
     char networkName[NSTACKX_MAX_INTERFACE_NAME_LEN];
     uint8_t discoveryType;
     uint8_t businessType;
+    char version[NSTACKX_MAX_HICOM_VERSION];
     char reservedInfo[NSTACKX_MAX_RESERVED_INFO_LEN];
 } NSTACKX_DeviceInfo;
 
@@ -142,6 +144,7 @@ typedef struct {
     uint8_t is5GHzBandSupported;
     uint8_t businessType;
     uint32_t deviceType;
+    char version[NSTACKX_MAX_HICOM_VERSION];
 } NSTACKX_LocalDeviceInfo;
 
 typedef enum {
@@ -176,6 +179,7 @@ typedef struct {
 typedef struct {
     const char *name;
     const char *deviceId;
+    const char *version;
     const NSTACKX_InterfaceInfo *localIfInfo;
     uint32_t ifNums;
     uint32_t deviceType;
