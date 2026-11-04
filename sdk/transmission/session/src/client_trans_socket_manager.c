@@ -497,12 +497,22 @@ SOFTBUS_VISIBILITY void DestroyClientSessionByNetworkId(
         }
         bool onlyReserveLinkDown = true;
         if (TransMultipathNeedDelReserve(sessionNode, routeType, &onlyReserveLinkDown)) {
-            (void)TransMultipathDelReserveLinkDown(sessionNode, server, destroyList, onlyReserveLinkDown);
-            if (sessionNode->routeType != routeType) {
-                TRANS_LOGI(TRANS_SDK, "multi path reserve channel link down.");
+            int32_t deadChannelId = (sessionNode->routeType == routeType) ?
+                sessionNode->channelId : sessionNode->channelIdReserve;
+            int32_t deadChannelType = (sessionNode->routeType == routeType) ?
+                sessionNode->channelType : sessionNode->channelTypeReserve;
+            bool otherUp = TransMultipathIsWiredRoute(routeType) ?
+                (sessionNode->ctrlWirelessStatus == CTRL_CH_STATUS_UP) :
+                (sessionNode->ctrlWiredStatus == CTRL_CH_STATUS_UP);
+            (void)TransMultipathMarkDown(sessionNode->sessionId, deadChannelId);
+            if (otherUp) {
+                (void)TransMultipathCloseDeadChannel(
+                    sessionNode->sessionId, deadChannelId, deadChannelType, false);
+                TRANS_LOGI(TRANS_SDK, "multipath one link down, session preserved, routeType=%{public}d", routeType);
                 continue;
             }
-            TRANS_LOGI(TRANS_SDK, "multi path main channel link down.");
+            (void)TransMultipathDelReserveLinkDown(sessionNode, server, destroyList, onlyReserveLinkDown);
+            TRANS_LOGI(TRANS_SDK, "multipath both down, destroy session, routeType=%{public}d", routeType);
         }
 
         if (!ClientTransCheckNeedDel(server->sessionName, sessionNode, routeType, connType)) {

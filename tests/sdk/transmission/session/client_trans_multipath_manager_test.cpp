@@ -284,4 +284,197 @@ HWTEST_F(TransMultipathManagerTest, TransMultipathGetRouteTypeSuccessTest001, Te
     SoftBusFree(sessionParam);
 }
 
+HWTEST_F(TransMultipathManagerTest, TransMultipathIsWiredRouteTest001, TestSize.Level1)
+{
+    EXPECT_TRUE(TransMultipathIsWiredRoute(WIFI_USB));
+    EXPECT_FALSE(TransMultipathIsWiredRoute(WIFI_P2P));
+    EXPECT_FALSE(TransMultipathIsWiredRoute(WIFI_STA));
+    EXPECT_FALSE(TransMultipathIsWiredRoute(INVALID_ROUTE_TYPE));
+}
+
+HWTEST_F(TransMultipathManagerTest, SelectCtrlChannelOnNodeTest001, TestSize.Level1)
+{
+    SessionInfo node = {};
+    int32_t channelId = -1;
+    int32_t channelType = -1;
+
+    node.enableMultipath = false;
+    node.channelId = 100;
+    node.channelType = CHANNEL_TYPE_TCP_DIRECT;
+    EXPECT_EQ(TransMultipathSelectCtrlChannelOnNode(&node, &channelId, &channelType), SOFTBUS_OK);
+    EXPECT_EQ(channelId, 100);
+    EXPECT_EQ(channelType, CHANNEL_TYPE_TCP_DIRECT);
+
+    node.enableMultipath = true;
+    node.channelId = 100; node.channelType = CHANNEL_TYPE_TCP_DIRECT; node.routeType = WIFI_USB;
+    node.channelIdReserve = 200; node.channelTypeReserve = CHANNEL_TYPE_TCP_DIRECT; node.routeTypeReserve = WIFI_P2P;
+    node.ctrlWiredStatus = CTRL_CH_STATUS_UP; node.ctrlWirelessStatus = CTRL_CH_STATUS_UP;
+    EXPECT_EQ(TransMultipathSelectCtrlChannelOnNode(&node, &channelId, &channelType), SOFTBUS_OK);
+    EXPECT_EQ(channelId, 100);
+
+    node.routeType = WIFI_P2P; node.routeTypeReserve = WIFI_USB;
+    EXPECT_EQ(TransMultipathSelectCtrlChannelOnNode(&node, &channelId, &channelType), SOFTBUS_OK);
+    EXPECT_EQ(channelId, 200);
+
+    node.routeType = WIFI_USB; node.routeTypeReserve = WIFI_P2P;
+    node.ctrlWiredStatus = CTRL_CH_STATUS_DOWN; node.ctrlWirelessStatus = CTRL_CH_STATUS_UP;
+    EXPECT_EQ(TransMultipathSelectCtrlChannelOnNode(&node, &channelId, &channelType), SOFTBUS_OK);
+    EXPECT_EQ(channelId, 200);
+
+    node.ctrlWirelessStatus = CTRL_CH_STATUS_DOWN;
+    EXPECT_EQ(TransMultipathSelectCtrlChannelOnNode(&node, &channelId, &channelType),
+        SOFTBUS_TRANS_INVALID_CHANNEL_TYPE);
+
+    EXPECT_EQ(TransMultipathSelectCtrlChannelOnNode(nullptr, &channelId, &channelType), SOFTBUS_INVALID_PARAM);
+}
+
+HWTEST_F(TransMultipathManagerTest, MarkDownAndClearSlotOnNodeTest001, TestSize.Level1)
+{
+    SessionInfo node = {};
+    node.enableMultipath = true;
+    node.channelId = 100; node.routeType = WIFI_USB;
+    node.channelIdReserve = 200; node.routeTypeReserve = WIFI_P2P;
+    node.ctrlWiredStatus = CTRL_CH_STATUS_UP; node.ctrlWirelessStatus = CTRL_CH_STATUS_UP;
+
+    EXPECT_EQ(TransMultipathMarkDownOnNode(&node, 100), SOFTBUS_OK);
+    EXPECT_EQ(node.ctrlWiredStatus, CTRL_CH_STATUS_DOWN);
+    EXPECT_EQ(node.ctrlWirelessStatus, CTRL_CH_STATUS_UP);
+
+    EXPECT_EQ(TransMultipathMarkDownOnNode(&node, 200), SOFTBUS_OK);
+    EXPECT_EQ(node.ctrlWirelessStatus, CTRL_CH_STATUS_DOWN);
+
+    EXPECT_EQ(TransMultipathMarkDownOnNode(&node, 100), SOFTBUS_OK);
+    EXPECT_EQ(node.ctrlWiredStatus, CTRL_CH_STATUS_DOWN);
+
+    EXPECT_EQ(TransMultipathMarkDownOnNode(&node, 999), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(TransMultipathMarkDownOnNode(nullptr, 100), SOFTBUS_INVALID_PARAM);
+
+    node.channelId = 100; node.channelIdReserve = 200;
+    EXPECT_EQ(TransMultipathClearChannelSlotOnNode(&node, 100), SOFTBUS_OK);
+    EXPECT_EQ(node.channelId, INVALID_CHANNEL_ID);
+    EXPECT_EQ(node.channelIdReserve, 200);
+    EXPECT_EQ(TransMultipathClearChannelSlotOnNode(&node, 200), SOFTBUS_OK);
+    EXPECT_EQ(node.channelIdReserve, INVALID_CHANNEL_ID);
+    EXPECT_EQ(TransMultipathClearChannelSlotOnNode(&node, 999), SOFTBUS_INVALID_PARAM);
+}
+
+HWTEST_F(TransMultipathManagerTest, GetOtherCtrlChannelOnNodeTest001, TestSize.Level1)
+{
+    SessionInfo node = {};
+    node.enableMultipath = true;
+    node.channelId = 100; node.channelType = CHANNEL_TYPE_TCP_DIRECT; node.routeType = WIFI_USB;
+    node.channelIdReserve = 200; node.channelTypeReserve = CHANNEL_TYPE_TCP_DIRECT; node.routeTypeReserve = WIFI_P2P;
+    int32_t id = -1, type = -1;
+
+    node.ctrlWiredStatus = CTRL_CH_STATUS_DOWN; node.ctrlWirelessStatus = CTRL_CH_STATUS_UP;
+    EXPECT_EQ(TransMultipathGetOtherCtrlChannelOnNode(&node, 100, &id, &type), SOFTBUS_OK);
+    EXPECT_EQ(id, 200);
+
+    node.ctrlWiredStatus = CTRL_CH_STATUS_UP;
+    EXPECT_EQ(TransMultipathGetOtherCtrlChannelOnNode(&node, 200, &id, &type), SOFTBUS_OK);
+    EXPECT_EQ(id, 100);
+
+    node.ctrlWiredStatus = CTRL_CH_STATUS_DOWN; node.ctrlWirelessStatus = CTRL_CH_STATUS_DOWN;
+    EXPECT_EQ(TransMultipathGetOtherCtrlChannelOnNode(&node, 100, &id, &type),
+        SOFTBUS_TRANS_INVALID_CHANNEL_TYPE);
+
+    EXPECT_EQ(TransMultipathGetOtherCtrlChannelOnNode(nullptr, 100, &id, &type), SOFTBUS_INVALID_PARAM);
+}
+
+HWTEST_F(TransMultipathManagerTest, MarkUpOnNodeTest001, TestSize.Level1)
+{
+    SessionInfo node = {};
+    node.ctrlWiredStatus = CTRL_CH_STATUS_DOWN;
+    node.ctrlWirelessStatus = CTRL_CH_STATUS_DOWN;
+    EXPECT_EQ(TransMultipathMarkUpOnNode(&node, WIFI_USB), SOFTBUS_OK);
+    EXPECT_EQ(node.ctrlWiredStatus, CTRL_CH_STATUS_UP);
+    EXPECT_EQ(node.ctrlWirelessStatus, CTRL_CH_STATUS_DOWN);
+    EXPECT_EQ(TransMultipathMarkUpOnNode(&node, WIFI_P2P), SOFTBUS_OK);
+    EXPECT_EQ(node.ctrlWirelessStatus, CTRL_CH_STATUS_UP);
+    EXPECT_EQ(TransMultipathMarkUpOnNode(nullptr, WIFI_USB), SOFTBUS_INVALID_PARAM);
+}
+
+HWTEST_F(TransMultipathManagerTest, CtrlFallbackDecisionTest001, TestSize.Level1)
+{
+    SessionInfo node = {};
+    node.enableMultipath = true;
+    node.channelId = 100; node.channelType = CHANNEL_TYPE_TCP_DIRECT; node.routeType = WIFI_USB;
+    node.channelIdReserve = 200; node.channelTypeReserve = CHANNEL_TYPE_TCP_DIRECT; node.routeTypeReserve = WIFI_P2P;
+    node.ctrlWiredStatus = CTRL_CH_STATUS_UP; node.ctrlWirelessStatus = CTRL_CH_STATUS_UP;
+
+    int32_t id = -1, type = -1;
+    EXPECT_EQ(TransMultipathSelectCtrlChannelOnNode(&node, &id, &type), SOFTBUS_OK);
+    EXPECT_EQ(id, 100);
+
+    EXPECT_EQ(TransMultipathMarkDownOnNode(&node, 100), SOFTBUS_OK);
+    EXPECT_EQ(node.ctrlWiredStatus, CTRL_CH_STATUS_DOWN);
+    EXPECT_EQ(TransMultipathGetOtherCtrlChannelOnNode(&node, 100, &id, &type), SOFTBUS_OK);
+    EXPECT_EQ(id, 200);
+
+    EXPECT_EQ(TransMultipathSelectCtrlChannelOnNode(&node, &id, &type), SOFTBUS_OK);
+    EXPECT_EQ(id, 200);
+
+    EXPECT_EQ(TransMultipathMarkUpOnNode(&node, WIFI_USB), SOFTBUS_OK);
+    EXPECT_EQ(node.ctrlWiredStatus, CTRL_CH_STATUS_UP);
+    EXPECT_EQ(TransMultipathSelectCtrlChannelOnNode(&node, &id, &type), SOFTBUS_OK);
+    EXPECT_EQ(id, 100);
+}
+
+HWTEST_F(TransMultipathManagerTest, CtrlBothDeadDecisionTest001, TestSize.Level1)
+{
+    SessionInfo node = {};
+    node.enableMultipath = true;
+    node.channelId = 100; node.routeType = WIFI_USB;
+    node.channelIdReserve = 200; node.routeTypeReserve = WIFI_P2P;
+    node.ctrlWiredStatus = CTRL_CH_STATUS_UP; node.ctrlWirelessStatus = CTRL_CH_STATUS_UP;
+
+    EXPECT_EQ(TransMultipathMarkDownOnNode(&node, 100), SOFTBUS_OK);
+    EXPECT_EQ(TransMultipathMarkDownOnNode(&node, 200), SOFTBUS_OK);
+    int32_t id = -1, type = -1;
+    EXPECT_EQ(TransMultipathGetOtherCtrlChannelOnNode(&node, 100, &id, &type),
+        SOFTBUS_TRANS_INVALID_CHANNEL_TYPE);
+    EXPECT_EQ(TransMultipathSelectCtrlChannelOnNode(&node, &id, &type),
+        SOFTBUS_TRANS_INVALID_CHANNEL_TYPE);
+}
+
+HWTEST_F(TransMultipathManagerTest, CtrlLinkDownPreserveDecisionTest001, TestSize.Level1)
+{
+    SessionInfo node = {};
+    node.enableMultipath = true;
+    node.sessionId = 1;
+    node.channelId = 100; node.channelType = CHANNEL_TYPE_TCP_DIRECT; node.routeType = WIFI_USB;
+    node.channelIdReserve = 200; node.channelTypeReserve = CHANNEL_TYPE_TCP_DIRECT; node.routeTypeReserve = WIFI_P2P;
+    node.ctrlWiredStatus = CTRL_CH_STATUS_UP; node.ctrlWirelessStatus = CTRL_CH_STATUS_UP;
+
+    int32_t deadId = (node.routeType == WIFI_USB) ? node.channelId : node.channelIdReserve;
+    bool otherUp = TransMultipathIsWiredRoute(WIFI_USB) ?
+        (node.ctrlWirelessStatus == CTRL_CH_STATUS_UP) : (node.ctrlWiredStatus == CTRL_CH_STATUS_UP);
+    EXPECT_EQ(deadId, 100);
+    EXPECT_TRUE(otherUp);
+    EXPECT_EQ(TransMultipathMarkDownOnNode(&node, deadId), SOFTBUS_OK);
+    EXPECT_EQ(node.ctrlWiredStatus, CTRL_CH_STATUS_DOWN);
+    int32_t id = -1, type = -1;
+    EXPECT_EQ(TransMultipathSelectCtrlChannelOnNode(&node, &id, &type), SOFTBUS_OK);
+    EXPECT_EQ(id, 200);
+
+    bool otherUp2 = TransMultipathIsWiredRoute(WIFI_P2P) ?
+        (node.ctrlWirelessStatus == CTRL_CH_STATUS_UP) : (node.ctrlWiredStatus == CTRL_CH_STATUS_UP);
+    EXPECT_FALSE(otherUp2);
+    EXPECT_EQ(TransMultipathMarkDownOnNode(&node, 200), SOFTBUS_OK);
+    EXPECT_EQ(TransMultipathSelectCtrlChannelOnNode(&node, &id, &type),
+        SOFTBUS_TRANS_INVALID_CHANNEL_TYPE);
+}
+
+HWTEST_F(TransMultipathManagerTest, CtrlNonMultipathUnchangedTest001, TestSize.Level1)
+{
+    SessionInfo node = {};
+    node.enableMultipath = false;
+    node.channelId = 100; node.channelType = CHANNEL_TYPE_TCP_DIRECT;
+    int32_t id = -1, type = -1;
+    EXPECT_EQ(TransMultipathSelectCtrlChannelOnNode(&node, &id, &type), SOFTBUS_OK);
+    EXPECT_EQ(id, 100);
+    EXPECT_EQ(TransMultipathGetOtherCtrlChannelOnNode(&node, 100, &id, &type),
+        SOFTBUS_TRANS_INVALID_CHANNEL_TYPE);
+    EXPECT_EQ(TransMultipathGetOtherCtrlChannelOnNode(&node, 999, &id, &type), SOFTBUS_INVALID_PARAM);
+}
 }

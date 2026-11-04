@@ -195,14 +195,16 @@ static void TransTdcDeleteChannelInfo(int32_t channelId)
     (void)SoftBusMutexUnlock(&g_tcpDirectChannelInfoList->lock);
 }
 
+void TransTdcCloseChannelEx(int32_t channelId, bool async)
+{
+    TRANS_LOGI(TRANS_SDK, "Close tdc Channel Ex, channelId=%{public}d, async=%{public}d", channelId, async);
+    TransTdcDeleteChannelInfo(channelId);
+    (void)ServerIpcCloseChannelEx(NULL, channelId, CHANNEL_TYPE_TCP_DIRECT, async);
+}
+
 void TransTdcCloseChannel(int32_t channelId)
 {
-    TRANS_LOGI(TRANS_SDK, "Close tdc Channel, channelId=%{public}d.", channelId);
-
-    TransTdcDeleteChannelInfo(channelId);
-    if (ServerIpcCloseChannel(NULL, channelId, CHANNEL_TYPE_TCP_DIRECT) != SOFTBUS_OK) {
-        TRANS_LOGE(TRANS_SDK, "close server tdc channelId=%{public}d err.", channelId);
-    }
+    TransTdcCloseChannelEx(channelId, false);
 }
 
 static TcpDirectChannelInfo *TransGetNewTcpChannel(const ChannelInfo *channel)

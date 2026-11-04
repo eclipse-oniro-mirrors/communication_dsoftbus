@@ -59,6 +59,8 @@ int32_t ClientTransTdcOnChannelOpenFailed(int32_t channelId, int32_t errCode);
 
 void TransTdcCloseChannel(int32_t channelId);
 
+void TransTdcCloseChannelEx(int32_t channelId, bool async);
+
 void TransTdcSetTimestamp(int32_t channelId, uint64_t timestamp);
 int32_t TransTdcGetInfoById(int32_t channelId, TcpDirectChannelInfo *info);
 int32_t TransTdcGetInfoByFd(int32_t fd, TcpDirectChannelInfo *info);

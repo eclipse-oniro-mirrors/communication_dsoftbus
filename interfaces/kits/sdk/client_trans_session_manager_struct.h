@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -86,6 +86,12 @@ typedef enum {
 } MultipathStrategy;
 
 typedef enum {
+    CTRL_CH_STATUS_IDLE = 0,  /**< control-plane channel not established */
+    CTRL_CH_STATUS_UP,        /**< control-plane channel available */
+    CTRL_CH_STATUS_DOWN,      /**< control-plane link down, not recovered */
+} CtrlChannelStatus;
+
+typedef enum {
     NOT_MULTIPATH = 0,              /**< not multipath session's channel link down */
     MULTIPATH_FIRST_CHANNEL,        /**< multipath session first channel link down */
     MULTIPATH_BOTH_CHANNEL,         /**< second channel link down caused by first channel link down */
@@ -142,6 +148,8 @@ typedef struct {
     LinkType linkTypeReserve[LINK_TYPE_MAX];
     bool isClosingReserve;
     int32_t routeTypeReserve;
+    CtrlChannelStatus ctrlWiredStatus;     /**< control-plane wired(USB) path liveness, only valid when enableMultipath */
+    CtrlChannelStatus ctrlWirelessStatus;  /**< control-plane wireless(HML) path liveness, only valid when enableMultipath */
     uint64_t startTimestamp;
     uint32_t cancelEncryptionBit;
     int32_t keyType;

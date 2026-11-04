@@ -434,6 +434,43 @@ int32_t TransServerProxy::CloseChannel(const char *sessionName, int32_t channelI
     return serverRet;
 }
 
+int32_t TransServerProxy::CloseChannelEx(const char *sessionName, int32_t channelId,
+    int32_t channelType, bool async)
+{
+    sptr<IRemoteObject> remote = GetSystemAbility();
+    if (remote == nullptr) {
+        TRANS_LOGE(TRANS_SDK, "remote is nullptr!");
+        return SOFTBUS_TRANS_PROXY_REMOTE_NULL;
+    }
+    MessageParcel data;
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        TRANS_LOGE(TRANS_SDK, "write InterfaceToken failed!");
+        return SOFTBUS_TRANS_PROXY_WRITETOKEN_FAILED;
+    }
+    if (!data.WriteInt32(channelId)) {
+        TRANS_LOGE(TRANS_SDK, "write channel id failed!");
+        return SOFTBUS_TRANS_PROXY_WRITEINT_FAILED;
+    }
+    if (!data.WriteInt32(channelType)) {
+        TRANS_LOGE(TRANS_SDK, "write channel type failed!");
+        return SOFTBUS_TRANS_PROXY_WRITEINT_FAILED;
+    }
+    if (channelType == CHANNEL_TYPE_UNDEFINED) {
+        if (!data.WriteCString(sessionName)) {
+            TRANS_LOGE(TRANS_SDK, "write session name failed!");
+            return SOFTBUS_TRANS_PROXY_WRITECSTRING_FAILED;
+        }
+    }
+    MessageParcel reply;
+    MessageOption option = { async ? MessageOption::TF_ASYNC : MessageOption::TF_SYNC };
+    int32_t ret = remote->SendRequest(SERVER_CLOSE_CHANNEL, data, reply, option);
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_SDK, "send request failed! ret=%{public}d", ret);
+        return ret;
+    }
+    return SOFTBUS_OK;
+}
+
 int32_t TransServerProxy::CloseChannelWithStatistics(int32_t channelId, int32_t channelType, uint64_t laneId,
     const void *dataInfo, uint32_t len)
 {

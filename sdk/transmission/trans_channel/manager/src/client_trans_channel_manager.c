@@ -57,7 +57,7 @@ void ClientTransChannelDeinit(void)
     ClientTransStatisticsDeinit();
 }
 
-int32_t ClientTransCloseChannel(int32_t channelId, int32_t type, int32_t socketId)
+int32_t ClientTransCloseChannelEx(int32_t channelId, int32_t type, int32_t socketId, bool async)
 {
     if (channelId < 0) {
         TRANS_LOGW(TRANS_SDK, "Invalid param");
@@ -72,7 +72,7 @@ int32_t ClientTransCloseChannel(int32_t channelId, int32_t type, int32_t socketI
         case CHANNEL_TYPE_TCP_DIRECT:
             TransStopTimeSync(channelId);
             TransDelDataBufNode(channelId);
-            TransTdcCloseChannel(channelId);
+            TransTdcCloseChannelEx(channelId, async);
             break;
         case CHANNEL_TYPE_UDP:
             ret = ClientTransCloseUdpChannel(channelId, SHUTDOWN_REASON_LOCAL);
@@ -85,6 +85,11 @@ int32_t ClientTransCloseChannel(int32_t channelId, int32_t type, int32_t socketI
             return SOFTBUS_TRANS_INVALID_CHANNEL_TYPE;
     }
     return ret;
+}
+
+int32_t ClientTransCloseChannel(int32_t channelId, int32_t type, int32_t socketId)
+{
+    return ClientTransCloseChannelEx(channelId, type, socketId, false);
 }
 
 int32_t ClientTransCloseReserveChannel(

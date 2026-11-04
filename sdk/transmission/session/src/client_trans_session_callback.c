@@ -68,6 +68,7 @@ static int32_t FillSessionInfo(SessionInfo *session, const ChannelInfo *channel,
     session->channelType = (ChannelType)channel->channelType;
     session->routeType = channel->routeType;
     session->enableMultipath = channel->enableMultipath;
+    (void)TransMultipathMarkUpOnNode(session, channel->routeType);
     session->peerPid = channel->peerPid;
     session->peerUid = channel->peerUid;
     session->isServer = channel->isServer;
