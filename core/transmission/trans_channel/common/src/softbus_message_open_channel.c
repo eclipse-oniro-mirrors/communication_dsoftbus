@@ -30,6 +30,7 @@
 #include "softbus_utils.h"
 #include "trans_channel_common.h"
 #include "trans_log.h"
+#include "trans_udp_channel_manager.h"
 #include "trans_uk_manager.h"
 
 #define FL_IDENTITY     "FL_IDENTITY"
@@ -98,6 +99,8 @@ static int32_t JsonObjectPackRequestEx(const AppInfo *appInfo, cJSON *json, unsi
     (void)AddNumber64ToJsonObject(json, SOURCE_ACL_TOKEN_ID, (int64_t)appInfo->myData.tokenId);
     (void)AddStringToJsonObject(json, SOURCE_ACL_EXTRA_INFO, appInfo->extraAccessInfo);
     (void)AddBoolToJsonObject(json, FORCE_GENERATE_UK, appInfo->forceGenerateUk);
+    (void)AddNumberToJsonObject(json, "UDP_CHANNEL_CAPABILITY", (int32_t)appInfo->udpChannelCapability);
+    (void)AddNumberToJsonObject(json, "LINKED_CHANNEL_ID", (int32_t)appInfo->linkedChannelId);
     return SOFTBUS_OK;
 }
 
@@ -282,6 +285,12 @@ SOFTBUS_VISIBILITY int32_t UnpackRequest(const cJSON *msg, AppInfo *appInfo)
     uint32_t remoteCapability = 0;
     (void)GetJsonObjectNumberItem(msg, TRANS_CAPABILITY, (int32_t *)&remoteCapability);
     appInfo->channelCapability = remoteCapability & TRANS_CHANNEL_CAPABILITY;
+    if (!GetJsonObjectNumberItem(msg, "UDP_CHANNEL_CAPABILITY", (int32_t *)&(appInfo->udpChannelCapability))) {
+        appInfo->udpChannelCapability = 0;
+    }
+    appInfo->enableMultipath = GetCapabilityBit(appInfo->udpChannelCapability, UDP_CHANNEL_MULTIPATH_OFFSET);
+    appInfo->isMultiNeg = GetCapabilityBit(appInfo->udpChannelCapability, CHANNEL_ISMULTINEG_OFFSET);
+    (void)GetJsonObjectNumberItem(msg, "LINKED_CHANNEL_ID", &appInfo->linkedChannelId);
     return SOFTBUS_OK;
 }
 
@@ -302,6 +311,7 @@ static int32_t AddItemsToJsonObject(const AppInfo *appInfo, cJSON *json)
     (void)AddStringToJsonObject(json, SINK_ACL_ACCOUNT_ID, appInfo->myData.accountId);
     (void)AddNumberToJsonObject(json, USER_ID, appInfo->myData.userId);
     (void)AddNumber64ToJsonObject(json, SINK_ACL_TOKEN_ID, (int64_t)appInfo->myData.tokenId);
+    (void)AddNumberToJsonObject(json, "UDP_CHANNEL_CAPABILITY", (int32_t)appInfo->udpChannelCapability);
     return EncryptAndAddSinkSessionKey(json, appInfo);
 }
 
@@ -403,6 +413,11 @@ SOFTBUS_VISIBILITY int32_t UnpackReply(const cJSON *msg, AppInfo *appInfo, uint1
     if (!GetJsonObjectNumberItem(msg, TRANS_CAPABILITY, (int32_t *)&(appInfo->channelCapability))) {
         appInfo->channelCapability = 0;
     }
+    if (!GetJsonObjectNumberItem(msg, "UDP_CHANNEL_CAPABILITY", (int32_t *)&(appInfo->udpChannelCapability))) {
+        appInfo->udpChannelCapability = 0;
+    }
+    appInfo->enableMultipath = GetCapabilityBit(appInfo->udpChannelCapability, UDP_CHANNEL_MULTIPATH_OFFSET);
+    appInfo->isMultiNeg = GetCapabilityBit(appInfo->udpChannelCapability, CHANNEL_ISMULTINEG_OFFSET);
     return DecryptAndAddSinkSessionKey(msg, appInfo);
 }
 

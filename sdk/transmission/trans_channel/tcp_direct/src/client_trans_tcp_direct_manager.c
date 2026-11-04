@@ -514,12 +514,14 @@ int32_t ClientTransTdcOnChannelOpened(const char *sessionName, const ChannelInfo
     if (channel->fdProtocol == LNN_PROTOCOL_DETTP && !channel->isServer) {
         (void)TransStartTimeSync(channel);
     }
-    ret = ClientTransTdcOnSessionOpened(sessionName, channel, accessInfo);
-    if (ret != SOFTBUS_OK) {
-        TransDelDataBufNode(channel->channelId);
-        TransTdcDelChannelInfo(channel->channelId, ret);
-        TRANS_LOGE(TRANS_SDK, "notify on session opened err.");
-        return ret;
+    if (!channel->isMultiNeg) {
+        ret = ClientTransTdcOnSessionOpened(sessionName, channel, accessInfo);
+        if (ret != SOFTBUS_OK) {
+            TransDelDataBufNode(channel->channelId);
+            TransTdcDelChannelInfo(channel->channelId, ret);
+            TRANS_LOGE(TRANS_SDK, "notify on session opened err.");
+            return ret;
+        }
     }
 
     ret = ClientTransTdcHandleListener(sessionName, channel);

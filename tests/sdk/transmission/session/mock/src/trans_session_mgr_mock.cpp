@@ -228,6 +228,15 @@ int32_t SetStartTimestampBySessionId(int32_t sessionId)
 {
     return GetManagerInterface()->SetStartTimestampBySessionId(sessionId);
 }
+
+int32_t TransMultipathMarkUpOnNode(SessionInfo *node, int32_t routeType)
+{
+    (void)routeType;
+    if (node == nullptr) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    return SOFTBUS_OK;
+}
 #ifdef __cplusplus
 }
 #endif

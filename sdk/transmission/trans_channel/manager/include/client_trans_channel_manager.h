@@ -16,6 +16,8 @@
 #ifndef CLIENT_TRANS_CHANNEL_MANAGER_H
 #define CLIENT_TRANS_CHANNEL_MANAGER_H
 
+#include <stdbool.h>
+
 #include "session.h"
 
 #ifdef __cplusplus
