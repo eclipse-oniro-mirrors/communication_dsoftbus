@@ -1579,7 +1579,7 @@ static inline int32_t CheckSessionType(DFileSessionType type)
     return NSTACKX_EOK;
 }
 
-static void ProcessDFileFrameList(DFileSession *session, List *head)
+static int32_t ProcessDFileFrameList(DFileSession *session, List *head)
 {
     QueueNode *queueNode = NULL;
     DFileFrame *dFileFrame = NULL;
@@ -1614,9 +1614,13 @@ static void ProcessDFileFrameList(DFileSession *session, List *head)
              * For NSTACKX_DFILE_FILE_DATA_FRAME, "dFileFrame" may be free when handling failed, and become invalid.
              */
             handleFrameRet = DFileSessionHandleFrame(session, dFileFrame, peerAddr);
+            if (handleFrameRet != NSTACKX_EOK) {
+                return NSTACKX_EAGAIN;
+            }
         }
 
         if (handleFrameRet != NSTACKX_EOK || type != NSTACKX_DFILE_FILE_DATA_FRAME) {
+            DFILE_LOGE(TAG, "handleFrameRet %d drop %d type", handleFrameRet, type);
             /* For FILE_DATA frame, the memory is passed to file manager. */
             free(queueNode->frame);
             queueNode->frame = NULL;
@@ -1624,6 +1628,7 @@ static void ProcessDFileFrameList(DFileSession *session, List *head)
         free(queueNode);
     }
     ClearDFileFrameList(head);
+    return NSTACKX_EOK;
 }
 
 static void ReadEventHandle(void *arg)
@@ -1648,14 +1653,28 @@ static void ReadEventHandle(void *arg)
             DFILE_LOGE(TAG, "PthreadMutexLock error");
             return;
         }
-        ListMove(&session->inboundQueue, &newHead);
-        session->recvBlockNumInner += session->inboundQueueSize;
-        session->inboundQueueSize = 0;
+        List *element = ListPopFront(&session->inboundQueue);
+        ListInsertTail(&newHead, element);
+        uint64_t inboundQueueSize = session->inboundQueueSize;
+        session->recvBlockNumInner += inboundQueueSize;
+        session->inboundQueueSize--;
         if (PthreadMutexUnlock(&session->inboundQueueLock) != 0) {
             DFILE_LOGE(TAG, "PthreadMutexUnlock error");
             break;
         }
-        ProcessDFileFrameList(session, &newHead);
+        int32_t ret = ProcessDFileFrameList(session, &newHead);
+        if (ret == NSTACKX_EAGAIN) {
+            if (PthreadMutexLock(&session->inboundQueueLock) != 0) {
+                DFILE_LOGE(TAG, "PthreadMutexLock error");
+            }
+            ListInsertHead(&session->inboundQueue, element);
+            session->inboundQueueSize++;
+            session->recvBlockNumInner -= inboundQueueSize;
+            if (PthreadMutexUnlock(&session->inboundQueueLock) != 0) {
+                DFILE_LOGE(TAG, "PthreadMutexUnlock error");
+            }
+            break;
+        }
     }
     ClearDFileFrameList(&newHead);
 }
@@ -1718,7 +1737,7 @@ static void BindServerRecvThreadToTargetCpu(DFileSession *session)
     StartThreadBindCore(cpu);
 }
 
-static void PostReadEventToMainLoop(DFileSession *session)
+void PostReadEventToMainLoop(DFileSession *session)
 {
     if (NSTACKX_ATOM_FETCH(&(session->unprocessedReadEventCount)) >= MAX_UNPROCESSED_READ_EVENT_COUNT) {
         return;
@@ -1795,6 +1814,8 @@ int32_t DFileAcceptSocket(DFileSession *session)
     return NSTACKX_EOK;
 }
 
+#define DFILE_SOCK_RECV_WAIT_US (10 * 1000)
+
 void *DFileReceiverHandle(void *arg)
 {
     DFileSession *session = arg;
@@ -1808,6 +1829,12 @@ void *DFileReceiverHandle(void *arg)
         if (ret == NSTACKX_EAGAIN || !canRead) {
             ret = RcverWaitSocket(session, &canRead);
             if (ret != NSTACKX_EOK || session->closeFlag) {
+                break;
+            }
+        }
+        while (session->inboundQueueSize > (MAX_RECVBUF_COUNT >> 1)) {
+            usleep(DFILE_SOCK_RECV_WAIT_US);
+            if (session->closeFlag) {
                 break;
             }
         }
