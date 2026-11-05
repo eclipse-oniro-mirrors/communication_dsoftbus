@@ -16,7 +16,7 @@
 #ifndef CLIENT_TRANS_CHANNEL_MANAGER_H
 #define CLIENT_TRANS_CHANNEL_MANAGER_H
 
-#include <stdbool.h>
+#include "softbus_def.h"
 
 #include "session.h"
 
