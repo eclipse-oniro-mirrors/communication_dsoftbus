@@ -107,9 +107,9 @@ void ClientTransChannelManagerTest::TearDownTestCase(void) { }
 HWTEST_F(ClientTransChannelManagerTest, ClientTransCloseChannelTest001, TestSize.Level1)
 {
     int32_t channelId = 1;
-    int32_t ret = ClientTransCloseChannel(channelId, CHANNEL_TYPE_PROXY, 1);
+    int32_t ret = ClientTransCloseChannel(channelId, CHANNEL_TYPE_PROXY, 1, false);
     EXPECT_EQ(SOFTBUS_OK, ret);
-    ret = ClientTransCloseChannel(channelId, CHANNEL_TYPE_TCP_DIRECT, 1);
+    ret = ClientTransCloseChannel(channelId, CHANNEL_TYPE_TCP_DIRECT, 1, false);
     EXPECT_EQ(SOFTBUS_OK, ret);
 }
 
@@ -122,9 +122,9 @@ HWTEST_F(ClientTransChannelManagerTest, ClientTransCloseChannelTest001, TestSize
 HWTEST_F(ClientTransChannelManagerTest, ClientTransCloseChannelTest002, TestSize.Level1)
 {
     int32_t channelId = 1;
-    int32_t ret = ClientTransCloseChannel(channelId, CHANNEL_TYPE_AUTH, 1);
+    int32_t ret = ClientTransCloseChannel(channelId, CHANNEL_TYPE_AUTH, 1, false);
     EXPECT_EQ(SOFTBUS_OK, ret);
-    ret = ClientTransCloseChannel(channelId, CHANNEL_TYPE_BUTT, 1);
+    ret = ClientTransCloseChannel(channelId, CHANNEL_TYPE_BUTT, 1, false);
     EXPECT_EQ(SOFTBUS_TRANS_INVALID_CHANNEL_TYPE, ret);
 }
 
@@ -136,12 +136,12 @@ HWTEST_F(ClientTransChannelManagerTest, ClientTransCloseChannelTest002, TestSize
  */
 HWTEST_F(ClientTransChannelManagerTest, ClientTransCloseReserveChannelTest001, TestSize.Level1)
 {
-    int32_t ret = ClientTransCloseChannel(INVALID_CHANNEL_ID, CHANNEL_TYPE_TCP_DIRECT, 1);
+    int32_t ret = ClientTransCloseChannel(INVALID_CHANNEL_ID, CHANNEL_TYPE_TCP_DIRECT, 1, false);
     EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
     int32_t channelId = 1;
-    ret = ClientTransCloseChannel(channelId, CHANNEL_TYPE_BUTT, 1);
+    ret = ClientTransCloseChannel(channelId, CHANNEL_TYPE_BUTT, 1, false);
     EXPECT_EQ(SOFTBUS_TRANS_INVALID_CHANNEL_TYPE, ret);
-    ret = ClientTransCloseChannel(channelId, CHANNEL_TYPE_UNDEFINED, 1);
+    ret = ClientTransCloseChannel(channelId, CHANNEL_TYPE_UNDEFINED, 1, false);
     EXPECT_EQ(SOFTBUS_TRANS_INVALID_CHANNEL_TYPE, ret);
 }
 

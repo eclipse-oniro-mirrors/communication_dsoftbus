@@ -660,7 +660,7 @@ int32_t TransMultipathCloseDeadChannel(int32_t sessionId, int32_t channelId, int
     UnlockClientSessionServerList();
     TRANS_LOGI(TRANS_SDK, "close dead channel, sessionId=%{public}d, channelId=%{public}d, async=%{public}d",
         sessionId, channelId, async);
-    return ClientTransCloseChannelEx(channelId, channelType, socketId, async);
+    return ClientTransCloseChannel(channelId, channelType, socketId, async);
 }
 
 uint32_t TransMultipathGetAsyncCloseCount(void)

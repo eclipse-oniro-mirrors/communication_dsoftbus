@@ -57,9 +57,7 @@ int32_t ClientTransTdcOnChannelOpened(
     const char *sessionName, const ChannelInfo *channel, SocketAccessInfo *accessInfo);
 int32_t ClientTransTdcOnChannelOpenFailed(int32_t channelId, int32_t errCode);
 
-void TransTdcCloseChannel(int32_t channelId);
-
-void TransTdcCloseChannelEx(int32_t channelId, bool async);
+void TransTdcCloseChannel(int32_t channelId, bool async);
 
 void TransTdcSetTimestamp(int32_t channelId, uint64_t timestamp);
 int32_t TransTdcGetInfoById(int32_t channelId, TcpDirectChannelInfo *info);

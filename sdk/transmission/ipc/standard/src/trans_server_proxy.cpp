@@ -216,7 +216,7 @@ int32_t ServerIpcCloseChannel(const char *sessionName, int32_t channelId, int32_
     return proxy->CloseChannel(sessionName, channelId, channelType);
 }
 
-int32_t ServerIpcCloseChannelEx(const char *sessionName, int32_t channelId, int32_t channelType, bool async)
+int32_t ServerIpcCloseChannelAsync(const char *sessionName, int32_t channelId, int32_t channelType)
 {
     sptr<TransServerProxy> proxy = GetProxy();
     TRANS_CHECK_AND_RETURN_RET_LOGE(
@@ -225,7 +225,7 @@ int32_t ServerIpcCloseChannelEx(const char *sessionName, int32_t channelId, int3
         TRANS_LOGE(TRANS_SDK, "invalid channel Id!");
         return SOFTBUS_INVALID_PARAM;
     }
-    return proxy->CloseChannelEx(sessionName, channelId, channelType, async);
+    return proxy->CloseChannelAsync(sessionName, channelId, channelType);
 }
 
 int32_t ServerIpcCloseChannelWithStatistics(int32_t channelId, int32_t channelType, uint64_t laneId,

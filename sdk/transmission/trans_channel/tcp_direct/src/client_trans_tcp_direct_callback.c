@@ -58,7 +58,7 @@ int32_t ClientTransTdcOnSessionOpened(const char *sessionName, const ChannelInfo
 int32_t ClientTransTdcOnSessionClosed(int32_t channelId, ShutdownReason reason)
 {
     (void)TransDelDataBufNode(channelId);
-    (void)TransTdcCloseChannel(channelId);
+    (void)TransTdcCloseChannel(channelId, false);
     return g_sessionCb.OnSessionClosed(channelId, CHANNEL_TYPE_TCP_DIRECT, reason);
 }
 

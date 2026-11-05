@@ -377,9 +377,8 @@ int32_t ServerIpcCloseChannel(const char *sessionName, int32_t channelId, int32_
     return ret;
 }
 
-int32_t ServerIpcCloseChannelEx(const char *sessionName, int32_t channelId, int32_t channelType, bool async)
+int32_t ServerIpcCloseChannelAsync(const char *sessionName, int32_t channelId, int32_t channelType)
 {
-    (void)async;
     return ServerIpcCloseChannel(sessionName, channelId, channelType);
 }
 

@@ -434,8 +434,8 @@ int32_t TransServerProxy::CloseChannel(const char *sessionName, int32_t channelI
     return serverRet;
 }
 
-int32_t TransServerProxy::CloseChannelEx(const char *sessionName, int32_t channelId,
-    int32_t channelType, bool async)
+int32_t TransServerProxy::CloseChannelAsync(const char *sessionName, int32_t channelId,
+    int32_t channelType)
 {
     sptr<IRemoteObject> remote = GetSystemAbility();
     if (remote == nullptr) {
@@ -462,7 +462,7 @@ int32_t TransServerProxy::CloseChannelEx(const char *sessionName, int32_t channe
         }
     }
     MessageParcel reply;
-    MessageOption option = { async ? MessageOption::TF_ASYNC : MessageOption::TF_SYNC };
+    MessageOption option = { MessageOption::TF_ASYNC };
     int32_t ret = remote->SendRequest(SERVER_CLOSE_CHANNEL, data, reply, option);
     if (ret != SOFTBUS_OK) {
         TRANS_LOGE(TRANS_SDK, "send request failed! ret=%{public}d", ret);

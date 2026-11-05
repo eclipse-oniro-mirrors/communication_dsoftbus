@@ -184,7 +184,7 @@ namespace OHOS {
         DataGenerator::Write(data, size);
         int32_t channelId = 0;
         GenerateInt32(channelId);
-        TransTdcCloseChannel(channelId);
+        TransTdcCloseChannel(channelId, false);
         DataGenerator::Clear();
     }
 

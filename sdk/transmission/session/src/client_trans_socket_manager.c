@@ -202,7 +202,7 @@ SOFTBUS_VISIBILITY void ClientDestroySession(const ListNode *destroyList, Shutdo
 #ifdef DSOFTBUS_FEATURE_TRANS_FILE
         (void)ClientDeleteRecvFileList(id);
 #endif
-        (void)ClientTransCloseChannel(destroyNode->channelId, destroyNode->channelType, id);
+        (void)ClientTransCloseChannel(destroyNode->channelId, destroyNode->channelType, id, false);
         if (destroyNode->OnSessionClosed != NULL) {
             destroyNode->OnSessionClosed(id);
         } else if (destroyNode->OnShutdown != NULL) {
@@ -817,7 +817,7 @@ SOFTBUS_VISIBILITY void ClientCleanUpIdleTimeoutSocket(const ListNode *destroyLi
 #ifdef DSOFTBUS_FEATURE_TRANS_FILE
         (void)ClientDeleteRecvFileList(id);
 #endif
-        (void)ClientTransCloseChannel(destroyNode->channelId, destroyNode->channelType, id);
+        (void)ClientTransCloseChannel(destroyNode->channelId, destroyNode->channelType, id, false);
         TRANS_LOGI(TRANS_SDK, "session is idle, sessionId=%{public}d", id);
         if (destroyNode->OnShutdown != NULL) {
             destroyNode->OnShutdown(id, SHUTDOWN_REASON_TIMEOUT);
