@@ -20,6 +20,7 @@
 #include "data/link_manager.h"
 #include "event/wifi_direct_event_dispatcher.h"
 #include "conn_log.h"
+#include "qos.h"
 #include "utils/wifi_direct_anonymous.h"
 #include "utils/wifi_direct_utils.h"
 #include "wifi_direct_scheduler_factory.h"
@@ -55,6 +56,10 @@ void WifiDirectExecutor::Start()
 
 void WifiDirectExecutor::Run(std::shared_ptr<WifiDirectProcessor> processor)
 {
+    int qosRet = OHOS::QOS::SetThreadQos(OHOS::QOS::QosLevel::QOS_USER_INTERACTIVE);
+    if (qosRet != 0) {
+        CONN_LOGE(CONN_WIFI_DIRECT, "set thread qos fail, ret=%{public}d", qosRet);
+    }
     processor_ = std::move(processor);
     do {
         if (IsActive()) {

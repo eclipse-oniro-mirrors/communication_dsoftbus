@@ -443,11 +443,94 @@ ohos_unittest("WifiDirectP2pAdapterTest") {
   ]
 }
 
+ohos_unittest("WifiDirectExecutorQosTest") {
+  module_out_path = module_output_path
+
+  include_dirs = [
+    "$dsoftbus_dfx_path/interface/include",
+    "$dsoftbus_dfx_path/interface/include/form",
+    "$dsoftbus_root_path/adapter/common/include",
+    "$dsoftbus_root_path/adapter/common/include/OS_adapter_define/linux",
+    "$dsoftbus_root_path/core/authentication/interface",
+    "$dsoftbus_root_path/core/bus_center/interface",
+    "$dsoftbus_root_path/core/bus_center/lnn/lane_hub/lane_manager/include",
+    "$dsoftbus_root_path/core/bus_center/lnn/net_builder/include",
+    "$dsoftbus_root_path/core/bus_center/lnn/net_ledger/common/include",
+    "$dsoftbus_root_path/core/bus_center/lnn/net_ledger/distributed_ledger/include",
+    "$dsoftbus_root_path/core/bus_center/service/include",
+    "$dsoftbus_root_path/core/common/include",
+    "$dsoftbus_root_path/core/connection/interface",
+    "$dsoftbus_root_path/core/connection/wifi_direct_cpp/dbinder",
+    "$dsoftbus_root_path/core/discovery/interface",
+    "$dsoftbus_root_path/core/discovery/manager/include",
+    "$dsoftbus_root_path/core/frame/common/include",
+    "$dsoftbus_root_path/core/frame/init/include",
+    "$dsoftbus_root_path/core/transmission/trans_channel/proxy/include",
+    "$dsoftbus_root_path/interfaces/inner_kits/lnn",
+    "$dsoftbus_root_path/interfaces/inner_kits/transport",
+    "$dsoftbus_root_path/interfaces/kits/adapter",
+    "$dsoftbus_root_path/interfaces/kits/authentication",
+    "$dsoftbus_root_path/interfaces/kits/authentication/enhance",
+    "$dsoftbus_root_path/interfaces/kits/bus_center",
+    "$dsoftbus_root_path/interfaces/kits/common",
+    "$dsoftbus_root_path/interfaces/kits/connect",
+    "$dsoftbus_root_path/interfaces/kits/disc",
+    "$dsoftbus_root_path/interfaces/kits/discovery",
+    "$dsoftbus_root_path/interfaces/kits/lnn",
+    "$dsoftbus_root_path/interfaces/kits/lnn/enhance",
+    "$dsoftbus_root_path/interfaces/kits/transport",
+    "$dsoftbus_root_path/tests/core/connection/wifi_direct_cpp",
+    "$wifi_direct_cpp_path",
+    "$wifi_direct_cpp_path/adapter",
+    "$wifi_direct_cpp_path/utils",
+  ]
+  sources = [
+    "$wifi_direct_cpp_path/utils/wifi_direct_anonymous.cpp",
+    "$wifi_direct_cpp_path/utils/wifi_direct_utils.cpp",
+    "$dsoftbus_root_path/core/frame/common/src/softbus_init_common.c",
+    "$wifi_direct_cpp_path/wifi_direct_executor.cpp",
+    "wifi_direct_executor_qos_test.cpp",
+    "wifi_direct_mock.cpp",
+  ]
+  remove_configs = [
+    "//build/config/compiler:no_rtti",
+    "//build/config/compiler:no_exceptions",
+  ]
+  configs = [
+    "//build/config/compiler:rtti",
+    "//build/config/compiler:exceptions",
+  ]
+  cflags = [
+    "-fexceptions",
+    "-frtti",
+  ]
+  deps = [
+    "$dsoftbus_dfx_path:softbus_dfx",
+    "$dsoftbus_root_path/core/common:softbus_utils",
+    "$dsoftbus_root_path/adapter:softbus_adapter",
+  ]
+  external_deps = [
+    "bounds_checking_function:libsec_shared",
+    "cJSON:cjson",
+    "c_utils:utils",
+    "googletest:gmock_rtti",
+    "googletest:gtest_rtti",
+    "hilog:libhilog",
+    "init:libbegetutil",
+    "ipc:ipc_single",
+    "json:nlohmann_json_static",
+    "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
+    "wifi:wifi_sdk",
+  ]
+}
+
 group("unittest") {
   testonly = true
   deps = [
     ":WifiDirectIpManagerTest",
     ":WifiDirectManagerCppTest",
+    ":WifiDirectExecutorQosTest",
     ":WifiDirectP2pAdapterTest",
     ":WifiDirectRoleOptionTest",
     "adapter:unittest",

@@ -166,6 +166,8 @@ if (!softbus_config_enhance && defined(ohos_lite)) {
           "netmanager_base:net_conn_manager_if",
           "samgr:samgr_proxy",
           "wifi:wifi_sdk",
+          "qos_manager:qos",
+          "qos_manager:concurrent_task_client",
         ]
 
         remove_configs = [
@@ -324,6 +326,8 @@ if (!softbus_config_enhance && defined(ohos_lite)) {
             "netmanager_base:net_conn_manager_if",
             "samgr:samgr_proxy",
             "wifi:wifi_sdk",
+            "qos_manager:qos",
+            "qos_manager:concurrent_task_client",
           ]
 
           remove_configs = [
@@ -503,6 +507,8 @@ if (!softbus_config_enhance && defined(ohos_lite)) {
           "netmanager_base:net_conn_manager_if",
           "samgr:samgr_proxy",
           "wifi:wifi_sdk",
+          "qos_manager:qos",
+          "qos_manager:concurrent_task_client",
         ]
 
         remove_configs = [
