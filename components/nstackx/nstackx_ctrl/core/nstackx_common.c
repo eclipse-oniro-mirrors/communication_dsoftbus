@@ -1316,8 +1316,8 @@ static int RegisterIfInfoCopy(NSTACKX_LocalDeviceInfoV2 *infoV2, const NSTACKX_L
         DFINDER_LOGE(TAG, "calloc info is error");
         return NSTACKX_EFAILED;
     }
-    (void)memcpy_s(info, localDeviceInfo->ifNums * sizeof(NSTACKX_InterfaceInfo)),
-                    localDeviceInfo->localIfInfo, localDeviceInfo->ifNums * sizeof(NSTACKX_InterfaceInfo);
+    (void)memcpy_s(info, localDeviceInfo->ifNums * sizeof(NSTACKX_InterfaceInfo),
+                    localDeviceInfo->localIfInfo, localDeviceInfo->ifNums * sizeof(NSTACKX_InterfaceInfo));
     infoV2->localIfInfo = info;
     return NSTACKX_EOK;
 }
@@ -1332,7 +1332,7 @@ static NSTACKX_LocalDeviceInfoV2 *RegisterInfoCreate(const NSTACKX_LocalDeviceIn
 
     if (RegisterStrFieldValidate(localDeviceInfo->deviceId, NSTACKX_MAX_DEVICE_ID_LEN, "deviceId") != NSTACKX_EOK ||
         RegisterStrFieldValidate(localDeviceInfo->version, NSTACKX_MAX_HICOM_VERSION, "version") != NSTACKX_EOK ||
-        RegisterStrFieldValidate(localDeviceInfo->name, NSTACKX_MAX_DEVICE_NAME_LEN, "name") |= NSTACKX_EOK) {
+        RegisterStrFieldValidate(localDeviceInfo->name, NSTACKX_MAX_DEVICE_NAME_LEN, "name") != NSTACKX_EOK) {
         free(infoV2);
         return NULL;
     }
