@@ -285,6 +285,12 @@ SOFTBUS_VISIBILITY int32_t UnpackRequest(const cJSON *msg, AppInfo *appInfo)
     appInfo->channelCapability = remoteCapability & TRANS_CHANNEL_CAPABILITY;
     appInfo->enableMultipath = GetCapabilityBit(remoteCapability, TRANS_CHANNEL_MULTIPATH_OFFSET);
     appInfo->isMultiNeg = GetCapabilityBit(remoteCapability, TRANS_CHANNEL_ISMULTINEG_OFFSET);
+    if (appInfo->enableMultipath) {
+        EnableCapabilityBit(&appInfo->channelCapability, TRANS_CHANNEL_MULTIPATH_OFFSET);
+    }
+    if (appInfo->isMultiNeg) {
+        EnableCapabilityBit(&appInfo->channelCapability, TRANS_CHANNEL_ISMULTINEG_OFFSET);
+    }
     (void)GetJsonObjectNumberItem(msg, "LINKED_CHANNEL_ID", &appInfo->linkedChannelId);
     return SOFTBUS_OK;
 }
