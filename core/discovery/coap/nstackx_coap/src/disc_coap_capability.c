@@ -154,7 +154,7 @@ SOFTBUS_SYMBOL_EXPORT int32_t DiscCoapAssembleBdata(const unsigned char *capabil
         return SOFTBUS_MALLOC_ERR;
     }
 
-    if (strlen(jsonStr) >= businessDataLen - 1) {
+    if (businessDataLen == 0 || strlen(jsonStr) + 1 >= businessDataLen) {
         DISC_LOGE(DISC_COAP, "custData too long for businessData channel, dataLen=%{public}u", dataLen);
         cJSON_free(jsonStr);
         DISC_LOGE(DISC_COAP, "copy businessData fail");
