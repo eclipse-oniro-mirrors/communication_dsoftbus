@@ -2549,7 +2549,7 @@ static int32_t ProcessFliterChanged(int32_t listenerId, SoftBusBcScanParams *ada
     ScanManager *scanManager = &g_scanManager[listenerId];
     BroadcastProtocol protocol = scanManager->protocol;
     if (scanManager->isScanning) {
-        DISC_LOGI(DISC_BROADCAST, "lId=%{public}d, srvType=%{public}s", listenerId,
+        DISC_LOGD(DISC_BROADCAST, "lId=%{public}d, srvType=%{public}s", listenerId,
             GetSrvType(scanManager->srvType));
         if (scanManager->addSize == 0 && scanManager->deleteSize == 0) {
             DISC_LOGI(DISC_BROADCAST, "scanId=%{public}d (%{public}hu, %{public}hu)",
