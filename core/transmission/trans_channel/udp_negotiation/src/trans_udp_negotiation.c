@@ -1374,7 +1374,7 @@ static int32_t TransUdpGetChannelAndOpenConn(int32_t channelId)
 
 SOFTBUS_VISIBILITY int32_t TransOpenUdpChannel(AppInfo *appInfo, const ConnectOption *connOpt, int32_t *channelId)
 {
-    TRANS_LOGI(TRANS_CTRL, "server trans open udp channel.");
+    TRANS_LOGI(TRANS_CTRL, "open udp channel, udpChannelCapability=%{public}d", appInfo->udpChannelCapability);
     if (appInfo == NULL || connOpt == NULL || channelId == NULL) {
         TRANS_LOGE(TRANS_CTRL, "invaild param.");
         return SOFTBUS_INVALID_PARAM;

@@ -149,7 +149,6 @@ static int32_t UnpackFirstData(AppInfo *appInfo, const cJSON *json)
     int32_t osType = 0;
     GetOsTypeByNetworkId(appInfo->peerNetWorkId, &osType);
     if (osType == OH_OS_TYPE) {
-        TRANS_LOGW(TRANS_CTRL, "no need get fastData osType=%{public}d", osType);
         return SOFTBUS_OK;
     }
     if (!GetJsonObjectNumber16Item(json, FIRST_DATA_SIZE, &(appInfo->fastTransDataSize))) {

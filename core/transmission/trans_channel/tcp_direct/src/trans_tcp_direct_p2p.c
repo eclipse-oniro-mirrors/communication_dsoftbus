@@ -1262,7 +1262,9 @@ static void OnAuthMsgProc(AuthHandle authHandle, int32_t flags, int64_t seq, con
     } else {
         ret = OnVerifyP2pReply(authHandle.authId, seq, json);
     }
-    TRANS_LOGI(TRANS_CTRL, "result: ret=%{public}d", ret);
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_CTRL, "result: ret=%{public}d", ret);
+    }
     return;
 }
 

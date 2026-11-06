@@ -1076,7 +1076,7 @@ SOFTBUS_VISIBILITY int32_t ClientDeleteSocketSession(int32_t sessionId)
 
     ret = TryDeleteEmptySessionServer(pkgName, sessionName);
     if (ret != SOFTBUS_OK) {
-        TRANS_LOGE(TRANS_SDK, "delete empty session server failed, ret=%{public}d", ret);
+        TRANS_LOGD(TRANS_SDK, "delete empty session server failed, ret=%{public}d", ret);
         return ret;
     }
     return SOFTBUS_OK;

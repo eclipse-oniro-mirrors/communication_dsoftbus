@@ -66,7 +66,7 @@ int CheckSendLen(int32_t channelId, int32_t channelType, unsigned int len, int32
             return SOFTBUS_GET_CONFIG_VAL_ERR;
         }
     }
-    TRANS_LOGI(TRANS_SDK, "channelId=%{public}d, sendDataLen=%{public}u, maxDataLen=%{public}u",
+    TRANS_LOGI(TRANS_SDK, "channelId=%{public}d, len=%{public}u, manLen=%{public}u",
         channelId, len, dataConfig);
     if (len > dataConfig) {
         TRANS_LOGE(TRANS_SDK, "send data over limit.len=%{public}u", len);
