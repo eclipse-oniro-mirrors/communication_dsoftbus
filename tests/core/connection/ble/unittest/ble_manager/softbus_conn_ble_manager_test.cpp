@@ -525,9 +525,10 @@ HWTEST_F(BleManagerUnitTest, TestNotifyReusedConnected, TestSize.Level1)
     ConnBleConnection *connection = CreateAndSaveClientConnectionWithUdid(addr, udid);
     ASSERT_NE(connection, nullptr);
     connection->state = BLE_CONNECTION_STATE_EXCHANGED_BASIC_INFO;
-
+    EXPECT_EQ(connection->objectRc, 2);
     uint16_t challengeCode = 0x1234;
     NotifyReusedConnected(connection->connectionId, challengeCode);
+    EXPECT_EQ(connection->objectRc, 2);
 
     CleanupConnection(connection);
 }
