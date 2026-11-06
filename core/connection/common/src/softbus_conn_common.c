@@ -70,7 +70,7 @@ void ConvertAnonymizeMacAddress(char *outAnomize, uint32_t anomizeLen, const cha
 
 void ConvertAnonymizeIpAddress(char *outAnomize, uint32_t anomizeLen, const char *ip, uint32_t ipLen)
 {
-    if (anomizeLen < IP_LEN || ipLen != IP_LEN) {
+    if (outAnomize == NULL || ip == NULL || anomizeLen == 0 || ipLen == 0 || ipLen > IP_LEN) {
         return;
     }
     AnonymizeData(outAnomize, anomizeLen, ip);
