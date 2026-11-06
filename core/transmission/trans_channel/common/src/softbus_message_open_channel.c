@@ -283,15 +283,9 @@ SOFTBUS_VISIBILITY int32_t UnpackRequest(const cJSON *msg, AppInfo *appInfo)
     uint32_t remoteCapability = 0;
     (void)GetJsonObjectNumberItem(msg, TRANS_CAPABILITY, (int32_t *)&remoteCapability);
     appInfo->channelCapability = remoteCapability & TRANS_CHANNEL_CAPABILITY;
-    appInfo->enableMultipath = GetCapabilityBit(remoteCapability, TRANS_CHANNEL_MULTIPATH_OFFSET);
-    appInfo->isMultiNeg = GetCapabilityBit(remoteCapability, TRANS_CHANNEL_ISMULTINEG_OFFSET);
-    if (appInfo->enableMultipath) {
-        EnableCapabilityBit(&appInfo->channelCapability, TRANS_CHANNEL_MULTIPATH_OFFSET);
-    }
-    if (appInfo->isMultiNeg) {
-        EnableCapabilityBit(&appInfo->channelCapability, TRANS_CHANNEL_ISMULTINEG_OFFSET);
-    }
+    appInfo->enableMultipath = GetCapabilityBit(appInfo->channelCapability, TRANS_CHANNEL_MULTIPATH_OFFSET);
     (void)GetJsonObjectNumberItem(msg, "LINKED_CHANNEL_ID", &appInfo->linkedChannelId);
+    appInfo->isMultiNeg = (appInfo->linkedChannelId != INVALID_CHANNEL_ID);
     return SOFTBUS_OK;
 }
 
@@ -414,7 +408,6 @@ SOFTBUS_VISIBILITY int32_t UnpackReply(const cJSON *msg, AppInfo *appInfo, uint1
         appInfo->channelCapability = 0;
     }
     appInfo->enableMultipath = GetCapabilityBit(appInfo->channelCapability, TRANS_CHANNEL_MULTIPATH_OFFSET);
-    appInfo->isMultiNeg = GetCapabilityBit(appInfo->channelCapability, TRANS_CHANNEL_ISMULTINEG_OFFSET);
     return DecryptAndAddSinkSessionKey(msg, appInfo);
 }
 
