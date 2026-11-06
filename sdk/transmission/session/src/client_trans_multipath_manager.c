@@ -140,7 +140,7 @@ int32_t TransMultipathCheckAndEnable(int32_t socket, const QosTV *qos, uint32_t 
     if (enableMultipath) {
         TRANS_LOGI(TRANS_SDK, "set enableMultipath, socket=%{public}d", socket);
     }
-    if (enableMultipath && (minBW <= LOW_BW || dataType != TYPE_FILE)) {
+    if (enableMultipath && (minBW <= LOW_BW || (dataType != DATA_TYPE_FILE && dataType != DATA_TYPE_BYTES))) {
         TRANS_LOGE(TRANS_SDK, "not multipath ability, minBW=%{public}d, dataType=%{public}d", minBW, dataType);
         TransMultipathSetEnabled(socket, false);
     }
