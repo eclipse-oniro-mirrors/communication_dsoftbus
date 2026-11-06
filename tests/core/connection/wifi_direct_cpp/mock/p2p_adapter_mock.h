@@ -62,6 +62,9 @@ public:
     using FastWakeUpHook = std::function<int32_t(const std::string &, int32_t)>;
     MOCK_METHOD(void, RegisterFastWakeUp, (const FastWakeUpHook &));
     MOCK_METHOD(int32_t, FastWakeUp, (const std::string &, int32_t));
+    using SetEdcaParamHook = std::function<int32_t(int, int)>;
+    MOCK_METHOD(void, RegisterSetEdcaParam, (const SetEdcaParamHook &));
+    MOCK_METHOD(int32_t, SetEdcaParam, (int, int));
     MOCK_METHOD(int, GetApChannel, ());
     MOCK_METHOD(int32_t, GetP2pGroupFrequency, ());
 

@@ -3866,6 +3866,71 @@ int32_t ClientSetGroupIdBySocket(int32_t socket, const char *groupId)
     return SOFTBUS_OK;
 }
 
+int32_t ClientSetEdcaBySocket(int32_t socket, const EdcaParam *edcaParam)
+{
+    if (socket <= 0 || edcaParam == NULL ||
+        edcaParam->scene < EDCA_SCENE_DATA_CLONE || edcaParam->scene >= EDCA_SCENE_BUTT ||
+        edcaParam->level < EDCA_LEVEL_DISABLE || edcaParam->level >= EDCA_LEVEL_BUTT) {
+        TRANS_LOGE(TRANS_SDK, "invalid param, socket=%{public}d", socket);
+        return SOFTBUS_INVALID_PARAM;
+    }
+    int32_t ret = LockClientSessionServerList();
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_SDK, "lock failed ret=%{public}d", ret);
+        return ret;
+    }
+    ClientSessionServer *serverNode = NULL;
+    SessionInfo *sessionNode = NULL;
+    ret = GetSessionById(socket, &serverNode, &sessionNode);
+    if (ret != SOFTBUS_OK) {
+        UnlockClientSessionServerList();
+        TRANS_LOGE(TRANS_SDK, "session not found, socket=%{public}d ret=%{public}d", socket, ret);
+        return ret;
+    }
+    if (sessionNode->role == SESSION_ROLE_SERVER) {
+        UnlockClientSessionServerList();
+        TRANS_LOGE(TRANS_SDK, "listen socket not support set edca, socket=%{public}d", socket);
+        return SOFTBUS_INVALID_PARAM;
+    }
+    sessionNode->edcaParam = *edcaParam;
+    int32_t channelId = sessionNode->channelId;
+    int32_t channelType = sessionNode->channelType;
+    int32_t channelIdReserve = sessionNode->channelIdReserve;
+    int32_t channelTypeReserve = sessionNode->channelTypeReserve;
+    UnlockClientSessionServerList();
+    TRANS_LOGI(TRANS_SDK, "socketId=%{public}d set edcaParam scene=%{public}d level=%{public}d",
+        socket, edcaParam->scene, edcaParam->level);
+
+    /* bind前channelId<=0且channelIdReserve<=0，仅存储edcaParam，建链时由A路径下发 */
+    if (channelId <= 0 && channelIdReserve <= 0) {
+        return SOFTBUS_OK;
+    }
+    bool anySuccess = false;
+    int32_t failRet = SOFTBUS_INVALID_PARAM;
+    if (channelId > 0) {
+        int32_t ret = ServerIpcSetSocketOptEdca(channelId, channelType,
+            edcaParam->scene, edcaParam->level);
+        if (ret == SOFTBUS_OK) {
+            anySuccess = true;
+        } else {
+            failRet = ret;
+            TRANS_LOGW(TRANS_SDK, "ipc set edca fail, channelId=%{public}d ret=%{public}d", channelId, ret);
+        }
+    }
+    if (channelIdReserve > 0) {
+        int32_t ret = ServerIpcSetSocketOptEdca(channelIdReserve, channelTypeReserve,
+            edcaParam->scene, edcaParam->level);
+        if (ret == SOFTBUS_OK) {
+            anySuccess = true;
+        } else {
+            failRet = ret;
+            TRANS_LOGW(TRANS_SDK, "ipc set edca fail on reserve, channelIdReserve=%{public}d ret=%{public}d",
+                channelIdReserve, ret);
+        }
+    }
+    return anySuccess ? SOFTBUS_OK : failRet;
+}
+
 static int32_t ClientCheckGetKeyTypePermission(const SessionInfo *sessionNode)
 {
     if (sessionNode->enableStatus != ENABLE_STATUS_SUCCESS) {

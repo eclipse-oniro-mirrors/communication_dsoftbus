@@ -742,6 +742,9 @@ static int32_t ParseRequestAppInfoEx(AppInfo *appInfo, AuthHandle authHandle)
     }
 
     TransSetUdpConnectTypeByAuthType(&appInfo->connectType, authHandle);
+    if (appInfo->connectType == CONNECT_HML) {
+        appInfo->linkType = LANE_HML;
+    }
     ret = TransGetUdpChannelLocalIp(authHandle, appInfo);
     TRANS_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret, TRANS_CTRL, "get udp channel local ip failed.");
     return SOFTBUS_OK;
@@ -1530,6 +1533,7 @@ void TransUdpDeathCallback(const char *pkgName, int32_t pid)
                 continue;
             }
             *tempNode = *udpChannelNode;
+            udpChannelNode->info.edcaParam.level = EDCA_LEVEL_DISABLE;
             ListAdd(&destroyList, &tempNode->node);
         }
     }
@@ -1537,6 +1541,7 @@ void TransUdpDeathCallback(const char *pkgName, int32_t pid)
 
     UdpChannelInfo *udpChannelNodeNext = NULL;
     LIST_FOR_EACH_ENTRY_SAFE(udpChannelNode, udpChannelNodeNext, (&destroyList), UdpChannelInfo, node) {
+        TransCancelEdcaParam(&udpChannelNode->info.edcaParam, udpChannelNode->info.linkType);
         if (OpenAuthConnForUdpNegotiation(udpChannelNode) != SOFTBUS_OK) {
             TRANS_LOGE(TRANS_CTRL, "open udp negotiation failed.");
         }

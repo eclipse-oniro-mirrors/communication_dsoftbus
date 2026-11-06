@@ -74,6 +74,8 @@ int32_t TransUdpResetReplyCnt(int32_t channelId);
 
 int32_t TransUdpUpdateUdpPort(int32_t channelId, int32_t udpPort);
 
+int32_t TransUdpUpdateEdcaParam(int32_t channelId, const EdcaParam *edcaParam);
+
 void TransAsyncUdpChannelTask(int32_t channelId);
 
 int32_t TransSetTos(int32_t channelId, uint8_t tos, pid_t callingPid);

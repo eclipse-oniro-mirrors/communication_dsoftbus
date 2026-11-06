@@ -110,6 +110,8 @@ public:
     virtual int32_t RegisterConversationListener(const ConversationBusiness *info);
     virtual int32_t UnregisterConversationListener(const ConversationBusiness *info);
     virtual int32_t GetTrustedDevices(DeviceNodeInfo **info, int32_t *nums);
+    virtual int32_t SetSocketOptEdca(int32_t channelId, int32_t channelType, int32_t scene,
+        int32_t level);
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"OHOS.ISoftBusServer");
 };

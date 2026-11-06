@@ -53,6 +53,7 @@ typedef struct {
     bool enableMultipath;   /**> Indicates whether the session is configured to allow multipath. */
     bool isMultiNeg;        /**> Indicates whether the session currently establish the second link. */
     int32_t keyType;
+    EdcaParam edcaParam;
 } SessionParam;
 
 typedef struct {

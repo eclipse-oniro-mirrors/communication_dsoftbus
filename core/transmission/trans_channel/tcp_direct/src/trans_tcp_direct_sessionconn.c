@@ -28,10 +28,12 @@
 #include "softbus_base_listener.h"
 #include "softbus_def.h"
 #include "softbus_error_code.h"
+#include "trans_channel_common.h"
 #include "trans_channel_manager.h"
 #include "trans_log.h"
 #include "trans_tcp_direct_p2p.h"
 #include "trans_uk_manager.h"
+#include "wifi_direct_manager.h"
 
 #define TRANS_SEQ_STEP 2
 
@@ -382,6 +384,7 @@ int32_t TransDelSessionConnById(int32_t channelId)
                 !item->serverSide && item->appInfo.routeType != WIFI_P2P_REUSE && item->requestId != REQUEST_INVALID) {
                 AuthCloseConn(item->authHandle);
             }
+            TransCancelEdcaParam(&item->appInfo.edcaParam, item->appInfo.linkType);
             ListDelete(&item->node);
             TRANS_LOGI(TRANS_CTRL, "delete channelId=%{public}d", item->channelId);
             if (item->appInfo.fastTransData != NULL) {
@@ -479,6 +482,7 @@ TcpChannelInfo *CreateTcpChannelInfo(const ChannelInfo *channel)
         SoftBusFree(tcpChannelInfo);
         return NULL;
     }
+    tcpChannelInfo->edcaParam = conn.appInfo.edcaParam;
     return tcpChannelInfo;
 }
 
@@ -569,6 +573,7 @@ SOFTBUS_VISIBILITY int32_t TransDelTcpChannelInfoByChannelId(int32_t channelId)
             if (item->osType == OTHER_OS_TYPE) {
                 StopP2pListenerByRemoteUuid(item->peerDeviceId);
             }
+            TransCancelEdcaParam(&item->edcaParam, item->linkType);
             ListDelete(&item->node);
             TRANS_LOGI(TRANS_CTRL, "delete TcpChannelInfo success, channelId=%{public}d", item->channelId);
             SoftBusFree(item);
@@ -584,6 +589,10 @@ SOFTBUS_VISIBILITY int32_t TransDelTcpChannelInfoByChannelId(int32_t channelId)
 
 void TransTdcChannelInfoDeathCallback(const char *pkgName, int32_t pid)
 {
+    if (pkgName == NULL) {
+        TRANS_LOGE(TRANS_CTRL, "param invalid");
+        return;
+    }
     if (g_tcpChannelInfoList == NULL) {
         TRANS_LOGE(TRANS_CTRL, "g_tcpChannelInfoList is null.");
         return;
@@ -600,6 +609,7 @@ void TransTdcChannelInfoDeathCallback(const char *pkgName, int32_t pid)
                 TRANS_LOGI(TRANS_CTRL, "tran stop time sync");
                 (void)LnnIpcStopTimeSync(item->pkgName, item->peerDeviceId, item->pid);
             }
+            TransCancelEdcaParam(&item->edcaParam, item->linkType);
             ListDelete(&item->node);
             TRANS_LOGI(TRANS_CTRL, "delete TcpChannelInfo success, channelId=%{public}d", item->channelId);
             SoftBusFree(item);
@@ -815,6 +825,84 @@ int32_t TransTdcUpdateReplyCnt(int32_t channelId)
     ReleaseSessionConnLock();
     TRANS_LOGE(TRANS_CTRL, "not find: channelId=%{public}d", channelId);
     return SOFTBUS_NOT_FIND;
+}
+
+int32_t TransTdcUpdateEdcaParam(int32_t channelId, const EdcaParam *edcaParam)
+{
+    if (edcaParam == NULL) {
+        TRANS_LOGE(TRANS_CTRL, "invalid edcaParam");
+        return SOFTBUS_INVALID_PARAM;
+    }
+    if (g_tcpChannelInfoList == NULL) {
+        TRANS_LOGE(TRANS_CTRL, "g_tcpChannelInfoList is null.");
+        return SOFTBUS_NO_INIT;
+    }
+    if (SoftBusMutexLock(&g_tcpChannelInfoList->lock) != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_CTRL, "lock failed.");
+        return SOFTBUS_LOCK_ERR;
+    }
+    TcpChannelInfo *item = NULL;
+    LIST_FOR_EACH_ENTRY(item, &g_tcpChannelInfoList->list, TcpChannelInfo, node) {
+        if (item->channelId == channelId) {
+            item->edcaParam = *edcaParam;
+            (void)SoftBusMutexUnlock(&g_tcpChannelInfoList->lock);
+            return SOFTBUS_OK;
+        }
+    }
+    (void)SoftBusMutexUnlock(&g_tcpChannelInfoList->lock);
+    TRANS_LOGE(TRANS_CTRL, "channel not found, channelId=%{public}d", channelId);
+    return SOFTBUS_TRANS_TDC_CHANNEL_NOT_FOUND;
+}
+
+int32_t TransTdcClearEdcaParam(int32_t channelId)
+{
+    if (GetSessionConnLock() != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_CTRL, "get lock fail");
+        return SOFTBUS_LOCK_ERR;
+    }
+    if (g_sessionConnList == NULL) {
+        TRANS_LOGE(TRANS_CTRL, "g_sessionConnList is null.");
+        ReleaseSessionConnLock();
+        return SOFTBUS_NO_INIT;
+    }
+    SessionConn *conn = NULL;
+    LIST_FOR_EACH_ENTRY(conn, &g_sessionConnList->list, SessionConn, node) {
+        if (conn->channelId == channelId) {
+            conn->appInfo.edcaParam.level = EDCA_LEVEL_DISABLE;
+            ReleaseSessionConnLock();
+            return SOFTBUS_OK;
+        }
+    }
+    ReleaseSessionConnLock();
+    TRANS_LOGW(TRANS_CTRL, "session conn not found, channelId=%{public}d", channelId);
+    return SOFTBUS_TRANS_TDC_CHANNEL_NOT_FOUND;
+}
+
+int32_t TransTdcGetChannelEdcaInfo(int32_t channelId, EdcaParam *edcaParam, int32_t *linkType)
+{
+    if (edcaParam == NULL || linkType == NULL) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    if (g_tcpChannelInfoList == NULL) {
+        TRANS_LOGE(TRANS_CTRL, "g_tcpChannelInfoList is null.");
+        return SOFTBUS_NO_INIT;
+    }
+    if (SoftBusMutexLock(&g_tcpChannelInfoList->lock) != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_CTRL, "lock failed.");
+        return SOFTBUS_LOCK_ERR;
+    }
+    TcpChannelInfo *item = NULL;
+    LIST_FOR_EACH_ENTRY(item, &g_tcpChannelInfoList->list, TcpChannelInfo, node) {
+        if (item->channelId == channelId) {
+            *edcaParam = item->edcaParam;
+            *linkType = item->linkType;
+            (void)SoftBusMutexUnlock(&g_tcpChannelInfoList->lock);
+            return SOFTBUS_OK;
+        }
+    }
+    (void)SoftBusMutexUnlock(&g_tcpChannelInfoList->lock);
+    TRANS_LOGE(TRANS_CTRL, "channel not found, channelId=%{public}d", channelId);
+    return SOFTBUS_TRANS_TDC_CHANNEL_NOT_FOUND;
 }
 
 int32_t TransTdcResetReplyCnt(int32_t channelId)

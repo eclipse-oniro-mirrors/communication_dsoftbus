@@ -112,6 +112,7 @@ private:
     int32_t StartPerceptionScanInner(MessageParcel &data, MessageParcel &reply);
     int32_t StopPerceptionScanInner(MessageParcel &data, MessageParcel &reply);
     int32_t GetPerceptionDeviceListInner(MessageParcel &data, MessageParcel &reply);
+    int32_t SetSocketOptEdcaInner(MessageParcel &data, MessageParcel &reply);
     int32_t BasicPermissionVerify(uint32_t code);
     int32_t SysHapPermissionVerify(uint32_t code);
     int32_t PermissionVerify(uint32_t code);

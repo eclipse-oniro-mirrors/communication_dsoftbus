@@ -528,4 +528,16 @@ int32_t P2pAdapter::SetP2pGroupLiveType(WifiDirectP2pGroupLiveType type)
         "set group live type fail, error=%{public}d", ToSoftBusErrorCode(ret));
     return SOFTBUS_OK;
 }
+
+void P2pAdapter::RegisterSetEdcaParam(const SetEdcaParamHook &setEdcaParam)
+{
+    setEdcaParamHook_ = setEdcaParam;
+}
+
+int32_t P2pAdapter::SetEdcaParam(int scene, int speedMode)
+{
+    CONN_CHECK_AND_RETURN_RET_LOGW(setEdcaParamHook_ != nullptr, SOFTBUS_NOT_IMPLEMENT, CONN_WIFI_DIRECT,
+        "not support");
+    return setEdcaParamHook_(scene, speedMode);
+}
 } // namespace OHOS::SoftBus

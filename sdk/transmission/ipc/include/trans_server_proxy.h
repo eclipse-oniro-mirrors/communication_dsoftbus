@@ -53,6 +53,7 @@ int32_t ServerIpcSendBrProxyData(int32_t channelId, char* data, uint32_t dataLen
 int32_t ServerIpcSetListenerState(int32_t channelId, int32_t type, bool CbEnabled);
 int32_t ServerIpcIsProxyChannelEnabled(int32_t uid, bool *isEnable);
 int32_t ServerIpcRegisterPushHook();
+int32_t ServerIpcSetSocketOptEdca(int32_t channelId, int32_t channelType, int32_t scene, int32_t level);
 #ifdef __cplusplus
 }
 #endif

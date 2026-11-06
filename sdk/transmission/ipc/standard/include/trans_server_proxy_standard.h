@@ -78,6 +78,8 @@ public:
     int32_t RegisterPushHook();
     int32_t SetWirelessLinkCtrl(int32_t socket);
     int32_t SetDisconnectPolicy(int32_t channelId, DisconnectPolicy policy);
+    int32_t SetSocketOptEdca(int32_t channelId, int32_t channelType, int32_t scene,
+        int32_t level) override;
 private:
     static inline BrokerDelegator<TransServerProxy> delegator_;
 };

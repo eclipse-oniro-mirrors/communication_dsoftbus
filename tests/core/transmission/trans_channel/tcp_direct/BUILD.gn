@@ -161,6 +161,7 @@ ohos_unittest("TransCoreTcpDirectTest") {
     "$dsoftbus_root_path/core/connection/p2p/common/include",
     "$dsoftbus_root_path/core/connection/p2p/interface",
     "$dsoftbus_root_path/core/connection/wifi_direct",
+    "$dsoftbus_root_path/core/connection/wifi_direct_cpp",
     "$dsoftbus_root_path/core/discovery/event_manager/include",
     "$dsoftbus_root_path/core/discovery/interface",
     "$dsoftbus_root_path/core/discovery/manager/include",
@@ -195,6 +196,7 @@ ohos_unittest("TransCoreTcpDirectTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
+    "$dsoftbus_root_path/core/connection/wifi_direct_cpp:wifi_direct",
     "$dsoftbus_root_path/core/frame:softbus_server_test",
     "$dsoftbus_root_path/sdk:softbus_client",
   ]
@@ -292,6 +294,7 @@ ohos_unittest("TransTcpDirectMessageTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
+    "$dsoftbus_root_path/core/connection/wifi_direct_cpp:wifi_direct",
     "$dsoftbus_root_path/core/frame:softbus_server_test",
     "$dsoftbus_root_path/sdk:softbus_client",
   ]
@@ -682,6 +685,7 @@ ohos_unittest("TransTcpDirectCallbackTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
+    "$dsoftbus_root_path/core/connection/wifi_direct_cpp:wifi_direct",
     "$dsoftbus_root_path/core/frame:softbus_server_test",
     "$dsoftbus_root_path/sdk:softbus_client",
   ]
@@ -731,6 +735,7 @@ ohos_unittest("TransTcpDirectJsonTest") {
 
   deps = [
     "$dsoftbus_root_path/core/common:softbus_utils",
+    "$dsoftbus_root_path/core/connection/wifi_direct_cpp:wifi_direct",
     "$dsoftbus_root_path/core/frame:softbus_server_test",
     "$dsoftbus_root_path/sdk:softbus_client",
   ]
@@ -957,6 +962,7 @@ ohos_unittest("TransTcpDirectJsonMockTest") {
 
   deps = [
     "$dsoftbus_root_path/core/common:softbus_utils",
+    "$dsoftbus_root_path/core/connection/wifi_direct_cpp:wifi_direct",
     "$dsoftbus_root_path/core/frame:softbus_server_test",
     "$dsoftbus_root_path/sdk:softbus_client",
   ]
@@ -1002,6 +1008,7 @@ ohos_unittest("TransTcpDirectSessionConnTest") {
   deps = [
     "$dsoftbus_root_path/adapter:softbus_adapter",
     "$dsoftbus_root_path/core/common:softbus_utils",
+    "$dsoftbus_root_path/core/connection/wifi_direct_cpp:wifi_direct",
     "$dsoftbus_root_path/core/frame:softbus_server_test",
     "$dsoftbus_root_path/sdk:softbus_client",
   ]

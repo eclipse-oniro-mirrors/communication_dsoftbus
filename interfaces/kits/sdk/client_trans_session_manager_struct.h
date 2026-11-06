@@ -145,6 +145,7 @@ typedef struct {
     uint64_t startTimestamp;
     uint32_t cancelEncryptionBit;
     int32_t keyType;
+    EdcaParam edcaParam;
 } SessionInfo;
 
 typedef struct {

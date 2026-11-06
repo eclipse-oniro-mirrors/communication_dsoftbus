@@ -540,3 +540,12 @@ int32_t ServerIpcSetDisconnectPolicy(int32_t channelId, DisconnectPolicy policy)
     (void)policy;
     return SOFTBUS_NOT_IMPLEMENT;
 }
+
+int32_t ServerIpcSetSocketOptEdca(int32_t channelId, int32_t channelType, int32_t scene, int32_t level)
+{
+    (void)channelId;
+    (void)channelType;
+    (void)scene;
+    (void)level;
+    return SOFTBUS_NOT_IMPLEMENT;
+}

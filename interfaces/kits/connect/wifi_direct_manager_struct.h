@@ -116,6 +116,7 @@ struct WifiDirectManager {
 
     bool (*isSoftbusCreateGo)(void);
     int32_t (*fastWakeUpByUuid)(const char *remoteUuid, WakeUpLevel level);
+    int32_t (*setEdcaParam)(int scene, int speedMode);
 };
 
 #ifdef __cplusplus
