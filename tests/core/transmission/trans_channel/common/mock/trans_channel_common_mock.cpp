@@ -55,5 +55,25 @@ int32_t TransUdpSetWakeUpInfo(int32_t channelId, bool needFastWakeUp)
 {
     return GetTransChannelCommonInterface()->TransUdpSetWakeUpInfo(channelId, needFastWakeUp);
 }
+
+int32_t TransTdcGetChannelEdcaInfo(int32_t channelId, EdcaParam *edcaParam, int32_t *linkType)
+{
+    return GetTransChannelCommonInterface()->TransTdcGetChannelEdcaInfo(channelId, edcaParam, linkType);
+}
+
+int32_t TransTdcUpdateEdcaParam(int32_t channelId, const EdcaParam *edcaParam)
+{
+    return GetTransChannelCommonInterface()->TransTdcUpdateEdcaParam(channelId, edcaParam);
+}
+
+int32_t TransGetUdpChannelById(int32_t channelId, UdpChannelInfo *channel)
+{
+    return GetTransChannelCommonInterface()->TransGetUdpChannelById(channelId, channel);
+}
+
+int32_t TransUdpUpdateEdcaParam(int32_t channelId, const EdcaParam *edcaParam)
+{
+    return GetTransChannelCommonInterface()->TransUdpUpdateEdcaParam(channelId, edcaParam);
+}
 }
 }

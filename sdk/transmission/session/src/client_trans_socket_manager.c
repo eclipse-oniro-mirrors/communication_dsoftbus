@@ -766,6 +766,7 @@ void FillSessionParam(
     param->flowInfo.sessionType = sessionNode->flowInfo.sessionType;
     param->flowInfo.flowQosType = sessionNode->flowInfo.flowQosType;
     param->keyType = sessionNode->keyType;
+    param->edcaParam = sessionNode->edcaParam;
 }
 
 void ClientConvertRetVal(int32_t socket, int32_t *retOut)

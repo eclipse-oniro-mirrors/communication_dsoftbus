@@ -628,6 +628,9 @@ static int32_t NotifyChannelOpened(int32_t channelId)
     ClearAppInfoSessionKey(&conn.appInfo);
     conn.status = TCP_DIRECT_CHANNEL_STATUS_CONNECTED;
     SetSessionConnStatusById(channelId, conn.status);
+    if (ret == SOFTBUS_OK) {
+        (void)TransTdcClearEdcaParam(channelId);
+    }
     return ret;
 }
 
@@ -1871,6 +1874,9 @@ static int32_t HandleTdcChannelOpenedReply(
     (void)memset_s(conn->appInfo.sessionKey, sizeof(conn->appInfo.sessionKey), 0, sizeof(conn->appInfo.sessionKey));
     (void)memset_s(conn->appInfo.sinkSessionKey, sizeof(conn->appInfo.sinkSessionKey), 0,
         sizeof(conn->appInfo.sinkSessionKey));
+    if (ret == SOFTBUS_OK) {
+        (void)TransTdcClearEdcaParam(channelId);
+    }
     (void)TransDelSessionConnById(channelId);
     CloseTcpDirectFd(conn->listenMod, conn->appInfo.fd);
     if (ret != SOFTBUS_OK) {

@@ -86,6 +86,10 @@ int32_t TransSetWakeUpInfo(int32_t channelType, int32_t channelId, bool needFast
 
 int32_t TransGetWakeUpInfo(int32_t channelType, int32_t channelId, char *uuid, int32_t uuidLen, bool *needFastWakeUp);
 
+int32_t TransSetEdcaParamForChannel(int32_t channelId, int32_t channelType, int32_t scene, int32_t level);
+
+void TransCancelEdcaParam(EdcaParam *edcaParam, int32_t linkType);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

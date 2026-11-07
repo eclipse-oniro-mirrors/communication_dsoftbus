@@ -28,6 +28,7 @@
 #include "softbus_def.h"
 #include "softbus_error_code.h"
 #include "softbus_utils.h"
+#include "trans_channel_common.h"
 #include "trans_channel_manager.h"
 #include "trans_client_proxy.h"
 #include "trans_event.h"
@@ -35,6 +36,7 @@
 #include "trans_log.h"
 #include "trans_udp_negotiation.h"
 #include "trans_uk_manager.h"
+#include "wifi_direct_manager.h"
 
 #define MAX_WAIT_CONNECT_TIME 15
 
@@ -120,6 +122,7 @@ static void NotifyTimeOutUdpChannel(ListNode *udpChannelList)
             TRANS_LOGW(TRANS_CTRL, "close udp channel time out, notify close.");
             (void)NotifyUdpChannelClosed(&(udpChannel->info), MESSAGE_TYPE_NOMAL);
         }
+        TransCancelEdcaParam(&udpChannel->info.edcaParam, udpChannel->info.linkType);
         // fastTransData is always NULL in the UDP channel, no need to free
         ListDelete(&(udpChannel->node));
         (void)memset_s(
@@ -273,6 +276,7 @@ SOFTBUS_VISIBILITY int32_t TransDelUdpChannel(int32_t channelId)
     LIST_FOR_EACH_ENTRY_SAFE(udpChannelNode, udpChannelNext, &(g_udpChannelMgr->list), UdpChannelInfo, node) {
         if (udpChannelNode->info.myData.channelId == channelId) {
             ReleaseUdpChannelId((int32_t)(udpChannelNode->info.myData.channelId));
+            TransCancelEdcaParam(&udpChannelNode->info.edcaParam, udpChannelNode->info.linkType);
             // fastTransData is always NULL in the UDP channel, no need to free
             ListDelete(&(udpChannelNode->node));
             TRANS_LOGI(TRANS_CTRL, "delete channelId=%{public}d", channelId);
@@ -832,6 +836,33 @@ SOFTBUS_VISIBILITY int32_t TransUdpUpdateUdpPort(int32_t channelId, int32_t udpP
     LIST_FOR_EACH_ENTRY(udpChannelNode, &(g_udpChannelMgr->list), UdpChannelInfo, node) {
         if (udpChannelNode->info.myData.channelId == channelId) {
             udpChannelNode->info.myData.port = udpPort;
+            (void)SoftBusMutexUnlock(&(g_udpChannelMgr->lock));
+            return SOFTBUS_OK;
+        }
+    }
+    (void)SoftBusMutexUnlock(&(g_udpChannelMgr->lock));
+    TRANS_LOGE(TRANS_CTRL, "not found udpChannelNode by channelId=%{public}d", channelId);
+    return SOFTBUS_TRANS_NODE_NOT_FOUND;
+}
+
+int32_t TransUdpUpdateEdcaParam(int32_t channelId, const EdcaParam *edcaParam)
+{
+    if (edcaParam == NULL) {
+        TRANS_LOGE(TRANS_CTRL, "invalid edcaParam");
+        return SOFTBUS_INVALID_PARAM;
+    }
+    if (g_udpChannelMgr == NULL) {
+        TRANS_LOGE(TRANS_CTRL, "udp channel manager not initialized.");
+        return SOFTBUS_NO_INIT;
+    }
+    if (SoftBusMutexLock(&(g_udpChannelMgr->lock)) != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_CTRL, "lock failed");
+        return SOFTBUS_LOCK_ERR;
+    }
+    UdpChannelInfo *udpChannelNode = NULL;
+    LIST_FOR_EACH_ENTRY(udpChannelNode, &(g_udpChannelMgr->list), UdpChannelInfo, node) {
+        if (udpChannelNode->info.myData.channelId == channelId) {
+            udpChannelNode->info.edcaParam = *edcaParam;
             (void)SoftBusMutexUnlock(&(g_udpChannelMgr->lock));
             return SOFTBUS_OK;
         }

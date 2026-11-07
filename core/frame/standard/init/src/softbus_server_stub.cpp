@@ -248,6 +248,7 @@ void SoftBusServerStub::InitMemberFuncMap()
     memberFuncMap_[SERVER_STOP_PERCEPTION_SCAN] = &SoftBusServerStub::StopPerceptionScanInner;
     memberFuncMap_[SERVER_GET_PERCEPTION_DEVICE_LIST] = &SoftBusServerStub::GetPerceptionDeviceListInner;
     memberFuncMap_[SERVER_SET_PERCEPTION_ADV_HIGH_FREQ] = &SoftBusServerStub::SetPerceptionAdvHighFreqInner;
+    memberFuncMap_[SERVER_SET_EDCA_PARAM] = &SoftBusServerStub::SetSocketOptEdcaInner;
 }
 
 void SoftBusServerStub::InitMemberPermissionMap()
@@ -321,6 +322,7 @@ void SoftBusServerStub::InitMemberPermissionMap()
     memberPermissionMap_[SERVER_START_PERCEPTION_SCAN] = OHOS_PERMISSION_ACCESS_SOFTBUS_SYS_HAP;
     memberPermissionMap_[SERVER_STOP_PERCEPTION_SCAN] = OHOS_PERMISSION_ACCESS_SOFTBUS_SYS_HAP;
     memberPermissionMap_[SERVER_GET_PERCEPTION_DEVICE_LIST] = OHOS_PERMISSION_ACCESS_SOFTBUS_SYS_HAP;
+    memberPermissionMap_[SERVER_SET_EDCA_PARAM] = OHOS_PERMISSION_DISTRIBUTED_DATASYNC;
 }
 
 void SoftBusServerStub::InitMemberConstraintSet()
@@ -791,6 +793,12 @@ static void ReadSessionInfo(MessageParcel &data, SessionParam &param)
     param.flowInfo.flowQosType = (FlowQosType)data.ReadUint32();
     param.cancelEncryptionBit = data.ReadUint32();
     param.keyType = data.ReadInt32();
+    int32_t scene = data.ReadInt32();
+    int32_t level = data.ReadInt32();
+    param.edcaParam.scene = (scene >= EDCA_SCENE_DATA_CLONE && scene < EDCA_SCENE_BUTT) ?
+        (EdcaScene)scene : EDCA_SCENE_DATA_CLONE;
+    param.edcaParam.level = (level >= EDCA_LEVEL_DISABLE && level < EDCA_LEVEL_BUTT) ?
+        (EdcaLevel)level : EDCA_LEVEL_DISABLE;
 }
 
 static bool WhitelistPermissionCheck(void)
@@ -1724,6 +1732,43 @@ int32_t SoftBusServerStub::GrantPermissionInner(MessageParcel &data, MessageParc
 EXIT:
     if (!reply.WriteInt32(ret)) {
         COMM_LOGE(COMM_SVC, "GrantPermissionInner write reply failed!");
+        return SOFTBUS_TRANS_PROXY_WRITEINT_FAILED;
+    }
+    return SOFTBUS_OK;
+}
+
+int32_t SoftBusServerStub::SetSocketOptEdcaInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t channelId = INVALID_CHANNEL_ID;
+    if (!data.ReadInt32(channelId)) {
+        COMM_LOGE(COMM_SVC, "SetSocketOptEdcaInner read channelId failed!");
+        return SOFTBUS_TRANS_PROXY_READINT_FAILED;
+    }
+    int32_t channelType = CHANNEL_TYPE_BUTT;
+    if (!data.ReadInt32(channelType)) {
+        COMM_LOGE(COMM_SVC, "read channelType failed!");
+        return SOFTBUS_TRANS_PROXY_READINT_FAILED;
+    }
+    pid_t callingPid = OHOS::IPCSkeleton::GetCallingPid();
+    int32_t ret = TransGetAndComparePid(callingPid, channelId, channelType);
+    if (ret != SOFTBUS_OK) {
+        COMM_LOGE(COMM_SVC, "pid check failed, pid=%{public}d, channelId=%{public}d, ret=%{public}d",
+            callingPid, channelId, ret);
+        return ret;
+    }
+    int32_t scene = EDCA_SCENE_BUTT;
+    if (!data.ReadInt32(scene)) {
+        COMM_LOGE(COMM_SVC, "read scene failed!");
+        return SOFTBUS_TRANS_PROXY_READINT_FAILED;
+    }
+    int32_t level = EDCA_LEVEL_DISABLE;
+    if (!data.ReadInt32(level)) {
+        COMM_LOGE(COMM_SVC, "read level failed!");
+        return SOFTBUS_TRANS_PROXY_READINT_FAILED;
+    }
+    ret = TransSetEdcaParamForChannel(channelId, channelType, scene, level);
+    if (!reply.WriteInt32(ret)) {
+        COMM_LOGE(COMM_SVC, "write reply failed!");
         return SOFTBUS_TRANS_PROXY_WRITEINT_FAILED;
     }
     return SOFTBUS_OK;

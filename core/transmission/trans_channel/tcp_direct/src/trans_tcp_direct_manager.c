@@ -84,6 +84,7 @@ static void NotifyTdcChannelTimeOut(ListNode *tdcChannelList)
     SessionConn *item = NULL;
     SessionConn *nextItem = NULL;
     LIST_FOR_EACH_ENTRY_SAFE(item, nextItem, tdcChannelList, SessionConn, node) {
+        TransCancelEdcaParam(&item->appInfo.edcaParam, item->appInfo.linkType);
         OnSessionOpenFailProc(item, SOFTBUS_TRANS_HANDSHAKE_TIMEOUT);
         TransSrvDelDataBufNode(item->channelId);
         SoftBusFree(item);
@@ -141,6 +142,7 @@ static void NotifyTdcChannelStopProc(ListNode *tdcChannelList)
     SessionConn *nextItem = NULL;
 
     LIST_FOR_EACH_ENTRY_SAFE(item, nextItem, tdcChannelList, SessionConn, node) {
+        TransCancelEdcaParam(&item->appInfo.edcaParam, item->appInfo.linkType);
         OnSessionOpenFailProc(item, SOFTBUS_TRANS_NET_STATE_CHANGED);
         TransSrvDelDataBufNode(item->channelId);
         SoftBusFree(item);
@@ -247,6 +249,7 @@ void TransTdcDeathCallback(const char *pkgName, int32_t pid)
     }
     LIST_FOR_EACH_ENTRY_SAFE(item, nextItem, &sessionList->list, SessionConn, node) {
         if ((strcmp(item->appInfo.myData.pkgName, pkgName) == 0) && (item->appInfo.myData.pid == pid)) {
+            TransCancelEdcaParam(&item->appInfo.edcaParam, item->appInfo.linkType);
             ListDelete(&item->node);
             sessionList->cnt--;
             DelTrigger(item->listenMod, item->appInfo.fd, RW_TRIGGER);

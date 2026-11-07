@@ -443,6 +443,7 @@ static int32_t TransAddAsyncLaneReqFromPendingList(
     item->param.isLowLatency = param->isLowLatency;
     item->param.enableMultipath = param->enableMultipath;
     item->param.isMultiNeg = param->isMultiNeg;
+    item->param.edcaParam = param->edcaParam;
     item->linkedChannelId = appInfo->linkedChannelId;
     if (SoftBusMutexLock(&g_asyncReqLanePendingList->lock) != SOFTBUS_OK) {
         ClearSessionParamMemory(&(item->param));

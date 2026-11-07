@@ -181,5 +181,14 @@ int32_t P2pAdapter::FastWakeUp(const std::string &remoteMac, int32_t level)
 {
     return P2pAdapterMock::GetMock()->FastWakeUp(remoteMac, level);
 }
+
+void P2pAdapter::RegisterSetEdcaParam(const SetEdcaParamHook &setEdcaParam)
+{
+    return P2pAdapterMock::GetMock()->RegisterSetEdcaParam(setEdcaParam);
+}
+
+int32_t P2pAdapter::SetEdcaParam(int scene, int speedMode)
+{
+    return P2pAdapterMock::GetMock()->SetEdcaParam(scene, speedMode);
+}
 } // namespace OHOS::SoftBus
-// namespace OHOS::SoftBus

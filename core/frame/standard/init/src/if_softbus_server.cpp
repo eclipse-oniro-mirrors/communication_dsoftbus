@@ -321,4 +321,15 @@ int32_t ISoftBusServer::UnregisterConversationListener(const ConversationBusines
     (void)info;
     return SOFTBUS_IPC_ERR;
 }
+
+int32_t ISoftBusServer::SetSocketOptEdca(int32_t channelId, int32_t channelType, int32_t scene,
+    int32_t level)
+{
+    (void)channelId;
+    (void)channelType;
+    (void)scene;
+    (void)level;
+    COMM_LOGE(COMM_SVC, "SetSocketOptEdca ipc default impl");
+    return SOFTBUS_IPC_ERR;
+}
 } // namespace OHOS

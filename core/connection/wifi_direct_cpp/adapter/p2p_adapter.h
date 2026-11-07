@@ -106,6 +106,10 @@ public:
     static void RegisterFastWakeUp(const FastWakeUpHook &fastWakeUp);
     static int32_t FastWakeUp(const std::string &remoteMac, int32_t level);
 
+    using SetEdcaParamHook = std::function<int32_t(int, int)>;
+    static void RegisterSetEdcaParam(const SetEdcaParamHook &setEdcaParam);
+    static int32_t SetEdcaParam(int scene, int speedMode);
+
 private:
     static constexpr int P2P_GROUP_CONFIG_INDEX_SSID = 0;
     static constexpr int P2P_GROUP_CONFIG_INDEX_BSSID = 1;
@@ -116,6 +120,7 @@ private:
 
     static inline GetCoexConflictCodeHook getCoexConflictCodeHook_;
     static inline FastWakeUpHook fastWakeUpHook_;
+    static inline SetEdcaParamHook setEdcaParamHook_;
 };
 } // namespace OHOS::SoftBus
 #endif

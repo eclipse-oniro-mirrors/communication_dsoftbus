@@ -339,6 +339,7 @@ static int32_t CopyAppInfoFromSessionParam(AppInfo *appInfo, const SessionParam 
     TransGetRemoteDeviceVersion(appInfo->peerNetWorkId, CATEGORY_NETWORK_ID, appInfo->peerVersion,
         sizeof(appInfo->peerVersion));
     appInfo->keyType = param->keyType;
+    appInfo->edcaParam = param->edcaParam;
     return SOFTBUS_OK;
 }
 
@@ -419,6 +420,33 @@ void TransOpenChannelSetModule(int32_t channelType, ConnectOption *connOpt)
     TRANS_LOGI(TRANS_CTRL, "set nip moduleId=%{public}d", connOpt->socketOption.moduleId);
 }
 
+static int32_t TransApplyEdcaToDriver(int32_t scene, int32_t level)
+{
+    struct WifiDirectManager *mgr = GetWifiDirectManager();
+    if (mgr == NULL || mgr->setEdcaParam == NULL) {
+        TRANS_LOGE(TRANS_CTRL, "wifi direct manager not available");
+        return SOFTBUS_NOT_FIND;
+    }
+    int32_t ret = mgr->setEdcaParam(scene, level);
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_CTRL, "set edca param fail, ret=%{public}d", ret);
+        return ret;
+    }
+    return SOFTBUS_OK;
+}
+
+void TransCancelEdcaParam(EdcaParam *edcaParam, int32_t linkType)
+{
+    if (edcaParam == NULL || edcaParam->level == EDCA_LEVEL_DISABLE || linkType != LANE_HML) {
+        return;
+    }
+    struct WifiDirectManager *mgr = GetWifiDirectManager();
+    if (mgr != NULL && mgr->setEdcaParam != NULL) {
+        (void)mgr->setEdcaParam(edcaParam->scene, EDCA_LEVEL_DISABLE);
+    }
+    edcaParam->level = EDCA_LEVEL_DISABLE;
+}
+
 SOFTBUS_VISIBILITY
 int32_t TransOpenChannelProc(ChannelType type, AppInfo *appInfo, const ConnectOption *connOpt, int32_t *channelId)
 {
@@ -430,12 +458,20 @@ int32_t TransOpenChannelProc(ChannelType type, AppInfo *appInfo, const ConnectOp
         TRANS_LOGE(TRANS_CTRL, "open invalid channel type.");
         return SOFTBUS_TRANS_INVALID_CHANNEL_TYPE;
     }
+    bool edcaSet = false;
+    if (appInfo->linkType == LANE_HML && appInfo->edcaParam.level != EDCA_LEVEL_DISABLE) {
+        if (TransApplyEdcaToDriver(appInfo->edcaParam.scene, appInfo->edcaParam.level) == SOFTBUS_OK) {
+            edcaSet = true;
+        } else {
+            appInfo->edcaParam.level = EDCA_LEVEL_DISABLE;
+        }
+    }
     int32_t ret = SOFTBUS_TRANS_INVALID_CHANNEL_TYPE;
     if (type == CHANNEL_TYPE_UDP) {
         ret = TransOpenUdpChannel(appInfo, connOpt, channelId);
         if (ret != SOFTBUS_OK) {
             TRANS_LOGE(TRANS_CTRL, "open udp channel err, ret=%{public}d", ret);
-            return ret;
+            goto EXIT_EDCA_CANCEL;
         }
     } else if (type == CHANNEL_TYPE_PROXY) {
         ret = TransProxyOpenProxyChannel(appInfo, connOpt, channelId);
@@ -447,8 +483,83 @@ int32_t TransOpenChannelProc(ChannelType type, AppInfo *appInfo, const ConnectOp
         ret = TransOpenDirectChannel(appInfo, connOpt, channelId);
         if (ret != SOFTBUS_OK) {
             TRANS_LOGE(TRANS_CTRL, "open direct channel err");
-            return ret;
+            goto EXIT_EDCA_CANCEL;
         }
+    }
+    return SOFTBUS_OK;
+
+EXIT_EDCA_CANCEL:
+    if (edcaSet) {
+        struct WifiDirectManager *mgr = GetWifiDirectManager();
+        if (mgr != NULL && mgr->setEdcaParam != NULL) {
+            (void)mgr->setEdcaParam(appInfo->edcaParam.scene, EDCA_LEVEL_DISABLE);
+        }
+    }
+    return ret;
+}
+
+static int32_t TransGetChannelEdcaInfo(int32_t channelId, int32_t channelType,
+    EdcaParam *curEdcaParam, int32_t *linkType)
+{
+    if (channelType == CHANNEL_TYPE_TCP_DIRECT) {
+        if (TransTdcGetChannelEdcaInfo(channelId, curEdcaParam, linkType) != SOFTBUS_OK) {
+            TRANS_LOGE(TRANS_CTRL, "tdc channel not found, channelId=%{public}d", channelId);
+            return SOFTBUS_NOT_FIND;
+        }
+    } else if (channelType == CHANNEL_TYPE_UDP) {
+        UdpChannelInfo channel;
+        if (TransGetUdpChannelById(channelId, &channel) != SOFTBUS_OK) {
+            TRANS_LOGE(TRANS_CTRL, "udp channel not found, channelId=%{public}d", channelId);
+            return SOFTBUS_NOT_FIND;
+        }
+        *curEdcaParam = channel.info.edcaParam;
+        *linkType = channel.info.linkType;
+    } else {
+        TRANS_LOGE(TRANS_CTRL, "unsupported channelType=%{public}d for edca", channelType);
+        return SOFTBUS_TRANS_INVALID_CHANNEL_TYPE;
+    }
+    return SOFTBUS_OK;
+}
+
+static int32_t TransUpdateChannelEdcaParam(int32_t channelId, int32_t channelType, const EdcaParam *newParam)
+{
+    if (channelType == CHANNEL_TYPE_TCP_DIRECT) {
+        return TransTdcUpdateEdcaParam(channelId, newParam);
+    }
+    return TransUdpUpdateEdcaParam(channelId, newParam);
+}
+
+int32_t TransSetEdcaParamForChannel(int32_t channelId, int32_t channelType, int32_t scene, int32_t level)
+{
+    if (scene < EDCA_SCENE_DATA_CLONE || scene >= EDCA_SCENE_BUTT ||
+        level < EDCA_LEVEL_DISABLE || level >= EDCA_LEVEL_BUTT) {
+        TRANS_LOGE(TRANS_CTRL, "invalid param, scene=%{public}d level=%{public}d", scene, level);
+        return SOFTBUS_INVALID_PARAM;
+    }
+    EdcaParam curEdcaParam;
+    int32_t linkType = 0;
+    int32_t ret = TransGetChannelEdcaInfo(channelId, channelType, &curEdcaParam, &linkType);
+    if (ret != SOFTBUS_OK) {
+        return ret;
+    }
+    if (linkType != LANE_HML) {
+        TRANS_LOGE(TRANS_CTRL, "non-HML link, not support edca, channelId=%{public}d", channelId);
+        return SOFTBUS_INVALID_PARAM;
+    }
+    if (level == EDCA_LEVEL_DISABLE && curEdcaParam.level == EDCA_LEVEL_DISABLE) {
+        return SOFTBUS_OK;
+    }
+    EdcaParam newParam = { .scene = (EdcaScene)scene, .level = (EdcaLevel)level };
+    ret = TransUpdateChannelEdcaParam(channelId, channelType, &newParam);
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_CTRL, "update edcaParam fail, ret=%{public}d", ret);
+        return ret;
+    }
+    ret = TransApplyEdcaToDriver(scene, level);
+    if (ret != SOFTBUS_OK) {
+        EdcaParam rollbackParam = { .scene = curEdcaParam.scene, .level = curEdcaParam.level };
+        (void)TransUpdateChannelEdcaParam(channelId, channelType, &rollbackParam);
+        return ret;
     }
     return SOFTBUS_OK;
 }

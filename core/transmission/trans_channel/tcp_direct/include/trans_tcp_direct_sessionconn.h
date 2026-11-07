@@ -71,6 +71,7 @@ typedef struct {
     int32_t linkType;
     uint64_t callingTokenId;
     ProtocolType fdProtocol;
+    EdcaParam edcaParam;
 } TcpChannelInfo;
 
 uint64_t TransTdcGetNewSeqId(void);
@@ -136,6 +137,12 @@ int32_t TransTdcGetIpAndConnectTypeById(int32_t channelId, char *localIp, char *
 int32_t TransGetPidByChanId(int32_t channelId, int32_t channelType, int32_t *pid);
 
 int32_t TransTdcUpdateReplyCnt(int32_t channelId);
+
+int32_t TransTdcUpdateEdcaParam(int32_t channelId, const EdcaParam *edcaParam);
+
+int32_t TransTdcClearEdcaParam(int32_t channelId);
+
+int32_t TransTdcGetChannelEdcaInfo(int32_t channelId, EdcaParam *edcaParam, int32_t *linkType);
 
 int32_t TransCheckTdcChannelOpenStatus(int32_t channelId, int32_t *curCount);
 

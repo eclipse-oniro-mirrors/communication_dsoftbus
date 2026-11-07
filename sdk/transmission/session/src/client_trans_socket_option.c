@@ -259,6 +259,27 @@ static int32_t TransSetDisconnectPolicy(
     return ServerIpcSetDisconnectPolicy(channelId, policy);
 }
 
+static int32_t TransSetEdca(
+    int32_t socket, OptLevel level, OptType optType, void *optValue, int32_t optValueSize)
+{
+    if (socket <= 0 || optValue == NULL || optValueSize < (int32_t)sizeof(EdcaParam)) {
+        TRANS_LOGE(TRANS_SDK, "invalid param, socket=%{public}d", socket);
+        return SOFTBUS_INVALID_PARAM;
+    }
+    if (level != OPT_LEVEL_SOFTBUS) {
+        TRANS_LOGE(TRANS_SDK, "invalid level, socket=%{public}d, level=%{public}d", socket, level);
+        return SOFTBUS_INVALID_PARAM;
+    }
+    EdcaParam *edcaParam = (EdcaParam *)optValue;
+    if (edcaParam->scene < EDCA_SCENE_DATA_CLONE || edcaParam->scene >= EDCA_SCENE_BUTT ||
+        edcaParam->level < EDCA_LEVEL_DISABLE || edcaParam->level >= EDCA_LEVEL_BUTT) {
+        TRANS_LOGE(TRANS_SDK, "invalid edcaParam scene=%{public}d level=%{public}d",
+            edcaParam->scene, edcaParam->level);
+        return SOFTBUS_INVALID_PARAM;
+    }
+    return ClientSetEdcaBySocket(socket, edcaParam);
+}
+
 static SocketOptMap g_socketOptMap[] = {
     { OPT_TYPE_MAX_BUFFER, TransGetSocketMaxBufferLen, NULL },
     { OPT_TYPE_FIRST_PACKAGE, NULL, NULL },
@@ -270,6 +291,7 @@ static SocketOptMap g_socketOptMap[] = {
     { OPT_TYPE_GROUP_ID, NULL, TransSetGroupId },
     { OPT_TYPE_WIRELESS_LINK_CTRL, NULL, TransSetWirelessLinkCtrl },
     { OPT_TYPE_DISCONNECT_POLICY, NULL, TransSetDisconnectPolicy },
+    { OPT_TYPE_EDCA, NULL, TransSetEdca },
 };
 
 int32_t GetCommonSocketOpt(int32_t socket, OptLevel level, OptType optType, void *optValue, int32_t *optValueSize)

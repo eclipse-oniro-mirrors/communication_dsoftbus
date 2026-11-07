@@ -301,11 +301,38 @@ typedef enum {
     OPT_TYPE_NEED_ACK,
     OPT_TYPE_LOGICAL_BANDWIDTH,
     OPT_TYPE_KEY_TYPE,                     /**< @reserved key type used by the current socket. */
+    OPT_TYPE_EDCA,                         /**< @reserved EDCA competition parameter. */
     OPT_TYPE_GROUP_ID,                     /**< Group id used by the current socket. */
     OPT_TYPE_WIRELESS_LINK_CTRL,           /**< @reserved wireless link control. */
     OPT_TYPE_DISCONNECT_POLICY,            /**< Disconnect policy for ProxyChannel+BLE. */
     OPT_TYPE_END,
 } OptType;
+
+/**
+ * @brief EDCA scene for competition parameter delivery.
+ */
+typedef enum {
+    EDCA_SCENE_DATA_CLONE = 0,
+    EDCA_SCENE_BUTT,
+} EdcaScene;
+
+/**
+ * @brief EDCA adjustment level for competition parameter delivery.
+ */
+typedef enum {
+    EDCA_LEVEL_DISABLE = 0,
+    EDCA_LEVEL_SEMI = 1,
+    EDCA_LEVEL_FULL = 2,
+    EDCA_LEVEL_BUTT,
+} EdcaLevel;
+
+/**
+ * @brief EDCA parameter passed via SetSocketOpt(OPT_TYPE_EDCA).
+ */
+typedef struct {
+    EdcaScene scene;
+    EdcaLevel level;
+} EdcaParam;
 
 /**
  * @brief Enumerates the socket option level types.

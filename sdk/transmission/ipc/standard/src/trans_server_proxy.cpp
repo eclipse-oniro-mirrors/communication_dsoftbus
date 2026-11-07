@@ -297,6 +297,15 @@ int32_t ServerIpcGrantPermission(int uid, int pid, const char *sessionName)
     return proxy->GrantPermission(uid, pid, sessionName);
 }
 
+int32_t ServerIpcSetSocketOptEdca(int32_t channelId, int32_t channelType, int32_t scene, int32_t level)
+{
+    sptr<TransServerProxy> proxy = GetProxy();
+    TRANS_CHECK_AND_RETURN_RET_LOGE(
+        proxy != nullptr, SOFTBUS_NO_INIT, TRANS_SDK, "softbus server g_serverProxy is nullptr");
+
+    return proxy->SetSocketOptEdca(channelId, channelType, scene, level);
+}
+
 int32_t ServerIpcRemovePermission(const char *sessionName)
 {
     sptr<TransServerProxy> proxy = GetProxy();

@@ -283,6 +283,8 @@ int32_t TransServerProxy::OpenSession(const SessionParam *param, TransInfo *info
     WRITE_PARCEL_WITH_RET(data, Uint32, param->flowInfo.flowQosType, SOFTBUS_TRANS_PROXY_WRITEINT_FAILED);
     WRITE_PARCEL_WITH_RET(data, Uint32, param->cancelEncryptionBit, SOFTBUS_TRANS_PROXY_WRITEINT_FAILED);
     WRITE_PARCEL_WITH_RET(data, Int32, param->keyType, SOFTBUS_TRANS_PROXY_WRITEINT_FAILED);
+    WRITE_PARCEL_WITH_RET(data, Int32, param->edcaParam.scene, SOFTBUS_TRANS_PROXY_WRITEINT_FAILED);
+    WRITE_PARCEL_WITH_RET(data, Int32, param->edcaParam.level, SOFTBUS_TRANS_PROXY_WRITEINT_FAILED);
     if (!TransWriteSessionAttrs(param->attr, data)) {
         TRANS_LOGE(TRANS_SDK, "write attr failed!");
         return SOFTBUS_TRANS_PROXY_WRITERAWDATA_FAILED;
@@ -691,6 +693,50 @@ int32_t TransServerProxy::GrantPermission(int32_t uid, int32_t pid, const char *
     MessageParcel reply;
     MessageOption option;
     int32_t ret = remote->SendRequest(SERVER_GRANT_PERMISSION, data, reply, option);
+    if (ret != ERR_NONE) {
+        TRANS_LOGE(TRANS_SDK, "send request failed, ret=%{public}d", ret);
+        return SOFTBUS_TRANS_PROXY_SEND_REQUEST_FAILED;
+    }
+    if (!reply.ReadInt32(ret)) {
+        TRANS_LOGE(TRANS_SDK, "read serverRet failed!");
+        return SOFTBUS_TRANS_PROXY_READINT_FAILED;
+    }
+    return ret;
+}
+
+int32_t TransServerProxy::SetSocketOptEdca(int32_t channelId, int32_t channelType, int32_t scene,
+    int32_t level)
+{
+    sptr<IRemoteObject> remote = GetSystemAbility();
+    if (remote == nullptr) {
+        TRANS_LOGE(TRANS_SDK, "remote is nullptr!");
+        return SOFTBUS_TRANS_PROXY_REMOTE_NULL;
+    }
+    MessageParcel data;
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        TRANS_LOGE(TRANS_SDK, "write InterfaceToken failed!");
+        return SOFTBUS_TRANS_PROXY_WRITETOKEN_FAILED;
+    }
+    if (!data.WriteInt32(channelId)) {
+        TRANS_LOGE(TRANS_SDK, "write channelId failed!");
+        return SOFTBUS_TRANS_PROXY_WRITEINT_FAILED;
+    }
+    if (!data.WriteInt32(channelType)) {
+        TRANS_LOGE(TRANS_SDK, "write channelType failed!");
+        return SOFTBUS_TRANS_PROXY_WRITEINT_FAILED;
+    }
+    if (!data.WriteInt32(scene)) {
+        TRANS_LOGE(TRANS_SDK, "write scene failed!");
+        return SOFTBUS_TRANS_PROXY_WRITEINT_FAILED;
+    }
+    if (!data.WriteInt32(level)) {
+        TRANS_LOGE(TRANS_SDK, "write level failed!");
+        return SOFTBUS_TRANS_PROXY_WRITEINT_FAILED;
+    }
+
+    MessageParcel reply;
+    MessageOption option;
+    int32_t ret = remote->SendRequest(SERVER_SET_EDCA_PARAM, data, reply, option);
     if (ret != ERR_NONE) {
         TRANS_LOGE(TRANS_SDK, "send request failed, ret=%{public}d", ret);
         return SOFTBUS_TRANS_PROXY_SEND_REQUEST_FAILED;

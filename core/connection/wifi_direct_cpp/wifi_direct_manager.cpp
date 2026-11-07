@@ -858,6 +858,11 @@ static int32_t FastWakeUpByUuid(const char *remoteUuid, WakeUpLevel level)
     return OHOS::SoftBus::P2pAdapter::FastWakeUp(macAddrStr, level);
 }
 
+static int32_t SetEdcaParam(int scene, int speedMode)
+{
+    return OHOS::SoftBus::P2pAdapter::SetEdcaParam(scene, speedMode);
+}
+
 static struct WifiDirectManager g_manager = {
     .getRequestId = GetRequestId,
     .allocateListenerModuleId = AllocateListenerModuleId,
@@ -923,6 +928,8 @@ static struct WifiDirectManager g_manager = {
 
     .isSoftbusCreateGo = IsSoftbusCreateGo,
     .fastWakeUpByUuid = FastWakeUpByUuid,
+
+    .setEdcaParam = SetEdcaParam,
 };
 
 struct WifiDirectManager *GetWifiDirectManager(void)

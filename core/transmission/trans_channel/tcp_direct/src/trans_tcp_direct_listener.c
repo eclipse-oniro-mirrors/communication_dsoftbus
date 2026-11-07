@@ -226,6 +226,9 @@ static int32_t CreateSessionConnNode(ListenerModule module, int fd, int32_t chan
     conn->appInfo.peerData.port = clientAddr->socketOption.port;
     conn->appInfo.fdProtocol = clientAddr->socketOption.protocol;
     TransSetTcpDirectConnectType(&conn->appInfo.connectType, module);
+    if (conn->appInfo.connectType == CONNECT_HML) {
+        conn->appInfo.linkType = LANE_HML;
+    }
     int32_t ret =
         LnnGetLocalStrInfo(STRING_KEY_UUID, conn->appInfo.myData.deviceId, sizeof(conn->appInfo.myData.deviceId));
     if (ret != SOFTBUS_OK) {
