@@ -649,4 +649,39 @@ HWTEST_F(DiscCoapTest, testCoapUpdateLocalDevInfo001, TestSize.Level1)
     DiscCoapDeinit();
     g_discCoapFuncInterface = nullptr;
 }
+
+
+/*
+ * @tc.name: CoapUpdateLocalIp001
+ * @tc.desc: Test DiscCoapUpdateLocalIp should cover both branches of the
+ *           LnnGetLocalStrInfo(STRING_KEY_HICE_VERSION) check in SetLocalDeviceInfo:
+ *           the first query fails and returns early, the second query succeeds and
+ *           SetLocalLinkInfo is reached
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+
+HWTEST_F(DiscCoapTest, CoapUpdateLocalIp001, TestSize.Level1)
+{
+    DiscCoapMock discCoapMock;
+    discCoapMock.SetupSuccessStub();
+    EXPECT_CALL(discCoapMock, LnnGetLocalNumInfo(NUM_KEY_DEV_TYPE_ID, testing::_))
+        .Times(2)
+        .WillRepeatedly(DiscCoapMock::ActionOfLnnGetLocalNumInfo);
+    EXPECT_CALL(discCoapMock, LnnGetLocalStrInfo(STRING_KEY_HICE_VERSION, testing::_, testing::_))
+        .WillOnce(Return(SOFTBUS_INVALID_PARAM))
+        .WillOnce(DiscCoapMock::ActionOfLnnGetLocalStrInfo);
+    EXPECT_CALL(discCoapMock, LnnGetLocalStrInfoByIfnameIdx)
+        .Times(testing::AtLeast(1))
+        .WillRepeatedly(DiscCoapMock::ActionOfLnnGetLocalStrInfoByIfnameIdx);
+
+    g_discCoapFuncInterface = DiscCoapInit(&g_discInnerCb);
+    ASSERT_NE(g_discCoapFuncInterface, nullptr);
+
+    g_discCoapFuncInterface->LinkStatusChanged(LINK_STATUS_UP, WLAN_IF);
+    g_discCoapFuncInterface->LinkStatusChanged(LINK_STATUS_UP, WLAN_IF);
+
+    DiscCoapDeinit();
+    g_discCoapFuncInterface = nullptr;
+}
 } // namespace OHOS
