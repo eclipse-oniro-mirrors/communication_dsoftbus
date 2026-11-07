@@ -777,11 +777,13 @@ static bool AttemptReuseConnection(OpenFarFieldContext *ctx)
     if (state == P2P_CONNECTED) {
         conn->channel.requestId = ctx->requestId;
         NotifyFarFieldConnected(conn);
+        conn->Dereference((SoftBusRcObject **)&conn);
         return true;
     }
     if (state == P2P_CONNECTING) {
         CONN_LOGE(CONN_PROXY, "state=%{public}d, wait reqId=%{public}u", state, conn->channel.requestId);
         conn->channel.requestId = ctx->requestId;
+        conn->Dereference((SoftBusRcObject **)&conn);
         return true;
     }
 
@@ -789,8 +791,10 @@ static bool AttemptReuseConnection(OpenFarFieldContext *ctx)
         conn->channel.requestId = ctx->requestId;
         CONN_LOGE(CONN_PROXY, "state=%{public}d transfer connecting, reqId=%{public}u", state, conn->channel.requestId);
         SetConnectionState(conn, P2P_AVAILABLE_STATE);
+        conn->Dereference((SoftBusRcObject **)&conn);
         return false;
     }
+    conn->Dereference((SoftBusRcObject **)&conn);
     return false;
 }
 

@@ -1425,6 +1425,7 @@ void NotifyReusedConnected(uint32_t connectionId, uint16_t challengeCode)
     }
     info.bleInfo.challengeCode = challengeCode;
     g_connectCallback.OnReusedConnected(connectionId, &info);
+    ConnBleReturnConnection(&connection);
 }
 
 SOFTBUS_VISIBILITY int32_t ConnBleKeepAlive(uint32_t connectionId, uint32_t requestId, uint32_t time)
