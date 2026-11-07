@@ -138,7 +138,7 @@ if (defined(ohos_lite)) {
     ]
     if (dsoftbus_access_token_feature) {
       external_deps += [
-        "access_token:libnativetoken",
+        "access_token:libnativetoken_shared",
         "access_token:libtoken_setproc",
         "cJSON:cjson_static",
       ]
@@ -171,7 +171,7 @@ if (defined(ohos_lite)) {
     ]
     if (dsoftbus_access_token_feature) {
       external_deps += [
-        "access_token:libnativetoken",
+        "access_token:libnativetoken_shared",
         "access_token:libtoken_setproc",
         "cJSON:cjson_static",
       ]
@@ -204,7 +204,7 @@ if (defined(ohos_lite)) {
     ]
     if (dsoftbus_access_token_feature) {
       external_deps += [
-        "access_token:libnativetoken",
+        "access_token:libnativetoken_shared",
         "access_token:libtoken_setproc",
         "cJSON:cjson_static",
       ]
@@ -242,7 +242,7 @@ if (defined(ohos_lite)) {
     ]
     if (dsoftbus_access_token_feature) {
       external_deps += [
-        "access_token:libnativetoken",
+        "access_token:libnativetoken_shared",
         "access_token:libtoken_setproc",
         "cJSON:cjson_static",
       ]
@@ -286,7 +286,7 @@ if (defined(ohos_lite)) {
     ]
     if (dsoftbus_access_token_feature) {
       external_deps += [
-        "access_token:libnativetoken",
+        "access_token:libnativetoken_shared",
         "access_token:libtoken_setproc",
         "cJSON:cjson_static",
       ]
@@ -320,7 +320,7 @@ if (defined(ohos_lite)) {
     ]
     if (dsoftbus_access_token_feature) {
       external_deps += [
-        "access_token:libnativetoken",
+        "access_token:libnativetoken_shared",
         "access_token:libtoken_setproc",
       ]
     }
@@ -377,7 +377,7 @@ if (defined(ohos_lite)) {
       ]
       if (dsoftbus_access_token_feature) {
         external_deps += [
-          "access_token:libnativetoken",
+          "access_token:libnativetoken_shared",
           "access_token:libtoken_setproc",
           "cJSON:cjson_static",
         ]
@@ -419,7 +419,7 @@ if (defined(ohos_lite)) {
     ]
     if (dsoftbus_access_token_feature) {
       external_deps += [
-        "access_token:libnativetoken",
+        "access_token:libnativetoken_shared",
         "access_token:libtoken_setproc",
         "cJSON:cjson_static",
       ]
@@ -452,7 +452,7 @@ if (defined(ohos_lite)) {
     ]
     if (dsoftbus_access_token_feature) {
       external_deps += [
-        "access_token:libnativetoken",
+        "access_token:libnativetoken_shared",
         "access_token:libtoken_setproc",
         "cJSON:cjson_static",
       ]
@@ -485,7 +485,7 @@ if (defined(ohos_lite)) {
     ]
     if (dsoftbus_access_token_feature) {
       external_deps += [
-        "access_token:libnativetoken",
+        "access_token:libnativetoken_shared",
         "access_token:libtoken_setproc",
         "cJSON:cjson_static",
       ]

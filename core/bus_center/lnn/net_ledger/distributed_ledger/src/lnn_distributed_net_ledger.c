@@ -900,6 +900,8 @@ SOFTBUS_VISIBILITY int32_t LnnUpdateNodeInfo(NodeInfo *newInfo, int32_t connecti
     bool isIrkChanged = false;
     bool isAccountChanged = false;
     char deviceName[DEVICE_NAME_BUF_LEN] = { 0 };
+    NodeInfo oldInfoSnapshot;
+    (void)memset_s(&oldInfoSnapshot, sizeof(NodeInfo), 0, sizeof(NodeInfo));
     UpdateNewNodeAccountHash(newInfo);
     udid = LnnGetDeviceUdid(newInfo);
     map = &g_distributedNetLedger.distributedInfo;
@@ -922,14 +924,19 @@ SOFTBUS_VISIBILITY int32_t LnnUpdateNodeInfo(NodeInfo *newInfo, int32_t connecti
         SoftBusMutexUnlock(&g_distributedNetLedger.lock);
         return ret;
     }
+    if (memcpy_s(&oldInfoSnapshot, sizeof(NodeInfo), oldInfo, sizeof(NodeInfo)) != EOK) {
+        LNN_LOGE(LNN_LEDGER, "copy oldInfo snapshot fail");
+        SoftBusMutexUnlock(&g_distributedNetLedger.lock);
+        return SOFTBUS_MEM_ERR;
+    }
     SoftBusMutexUnlock(&g_distributedNetLedger.lock);
     if (memcmp(deviceName, newInfo->deviceInfo.deviceName, DEVICE_NAME_BUF_LEN) != 0) {
         UpdateDeviceNameInfo(newInfo->deviceInfo.deviceUdid, deviceName);
     }
     if (isIrkChanged) {
-        LnnInsertLinkFinderInfoPacked(oldInfo->networkId);
+        LnnInsertLinkFinderInfoPacked(oldInfoSnapshot.networkId);
     }
-    CheckUserIdCheckSumChange(oldInfo, newInfo);
+    CheckUserIdCheckSumChange(&oldInfoSnapshot, newInfo);
     ret = RemoteNodeInfoRetrieve(newInfo, connectionType);
     if (isAccountChanged) {
         UpdateDeviceInfoToMlps(udid);
