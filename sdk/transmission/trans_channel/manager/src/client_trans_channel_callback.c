@@ -188,8 +188,17 @@ int32_t TransOnChannelOpened(const char *sessionName, const ChannelInfo *channel
             ret = TransSendChannelOpenedDataToCore(channelId, channelType, openResult, &accessInfo);
         }
     } else if (channel->isMultiNeg) {
-        TransSetUdpChannelSessionId(channel->channelId, channel->sessionId);
-        (void)TransMultipathUpdateReserveChannel(channel->sessionId, channel);
+        if (channelType == CHANNEL_TYPE_UDP) {
+            TransSetUdpChannelSessionId(channel->channelId, channel->sessionId);
+            (void)TransMultipathUpdateReserveChannel(channel->sessionId, channel);
+        } else if (channelType == CHANNEL_TYPE_TCP_DIRECT &&
+            channel->linkedChannelId != INVALID_CHANNEL_ID) {
+            int32_t sessionId = INVALID_SESSION_ID;
+            if (GetClientSessionCb()->OnGetSessionId(
+                channel->linkedChannelId, channelType, &sessionId, false) == SOFTBUS_OK) {
+                (void)TransMultipathUpdateReserveChannel(sessionId, channel);
+            }
+        }
     }
     if (ret == SOFTBUS_OK && !channel->isServer && (channel->connectType == CONNECT_BR ||
         channel->connectType == CONNECT_BLE || channel->connectType == CONNECT_P2P ||
