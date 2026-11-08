@@ -128,6 +128,7 @@ static int32_t MockUnRegisterScanListener(int32_t scanerId)
 
 static int32_t MockStartBroadcasting(int32_t bcId, const SoftbusBroadcastParam *param, SoftbusBroadcastData *data)
 {
+    ManagerMock::capturedIsIncludeDeviceName = (param != nullptr) ? param->isIncludeDeviceName : false;
     ManagerMock::broadcastCallback->OnStartBroadcastingCallback(BROADCAST_PROTOCOL_BLE,
         bcId, (int32_t)SOFTBUS_BC_STATUS_SUCCESS);
     return SOFTBUS_OK;
