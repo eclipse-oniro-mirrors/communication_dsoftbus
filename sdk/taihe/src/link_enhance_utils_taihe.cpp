@@ -43,6 +43,7 @@ static std::map<int32_t, std::string> taiheErrMsgMap {
     {LINK_ENHANCE_CONNECTION_NOT_READY, "Connection is not ready."},
     {LINK_ENHANCE_PARAMETER_INVALID, "Invalid parameter."},
     {LINK_ENHANCE_INTERNAL_ERR, "Internal error."},
+    {LINK_ENHANCE_EMULATOR_NOT_SUPPORT, "Emulator not supported."},
 };
 int32_t ConvertToJsErrcode(int32_t err)
 {
@@ -63,6 +64,8 @@ int32_t ConvertToJsErrcode(int32_t err)
             return LINK_ENHANCE_PARAMETER_INVALID;
         case SOFTBUS_CONN_GENERAL_CREATE_SERVER_MAX:
             return LINK_ENHANCE_SERVERS_EXCEEDS;
+        case SOFTBUS_CONN_GENERAL_NOT_SUPPORT:
+            return LINK_ENHANCE_EMULATOR_NOT_SUPPORT;
         default:
             return LINK_ENHANCE_INTERNAL_ERR;
     }
