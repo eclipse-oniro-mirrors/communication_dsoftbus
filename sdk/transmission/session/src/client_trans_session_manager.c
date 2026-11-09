@@ -1467,6 +1467,7 @@ int32_t ClientEnableSessionByChannelId(const ChannelInfo *channel, int32_t *sess
                 sessionNode->isSupportTlv = channel->isSupportTlv;
                 sessionNode->enableMultipath = channel->enableMultipath;
                 sessionNode->keyType = channel->keyType;
+                (void)TransMultipathMarkUpOnNode(sessionNode, channel->routeType);
                 if (channel->channelType == CHANNEL_TYPE_AUTH || !sessionNode->isEncrypt || channel->isD2D) {
                     ClientSetAuthSessionTimer(serverNode, sessionNode);
                     if (strcpy_s(sessionNode->info.peerDeviceId, DEVICE_ID_SIZE_MAX, channel->peerDeviceId) != EOK) {
