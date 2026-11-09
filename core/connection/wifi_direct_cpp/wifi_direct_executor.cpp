@@ -14,17 +14,22 @@
  */
 #include "wifi_direct_executor.h"
 
+#include <unordered_map>
 #include <utility>
+#include <unistd.h>
 
 #include "wifi_direct_scheduler.h"
 #include "data/link_manager.h"
 #include "event/wifi_direct_event_dispatcher.h"
 #include "conn_log.h"
 #include "qos.h"
+#include "concurrent_task_client.h"
 #include "utils/wifi_direct_anonymous.h"
 #include "utils/wifi_direct_utils.h"
 #include "wifi_direct_scheduler_factory.h"
 #include "command/negotiate_command.h"
+
+using namespace OHOS::QOS;
 
 namespace OHOS::SoftBus {
 SOFTBUS_DEFAULT_USED_EXPORT
@@ -56,7 +61,10 @@ void WifiDirectExecutor::Start()
 
 void WifiDirectExecutor::Run(std::shared_ptr<WifiDirectProcessor> processor)
 {
-    int qosRet = OHOS::QOS::SetThreadQos(OHOS::QOS::QosLevel::QOS_USER_INTERACTIVE);
+    std::unordered_map<std::string, std::string> payload;
+    payload["pid"] = std::to_string(getpid());
+    OHOS::ConcurrentTask::ConcurrentTaskClient::GetInstance().RequestAuth(payload);
+    const auto qosRet = SetThreadQos(QosLevel::QOS_USER_INTERACTIVE);
     if (qosRet != 0) {
         CONN_LOGE(CONN_WIFI_DIRECT, "set thread qos fail, ret=%{public}d", qosRet);
     }

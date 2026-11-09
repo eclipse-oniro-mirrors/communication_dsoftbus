@@ -4,6 +4,7 @@
 #include <chrono>
 #include <memory>
 #include <string>
+#include <unordered_map>
 
 #include "wifi_direct_executor.h"
 #include "wifi_direct_scheduler.h"
@@ -17,12 +18,14 @@ namespace {
 std::atomic<int> g_setThreadQosCallCount{0};
 std::atomic<int> g_setThreadQosReturnVal{0};
 std::atomic<int> g_setThreadQosLastLevel{-1};
+std::atomic<int> g_requestAuthCallCount{0};
 
 void ResetQosMock()
 {
     g_setThreadQosCallCount.store(0);
     g_setThreadQosReturnVal.store(0);
     g_setThreadQosLastLevel.store(-1);
+    g_requestAuthCallCount.store(0);
 }
 }
 
@@ -43,6 +46,36 @@ int AddThreadToProcRtg(int tid) { return 0; }
 int AddThreadsToRrocRtg(int tid[5], int size) { return 0; }
 int RemoveThreadFromProcRtg(int tid) { return 0; }
 int RemoveThreadsFromProcRtg(int tid[5], int size) { return 0; }
+}
+
+namespace OHOS::ConcurrentTask {
+class ConcurrentTaskClient {
+public:
+    static ConcurrentTaskClient& GetInstance()
+    {
+        static ConcurrentTaskClient instance;
+        return instance;
+    }
+    void RequestAuth(const std::unordered_map<std::string, std::string>& mapPayload)
+    {
+        g_requestAuthCallCount.fetch_add(1);
+    }
+    void ReportData(uint32_t resType, int64_t value,
+        const std::unordered_map<std::string, std::string>& mapPayload) {}
+    void ReportSceneInfo(uint32_t type,
+        const std::unordered_map<std::string, std::string>& mapPayload) {}
+    void QueryInterval(int queryItem, IntervalReply& queryRs) {}
+    void QueryDeadline(int queryItem, DeadlineReply& ddlReply,
+        const std::unordered_map<pid_t, uint32_t>& mapPayload) {}
+    void QueryDeadline(int queryItem, DeadlineReply& ddlReply,
+        const std::unordered_map<std::string, std::string>& mapPayload) {}
+    void SetAudioDeadline(int queryItem, int tid, int grpId, IntervalReply& queryRs) {}
+    void StopRemoteObject() {}
+    int SetSystemQoS(int tid, int level) { return 0; }
+private:
+    ConcurrentTaskClient() = default;
+    ~ConcurrentTaskClient() = default;
+};
 }
 
 namespace OHOS::SoftBus {
@@ -88,6 +121,7 @@ HWTEST_F(WifiDirectExecutorQosTest, Run_QosSetSuccess_CallSetThreadQosAndContinu
     executor.Start();
 
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    EXPECT_GE(g_requestAuthCallCount.load(), 1);
     EXPECT_GE(g_setThreadQosCallCount.load(), 1);
     EXPECT_EQ(g_setThreadQosLastLevel.load(), static_cast<int>(OHOS::QOS::QosLevel::QOS_USER_INTERACTIVE));
 }
@@ -104,6 +138,7 @@ HWTEST_F(WifiDirectExecutorQosTest, Run_QosSetFail_LogErrorAndContinue, TestSize
     executor.Start();
 
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    EXPECT_GE(g_requestAuthCallCount.load(), 1);
     EXPECT_GE(g_setThreadQosCallCount.load(), 1);
     EXPECT_EQ(g_setThreadQosLastLevel.load(), static_cast<int>(OHOS::QOS::QosLevel::QOS_USER_INTERACTIVE));
 }
