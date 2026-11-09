@@ -925,9 +925,13 @@ HWTEST_F(ClientBusCentManagerTest, REG_DATA_LEVEL_CHANGE_CB_INNER_Test_001, Test
 {
     IDataLevelCb cb;
     (void)memset_s(&cb, sizeof(IDataLevelCb), 0, sizeof(IDataLevelCb));
-    EXPECT_EQ(RegDataLevelChangeCbInner(nullptr, &cb), SOFTBUS_STRCPY_ERR);
+    SoftBusMutexInit(&g_busCenterClient.lock, nullptr);
 
     ClientBusCenterManagerInterfaceMock busCentManagerMock;
+    EXPECT_CALL(busCentManagerMock, SoftBusMutexLockInner(_)).WillRepeatedly(Return(SOFTBUS_OK));
+    EXPECT_CALL(busCentManagerMock, SoftBusMutexUnlockInner(_)).WillRepeatedly(Return(SOFTBUS_OK));
+    EXPECT_EQ(RegDataLevelChangeCbInner(nullptr, &cb), SOFTBUS_STRCPY_ERR);
+
     EXPECT_CALL(busCentManagerMock, ServerIpcRegDataLevelChangeCb(_)).WillOnce(Return(SOFTBUS_SERVER_NOT_INIT));
     EXPECT_EQ(RegDataLevelChangeCbInner("pkgName", &cb), SOFTBUS_SERVER_NOT_INIT);
 
@@ -946,8 +950,11 @@ HWTEST_F(ClientBusCentManagerTest, REG_BLE_RANGE_INNER_Test_001, TestSize.Level1
 {
     IRangeCallback cb;
     (void)memset_s(&cb, sizeof(IRangeCallback), 0, sizeof(IRangeCallback));
+    SoftBusMutexInit(&g_busCenterClient.lock, nullptr);
 
     ClientBusCenterManagerInterfaceMock busCentManagerMock;
+    EXPECT_CALL(busCentManagerMock, SoftBusMutexLockInner(_)).WillRepeatedly(Return(SOFTBUS_OK));
+    EXPECT_CALL(busCentManagerMock, SoftBusMutexUnlockInner(_)).WillRepeatedly(Return(SOFTBUS_OK));
     EXPECT_CALL(busCentManagerMock, ServerIpcRegRangeCbForMsdp(_)).WillOnce(Return(SOFTBUS_SERVER_NOT_INIT));
     EXPECT_EQ(RegRangeCbForMsdpInner("pkgName", &cb), SOFTBUS_SERVER_NOT_INIT);
 
@@ -964,12 +971,54 @@ HWTEST_F(ClientBusCentManagerTest, REG_BLE_RANGE_INNER_Test_001, TestSize.Level1
  */
 HWTEST_F(ClientBusCentManagerTest, UNREG_BLE_RANGE_INNER_Test_001, TestSize.Level1)
 {
+    SoftBusMutexInit(&g_busCenterClient.lock, nullptr);
+
     ClientBusCenterManagerInterfaceMock busCentManagerMock;
+    EXPECT_CALL(busCentManagerMock, SoftBusMutexLockInner(_)).WillRepeatedly(Return(SOFTBUS_OK));
+    EXPECT_CALL(busCentManagerMock, SoftBusMutexUnlockInner(_)).WillRepeatedly(Return(SOFTBUS_OK));
     EXPECT_CALL(busCentManagerMock, ServerIpcUnregRangeCbForMsdp(_)).WillOnce(Return(SOFTBUS_SERVER_NOT_INIT));
     EXPECT_EQ(UnregRangeCbForMsdpInner("pkgName"), SOFTBUS_SERVER_NOT_INIT);
 
     EXPECT_CALL(busCentManagerMock, ServerIpcUnregRangeCbForMsdp(_)).WillOnce(Return(SOFTBUS_OK));
     EXPECT_EQ(UnregRangeCbForMsdpInner("pkgName"), SOFTBUS_OK);
+}
+
+/*
+ * @tc.name: LNN_ON_RANGE_RESULT_Test_001
+ * @tc.desc: lnn on range result with lock-protected callback snapshot
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+static int32_t g_rangeResultInvokeCnt = 0;
+static void OnRangeResultCb(const RangeResult *result)
+{
+    (void)result;
+    g_rangeResultInvokeCnt++;
+}
+
+HWTEST_F(ClientBusCentManagerTest, LNN_ON_RANGE_RESULT_Test_001, TestSize.Level1)
+{
+    SoftBusMutexInit(&g_busCenterClient.lock, nullptr);
+
+    ClientBusCenterManagerInterfaceMock busCentManagerMock;
+    EXPECT_CALL(busCentManagerMock, SoftBusMutexLockInner(_)).WillRepeatedly(Return(SOFTBUS_OK));
+    EXPECT_CALL(busCentManagerMock, SoftBusMutexUnlockInner(_)).WillRepeatedly(Return(SOFTBUS_OK));
+
+    RangeResultInnerInfo info;
+    (void)memset_s(&info, sizeof(RangeResultInnerInfo), 0, sizeof(RangeResultInnerInfo));
+    info.length = 0;
+    g_busCenterClient.rangeCb.onRangeResult = NULL;
+    EXPECT_NO_FATAL_FAILURE(LnnOnRangeResult(&info));
+
+    IRangeCallback cb;
+    (void)memset_s(&cb, sizeof(IRangeCallback), 0, sizeof(IRangeCallback));
+    cb.onRangeResult = OnRangeResultCb;
+    EXPECT_CALL(busCentManagerMock, ServerIpcRegRangeCbForMsdp(_)).WillRepeatedly(Return(SOFTBUS_OK));
+    EXPECT_EQ(RegRangeCbForMsdpInner("pkgName", &cb), SOFTBUS_OK);
+    g_rangeResultInvokeCnt = 0;
+    EXPECT_NO_FATAL_FAILURE(LnnOnRangeResult(&info));
+    EXPECT_EQ(g_rangeResultInvokeCnt, 1);
 }
 
 /*
@@ -1001,12 +1050,16 @@ HWTEST_F(ClientBusCentManagerTest, TRIGGER_HB_FOR_RANGE_INNER_Test_001, TestSize
  */
 HWTEST_F(ClientBusCentManagerTest, RESTART_REG_DATA_LEVEL_CHANGE_Test_001, TestSize.Level1)
 {
+    SoftBusMutexInit(&g_busCenterClient.lock, nullptr);
+
+    ClientBusCenterManagerInterfaceMock busCentManagerMock;
+    EXPECT_CALL(busCentManagerMock, SoftBusMutexLockInner(_)).WillRepeatedly(Return(SOFTBUS_OK));
+    EXPECT_CALL(busCentManagerMock, SoftBusMutexUnlockInner(_)).WillRepeatedly(Return(SOFTBUS_OK));
     g_regDataLevelChangePkgName[0] = '\0';
     EXPECT_NO_FATAL_FAILURE(RestartRegDataLevelChange());
 
     g_regDataLevelChangePkgName[0] = '1';
     g_regDataLevelChangePkgName[1] = '\0';
-    ClientBusCenterManagerInterfaceMock busCentManagerMock;
     EXPECT_CALL(busCentManagerMock, ServerIpcRegDataLevelChangeCb(_)).WillOnce(Return(SOFTBUS_SERVER_NOT_INIT));
     EXPECT_NO_FATAL_FAILURE(RestartRegDataLevelChange());
 
@@ -1023,7 +1076,11 @@ HWTEST_F(ClientBusCentManagerTest, RESTART_REG_DATA_LEVEL_CHANGE_Test_001, TestS
  */
 HWTEST_F(ClientBusCentManagerTest, UNREG_DATA_LEVEL_CHANGE_CB_INNER_Test_001, TestSize.Level1)
 {
+    SoftBusMutexInit(&g_busCenterClient.lock, nullptr);
+
     ClientBusCenterManagerInterfaceMock busCentManagerMock;
+    EXPECT_CALL(busCentManagerMock, SoftBusMutexLockInner(_)).WillRepeatedly(Return(SOFTBUS_OK));
+    EXPECT_CALL(busCentManagerMock, SoftBusMutexUnlockInner(_)).WillRepeatedly(Return(SOFTBUS_OK));
     EXPECT_CALL(busCentManagerMock, ServerIpcUnregDataLevelChangeCb(_)).WillOnce(Return(SOFTBUS_SERVER_NOT_INIT));
     EXPECT_EQ(UnregDataLevelChangeCbInner(nullptr), SOFTBUS_SERVER_NOT_INIT);
 
@@ -1177,6 +1234,11 @@ HWTEST_F(ClientBusCentManagerTest, LNN_ON_TIME_SYNC_RESULT_Test_002, TestSize.Le
  */
 HWTEST_F(ClientBusCentManagerTest, LNN_ON_DATA_LEVEL_CHANGED_Test_001, TestSize.Level1)
 {
+    SoftBusMutexInit(&g_busCenterClient.lock, nullptr);
+
+    ClientBusCenterManagerInterfaceMock busCentManagerMock;
+    EXPECT_CALL(busCentManagerMock, SoftBusMutexLockInner(_)).WillRepeatedly(Return(SOFTBUS_OK));
+    EXPECT_CALL(busCentManagerMock, SoftBusMutexUnlockInner(_)).WillRepeatedly(Return(SOFTBUS_OK));
     auto ptr = g_busCenterClient.dataLevelCb.onDataLevelChanged;
     g_busCenterClient.dataLevelCb.onDataLevelChanged = nullptr;
     EXPECT_NO_FATAL_FAILURE(LnnOnDataLevelChanged(nullptr, nullptr));
