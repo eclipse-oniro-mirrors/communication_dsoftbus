@@ -86,7 +86,7 @@ static int32_t ClientTdcOnDataEvent(ListenerModule module, int events, int32_t f
             ret = TransTdcRecvData(channelId);
         }
         if (ret == SOFTBUS_DATA_NOT_ENOUGH) {
-            TRANS_LOGW(TRANS_SDK, "client process data fail, SOFTBUS_DATA_NOT_ENOUGH. channelId=%{public}d", channelId);
+            TRANS_LOGW(TRANS_SDK, "SOFTBUS_DATA_NOT_ENOUGH. channelId=%{public}d", channelId);
             return SOFTBUS_OK;
         }
         if (ret != SOFTBUS_OK) {

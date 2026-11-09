@@ -312,7 +312,7 @@ int32_t BindAsync(int32_t socket, const QosTV qos[], uint32_t qosCount, const IS
 
 void Shutdown(int32_t socket)
 {
-    TRANS_LOGI(TRANS_SDK, "Shutdown: socket=%{public}d", socket);
+    TRANS_LOGI(TRANS_SDK, "socket=%{public}d", socket);
     (void)ClientHandleBindWaitTimer(socket, 0, TIMER_ACTION_STOP);
     SessionInfoReport(socket);
     ClientShutdown(socket, SOFTBUS_TRANS_STOP_BIND_BY_CANCEL);

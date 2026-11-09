@@ -616,9 +616,7 @@ HWTEST_F(TransTcpDirectMessageStaticTest, NotifyFastDataRecvTest001, TestSize.Le
     int32_t channelId = 1;
     NotifyFastDataRecv(conn, channelId);
 
-    char *mySessionName = nullptr;
-    char *peerSessionName = nullptr;
-    OpenDataBusRequestOutSessionName(mySessionName, peerSessionName);
+    OpenDataBusRequestOutSessionName(&conn->appInfo);
 
     SoftBusFree(conn);
 }

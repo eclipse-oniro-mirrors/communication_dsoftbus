@@ -239,7 +239,7 @@ SOFTBUS_VISIBILITY void GetOsTypeByNetworkId(const char *networkId, int32_t *osT
 {
     int32_t errCode = LnnGetOsTypeByNetworkId(networkId, osType);
     if (errCode != SOFTBUS_OK) {
-        TRANS_LOGE(TRANS_CTRL, "get remote osType err, errCode=%{public}d", errCode);
+        TRANS_LOGD(TRANS_CTRL, "get remote osType err, errCode=%{public}d", errCode);
         return;
     }
 }
@@ -358,7 +358,7 @@ SOFTBUS_VISIBILITY int32_t TransCommonGetAppInfo(const SessionParam *param, AppI
     TRANS_CHECK_AND_RETURN_RET_LOGE(appInfo != NULL, SOFTBUS_INVALID_PARAM, TRANS_CTRL, "Invalid appInfo");
     char *tmpId = NULL;
     Anonymize(param->peerDeviceId, &tmpId);
-    TRANS_LOGI(TRANS_CTRL, "GetAppInfo, deviceId=%{public}s", AnonymizeWrapper(tmpId));
+    TRANS_LOGI(TRANS_CTRL, "deviceId=%{public}s", AnonymizeWrapper(tmpId));
     AnonymizeFree(tmpId);
     appInfo->appType = APP_TYPE_NORMAL;
     appInfo->myData.apiVersion = API_V2;
@@ -396,7 +396,7 @@ SOFTBUS_VISIBILITY int32_t TransCommonGetAppInfo(const SessionParam *param, AppI
     SetUdpChannelCapability(param->enableMultipath, &appInfo->udpChannelCapability, UDP_CHANNEL_MULTIPATH_OFFSET);
     appInfo->isMultiNeg = param->isMultiNeg;
     SetUdpChannelCapability(param->isMultiNeg, &appInfo->udpChannelCapability, CHANNEL_ISMULTINEG_OFFSET);
-    TRANS_LOGD(TRANS_CTRL, "GetAppInfo ok");
+    TRANS_LOGD(TRANS_CTRL, "ok");
     return SOFTBUS_OK;
 }
 
@@ -802,7 +802,7 @@ static bool TransGetNetCapability(const char *networkId, uint32_t *local, uint32
     }
     ret = LnnGetRemoteNumU32Info(networkId, NUM_KEY_NET_CAP, remote);
     if (ret != SOFTBUS_OK) {
-        TRANS_LOGE(TRANS_CTRL, "LnnGetRemoteNumInfo err, ret=%{public}d, remote=%{public}u", ret, *remote);
+        TRANS_LOGD(TRANS_CTRL, "LnnGetRemoteNumInfo err, ret=%{public}d, remote=%{public}u", ret, *remote);
         return false;
     }
     TRANS_LOGD(TRANS_CTRL, "trans get net capability success, local=%{public}u, remote=%{public}u", *local, *remote);
@@ -948,7 +948,7 @@ SOFTBUS_VISIBILITY int32_t CheckCollabRelation(const AppInfo *appInfo, int32_t c
         return ret;
     }
     if (!SoftBusCheckIsCollabApp(sinkInfo.tokenId, appInfo->myData.sessionName)) {
-        TRANS_LOGE(TRANS_CTRL, "check is not app.");
+        TRANS_LOGD(TRANS_CTRL, "check is not app.");
         return SOFTBUS_TRANS_NOT_NEED_CHECK_RELATION;
     }
 

@@ -918,14 +918,15 @@ static int32_t GetUuidByChanId(int32_t channelId, char *uuid, uint32_t len)
     return AuthGetDeviceUuid(authId, uuid, len);
 }
 
-static void OpenDataBusRequestOutSessionName(const char *mySessionName, const char *peerSessionName)
+static void OpenDataBusRequestOutSessionName(const AppInfo *appInfo)
 {
     char *tmpMyName = NULL;
     char *tmpPeerName = NULL;
-    Anonymize(mySessionName, &tmpMyName);
-    Anonymize(peerSessionName, &tmpPeerName);
-    TRANS_LOGI(TRANS_CTRL, "OpenDataBusRequest: mySessionName=%{public}s, peerSessionName=%{public}s",
-        AnonymizeWrapper(tmpMyName), AnonymizeWrapper(tmpPeerName));
+    Anonymize(appInfo->myData.sessionName, &tmpMyName);
+    Anonymize(appInfo->peerData.sessionName, &tmpPeerName);
+    TRANS_LOGI(TRANS_CTRL, "OpenDataBusRequest: mySessionName=%{public}s, peerSessionName=%{public}s, "
+        "myPid=%{public}d, peerPid=%{public}d",AnonymizeWrapper(tmpMyName), AnonymizeWrapper(tmpPeerName), 
+        appInfo->myData.pid, appInfo->peerData.pid);
     AnonymizeFree(tmpMyName);
     AnonymizeFree(tmpPeerName);
 }
@@ -1098,9 +1099,7 @@ static int32_t CheckServerPermission(AppInfo *appInfo, char *ret)
 
 static int32_t TransTdcCheckCollabRelation(const AppInfo *appInfo, int32_t channelId, char *ret)
 {
-    OpenDataBusRequestOutSessionName(appInfo->myData.sessionName, appInfo->peerData.sessionName);
-    TRANS_LOGI(TRANS_CTRL, "OpenDataBusRequest: myPid=%{public}d, peerPid=%{public}d",
-        appInfo->myData.pid, appInfo->peerData.pid);
+    OpenDataBusRequestOutSessionName(appInfo);
 
     char *errDesc = NULL;
     int32_t errCode = CheckCollabRelation(appInfo, channelId, CHANNEL_TYPE_TCP_DIRECT);
@@ -1328,7 +1327,6 @@ static int32_t GetAuthIdByChannelInfo(int32_t channelId, uint64_t seq, uint32_t 
     (void)memset_s(appInfo.sinkSessionKey, sizeof(appInfo.sinkSessionKey), 0, sizeof(appInfo.sinkSessionKey));
     if (ret != SOFTBUS_OK) {
         AuthConnInfo connInfo;
-        TRANS_LOGI(TRANS_CTRL, "protoclType=%{public}d", appInfo.protocol);
         connInfo.type = (appInfo.protocol == LNN_PROTOCOL_USB) ? AUTH_LINK_TYPE_USB : AUTH_LINK_TYPE_WIFI;
         if (strcpy_s(connInfo.info.ipInfo.ip, IP_LEN, appInfo.peerData.addr) != EOK) {
             TRANS_LOGE(TRANS_CTRL, "copy ip addr fail");
@@ -1336,8 +1334,8 @@ static int32_t GetAuthIdByChannelInfo(int32_t channelId, uint64_t seq, uint32_t 
         }
         char *tmpPeerIp = NULL;
         Anonymize(appInfo.peerData.addr, &tmpPeerIp);
-        TRANS_LOGE(TRANS_CTRL, "channelId=%{public}d get remote uuid by Ip=%{public}s failed", channelId,
-            AnonymizeWrapper(tmpPeerIp));
+        TRANS_LOGE(TRANS_CTRL, "channelId=%{public}d get remote uuid by Ip=%{public}s, protoclType=%{public}d",
+            channelId, AnonymizeWrapper(tmpPeerIp), appInfo.protocol);
         AnonymizeFree(tmpPeerIp);
         authHandle->type = connInfo.type;
         authHandle->authId = AuthGetIdByConnInfo(&connInfo, !fromAuthServer, false);

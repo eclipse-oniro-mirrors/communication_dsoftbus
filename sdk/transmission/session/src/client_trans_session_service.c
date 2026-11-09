@@ -1316,7 +1316,7 @@ void ClientShutdown(int32_t socket, int32_t cancelReason)
     }
     (void)ClientDeleteSocketSession(socket);
 
-    TRANS_LOGI(TRANS_SDK, "Shutdown ok: socket=%{public}d", socket);
+    TRANS_LOGI(TRANS_SDK, "ok: socket=%{public}d", socket);
 }
 
 int32_t GetSocketMtuSize(int32_t socket, uint32_t *mtuSize)
