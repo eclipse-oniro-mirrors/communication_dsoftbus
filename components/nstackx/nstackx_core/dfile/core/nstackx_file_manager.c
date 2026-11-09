@@ -802,6 +802,7 @@ static void RecvTaskProcess(FileManager *fileManager, FileListTask *fileList)
             DFILE_LOGE(TAG, "WriteBlockFrame error");
             continue;
         }
+        PostReadEventToMainLoop(fileManager->context);
     }
     FileListRefreshFileRecvStatus(fileList);
     if (fileList->errCode != FILE_MANAGER_EOK) {

@@ -77,7 +77,7 @@ struct DFileSession {
     pthread_t tid;
     EpollDesc epollfd;
     List eventNodeChain;
-    uint8_t closeFlag;
+    volatile uint8_t closeFlag;
     uint32_t vtransDefaultSize;
     List vtransManagerList;
     pthread_mutex_t transIdLock;
@@ -100,8 +100,8 @@ struct DFileSession {
     pthread_mutex_t outboundQueueLock;
     pthread_mutex_t inboundQueueLock;
     sem_t outboundQueueWait[NSTACKX_MULTI_PATH_NUM];
-    uint64_t outboundQueueSize;
-    uint64_t inboundQueueSize;
+    volatile uint64_t outboundQueueSize;
+    volatile uint64_t inboundQueueSize;
     List pendingFileLists;
 #ifdef NSTACKX_SMALL_FILE_SUPPORT
     List smallFileLists;
@@ -152,6 +152,7 @@ struct DFileSession {
     uint32_t cipherCapability;
 };
 
+void PostReadEventToMainLoop(DFileSession *session);
 PeerInfo *CreatePeerInfo(DFileSession *session, const struct sockaddr_in *peerAddr,
     uint16_t mtu, uint16_t connType, uint8_t socketIndex);
 int32_t DFileWriteHandle(const uint8_t *frame, size_t len, void *context);
