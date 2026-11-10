@@ -142,8 +142,6 @@ static int32_t CacheParam(PerceptionType type, const PerceptionAdvParam *param)
     if (param->customDataLen > 0) {
         if (memcpy_s(g_advCtx.currentParam.customData, PERCEPTION_CUSTOM_DATA_MAX_LEN,
             param->customData, param->customDataLen) != EOK) {
-            (void)memset_s(g_advCtx.currentParam.customData, PERCEPTION_CUSTOM_DATA_MAX_LEN, 0,
-                PERCEPTION_CUSTOM_DATA_MAX_LEN);
             g_advCtx.currentParam.customDataLen = 0;
             LNN_LOGE(LNN_STATE, "perception adv cache customData fail");
             return SOFTBUS_MEM_ERR;
