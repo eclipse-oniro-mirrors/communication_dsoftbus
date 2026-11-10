@@ -184,11 +184,13 @@ ohos_unittest("PerceptionAdvTest") {
     "$dsoftbus_root_path/core/broadcast/scheduler/src/broadcast_scheduler_virtual.c",
   ]
   include_dirs = bus_center_unittest_dirs + [
+    "$dsoftbus_root_path/adapter/common/net/bluetooth/broadcast/interface",
     "$dsoftbus_root_path/core/bus_center/lnn/lane_hub/perception/include",
     "$dsoftbus_root_path/core/bus_center/lnn/lane_hub/perception/src",
     "$dsoftbus_root_path/core/broadcast/scheduler/interface",
     "$dsoftbus_root_path/core/frame/init/include",
     "$dsoftbus_root_path/interfaces/kits/adapter",
+    "$dsoftbus_root_path/interface/kits/broadcast/enhance",
   ]
   deps = bus_center_unittest_deps
   external_deps = [
