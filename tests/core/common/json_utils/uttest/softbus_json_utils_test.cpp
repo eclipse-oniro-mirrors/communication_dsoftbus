@@ -1357,7 +1357,8 @@ HWTEST_F(SoftbusJsonUtilsTest, JsonArrayRoundTripTest001, TestSize.Level1)
 
 /*
  * @tc.name: JSON_ParseArray001
- * @tc.desc: Verify JSON_ParseArray parses a well-formed array of objects and reports the correct size
+ * @tc.desc: Verify JSON_ParseArray parses a well-formed array, rejects a malformed string
+ *           and a json object string
  * @tc.type: FUNC
  * @tc.require:
  */
@@ -1368,39 +1369,18 @@ HWTEST_F(SoftbusJsonUtilsTest, JSON_ParseArray001, TestSize.Level1)
     ASSERT_NE(nullptr, arr);
     EXPECT_EQ(3, JSON_GetArraySize(arr)); // 3 is the element count of the array
     JSON_Delete(arr);
+
+    EXPECT_EQ(nullptr, JSON_ParseArray("[{\"id\":1},{\"id\"}]", strlen("[{\"id\":1},{\"id\"}]")));
+    EXPECT_EQ(nullptr, JSON_ParseArray("{\"id\":1}", strlen("{\"id\":1}")));
 }
 
 /*
  * @tc.name: JSON_ParseArray002
- * @tc.desc: Verify JSON_ParseArray returns nullptr for a malformed string
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(SoftbusJsonUtilsTest, JSON_ParseArray002, TestSize.Level1)
-{
-    const char *jsonStr = "[{\"id\":1},{\"id\"}]";
-    EXPECT_EQ(nullptr, JSON_ParseArray(jsonStr, strlen(jsonStr)));
-}
-
-/*
- * @tc.name: JSON_ParseArray003
- * @tc.desc: Verify JSON_ParseArray returns nullptr when the string is a json object instead of an array
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(SoftbusJsonUtilsTest, JSON_ParseArray003, TestSize.Level1)
-{
-    const char *jsonStr = "{\"id\":1}";
-    EXPECT_EQ(nullptr, JSON_ParseArray(jsonStr, strlen(jsonStr)));
-}
-
-/*
- * @tc.name: JSON_ParseArray004
  * @tc.desc: Verify JSON_ParseArray parses an empty array and reports size zero
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(SoftbusJsonUtilsTest, JSON_ParseArray004, TestSize.Level1)
+HWTEST_F(SoftbusJsonUtilsTest, JSON_ParseArray002, TestSize.Level1)
 {
     const char *jsonStr = "[]";
     JsonObj *arr = JSON_ParseArray(jsonStr, strlen(jsonStr));
@@ -1410,24 +1390,24 @@ HWTEST_F(SoftbusJsonUtilsTest, JSON_ParseArray004, TestSize.Level1)
 }
 
 /*
- * @tc.name: JSON_ParseArray005
+ * @tc.name: JSON_ParseArray003
  * @tc.desc: Verify JSON_ParseArray returns nullptr when len truncates the string into invalid json
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(SoftbusJsonUtilsTest, JSON_ParseArray005, TestSize.Level1)
+HWTEST_F(SoftbusJsonUtilsTest, JSON_ParseArray003, TestSize.Level1)
 {
     const char *jsonStr = "[{\"id\":1},{\"id\":2}]";
     EXPECT_EQ(nullptr, JSON_ParseArray(jsonStr, 2)); // 2 truncates the string to "[{"
 }
 
 /*
- * @tc.name: JSON_ParseArray006
+ * @tc.name: JSON_ParseArray004
  * @tc.desc: Verify JSON_ParseArray returns nullptr when len is zero
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(SoftbusJsonUtilsTest, JSON_ParseArray006, TestSize.Level1)
+HWTEST_F(SoftbusJsonUtilsTest, JSON_ParseArray004, TestSize.Level1)
 {
     const char *jsonStr = "[{\"id\":1}]";
     EXPECT_EQ(nullptr, JSON_ParseArray(jsonStr, 0));
@@ -1435,56 +1415,15 @@ HWTEST_F(SoftbusJsonUtilsTest, JSON_ParseArray006, TestSize.Level1)
 
 /*
  * @tc.name: JSON_GetArrayItem001
- * @tc.desc: Verify JSON_GetArrayItem returns nullptr when obj is nullptr
+ * @tc.desc: Verify JSON_GetArrayItem returns nullptr when obj is nullptr,
+ *           and retrieves each item of a parsed array with correct field values
  * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(SoftbusJsonUtilsTest, JSON_GetArrayItem001, TestSize.Level1)
 {
     EXPECT_EQ(nullptr, JSON_GetArrayItem(nullptr, 0));
-}
 
-/*
- * @tc.name: JSON_GetArrayItem002
- * @tc.desc: Verify JSON_GetArrayItem returns nullptr when index is negative
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(SoftbusJsonUtilsTest, JSON_GetArrayItem002, TestSize.Level1)
-{
-    const char *jsonStr = "[{\"id\":1},{\"id\":2}]";
-    JsonObj *arr = JSON_ParseArray(jsonStr, strlen(jsonStr));
-    ASSERT_NE(nullptr, arr);
-    EXPECT_EQ(nullptr, JSON_GetArrayItem(arr, -1));
-    JSON_Delete(arr);
-}
-
-/*
- * @tc.name: JSON_GetArrayItem003
- * @tc.desc: Verify JSON_GetArrayItem returns nullptr when index is out of range
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(SoftbusJsonUtilsTest, JSON_GetArrayItem003, TestSize.Level1)
-{
-    const char *jsonStr = "[{\"id\":1},{\"id\":2}]";
-    JsonObj *arr = JSON_ParseArray(jsonStr, strlen(jsonStr));
-    ASSERT_NE(nullptr, arr);
-    int32_t size = JSON_GetArraySize(arr);
-    ASSERT_EQ(2, size); // 2 is the element count of the array
-    EXPECT_EQ(nullptr, JSON_GetArrayItem(arr, size));
-    EXPECT_EQ(nullptr, JSON_GetArrayItem(arr, size + 1));
-    JSON_Delete(arr);
-}
-
-/*
- * @tc.name: JSON_GetArrayItem004
- * @tc.desc: Verify JSON_GetArrayItem retrieves each item of a parsed array with correct field values
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(SoftbusJsonUtilsTest, JSON_GetArrayItem004, TestSize.Level1)
-{
     const char *jsonStr = "[{\"id\":1,\"name\":\"first\"},{\"id\":2,\"name\":\"second\"}]";
     JsonObj *arr = JSON_ParseArray(jsonStr, strlen(jsonStr));
     ASSERT_NE(nullptr, arr);
@@ -1496,10 +1435,10 @@ HWTEST_F(SoftbusJsonUtilsTest, JSON_GetArrayItem004, TestSize.Level1)
     for (int32_t i = 0; i < size; ++i) {
         JsonObj *item = JSON_GetArrayItem(arr, i);
         ASSERT_NE(nullptr, item);
-        int32_t id = -1;
+        int32_t id = -1; // -1 is a sentinel value, keeps the assertion deterministic on getter failure
         EXPECT_TRUE(JSON_GetInt32FromOject(item, "id", &id));
         EXPECT_EQ(ids[i], id);
-        char name[ARRAY_LEN];
+        char name[ARRAY_LEN] = {0}; // zero-initialized, keeps the assertion deterministic on getter failure
         EXPECT_TRUE(JSON_GetStringFromObject(item, "name", name, sizeof(name)));
         EXPECT_STREQ(names[i], name);
         JSON_Delete(item);
@@ -1508,12 +1447,31 @@ HWTEST_F(SoftbusJsonUtilsTest, JSON_GetArrayItem004, TestSize.Level1)
 }
 
 /*
- * @tc.name: JSON_GetArrayItem005
+ * @tc.name: JSON_GetArrayItem002
+ * @tc.desc: Verify JSON_GetArrayItem returns nullptr when index is negative or out of range
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusJsonUtilsTest, JSON_GetArrayItem002, TestSize.Level1)
+{
+    const char *jsonStr = "[{\"id\":1},{\"id\":2}]";
+    JsonObj *arr = JSON_ParseArray(jsonStr, strlen(jsonStr));
+    ASSERT_NE(nullptr, arr);
+    int32_t size = JSON_GetArraySize(arr);
+    ASSERT_EQ(2, size); // 2 is the element count of the array
+    EXPECT_EQ(nullptr, JSON_GetArrayItem(arr, -1));
+    EXPECT_EQ(nullptr, JSON_GetArrayItem(arr, size));
+    EXPECT_EQ(nullptr, JSON_GetArrayItem(arr, size + 1));
+    JSON_Delete(arr);
+}
+
+/*
+ * @tc.name: JSON_GetArrayItem003
  * @tc.desc: Verify JSON_GetArrayItem returns nullptr when the array item is not a json object
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(SoftbusJsonUtilsTest, JSON_GetArrayItem005, TestSize.Level1)
+HWTEST_F(SoftbusJsonUtilsTest, JSON_GetArrayItem003, TestSize.Level1)
 {
     const char *jsonStr = "[1,2,3]";
     JsonObj *arr = JSON_ParseArray(jsonStr, strlen(jsonStr));
@@ -1527,12 +1485,12 @@ HWTEST_F(SoftbusJsonUtilsTest, JSON_GetArrayItem005, TestSize.Level1)
 }
 
 /*
- * @tc.name: JSON_GetArrayItem006
+ * @tc.name: JSON_GetArrayItem004
  * @tc.desc: Verify JSON_GetArrayItem returns nullptr for an empty array
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(SoftbusJsonUtilsTest, JSON_GetArrayItem006, TestSize.Level1)
+HWTEST_F(SoftbusJsonUtilsTest, JSON_GetArrayItem004, TestSize.Level1)
 {
     const char *jsonStr = "[]";
     JsonObj *arr = JSON_ParseArray(jsonStr, strlen(jsonStr));
@@ -1542,12 +1500,12 @@ HWTEST_F(SoftbusJsonUtilsTest, JSON_GetArrayItem006, TestSize.Level1)
 }
 
 /*
- * @tc.name: JSON_GetArrayItem007
+ * @tc.name: JSON_GetArrayItem005
  * @tc.desc: Verify JSON_GetArrayItem returns nullptr when the json object is not an array
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(SoftbusJsonUtilsTest, JSON_GetArrayItem007, TestSize.Level1)
+HWTEST_F(SoftbusJsonUtilsTest, JSON_GetArrayItem005, TestSize.Level1)
 {
     const char *jsonStr = "{\"id\":1}";
     JsonObj *obj = JSON_Parse(jsonStr, strlen(jsonStr));
