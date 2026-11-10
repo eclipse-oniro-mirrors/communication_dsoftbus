@@ -810,6 +810,7 @@ SOFTBUS_VISIBILITY void LnnDeinitNetworkInfo(void)
 {
     (void)LnnUnregisterEventHandler(LNN_EVENT_BT_STATE_CHANGED, BtStateChangeEventHandler);
     (void)LnnUnregisterEventHandler(LNN_EVENT_WIFI_STATE_CHANGED, WifiStateEventHandler);
+    (void)LnnUnregisterEventHandler(LNN_EVENT_SLE_STATE_CHANGED, SleStateChangeEventHandle);
     (void)LnnUnregSyncInfoHandler(LNN_INFO_TYPE_CAPABILITY, OnReceiveCapaSyncInfoMsg);
     (void)LnnUnregSyncInfoHandler(LNN_INFO_TYPE_USERID, OnReceiveUserIdSyncInfoMsg);
     (void)LnnUnregisterEventHandler(LNN_EVENT_WIFI_SERVICE_START, WifiServiceOnStartHandle);
