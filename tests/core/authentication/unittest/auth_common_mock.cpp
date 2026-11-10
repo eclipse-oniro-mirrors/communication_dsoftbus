@@ -175,9 +175,9 @@ int32_t UpdateLaneBusinessInfoItem(uint64_t oldLaneId, uint64_t newLaneId)
     return GetCommonInterface()->UpdateLaneBusinessInfoItem(oldLaneId, newLaneId);
 }
 
-int32_t UpdateLaneResourceLaneId(uint64_t oldLaneId, uint64_t newLaneId, const char *peerUdid)
+int32_t UpdateLaneResourceLaneId(uint64_t oldLaneId, uint64_t newLaneId, const char *peerUdid, const char *networkId)
 {
-    return GetCommonInterface()->UpdateLaneResourceLaneId(oldLaneId, newLaneId, peerUdid);
+    return GetCommonInterface()->UpdateLaneResourceLaneId(oldLaneId, newLaneId, peerUdid, networkId);
 }
 
 uint64_t GenerateLaneId(const char *localUdid, const char *remoteUdid, LaneLinkType linkType)

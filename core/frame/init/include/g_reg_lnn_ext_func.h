@@ -322,7 +322,8 @@ typedef uint32_t (*GetAuthDataSizeFunc)(uint32_t len);
 typedef int32_t (*ConnPostBytesFunc)(uint32_t connectionId, ConnPostData *data);
 typedef uint32_t (*ConnGetHeadSizeFunc)(void);
 
-typedef int32_t (*UpdateLaneResourceLaneIdFunc)(uint64_t oldLaneId, uint64_t newLaneId, const char *peerUdid);
+typedef int32_t (*UpdateLaneResourceLaneIdFunc)(uint64_t oldLaneId, uint64_t newLaneId, const char *peerUdid,
+    const char *networkId);
 typedef int32_t (*UpdateLaneBusinessInfoItemFunc)(uint64_t oldLaneId, uint64_t newLaneId);
 typedef int32_t (*UpdateReqListLaneIdFunc)(uint64_t oldLaneId, uint64_t newLaneId);
 typedef int32_t (*ConvertToConnectOptionFunc)(const AuthConnInfo *connInfo, ConnectOption *option);

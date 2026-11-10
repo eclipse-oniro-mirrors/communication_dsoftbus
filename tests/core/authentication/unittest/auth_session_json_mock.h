@@ -73,7 +73,8 @@ public:
     virtual int32_t AuthManagerSetSessionKey(
         int64_t authSeq, AuthSessionInfo *info, const SessionKey *sessionKey, bool isConnect, bool isOldKey) = 0;
     virtual uint64_t GenerateLaneId(const char *localUdid, const char *remoteUdid, LaneLinkType linkType) = 0;
-    virtual int32_t UpdateLaneResourceLaneId(uint64_t oldLaneId, uint64_t newLaneId, const char *peerUdid) = 0;
+    virtual int32_t UpdateLaneResourceLaneId(uint64_t oldLaneId, uint64_t newLaneId, const char *peerUdid,
+        const char *networkId) = 0;
     virtual int32_t DecryptInner(const SessionKeyList *list, AuthLinkType type, const InDataInfo *inDataInfo,
         uint8_t **outData, uint32_t *outLen) = 0;
     virtual int32_t DataDecompress(uint8_t *in, uint32_t inLen, uint8_t **out, uint32_t *outLen) = 0;
@@ -165,7 +166,7 @@ public:
     MOCK_METHOD5(AuthDeviceDecrypt, int32_t(AuthHandle *, const uint8_t *, uint32_t, uint8_t *, uint32_t *));
     MOCK_METHOD5(AuthManagerSetSessionKey, int32_t(int64_t, AuthSessionInfo *, const SessionKey *, bool, bool));
     MOCK_METHOD3(GenerateLaneId, uint64_t(const char *, const char *, LaneLinkType));
-    MOCK_METHOD3(UpdateLaneResourceLaneId, int32_t(uint64_t, uint64_t, const char *));
+    MOCK_METHOD4(UpdateLaneResourceLaneId, int32_t(uint64_t, uint64_t, const char *, const char *));
     MOCK_METHOD5(
         DecryptInner, int32_t(const SessionKeyList *, AuthLinkType, const InDataInfo *, uint8_t **, uint32_t *));
     MOCK_METHOD4(DataDecompress, int32_t(uint8_t *, uint32_t, uint8_t **, uint32_t *));

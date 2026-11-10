@@ -20,11 +20,13 @@
 
 #include "softbus_error_code.h"
 
-int32_t UpdateLaneResourceLaneId(uint64_t oldLaneId, uint64_t newLaneId, const char *peerUdid)
+int32_t UpdateLaneResourceLaneId(uint64_t oldLaneId, uint64_t newLaneId, const char *peerUdid,
+    const char *networkId)
 {
     (void)oldLaneId;
     (void)newLaneId;
     (void)peerUdid;
+    (void)networkId;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 

@@ -282,7 +282,8 @@ int32_t TryUpdateLaneResourceLaneId(AuthSessionInfo *info)
     AUTH_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret, AUTH_FSM, "get local udid fail");
     uint64_t oldLaneId = GenerateLaneId(localUDID, info->connInfo.info.ipInfo.ip, LANE_HML_RAW);
     uint64_t newLaneId = GenerateLaneId(localUDID, info->nodeInfo.deviceInfo.deviceUdid, LANE_HML_RAW);
-    ret = UpdateLaneResourceLaneId(oldLaneId, newLaneId, info->nodeInfo.deviceInfo.deviceUdid);
+    ret = UpdateLaneResourceLaneId(oldLaneId, newLaneId, info->nodeInfo.deviceInfo.deviceUdid,
+        info->nodeInfo.networkId);
     AUTH_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret, AUTH_FSM, "update lane resource laneid fail");
     ret = UpdateLaneBusinessInfoItem(oldLaneId, newLaneId);
     AUTH_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret, AUTH_FSM, "update lane business info fail");

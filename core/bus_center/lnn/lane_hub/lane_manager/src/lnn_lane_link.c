@@ -992,7 +992,8 @@ SOFTBUS_VISIBILITY int32_t FindLaneResourceByLaneId(uint64_t laneId, LaneResourc
     return SOFTBUS_LANE_RESOURCE_NOT_FOUND;
 }
 
-SOFTBUS_VISIBILITY int32_t UpdateLaneResourceLaneId(uint64_t oldLaneId, uint64_t newLaneId, const char *peerUdid)
+SOFTBUS_VISIBILITY int32_t UpdateLaneResourceLaneId(uint64_t oldLaneId, uint64_t newLaneId, const char *peerUdid,
+    const char *networkId)
 {
     if (oldLaneId == INVALID_LANE_ID || newLaneId == INVALID_LANE_ID || peerUdid == NULL) {
         LNN_LOGE(LNN_LANE, "get invalid laneId");
@@ -1012,6 +1013,11 @@ SOFTBUS_VISIBILITY int32_t UpdateLaneResourceLaneId(uint64_t oldLaneId, uint64_t
                 return SOFTBUS_STRCPY_ERR;
             }
             item->laneId = newLaneId;
+            if (networkId != NULL && networkId[0] != '\0') {
+                if (AddNetworkIdToResource(item, networkId, false, NULL) != SOFTBUS_OK) {
+                    LNN_LOGE(LNN_LANE, "add networkId to resource fail");
+                }
+            }
             LNN_LOGI(LNN_LANE, "find and refresh oldLaneId=%{public}" PRIu64 ", newLaneId=%{public}" PRIu64,
                 oldLaneId, newLaneId);
             LaneUnlock();

@@ -72,7 +72,8 @@ public:
     virtual int32_t GetAllForegroundAccountIds(int32_t **userIds, uint32_t *userIdsLen) = 0;
     virtual int32_t UpdateReqListLaneId(uint64_t oldLaneId, uint64_t newLaneId) = 0;
     virtual int32_t UpdateLaneBusinessInfoItem(uint64_t oldLaneId, uint64_t newLaneId) = 0;
-    virtual int32_t UpdateLaneResourceLaneId(uint64_t oldLaneId, uint64_t newLaneId, const char *peerUdid) = 0;
+    virtual int32_t UpdateLaneResourceLaneId(uint64_t oldLaneId, uint64_t newLaneId, const char *peerUdid,
+        const char *networkId) = 0;
     virtual uint64_t GenerateLaneId(const char *localUdid, const char *remoteUdid, LaneLinkType linkType) = 0;
     virtual int32_t RegHichainSaStatusListener(void) = 0;
     virtual int32_t UnRegHichainSaStatusListener(void) = 0;
@@ -115,7 +116,7 @@ public:
     MOCK_METHOD2(GetAllForegroundAccountIds, int32_t(int32_t **, uint32_t *));
     MOCK_METHOD2(UpdateReqListLaneId, int32_t(uint64_t, uint64_t));
     MOCK_METHOD2(UpdateLaneBusinessInfoItem, int32_t(uint64_t, uint64_t));
-    MOCK_METHOD3(UpdateLaneResourceLaneId, int32_t(uint64_t, uint64_t, const char *));
+    MOCK_METHOD4(UpdateLaneResourceLaneId, int32_t(uint64_t, uint64_t, const char *, const char *));
     MOCK_METHOD3(GenerateLaneId, uint64_t(const char *, const char *, LaneLinkType));
     MOCK_METHOD0(RegHichainSaStatusListener, int32_t(void));
     MOCK_METHOD0(UnRegHichainSaStatusListener, int32_t(void));
