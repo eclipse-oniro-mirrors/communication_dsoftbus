@@ -763,12 +763,12 @@ void BusCenterClientDeinit(void)
     (void)memset_s(&g_busCenterClient.refreshCbItems, sizeof(g_busCenterClient.refreshCbItems), 0,
         sizeof(g_busCenterClient.refreshCbItems));
     g_busCenterClient.nodeStateCbListCnt = 0;
+    g_busCenterClient.rangeCb.onRangeResult = NULL;
+    g_busCenterClient.rangeCb.onRangeStateChange = NULL;
+    g_busCenterClient.dataLevelCb.onDataLevelChanged = NULL;
     if (SoftBusMutexUnlock(&g_busCenterClient.lock) != SOFTBUS_OK) {
         LNN_LOGE(LNN_INIT, "unlock in deinit");
     }
-    g_busCenterClient.dataLevelCb.onDataLevelChanged = NULL;
-    g_busCenterClient.rangeCb.onRangeResult = NULL;
-    g_busCenterClient.rangeCb.onRangeStateChange = NULL;
     SoftBusMutexDestroy(&g_busCenterClient.lock);
     BusCenterServerProxyDeInit();
 }
@@ -858,11 +858,17 @@ int32_t SetNodeDataChangeFlagInner(const char *pkgName, const char *networkId, u
 int32_t RegDataLevelChangeCbInner(const char *pkgName, IDataLevelCb *callback)
 {
     LNN_LOGI(LNN_STATE, "enter");
+    if (SoftBusMutexLock(&g_busCenterClient.lock) != SOFTBUS_OK) {
+        LNN_LOGE(LNN_STATE, "lock data level cb fail");
+        return SOFTBUS_LOCK_ERR;
+    }
     g_busCenterClient.dataLevelCb = *callback;
     if (strcpy_s(g_regDataLevelChangePkgName, PKG_NAME_SIZE_MAX, pkgName) != EOK) {
+        (void)SoftBusMutexUnlock(&g_busCenterClient.lock);
         LNN_LOGE(LNN_STATE, "copy pkgName fail");
         return SOFTBUS_STRCPY_ERR;
     }
+    (void)SoftBusMutexUnlock(&g_busCenterClient.lock);
     int32_t ret = ServerIpcRegDataLevelChangeCb(pkgName);
     if (ret != SOFTBUS_OK) {
         LNN_LOGE(LNN_STATE, "Server RegDataLevelChangeCb failed, ret=%{public}d", ret);
@@ -873,11 +879,23 @@ int32_t RegDataLevelChangeCbInner(const char *pkgName, IDataLevelCb *callback)
 void RestartRegDataLevelChange(void)
 {
     LNN_LOGI(LNN_STATE, "enter");
+    char pkgNameLocal[PKG_NAME_SIZE_MAX];
+    if (SoftBusMutexLock(&g_busCenterClient.lock) != SOFTBUS_OK) {
+        LNN_LOGE(LNN_STATE, "lock reg pkgName fail");
+        return;
+    }
     if (g_regDataLevelChangePkgName[0] == '\0') {
+        (void)SoftBusMutexUnlock(&g_busCenterClient.lock);
         LNN_LOGI(LNN_STATE, "restart regDataLevelChange is not used");
         return;
     }
-    int32_t ret = ServerIpcRegDataLevelChangeCb(g_regDataLevelChangePkgName);
+    if (strcpy_s(pkgNameLocal, PKG_NAME_SIZE_MAX, g_regDataLevelChangePkgName) != EOK) {
+        (void)SoftBusMutexUnlock(&g_busCenterClient.lock);
+        LNN_LOGE(LNN_STATE, "copy reg pkgName fail");
+        return;
+    }
+    (void)SoftBusMutexUnlock(&g_busCenterClient.lock);
+    int32_t ret = ServerIpcRegDataLevelChangeCb(pkgNameLocal);
     if (ret != SOFTBUS_OK) {
         LNN_LOGE(LNN_STATE, "Server RegDataLevelChangeCb failed, ret=%{public}d", ret);
         return;
@@ -888,7 +906,12 @@ void RestartRegDataLevelChange(void)
 int32_t UnregDataLevelChangeCbInner(const char *pkgName)
 {
     LNN_LOGI(LNN_STATE, "UnregDataLevelChangeCbInner enter");
+    if (SoftBusMutexLock(&g_busCenterClient.lock) != SOFTBUS_OK) {
+        LNN_LOGE(LNN_STATE, "lock data level cb fail");
+        return SOFTBUS_LOCK_ERR;
+    }
     g_busCenterClient.dataLevelCb.onDataLevelChanged = NULL;
+    (void)SoftBusMutexUnlock(&g_busCenterClient.lock);
     int32_t ret = ServerIpcUnregDataLevelChangeCb(pkgName);
     if (ret != SOFTBUS_OK) {
         LNN_LOGE(LNN_STATE, "Server UnregDataLevelChangeCb failed, ret=%{public}d", ret);
@@ -908,7 +931,12 @@ int32_t SetDataLevelInner(const DataLevel *dataLevel)
 int32_t RegRangeCbForMsdpInner(const char *pkgName, IRangeCallback *callback)
 {
     LNN_LOGI(LNN_STATE, "enter");
+    if (SoftBusMutexLock(&g_busCenterClient.lock) != SOFTBUS_OK) {
+        LNN_LOGE(LNN_STATE, "lock range cb fail");
+        return SOFTBUS_LOCK_ERR;
+    }
     g_busCenterClient.rangeCb = *callback;
+    (void)SoftBusMutexUnlock(&g_busCenterClient.lock);
     int32_t ret = ServerIpcRegRangeCbForMsdp(pkgName);
     if (ret != SOFTBUS_OK) {
         LNN_LOGE(LNN_STATE, "Server RegRangeCbForMsdpInner failed, ret=%{public}d", ret);
@@ -919,8 +947,13 @@ int32_t RegRangeCbForMsdpInner(const char *pkgName, IRangeCallback *callback)
 int32_t UnregRangeCbForMsdpInner(const char *pkgName)
 {
     LNN_LOGI(LNN_STATE, "enter");
+    if (SoftBusMutexLock(&g_busCenterClient.lock) != SOFTBUS_OK) {
+        LNN_LOGE(LNN_STATE, "lock range cb fail");
+        return SOFTBUS_LOCK_ERR;
+    }
     g_busCenterClient.rangeCb.onRangeResult = NULL;
     g_busCenterClient.rangeCb.onRangeStateChange = NULL;
+    (void)SoftBusMutexUnlock(&g_busCenterClient.lock);
     int32_t ret = ServerIpcUnregRangeCbForMsdp(pkgName);
     if (ret != SOFTBUS_OK) {
         LNN_LOGE(LNN_STATE, "Server UnregRangeCbForMsdpInner failed, ret=%{public}d", ret);
@@ -1936,7 +1969,14 @@ void LnnOnRefreshDeviceFound(const void *device)
 
 void LnnOnDataLevelChanged(const char *networkId, const DataLevelInfo *dataLevelInfo)
 {
-    if (g_busCenterClient.dataLevelCb.onDataLevelChanged == NULL) {
+    IDataLevelCb cb;
+    if (SoftBusMutexLock(&g_busCenterClient.lock) != SOFTBUS_OK) {
+        LNN_LOGE(LNN_STATE, "lock data level cb fail");
+        return;
+    }
+    cb = g_busCenterClient.dataLevelCb;
+    (void)SoftBusMutexUnlock(&g_busCenterClient.lock);
+    if (cb.onDataLevelChanged == NULL) {
         LNN_LOGW(LNN_STATE, "data level callback is null");
         return;
     }
@@ -1946,12 +1986,19 @@ void LnnOnDataLevelChanged(const char *networkId, const DataLevelInfo *dataLevel
         .switchLevel = dataLevelInfo->switchLevel,
         .switchLength = dataLevelInfo->switchLength
     };
-    g_busCenterClient.dataLevelCb.onDataLevelChanged(networkId, dataLevel);
+    cb.onDataLevelChanged(networkId, dataLevel);
 }
 
 void LnnOnRangeResult(const RangeResultInnerInfo *rangeInfo)
 {
-    if (g_busCenterClient.rangeCb.onRangeResult == NULL) {
+    IRangeCallback cb;
+    if (SoftBusMutexLock(&g_busCenterClient.lock) != SOFTBUS_OK) {
+        LNN_LOGE(LNN_STATE, "lock range cb fail");
+        return;
+    }
+    cb = g_busCenterClient.rangeCb;
+    (void)SoftBusMutexUnlock(&g_busCenterClient.lock);
+    if (cb.onRangeResult == NULL) {
         LNN_LOGW(LNN_STATE, "ble range callback is null");
         return;
     }
@@ -1970,7 +2017,7 @@ void LnnOnRangeResult(const RangeResultInnerInfo *rangeInfo)
     LNN_LOGD(LNN_STATE, "medium=%{public}d, distance=%{public}f, networkId=%{public}s", rst.medium, rst.distance,
         AnonymizeWrapper(anonyNetworkId));
     AnonymizeFree(anonyNetworkId);
-    g_busCenterClient.rangeCb.onRangeResult(&rst);
+    cb.onRangeResult(&rst);
 }
 
 void LnnOnGroupStateChange(int32_t retCode)
