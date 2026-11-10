@@ -694,6 +694,12 @@ int32_t TransOnSessionClosed(int32_t channelId, int32_t channelType, ShutdownRea
     if (!isServer) {
         SessionInfoReport(sessionId);
     }
+    int32_t surviveChannelId = INVALID_CHANNEL_ID;
+    int32_t surviveChannelType = CHANNEL_TYPE_UNDEFINED;
+    if (TransMultipathHandleChannelClose(sessionId, channelId, &surviveChannelId, &surviveChannelType)) {
+        TransMultipathOnEvent(surviveChannelId, 0, LINK_TYPE_UNKNOWN, 0);
+        return SOFTBUS_OK;
+    }
     SessionEnableStatus enableStatus = ENABLE_STATUS_INIT;
     (void)ClientGetChannelBySessionId(sessionId, NULL, NULL, &enableStatus);
     TRANS_LOGI(TRANS_SDK, "trigger session close callback");

@@ -637,6 +637,51 @@ int32_t TransMultipathMarkDown(int32_t sessionId, int32_t channelId)
     return ret;
 }
 
+bool TransMultipathHandleChannelClose(int32_t sessionId, int32_t channelId,
+    int32_t *surviveChannelId, int32_t *surviveChannelType)
+{
+    if (surviveChannelId == NULL || surviveChannelType == NULL) {
+        return false;
+    }
+    int32_t ret = LockClientSessionServerList();
+    if (ret != SOFTBUS_OK) {
+        return false;
+    }
+    ClientSessionServer *serverNode = NULL;
+    SessionInfo *sessionNode = NULL;
+    ret = GetSessionById(sessionId, &serverNode, &sessionNode);
+    if (ret != SOFTBUS_OK) {
+        UnlockClientSessionServerList();
+        return false;
+    }
+    if (!sessionNode->enableMultipath) {
+        UnlockClientSessionServerList();
+        return false;
+    }
+    bool isPrimary = (sessionNode->channelId == channelId);
+    bool isReserve = (sessionNode->channelIdReserve == channelId);
+    if (!isPrimary && !isReserve) {
+        UnlockClientSessionServerList();
+        return false;
+    }
+    (void)TransMultipathMarkDownOnNode(sessionNode, channelId);
+    int32_t otherRoute = isPrimary ? sessionNode->routeTypeReserve : sessionNode->routeType;
+    CtrlChannelStatus otherStatus = TransMultipathIsWiredRoute(otherRoute) ?
+        sessionNode->ctrlWiredStatus : sessionNode->ctrlWirelessStatus;
+    if (otherStatus != CTRL_CH_STATUS_UP) {
+        UnlockClientSessionServerList();
+        return false;
+    }
+    *surviveChannelId = isPrimary ? sessionNode->channelIdReserve : sessionNode->channelId;
+    *surviveChannelType = isPrimary ? sessionNode->channelTypeReserve : sessionNode->channelType;
+    (void)TransMultipathClearChannelSlotOnNode(sessionNode, channelId);
+    UnlockClientSessionServerList();
+    TRANS_LOGI(TRANS_SDK, "multipath one channel closed, session preserved, sessionId=%{public}d, "
+        "deadChannelId=%{public}d, surviveChannelId=%{public}d",
+        sessionId, channelId, *surviveChannelId);
+    return true;
+}
+
 int32_t TransMultipathCloseDeadChannel(int32_t sessionId, int32_t channelId, int32_t channelType, bool async)
 {
     int32_t ret = LockClientSessionServerList();

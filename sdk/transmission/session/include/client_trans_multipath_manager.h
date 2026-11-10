@@ -80,6 +80,11 @@ int32_t TransMultipathGetOtherCtrlChannel(int32_t sessionId, int32_t failChannel
 
 int32_t TransMultipathMarkDown(int32_t sessionId, int32_t channelId);
 
+/* ========== Channel close handling ========== */
+
+bool TransMultipathHandleChannelClose(int32_t sessionId, int32_t channelId,
+    int32_t *surviveChannelId, int32_t *surviveChannelType);
+
 /* ========== Dead channel close ========== */
 
 int32_t TransMultipathCloseDeadChannel(int32_t sessionId, int32_t channelId, int32_t channelType, bool async);
