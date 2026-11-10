@@ -167,11 +167,22 @@ int32_t TransOnChannelOpened(const char *sessionName, const ChannelInfo *channel
             break;
         case CHANNEL_TYPE_TCP_DIRECT:
             ret = ClientTransTdcOnChannelOpened(sessionName, channel, &accessInfo);
+            if (channel->isMultiNeg) {
+                int32_t sessionId = INVALID_SESSION_ID;
+                if (GetClientSessionCb()->OnGetSessionId(
+                    channel->linkedChannelId, CHANNEL_TYPE_TCP_DIRECT, &sessionId, false) == SOFTBUS_OK) {
+                    (void)TransMultipathUpdateReserveChannel(sessionId, channel);
+                }
+            }
             break;
         case CHANNEL_TYPE_UDP:
             ret = TransOnUdpChannelOpened(sessionName, channel, &udpPort, &accessInfo);
             TRANS_LOGI(TRANS_SDK, "enableMultipath=%{public}d, isMultiNeg=%{public}d",
                 channel->enableMultipath, channel->isMultiNeg);
+            if (channel->isMultiNeg && !channel->isServer) {
+                TransSetUdpChannelSessionId(channel->channelId, channel->sessionId);
+                (void)TransMultipathUpdateReserveChannel(channel->sessionId, channel);
+            }
             break;
         default:
             TRANS_LOGE(TRANS_SDK, "[client] invalid type.");
@@ -186,20 +197,6 @@ int32_t TransOnChannelOpened(const char *sessionName, const ChannelInfo *channel
             ret = TransSendUdpChannelOpenedDataToCore(channelId, channelType, openResult, udpPort, &accessInfo);
         } else {
             ret = TransSendChannelOpenedDataToCore(channelId, channelType, openResult, &accessInfo);
-        }
-    }
-    if (channel->isMultiNeg) {
-        if (channelType == CHANNEL_TYPE_UDP) {
-            if (!channel->isServer) {
-                TransSetUdpChannelSessionId(channel->channelId, channel->sessionId);
-                (void)TransMultipathUpdateReserveChannel(channel->sessionId, channel);
-            }
-        } else if (channelType == CHANNEL_TYPE_TCP_DIRECT) {
-            int32_t sessionId = INVALID_SESSION_ID;
-            if (GetClientSessionCb()->OnGetSessionId(
-                channel->linkedChannelId, channelType, &sessionId, false) == SOFTBUS_OK) {
-                (void)TransMultipathUpdateReserveChannel(sessionId, channel);
-            }
         }
     }
     if (ret == SOFTBUS_OK && !channel->isServer && (channel->connectType == CONNECT_BR ||
