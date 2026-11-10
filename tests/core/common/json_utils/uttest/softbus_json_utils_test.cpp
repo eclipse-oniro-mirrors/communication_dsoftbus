@@ -1376,7 +1376,8 @@ HWTEST_F(SoftbusJsonUtilsTest, JSON_ParseArray001, TestSize.Level1)
 
 /*
  * @tc.name: JSON_ParseArray002
- * @tc.desc: Verify JSON_ParseArray parses an empty array and reports size zero
+ * @tc.desc: Verify JSON_ParseArray parses an empty array, and returns nullptr when len
+ *           truncates the string into invalid json or len is zero
  * @tc.type: FUNC
  * @tc.require:
  */
@@ -1387,30 +1388,11 @@ HWTEST_F(SoftbusJsonUtilsTest, JSON_ParseArray002, TestSize.Level1)
     ASSERT_NE(nullptr, arr);
     EXPECT_EQ(0, JSON_GetArraySize(arr));
     JSON_Delete(arr);
-}
 
-/*
- * @tc.name: JSON_ParseArray003
- * @tc.desc: Verify JSON_ParseArray returns nullptr when len truncates the string into invalid json
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(SoftbusJsonUtilsTest, JSON_ParseArray003, TestSize.Level1)
-{
-    const char *jsonStr = "[{\"id\":1},{\"id\":2}]";
-    EXPECT_EQ(nullptr, JSON_ParseArray(jsonStr, 2)); // 2 truncates the string to "[{"
-}
-
-/*
- * @tc.name: JSON_ParseArray004
- * @tc.desc: Verify JSON_ParseArray returns nullptr when len is zero
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(SoftbusJsonUtilsTest, JSON_ParseArray004, TestSize.Level1)
-{
-    const char *jsonStr = "[{\"id\":1}]";
-    EXPECT_EQ(nullptr, JSON_ParseArray(jsonStr, 0));
+    const char *truncatedStr = "[{\"id\":1},{\"id\":2}]";
+    EXPECT_EQ(nullptr, JSON_ParseArray(truncatedStr, 2)); // 2 truncates the string to "[{"
+    const char *lenZeroStr = "[{\"id\":1}]";
+    EXPECT_EQ(nullptr, JSON_ParseArray(lenZeroStr, 0));
 }
 
 /*
