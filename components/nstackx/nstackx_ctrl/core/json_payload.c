@@ -454,18 +454,6 @@ static int JsonAddStr(cJSON *data, const char *key, const char *value)
     return NSTACKX_EOK;
 }
 
-/*
- * Service Discover JSON format
- * {
- *   "deviceId":[device ID, string],
- *   "deviceName":[device name, string],
- *   "type": [device type, number],
- *   "version":[hicom version, string],
- *   "wlanIp":[WLAN IP address, string],
- *   "capabilityBitmap":[bitmap, bitmap, bitmap, ...]
- *   "coapUri":[coap uri for discover, string]   <-- optional. When present, means it's broadcast request.
- * }
- */
 static char *PrepareServiceDiscoverEx(const struct DiscoverInfo *info)
 {
     cJSON *data = cJSON_CreateObject();

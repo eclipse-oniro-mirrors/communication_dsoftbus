@@ -60,6 +60,7 @@
 
 #define IPV4_LOOP_IP                      "127.0.0.1"
 #define IPV6_LOOP_IP                      "::1"
+#define NSTACKX_DEFAULT_VER               "1.0.0.0"
 
 static NSTACKX_LocalDeviceInfoV2 *g_localDeviceInfo = NULL;
 static DiscInnerCallback *g_discCoapInnerCb = NULL;
@@ -68,7 +69,6 @@ static SoftBusMutex g_discCoapInnerCbLock = {0};
 static int32_t NstackxLocalDevInfoDump(int fd);
 static int32_t g_currentLinkUpNums = 0;
 static char g_serviceData[NSTACKX_MAX_SERVICE_DATA_LEN] = {0};
-static char g_localVersion[NSTACKX_MAX_HICOM_VERSION] = {0};
 #ifdef DSOFTBUS_FEATURE_DISC_COAP_CUSTDATA
     static char g_cachedBData[NSTACKX_MAX_BUSINESS_DATA_LEN] = {0};
     static uint32_t g_cachedBDataLen = 0;
@@ -712,12 +712,7 @@ static int32_t SetLocalDeviceInfo(LinkStatus status, int32_t ifnameIdx)
     g_localDeviceInfo->deviceType = (uint32_t)deviceType;
     g_localDeviceInfo->businessType = (uint8_t)NSTACKX_BUSINESS_TYPE_NULL;
     g_localDeviceInfo->hasDeviceHash = true;
-    if (LnnGetLocalStrInfo(STRING_KEY_HICE_VERSION, g_localVersion, sizeof(g_localVersion)) != SOFTBUS_OK) {
-        DISC_LOGE(DISC_COAP, "get local device version fail.");
-        (void)SoftBusMutexUnlock(&g_localDeviceInfoLock);
-        return SOFTBUS_DISCOVER_GET_LOCAL_STR_FAILED;
-    }
-    g_localDeviceInfo->version = g_localVersion;
+    g_localDeviceInfo->version = NSTACKX_DEFAULT_VER;
     (void)SoftBusMutexUnlock(&g_localDeviceInfoLock);
 
     ret = SetLocalLinkInfo(status, ifnameIdx);
