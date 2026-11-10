@@ -187,12 +187,14 @@ int32_t TransOnChannelOpened(const char *sessionName, const ChannelInfo *channel
         } else {
             ret = TransSendChannelOpenedDataToCore(channelId, channelType, openResult, &accessInfo);
         }
-    } else if (channel->isMultiNeg) {
+    }
+    if (channel->isMultiNeg) {
         if (channelType == CHANNEL_TYPE_UDP) {
-            TransSetUdpChannelSessionId(channel->channelId, channel->sessionId);
-            (void)TransMultipathUpdateReserveChannel(channel->sessionId, channel);
-        } else if (channelType == CHANNEL_TYPE_TCP_DIRECT &&
-            channel->linkedChannelId > 0) {
+            if (!channel->isServer) {
+                TransSetUdpChannelSessionId(channel->channelId, channel->sessionId);
+                (void)TransMultipathUpdateReserveChannel(channel->sessionId, channel);
+            }
+        } else if (channelType == CHANNEL_TYPE_TCP_DIRECT && channel->linkedChannelId > 0) {
             int32_t sessionId = INVALID_SESSION_ID;
             if (GetClientSessionCb()->OnGetSessionId(
                 channel->linkedChannelId, channelType, &sessionId, false) == SOFTBUS_OK) {
