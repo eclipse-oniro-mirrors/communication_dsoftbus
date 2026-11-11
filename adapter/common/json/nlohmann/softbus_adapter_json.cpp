@@ -109,9 +109,7 @@ SOFTBUS_SYMBOL_EXPORT JsonObj *JSON_Parse(const char *str, uint32_t len)
         COMM_LOGE(COMM_ADAPTER, "parse json fail");
         return nullptr;
     }
-    for (auto &item : entity.items()) {
-        (*json)[item.key()] = item.value();
-    }
+    *json = std::move(entity);
     return obj;
 }
 
