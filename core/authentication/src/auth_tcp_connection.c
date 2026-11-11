@@ -22,15 +22,19 @@
 #include "bus_center_manager.h"
 #include "g_enhance_auth_func_pack.h"
 #include "softbus_adapter_mem.h"
+#include "softbus_adapter_timer.h"
 #include "softbus_base_listener.h"
 #include "softbus_def.h"
 #include "softbus_tcp_socket.h"
 
-#define MAGIC_NUMBER             0xBABEFACE
-#define AUTH_PKT_HEAD_LEN        24
-#define AUTH_SOCKET_MAX_DATA_LEN (64 * 1024)
-#define TCP_KEEPALIVE_TOS_VAL    180
-#define RECV_DATA_TIMEOUT        (10 * 1000 * 1000)
+#define MAGIC_NUMBER                      0xBABEFACE
+#define AUTH_PKT_HEAD_LEN                 24
+#define AUTH_SOCKET_MAX_DATA_LEN          (64 * 1024)
+#define TCP_KEEPALIVE_TOS_VAL             180
+#define AUTH_SOCKET_RECV_MAX_RETRY        600
+#define AUTH_SOCKET_EAGAIN_RETRY_MAX      30
+#define AUTH_SOCKET_EAGAIN_RETRY_DELAY_MS 10
+#define AUTH_SOCKET_RECV_TIME_OUT         100
 
 typedef struct {
     int32_t keepaliveIdle;
@@ -216,16 +220,34 @@ static void NotifyDataReceived(ListenerModule module, int32_t fd,
 
 static int32_t RecvPacketHead(ListenerModule module, int32_t fd, SocketPktHead *head)
 {
+    (void)module;
     uint8_t buf[AUTH_PKT_HEAD_LEN] = { 0 };
     uint32_t offset = 0;
+    uint32_t recvCnt = 0;
+    uint32_t retryCnt = 0;
     while (offset < AUTH_PKT_HEAD_LEN) {
-        ssize_t recvLen =
-            ConnRecvSocketData(fd, (char *)&buf[offset], (size_t)(sizeof(buf) - offset), RECV_DATA_TIMEOUT);
-        if (recvLen <= 0) {
-            AUTH_LOGE(AUTH_CONN, "recv head fail, recvLen=%{public}zd.", recvLen);
+        if (recvCnt > AUTH_SOCKET_RECV_MAX_RETRY) {
+            AUTH_LOGE(AUTH_CONN, "recv head exceed max retry, recvCnt=%{public}u, offset=%{public}u", recvCnt, offset);
             return SOFTBUS_INVALID_DATA_HEAD;
         }
+        recvCnt++;
+        ssize_t recvLen =
+            ConnRecvSocketData(fd, (char *)&buf[offset], (size_t)(sizeof(buf) - offset), AUTH_SOCKET_RECV_TIME_OUT);
+        if (recvLen < 0) {
+            AUTH_LOGE(AUTH_CONN, "recv head fail, recvLen=%{public}zd.", recvLen);
+            return SOFTBUS_INVALID_DATA_HEAD;
+        } else if (recvLen == 0) {
+            if (retryCnt > AUTH_SOCKET_EAGAIN_RETRY_MAX) {
+                AUTH_LOGE(AUTH_CONN, "recv head exceed eagain retry, retryCnt=%{public}u, offset=%{public}u", retryCnt,
+                    offset);
+                return SOFTBUS_INVALID_DATA_HEAD;
+            }
+            retryCnt++;
+            SoftBusSleepMs(AUTH_SOCKET_EAGAIN_RETRY_DELAY_MS);
+            continue;
+        }
         offset += (uint32_t)recvLen;
+        retryCnt = 0;
     }
     return UnpackSocketPkt(buf, offset, head);
 }
@@ -238,14 +260,36 @@ static uint8_t *RecvPacketData(int32_t fd, uint32_t len)
         return NULL;
     }
     uint32_t offset = 0;
+    uint32_t recvCnt = 0;
+    uint32_t retryCnt = 0;
     while (offset < len) {
-        ssize_t recvLen = ConnRecvSocketData(fd, (char *)(data + offset), (size_t)(len - offset), RECV_DATA_TIMEOUT);
-        if (recvLen <= 0) {
-            AUTH_LOGE(AUTH_CONN, "recv data fail, recvLen=%{public}zd.", recvLen);
+        if (recvCnt > AUTH_SOCKET_RECV_MAX_RETRY) {
+            AUTH_LOGE(AUTH_CONN, "recv data exceed max retry, recvCnt=%{public}u, offset=%{public}u, len=%{public}u",
+                recvCnt, offset, len);
             SoftBusFree(data);
             return NULL;
         }
+        recvCnt++;
+        ssize_t recvLen =
+            ConnRecvSocketData(fd, (char *)(data + offset), (size_t)(len - offset), AUTH_SOCKET_RECV_TIME_OUT);
+        if (recvLen < 0) {
+            AUTH_LOGE(AUTH_CONN, "recv data fail, recvLen=%{public}zd.", recvLen);
+            SoftBusFree(data);
+            return NULL;
+        } else if (recvLen == 0) {
+            if (retryCnt > AUTH_SOCKET_EAGAIN_RETRY_MAX) {
+                AUTH_LOGE(AUTH_CONN,
+                    "recv data exceed eagain retry, retryCnt=%{public}u, offset=%{public}u, len=%{public}u", retryCnt,
+                    offset, len);
+                SoftBusFree(data);
+                return NULL;
+            }
+            retryCnt++;
+            SoftBusSleepMs(AUTH_SOCKET_EAGAIN_RETRY_DELAY_MS);
+            continue;
+        }
         offset += (uint32_t)recvLen;
+        retryCnt = 0;
     }
     return data;
 }
