@@ -638,9 +638,9 @@ int32_t TransMultipathMarkDown(int32_t sessionId, int32_t channelId)
 }
 
 bool TransMultipathHandleChannelClose(int32_t sessionId, int32_t channelId,
-    int32_t *surviveChannelId, int32_t *surviveChannelType)
+    int32_t *surviveChannelId, int32_t *surviveChannelType, int32_t *deadRouteType)
 {
-    if (surviveChannelId == NULL || surviveChannelType == NULL) {
+    if (surviveChannelId == NULL || surviveChannelType == NULL || deadRouteType == NULL) {
         return false;
     }
     int32_t ret = LockClientSessionServerList();
@@ -664,6 +664,7 @@ bool TransMultipathHandleChannelClose(int32_t sessionId, int32_t channelId,
         UnlockClientSessionServerList();
         return false;
     }
+    *deadRouteType = isPrimary ? sessionNode->routeType : sessionNode->routeTypeReserve;
     (void)TransMultipathMarkDownOnNode(sessionNode, channelId);
     int32_t otherRoute = isPrimary ? sessionNode->routeTypeReserve : sessionNode->routeType;
     CtrlChannelStatus otherStatus = TransMultipathIsWiredRoute(otherRoute) ?
