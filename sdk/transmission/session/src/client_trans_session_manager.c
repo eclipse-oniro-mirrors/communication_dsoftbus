@@ -1252,7 +1252,9 @@ SOFTBUS_VISIBILITY int32_t ClientGetSessionIsD2DByChannelId(int32_t channelId, i
             continue;
         }
         LIST_FOR_EACH_ENTRY(sessionNode, &(serverNode->sessionList), SessionInfo, node) {
-            if (sessionNode->channelId == channelId && sessionNode->channelType == (ChannelType)channelType) {
+            if ((sessionNode->channelId == channelId && sessionNode->channelType == (ChannelType)channelType) ||
+                (sessionNode->channelIdReserve == channelId &&
+                sessionNode->channelTypeReserve == (ChannelType)channelType)) {
                 *isD2D = sessionNode->isD2D;
                 UnlockClientSessionServerList();
                 return SOFTBUS_OK;
