@@ -15,8 +15,6 @@
 
 #include "client_trans_socket_option.h"
 
-#include <string.h>
-
 #include "client_trans_multipath_manager.h"
 #include "client_trans_session_manager.h"
 #include "softbus_app_info.h"
@@ -124,7 +122,7 @@ static int32_t TransSetKeyType(
 static int32_t TransSetGroupId(
     int32_t socket, OptLevel level, OptType optType, void *optValue, int32_t optValueSize)
 {
-    if (socket <= 0 || optValue == NULL || optValueSize <= 0) {
+    if (socket <= 0 || optValue == NULL) {
         TRANS_LOGE(TRANS_SDK, "invalid param, socket=%{public}d", socket);
         return SOFTBUS_INVALID_PARAM;
     }
@@ -132,12 +130,7 @@ static int32_t TransSetGroupId(
         TRANS_LOGE(TRANS_SDK, "invalid level, socket=%{public}d, level=%{public}d", socket, level);
         return SOFTBUS_INVALID_PARAM;
     }
-    const char *groupId = (const char *)optValue;
-    if (strnlen(groupId, GROUP_ID_SIZE_MAX) >= GROUP_ID_SIZE_MAX) {
-        TRANS_LOGE(TRANS_SDK, "invalid groupId, socket=%{public}d", socket);
-        return SOFTBUS_TRANS_SESSION_GROUP_INVALID;
-    }
-    return ClientSetGroupIdBySocket(socket, groupId);
+    return ClientSetGroupIdBySocket(socket, (const char *)optValue, optValueSize);
 }
 
 static int32_t TransGetKeyType(

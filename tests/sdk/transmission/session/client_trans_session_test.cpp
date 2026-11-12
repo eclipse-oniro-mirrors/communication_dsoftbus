@@ -2121,7 +2121,7 @@ HWTEST_F(TransClientSessionTest, CreateNewSocketSessionGroupIdInitTest001, TestS
     sessionParam->groupId = "custom_group_id";
     SessionInfo *session = CreateNewSocketSession(sessionParam);
     ASSERT_TRUE(session != nullptr);
-    EXPECT_STREQ(session->info.groupId, "reserved");
+    EXPECT_STREQ(session->info.groupId, "custom_group_id");
     SoftBusFree(session);
     SoftBusFree(sessionParam);
 }
@@ -2180,7 +2180,7 @@ HWTEST_F(TransClientSessionTest, FillDfsSocketParamGroupIdTest001, TestSize.Leve
     (void)memset_s(&serverNode, sizeof(ClientSessionServer), 0, sizeof(ClientSessionServer));
     (void)memset_s(&tmpAttr, sizeof(SessionAttribute), 0, sizeof(SessionAttribute));
     FillDfsSocketParam(sessionParam, &tmpAttr, &serverNode, info);
-    EXPECT_STREQ(sessionParam->groupId, testGroupId);
+    EXPECT_STREQ(sessionParam->groupId, "reserved");
 
     strcpy_s(info->info.groupId, GROUP_ID_SIZE_MAX, "reserved");
     FillDfsSocketParam(sessionParam, &tmpAttr, &serverNode, info);
@@ -2217,7 +2217,7 @@ HWTEST_F(TransClientSessionTest, ClientSetGroupIdBySocketWhiteBoxTest001, TestSi
     EXPECT_EQ(ret, SOFTBUS_OK);
 
     const char *newGroupId = "whitebox_group_id";
-    ret = ClientSetGroupIdBySocket(session->sessionId, newGroupId);
+    ret = ClientSetGroupIdBySocket(session->sessionId, newGroupId, GROUP_ID_SIZE_MAX);
     EXPECT_EQ(ret, SOFTBUS_OK);
 
     ClientSessionServer *serverNode = nullptr;

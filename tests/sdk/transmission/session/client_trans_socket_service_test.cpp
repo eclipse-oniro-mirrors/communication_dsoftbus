@@ -1170,12 +1170,14 @@ HWTEST_F(TransClientSocketServiceTest, SetSocketOptGroupIdInvalidParamTest001, T
     EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
     ret = SetSocketOpt(1, OPT_LEVEL_SOFTBUS, OPT_TYPE_GROUP_ID, groupId, -1);
     EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+    ret = SetSocketOpt(1, OPT_LEVEL_SOFTBUS, OPT_TYPE_GROUP_ID, groupId, TEST_GROUP_ID_SIZE_MAX + 1);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
 }
 
 /*
  * @tc.name: SetSocketOptGroupIdInvalidGroupTest001
- * @tc.desc: test SetSocketOpt with OPT_TYPE_GROUP_ID when groupId is too long
- *           (length >= TEST_GROUP_ID_SIZE_MAX), returns SOFTBUS_TRANS_SESSION_GROUP_INVALID
+ * @tc.desc: test SetSocketOpt with OPT_TYPE_GROUP_ID when groupId has no null
+ *           terminator within optValueSize, returns SOFTBUS_TRANS_SESSION_GROUP_INVALID
  * @tc.type: FUNC
  * @tc.level: Level1
  * @tc.require:
@@ -1184,7 +1186,7 @@ HWTEST_F(TransClientSocketServiceTest, SetSocketOptGroupIdInvalidGroupTest001, T
 {
     char groupId[TEST_GROUP_ID_SIZE_MAX + 2] = {0};
     (void)memset_s(groupId, sizeof(groupId), 'G', TEST_GROUP_ID_SIZE_MAX + 1);
-    int32_t groupIdSize = static_cast<int32_t>(TEST_GROUP_ID_SIZE_MAX + 1);
+    int32_t groupIdSize = static_cast<int32_t>(TEST_GROUP_ID_SIZE_MAX);
     int32_t ret = SetSocketOpt(1, OPT_LEVEL_SOFTBUS, OPT_TYPE_GROUP_ID, groupId, groupIdSize);
     EXPECT_EQ(ret, SOFTBUS_TRANS_SESSION_GROUP_INVALID);
 }

@@ -704,7 +704,7 @@ SessionInfo *CreateNewSocketSession(const SessionParam *param)
         return NULL;
     }
 
-    if (strcpy_s(session->info.groupId, GROUP_ID_SIZE_MAX, "reserved") != EOK ||
+    if (strcpy_s(session->info.groupId, GROUP_ID_SIZE_MAX, param->groupId) != EOK ||
         memcpy_s(session->linkType, sizeof(param->attr->linkType), param->attr->linkType,
             sizeof(param->attr->linkType)) != EOK) {
         TRANS_LOGE(TRANS_SDK, "strcpy failed");
@@ -974,7 +974,7 @@ void FillDfsSocketParam(
     param->sessionName = serverNode->sessionName;
     param->peerSessionName = sessionNode->info.peerSessionName;
     param->peerDeviceId = sessionNode->info.peerDeviceId;
-    param->groupId = sessionNode->info.groupId;
+    param->groupId = "reserved";
     param->attr = tmpAttr;
     param->isQosLane = false;
     param->qosCount = 0;
