@@ -22,7 +22,6 @@
 #include "client_trans_session_callback.h"
 #include "client_trans_session_manager.h"
 #include "client_trans_socket_manager.h"
-#include "client_trans_udp_manager.h"
 
 #define LOW_BW               (384 * 1024)
 #define TRANS_DEFAULT_MIN_BW 0
@@ -409,7 +408,8 @@ void TransMultipathUpdateClosingState(SessionInfo *sessionNode, bool isClosing)
     }
 }
 
-void TransMultipathOnEvent(int32_t channelId, uint8_t changeType, int32_t linkType, int32_t reason)
+void TransMultipathOnEvent(int32_t channelId, int32_t channelType, uint8_t changeType,
+    int32_t linkType, int32_t reason)
 {
     if (channelId == INVALID_CHANNEL_ID) {
         TRANS_LOGE(TRANS_SDK, "Invalid param");
@@ -421,16 +421,10 @@ void TransMultipathOnEvent(int32_t channelId, uint8_t changeType, int32_t linkTy
         .reason = reason
     };
     TRANS_LOGI(TRANS_SDK,
-        "handle on event, channelId=%{public}d, transitionType=%{public}d, linkMediumType=%{public}d, "
-        "reason=%{public}d",
-        channelId, eventData.transitionType, eventData.linkMediumType, eventData.reason);
-    int32_t channelType = CHANNEL_TYPE_UNDEFINED;
-    int32_t ret = GetChannelTypeByChannelId(channelId, &channelType);
-    if (ret != SOFTBUS_OK) {
-        TRANS_LOGE(TRANS_SDK, "get channel type error, channelId=%{public}d, ret=%{public}d", channelId, ret);
-        return;
-    }
-    ret = GetClientSessionCb()->OnEvent(
+        "handle on event, channelId=%{public}d, channelType=%{public}d, transitionType=%{public}d, "
+        "linkMediumType=%{public}d, reason=%{public}d",
+        channelId, channelType, eventData.transitionType, eventData.linkMediumType, eventData.reason);
+    int32_t ret = GetClientSessionCb()->OnEvent(
         channelId, channelType, EVENT_TYPE_MULTIPATH, (const void *)&eventData, sizeof(MultipathEvent));
     if (ret != SOFTBUS_OK) {
         TRANS_LOGE(TRANS_SDK, "handle on event error, ret=%{public}d", ret);

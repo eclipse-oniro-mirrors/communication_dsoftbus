@@ -67,7 +67,8 @@ void TransMultipathUpdateClosingState(SessionInfo *sessionNode, bool isClosing);
 
 /* ========== Event reporting ========== */
 
-void TransMultipathOnEvent(int32_t channelId, uint8_t changeType, int32_t linkType, int32_t reason);
+void TransMultipathOnEvent(int32_t channelId, int32_t channelType, uint8_t changeType,
+    int32_t linkType, int32_t reason);
 
 /* ========== Control-plane route selection ========== */
 

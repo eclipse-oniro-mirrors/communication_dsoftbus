@@ -701,7 +701,7 @@ int32_t TransOnSessionClosed(int32_t channelId, int32_t channelType, ShutdownRea
         &surviveChannelType, &deadRouteType)) {
         LinkMediumType linkType = TransMultipathIsWiredRoute(deadRouteType) ?
             LINK_TYPE_WIRED : LINK_TYPE_WIFI;
-        TransMultipathOnEvent(surviveChannelId, 0, (int32_t)linkType, 0);
+        TransMultipathOnEvent(surviveChannelId, surviveChannelType, 0, (int32_t)linkType, 0);
         return SOFTBUS_OK;
     }
     SessionEnableStatus enableStatus = ENABLE_STATUS_INIT;

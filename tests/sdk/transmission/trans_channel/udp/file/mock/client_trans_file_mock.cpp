@@ -220,7 +220,8 @@ int32_t NSTACKX_DFileSendFilesWithRemotePath(int32_t sessionId, const char *file
 }
 
 // Session wrappers
-void TransMultipathOnEvent(int32_t channelId, uint8_t changeType, int32_t linkType, int32_t reason)
+void TransMultipathOnEvent(int32_t channelId, int32_t channelType, uint8_t changeType, int32_t linkType,
+    int32_t reason)
 {
     if (GetClientTransFileInterface() != nullptr) {
         GetClientTransFileInterface()->HandleMultiPathOnEvent(
