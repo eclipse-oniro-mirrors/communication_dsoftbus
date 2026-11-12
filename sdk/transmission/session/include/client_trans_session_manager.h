@@ -260,7 +260,7 @@ int32_t ClientSetKeyTypeBySocket(int32_t socket, int32_t keyType);
 
 int32_t TransGetKeyTypeBySocketId(int32_t socket, int32_t *keyType);
 
-int32_t ClientSetGroupIdBySocket(int32_t socket, const char *groupId);
+int32_t ClientSetGroupIdBySocket(int32_t socket, const char *groupId, int32_t groupIdSize);
 
 int32_t ClientSetEdcaBySocket(int32_t socket, const EdcaParam *edcaParam);
 

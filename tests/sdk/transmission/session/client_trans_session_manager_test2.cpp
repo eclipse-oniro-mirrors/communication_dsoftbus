@@ -1893,27 +1893,33 @@ HWTEST_F(TransClientSessionManagerTest, SaveAddrInfoInvalidParamTest001, TestSiz
 /*
  * @tc.name: ClientSetGroupIdBySocketInvalidParamTest001
  * @tc.desc: test ClientSetGroupIdBySocket returns SOFTBUS_INVALID_PARAM for
- *           invalid socket id or null groupId
+ *           invalid socket id, null groupId or invalid groupIdSize
  * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(TransClientSessionManagerTest, ClientSetGroupIdBySocketInvalidParamTest001, TestSize.Level1)
 {
     const char *groupId = "test_group_id";
-    int32_t ret = ClientSetGroupIdBySocket(0, groupId);
+    int32_t ret = ClientSetGroupIdBySocket(0, groupId, GROUP_ID_SIZE_MAX);
     EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
-    ret = ClientSetGroupIdBySocket(-1, groupId);
+    ret = ClientSetGroupIdBySocket(-1, groupId, GROUP_ID_SIZE_MAX);
     EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
-    ret = ClientSetGroupIdBySocket(1, nullptr);
+    ret = ClientSetGroupIdBySocket(1, nullptr, GROUP_ID_SIZE_MAX);
     EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
-    ret = ClientSetGroupIdBySocket(0, nullptr);
+    ret = ClientSetGroupIdBySocket(0, nullptr, GROUP_ID_SIZE_MAX);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+    ret = ClientSetGroupIdBySocket(1, groupId, 0);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+    ret = ClientSetGroupIdBySocket(1, groupId, -1);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+    ret = ClientSetGroupIdBySocket(1, groupId, GROUP_ID_SIZE_MAX + 1);
     EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
 }
 
 /*
  * @tc.name: ClientSetGroupIdBySocketInvalidGroupTest001
  * @tc.desc: test ClientSetGroupIdBySocket returns SOFTBUS_TRANS_SESSION_GROUP_INVALID
- *           when groupId length >= GROUP_ID_SIZE_MAX
+ *           when groupId has no null terminator within groupIdSize
  * @tc.type: FUNC
  * @tc.require:
  */
@@ -1921,7 +1927,9 @@ HWTEST_F(TransClientSessionManagerTest, ClientSetGroupIdBySocketInvalidGroupTest
 {
     char groupId[GROUP_ID_SIZE_MAX + 2] = {0};
     (void)memset_s(groupId, sizeof(groupId), 'G', GROUP_ID_SIZE_MAX + 1);
-    int32_t ret = ClientSetGroupIdBySocket(1, groupId);
+    int32_t ret = ClientSetGroupIdBySocket(1, groupId, GROUP_ID_SIZE_MAX);
+    EXPECT_EQ(ret, SOFTBUS_TRANS_SESSION_GROUP_INVALID);
+    ret = ClientSetGroupIdBySocket(1, groupId, GROUP_ID_SIZE_MAX / 2);
     EXPECT_EQ(ret, SOFTBUS_TRANS_SESSION_GROUP_INVALID);
 }
 
@@ -1937,7 +1945,7 @@ HWTEST_F(TransClientSessionManagerTest, ClientSetGroupIdBySocketNotFoundTest001,
     int32_t ret = TransClientInit();
     EXPECT_EQ(ret, SOFTBUS_OK);
     const char *groupId = "test_group_id";
-    ret = ClientSetGroupIdBySocket(TRANS_TEST_SESSION_ID, groupId);
+    ret = ClientSetGroupIdBySocket(TRANS_TEST_SESSION_ID, groupId, GROUP_ID_SIZE_MAX);
     EXPECT_NE(ret, SOFTBUS_OK);
     TransClientDeinit();
 }
@@ -1969,7 +1977,7 @@ HWTEST_F(TransClientSessionManagerTest, ClientSetGroupIdBySocketSuccessTest001, 
     EXPECT_EQ(ret, SOFTBUS_OK);
 
     const char *newGroupId = "new_test_group_id";
-    ret = ClientSetGroupIdBySocket(session->sessionId, newGroupId);
+    ret = ClientSetGroupIdBySocket(session->sessionId, newGroupId, GROUP_ID_SIZE_MAX);
     EXPECT_EQ(ret, SOFTBUS_OK);
 
     ret = ClientDeleteSession(session->sessionId);
