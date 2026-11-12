@@ -337,7 +337,7 @@
     "APP_INFO": [
       {
         "PKG_NAME": "ohos.distributed_notification",
-        "UID": "5523",
+        "UID": "6061",
         "TYPE": "native_app",
         "ACTIONS": "create,open"
       }
