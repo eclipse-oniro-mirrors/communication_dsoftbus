@@ -845,7 +845,7 @@ HWTEST_F(TransTcpDirectMessageStaticTest, TransSrvGetSeqAndFlagsByChannelIdTest0
     SessionConn *conn = (SessionConn *)SoftBusCalloc(sizeof(SessionConn));
     ASSERT_TRUE(conn != nullptr);
     TransProcessAsyncOpenTdcChannelFailed(conn, openResult, seq, flags);
-    TransCleanTdcSource(channelId);
+    TransCleanTdcSource(channelId, conn->listenMod, conn->appInfo.fd);
     SoftBusFree(conn);
 }
 
