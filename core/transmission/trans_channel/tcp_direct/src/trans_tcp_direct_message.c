@@ -1841,11 +1841,14 @@ int32_t TransTdcSrvRecvData(ListenerModule module, int32_t channelId, int32_t ty
     return TransTdcSrvProcData(module, channelId, type);
 }
 
-static void TransCleanTdcSource(int32_t channelId)
+static void TransCleanTdcSource(int32_t channelId, ListenerModule module, int32_t fd)
 {
     (void)TransDelTcpChannelInfoByChannelId(channelId);
-    (void)TransDelSessionConnById(channelId);
+    int32_t ret = TransDelSessionConnById(channelId);
     TransSrvDelDataBufNode(channelId);
+    if (ret == SOFTBUS_OK) {
+        CloseTcpDirectFd(module, fd);
+    }
 }
 
 static void TransProcessAsyncOpenTdcChannelFailed(SessionConn *conn, int32_t openResult, uint64_t seq, uint32_t flags)
@@ -1861,8 +1864,7 @@ static void TransProcessAsyncOpenTdcChannelFailed(SessionConn *conn, int32_t ope
     (void)memset_s(conn->appInfo.sessionKey, sizeof(conn->appInfo.sessionKey), 0, sizeof(conn->appInfo.sessionKey));
     (void)memset_s(conn->appInfo.sinkSessionKey, sizeof(conn->appInfo.sinkSessionKey), 0,
         sizeof(conn->appInfo.sinkSessionKey));
-    TransCleanTdcSource(conn->channelId);
-    CloseTcpDirectFd(conn->listenMod, conn->appInfo.fd);
+    TransCleanTdcSource(conn->channelId, conn->listenMod, conn->appInfo.fd);
 }
 
 static int32_t HandleTdcChannelOpenedReply(
@@ -2089,8 +2091,7 @@ void TransAsyncTcpDirectChannelTask(int32_t channelId)
         (void)memset_s(connInfo.appInfo.sinkSessionKey, sizeof(connInfo.appInfo.sinkSessionKey), 0,
             sizeof(connInfo.appInfo.sinkSessionKey));
         (void)NotifyChannelClosed(&connInfo.appInfo, channelId);
-        TransCleanTdcSource(channelId);
-        CloseTcpDirectFd(connInfo.listenMod, connInfo.appInfo.fd);
+        TransCleanTdcSource(channelId, connInfo.listenMod, connInfo.appInfo.fd);
         return;
     }
     TRANS_LOGI(TRANS_CTRL, "Open channelId=%{public}d not finished, generate new task and waiting", channelId);
