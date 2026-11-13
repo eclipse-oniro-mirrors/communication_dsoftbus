@@ -59,7 +59,7 @@ static FarFieldAdapterContext g_adapterContext = {
     .refCount = 0,
 };
 
-static FarFieldCallbackSt *g_farFieldCallback = NULL;
+static const FarFieldCallbackSt *g_farFieldCallback = NULL;
 
 static SoftBusMutex g_adapterMutex;
 

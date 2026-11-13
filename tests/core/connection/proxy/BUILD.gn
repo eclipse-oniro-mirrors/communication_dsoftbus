@@ -154,3 +154,40 @@ ohos_unittest("FarFieldProxyChannelManagerTest") {
     "hilog:libhilog",
   ]
 }
+
+ohos_unittest("FarFieldProxyAdapterTest") {
+  module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
+  include_dirs = [
+    "$dsoftbus_root_path/core/connection/proxy",
+    "$dsoftbus_root_path/core/connection/proxy/far_field",
+    "$dsoftbus_root_path/core/connection/common/include",
+    "$dsoftbus_root_path/core/common/include",
+    "$dsoftbus_root_path/core/frame/common/include",
+    "$softbus_adapter_common/include",
+    "$dsoftbus_root_path/dfx/interface/include",
+    "$dsoftbus_root_path/interfaces/kits/common",
+  ]
+
+  deps = [
+    "$dsoftbus_dfx_path:softbus_dfx",
+    "$dsoftbus_root_path/adapter:softbus_adapter",
+    "$dsoftbus_root_path/core/common:softbus_utils",
+  ]
+
+  sources = [
+    "$dsoftbus_root_path/core/connection/proxy/far_field/far_field_proxy_adapter.c",
+    "$dsoftbus_root_path/tests/core/connection/proxy/unittest/far_field_proxy_adapter_test.cpp",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "googletest:gmock_main",
+    "hilog:libhilog",
+  ]
+}

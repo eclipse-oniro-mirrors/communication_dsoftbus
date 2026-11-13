@@ -56,6 +56,7 @@ group("unittest") {
       "general:GeneralConnectionConstraintTest",
       "general:GeneralConnectionTest",
       "general:GeneralNegotiationTest",
+      "proxy:FarFieldProxyAdapterTest",
       #      "proxy:BrProxyChannelManagerTest",
       #      "proxy:FarFieldProxyChannelManagerTest",
       #      "proxy:ProxyChannelManagerTest",
