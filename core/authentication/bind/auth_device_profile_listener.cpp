@@ -26,6 +26,7 @@
 #include "lnn_app_bind_interface.h"
 #include "lnn_distributed_net_ledger.h"
 #include "lnn_decision_db.h"
+#include "lnn_local_net_ledger.h"
 #include "lnn_device_info_struct.h"
 #include "lnn_heartbeat_ctrl.h"
 #include "lnn_heartbeat_utils.h"
@@ -102,6 +103,10 @@ int32_t AuthDeviceProfileListener::OnTrustDeviceProfileDelete(const TrustDeviceP
         "udid=%{public}s, localUserId=%{public}d, peerUserId=%{public}d",
         AnonymizeWrapper(anonyUdid), profile.GetLocalUserId(), profile.GetPeerUserId());
     AnonymizeFree(anonyUdid);
+    if (profile.GetBindType() == (uint32_t)OHOS::DistributedDeviceProfile::BindType::SHARE) {
+        AUTH_LOGI(AUTH_INIT, "share type deleted, update state version");
+        LnnUpdateStateVersion(UPDATE_SHARE_DELETE);
+    }
     if (IsSingleFrameCarDeviceExist(udid)) {
         AUTH_LOGI(AUTH_INIT, "single frame car skip");
         return SOFTBUS_OK;

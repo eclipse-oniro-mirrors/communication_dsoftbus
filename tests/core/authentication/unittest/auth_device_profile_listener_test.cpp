@@ -156,6 +156,27 @@ HWTEST_F(AuthDeviceProfileListenerTest, ON_TRUST_DEVICE_PROFILE_DELETE_TEST_002,
 }
 
 /*
+ * @tc.name: ON_TRUST_DEVICE_PROFILE_DELETE_TEST_003
+ * @tc.desc: Verify that OnTrustDeviceProfileDelete updates state version when bindType is SHARE.
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(AuthDeviceProfileListenerTest, ON_TRUST_DEVICE_PROFILE_DELETE_TEST_003, TestSize.Level1)
+{
+    g_deviceProfilePara.onDeviceProfileDeleted = OnDeviceNotTrusted;
+    RegisterToDp(&g_deviceProfilePara);
+    AuthToDeviceProfile::TrustDeviceProfile profile;
+    profile.SetDeviceId("test_device_id");
+    profile.SetBindType((uint32_t)OHOS::DistributedDeviceProfile::BindType::SHARE);
+    AuthDeviceProfileListenerInterfaceMock mocker;
+    EXPECT_CALL(mocker, LnnUpdateStateVersion(UPDATE_SHARE_DELETE)).Times(1);
+    EXPECT_CALL(mocker, LnnGetRemoteNodeInfoById(_, _, _)).WillRepeatedly(Return(0));
+    int32_t ret = listener->OnTrustDeviceProfileDelete(profile);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+}
+
+/*
  * @tc.name: ON_TRUST_DEVICE_PROFILE_UPDATE_TEST
  * @tc.desc: Verify that OnTrustDeviceProfileUpdate successfully handles updating a
  *           TrustDeviceProfile, including cases with null profiles.
