@@ -150,7 +150,7 @@ int32_t TransCheckClientAccessControl(const char *peerNetworkId)
         return SOFTBUS_OK;
     }
 
-    pid_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
+    pid_t callingUid = OHOS::IPCSkeleton::GetCallingAppUid();
     int32_t appUserId = GetOsAccountLocalIdFromUidAdapter(callingUid);
     bool isForegroundUser = false;
     int32_t ret = IsOsAccountForegroundAdapter(appUserId, isForegroundUser);

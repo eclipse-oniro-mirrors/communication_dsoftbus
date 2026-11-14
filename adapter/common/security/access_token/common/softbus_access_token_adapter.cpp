@@ -151,7 +151,7 @@ SOFTBUS_SYMBOL_EXPORT SOFTBUS_VISIBILITY bool SoftBusCheckIsAccessAndRecordAcces
 
 SOFTBUS_SYMBOL_EXPORT int32_t SoftBusCalcPermType(uint64_t fullTokenId, pid_t uid, pid_t pid)
 {
-    if (uid == static_cast<pid_t>(getuid()) && pid == getpid()) {
+    if (uid == static_cast<pid_t>(getappuid()) && pid == getpid()) {
         COMM_LOGI(COMM_PERM, "self app");
         return SELF_APP;
     }

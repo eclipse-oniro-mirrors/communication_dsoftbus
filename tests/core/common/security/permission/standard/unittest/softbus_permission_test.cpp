@@ -95,7 +95,7 @@ HWTEST_F(SoftbusPermissionTest, CheckTransPermissionTest001, TestSize.Level0)
  */
 HWTEST_F(SoftbusPermissionTest, CheckTransPermissionTest002, TestSize.Level0)
 {
-    pid_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
+    pid_t callingUid = OHOS::IPCSkeleton::GetCallingAppUid();
     pid_t callingPid = OHOS::IPCSkeleton::GetCallingPid();
     char testSessionName[] = "testSessionName";
     char testPkgName[] = "testPkgName";
@@ -311,7 +311,7 @@ HWTEST_F(SoftbusPermissionTest, SoftBusCheckIsAccessAndRecordAccessToken001, Tes
 HWTEST_F(SoftbusPermissionTest, SoftBusCalcPermType001, TestSize.Level0)
 {
     uint64_t fullTokenId = 0;
-    pid_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
+    pid_t callingUid = OHOS::IPCSkeleton::GetCallingAppUid();
     pid_t callingPid = OHOS::IPCSkeleton::GetCallingPid();
 
     int32_t ret = SoftBusCalcPermType(fullTokenId, callingUid, callingPid);

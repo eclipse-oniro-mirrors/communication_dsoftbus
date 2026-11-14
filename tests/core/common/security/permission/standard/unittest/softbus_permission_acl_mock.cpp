@@ -49,13 +49,13 @@ IPCSkeletonMock::~IPCSkeletonMock()
     mock.store(nullptr);
 }
 
-pid_t IPCSkeleton::GetCallingUid()
+pid_t IPCSkeleton::GetCallingAppUid()
 {
     auto mock = IPCSkeletonMock::GetMock();
     if (mock == nullptr) {
         return -1;
     }
-    return mock->GetCallingUid();
+    return mock->GetCallingAppUid();
 }
 
 uint64_t IPCSkeleton::GetFirstFullTokenID()

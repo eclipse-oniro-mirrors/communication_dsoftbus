@@ -103,7 +103,7 @@ int32_t SoftBusServer::SoftbusRegisterService(
 int32_t SoftBusServer::CreateSessionServer(const char *pkgName, const char *sessionName, uint64_t timestamp)
 {
     (void)timestamp;
-    pid_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
+    pid_t callingUid = OHOS::IPCSkeleton::GetCallingAppUid();
     pid_t callingPid = OHOS::IPCSkeleton::GetCallingPid();
     return TransCreateSessionServer(pkgName, sessionName, (int32_t)callingUid, (int32_t)callingPid);
 }
@@ -575,7 +575,7 @@ void SoftBusServer::DestroyGroupOwner(const char *pkgName)
 #ifdef SUPPORT_BUNDLENAME
 static int32_t FillBundleName(char *bundleNameStr, uint32_t size)
 {
-    pid_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
+    pid_t callingUid = OHOS::IPCSkeleton::GetCallingAppUid();
     std::string bundleName;
     sptr<ISystemAbilityManager> systemAbilityManager =
         SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -774,7 +774,7 @@ static int32_t PushIdentifyCheck()
         COMM_LOGE(COMM_SVC, "get remote object failed!");
         return SOFTBUS_TRANS_PROXY_REMOTE_NULL;
     }
-    pid_t uid = IPCSkeleton::GetCallingUid();
+    pid_t uid = IPCSkeleton::GetCallingAppUid();
     COMM_LOGI(COMM_SVC, "[br_proxy] uid:%{public}d", uid);
     if (uid != PUSH_SERVICE_UID) {
         pid_t pid;

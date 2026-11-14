@@ -38,7 +38,7 @@ public:
 
 void TransDynamicPermissionTest::SetUpTestCase(void)
 {
-    g_permUid = static_cast<int32_t>(getuid());
+    g_permUid = static_cast<int32_t>(getappuid());
     ASSERT_TRUE(g_permUid >= 0);
     g_permPid = static_cast<int32_t>(getpid());
     ASSERT_TRUE(g_permPid > 0);

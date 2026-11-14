@@ -195,7 +195,7 @@ SOFTBUS_VISIBILITY extern "C" pid_t GetCallerPid()
 
 SOFTBUS_VISIBILITY extern "C" pid_t GetCallerUid()
 {
-    return IPCSkeleton::GetCallingUid();
+    return IPCSkeleton::GetCallingAppUid();
 }
 
 SOFTBUS_VISIBILITY extern "C" uint32_t GetCallerTokenId()

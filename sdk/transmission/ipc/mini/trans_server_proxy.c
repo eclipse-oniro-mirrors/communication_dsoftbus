@@ -43,12 +43,12 @@ void TransServerProxyClear(void)
 int32_t ServerIpcCreateSessionServer(const char *pkgName, const char *sessionName, uint64_t timestamp)
 {
     (void)timestamp;
-    return TransCreateSessionServer(pkgName, sessionName, (int32_t)getuid(), (int32_t)getpid());
+    return TransCreateSessionServer(pkgName, sessionName, (int32_t)getappuid(), (int32_t)getpid());
 }
 
 int32_t ServerIpcRemoveSessionServer(const char *pkgName, const char *sessionName, uint64_t timestamp)
 {
-    int32_t callingUid = (int32_t)getuid();
+    int32_t callingUid = (int32_t)getappuid();
     int32_t callingPid = (int32_t)getpid();
     if (!CheckUidAndPid(sessionName, callingUid, callingPid)) {
         TRANS_LOGE(TRANS_SDK, "Check Uid and Pid failed!");

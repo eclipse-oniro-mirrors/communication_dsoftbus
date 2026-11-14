@@ -112,7 +112,7 @@ HWTEST_F(SoftbusPermissionACLTest, TransCheckClientAccessControl004, TestSize.Le
     IPCSkeletonMock mockIpc;
     EXPECT_CALL(mockIpc, GetCallingFullTokenID)
         .WillRepeatedly(Return(HAP_TOKENID));
-    EXPECT_CALL(mockIpc, GetCallingUid)
+    EXPECT_CALL(mockIpc, GetCallingAppUid)
         .WillRepeatedly(Return(NATIVE_PID));
 
     SoftbusPermissionACLInterfaceMock mockSPACL;
@@ -141,7 +141,7 @@ HWTEST_F(SoftbusPermissionACLTest, TransCheckClientAccessControl005, TestSize.Le
     IPCSkeletonMock mockIpc;
     EXPECT_CALL(mockIpc, GetCallingFullTokenID)
         .WillRepeatedly(Return(HAP_TOKENID));
-    EXPECT_CALL(mockIpc, GetCallingUid)
+    EXPECT_CALL(mockIpc, GetCallingAppUid)
         .WillRepeatedly(Return(NATIVE_PID));
 
     SoftbusPermissionACLInterfaceMock mockSPACL;
@@ -169,7 +169,7 @@ HWTEST_F(SoftbusPermissionACLTest, TransCheckClientAccessControl006, TestSize.Le
     IPCSkeletonMock mockIpc;
     EXPECT_CALL(mockIpc, GetCallingFullTokenID)
         .WillRepeatedly(Return(HAP_TOKENID));
-    EXPECT_CALL(mockIpc, GetCallingUid)
+    EXPECT_CALL(mockIpc, GetCallingAppUid)
         .WillRepeatedly(Return(NATIVE_PID));
 
     SoftbusPermissionACLInterfaceMock mockSPACL;
@@ -199,7 +199,7 @@ HWTEST_F(SoftbusPermissionACLTest, TransCheckClientAccessControl007, TestSize.Le
     IPCSkeletonMock mockIpc;
     EXPECT_CALL(mockIpc, GetCallingFullTokenID)
         .WillRepeatedly(Return(HAP_TOKENID));
-    EXPECT_CALL(mockIpc, GetCallingUid)
+    EXPECT_CALL(mockIpc, GetCallingAppUid)
         .WillRepeatedly(Return(NATIVE_PID));
 
     SoftbusPermissionACLInterfaceMock mockSPACL;
@@ -231,7 +231,7 @@ HWTEST_F(SoftbusPermissionACLTest, TransCheckClientAccessControl008, TestSize.Le
     IPCSkeletonMock mockIpc;
     EXPECT_CALL(mockIpc, GetCallingFullTokenID)
         .WillRepeatedly(Return(HAP_TOKENID));
-    EXPECT_CALL(mockIpc, GetCallingUid)
+    EXPECT_CALL(mockIpc, GetCallingAppUid)
         .WillRepeatedly(Return(NATIVE_PID));
 
     SoftbusPermissionACLInterfaceMock mockSPACL;

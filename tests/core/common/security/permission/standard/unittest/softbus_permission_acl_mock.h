@@ -93,7 +93,7 @@ public:
     IPCSkeleton() = default;
     virtual ~IPCSkeleton() = default;
 
-    virtual pid_t GetCallingUid();
+    virtual pid_t GetCallingAppUid();
     virtual uint64_t GetFirstFullTokenID();
     virtual uint64_t GetCallingFullTokenID();
 };
@@ -101,7 +101,7 @@ class IPCSkeletonMock : public IPCSkeleton {
 public:
     IPCSkeletonMock();
     ~IPCSkeletonMock() override;
-    MOCK_METHOD0(GetCallingUid, pid_t());
+    MOCK_METHOD0(GetCallingAppUid, pid_t());
     MOCK_METHOD0(GetFirstFullTokenID, uint64_t());
     MOCK_METHOD0(GetCallingFullTokenID, uint64_t());
 
