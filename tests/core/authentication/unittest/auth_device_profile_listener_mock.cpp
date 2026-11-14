@@ -134,6 +134,11 @@ int32_t JudgeDeviceTypeAndGetOsAccountIds(void)
     return GetInterface()->JudgeDeviceTypeAndGetOsAccountIds();
 }
 
+void LnnUpdateStateVersion(StateVersionChangeReason reason)
+{
+    return GetInterface()->LnnUpdateStateVersion(reason);
+}
+
 int32_t LnnGetLocalNumInfo(InfoKey key, int32_t *info)
 {
     (void)key;

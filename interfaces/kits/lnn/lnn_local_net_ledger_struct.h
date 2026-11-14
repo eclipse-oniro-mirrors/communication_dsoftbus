@@ -55,6 +55,7 @@ typedef enum {
     UPDATE_CIPHERKEY = 128,
     UPDATE_SLE_CAP = 256,
     UPDATE_FEATURE = 512,
+    UPDATE_SHARE_DELETE = 1024,
 } StateVersionChangeReason;
 
 typedef struct {

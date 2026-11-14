@@ -19,6 +19,7 @@
 #include "bus_center_event.h"
 #include "lnn_distributed_net_ledger.h"
 #include "lnn_heartbeat_utils.h"
+#include "lnn_local_net_ledger_struct.h"
 #include "lnn_ohos_account.h"
 #include <gmock/gmock.h>
 #include <mutex>
@@ -42,6 +43,7 @@ public:
     virtual void LnnHbOnTrustedRelationReduced(void) = 0;
     virtual int32_t LnnJudgeDeviceTypeAndGetOsAccountInfo(uint8_t *accountHash, uint32_t len) = 0;
     virtual int32_t JudgeDeviceTypeAndGetOsAccountIds(void) = 0;
+    virtual void LnnUpdateStateVersion(StateVersionChangeReason reason) = 0;
 };
 
 class AuthDeviceProfileListenerInterfaceMock : public AuthDeviceProfileListenerInterface {
@@ -61,6 +63,7 @@ public:
     MOCK_METHOD0(LnnHbOnTrustedRelationReduced, void(void));
     MOCK_METHOD2(LnnJudgeDeviceTypeAndGetOsAccountInfo, int32_t(uint8_t *, uint32_t));
     MOCK_METHOD0(JudgeDeviceTypeAndGetOsAccountIds, int32_t(void));
+    MOCK_METHOD1(LnnUpdateStateVersion, void(StateVersionChangeReason));
 };
 
 extern "C" {
