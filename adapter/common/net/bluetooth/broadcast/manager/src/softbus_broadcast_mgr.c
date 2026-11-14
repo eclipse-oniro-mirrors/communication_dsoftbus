@@ -1232,7 +1232,7 @@ static const SrvTypeChannelMap SRV_TYPE_CHANNEL_MAP[] = {
     { SRV_TYPE_OOP,              CHANEL_UNSTEADY       },
     { SRV_TYPE_SD,               CHANEL_UNSTEADY       },
     { SRV_TYPE_COLLABORATION,    CHANEL_UNSTEADY       },
-    { SRV_TYPE_PERCEPTION,       CHANEL_UNSTEADY       },
+    { SRV_TYPE_PERCEPTION,       CHANEL_LP             },
     { SRV_TYPE_D2D_PAGING,       CHANEL_SLE_D2D_PAGING },
     { SRV_TYPE_D2D_GROUP_TALKIE, CHANEL_SLE_D2D_TALKIE },
     { SRV_TYPE_VLINK,            CHANEL_VLINK          },
