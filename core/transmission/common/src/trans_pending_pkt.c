@@ -78,7 +78,7 @@ void PendingDeinit(int32_t type)
         DestroySoftBusList(g_pendingList[type]);
         g_pendingList[type] = NULL;
     }
-    TRANS_LOGI(TRANS_INIT, "PendigPackManagerDeinit init ok");
+    TRANS_LOGI(TRANS_INIT, "PendingPackManagerDeinit init ok");
 }
 
 static inline bool TimeBefore(const SoftBusSysTime *inputTime)

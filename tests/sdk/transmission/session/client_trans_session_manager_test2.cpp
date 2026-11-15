@@ -1987,4 +1987,292 @@ HWTEST_F(TransClientSessionManagerTest, ClientSetGroupIdBySocketSuccessTest001, 
     SoftBusFree(sessionParam);
     TransClientDeinit();
 }
+
+/*
+ * @tc.name: ClientIpcOpenSessionAfterDeleteTest001
+ * @tc.desc: test ClientIpcOpenSession returns SOFTBUS_TRANS_SESSION_INFO_NOT_FOUND when
+ *           the session has been deleted before the call, regression guard for the
+ *           use-after-free fix: no session heap block is touched after this point
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransClientSessionManagerTest, ClientIpcOpenSessionAfterDeleteTest001, TestSize.Level1)
+{
+    int32_t ret = TransClientInit();
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    (void)ClientDeleteSessionServer(SEC_TYPE_PLAINTEXT, g_sessionName);
+    uint64_t timestamp = 0;
+    ret = ClientAddSessionServer(SEC_TYPE_PLAINTEXT, g_pkgName, g_sessionName, &g_sessionlistener, &timestamp);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    SessionParam *sessionParam = reinterpret_cast<SessionParam *>(SoftBusCalloc(sizeof(SessionParam)));
+    ASSERT_TRUE(sessionParam != nullptr);
+    GenerateCommParam(sessionParam);
+    SessionInfo *session = GenerateSession(sessionParam);
+    ASSERT_TRUE(session != nullptr);
+    ret = ClientAddNewSession(g_sessionName, session);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    int32_t sessionId = session->sessionId;
+    ret = ClientDeleteSession(sessionId);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    session = nullptr;
+
+    TransInfo transInfo = { 0 };
+    ret = ClientIpcOpenSession(sessionId, nullptr, 0, &transInfo, false);
+    EXPECT_EQ(ret, SOFTBUS_TRANS_SESSION_INFO_NOT_FOUND);
+
+    ret = ClientDeleteSessionServer(SEC_TYPE_PLAINTEXT, g_sessionName);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    SoftBusFree(sessionParam);
+    TransClientDeinit();
+}
+
+/*
+ * @tc.name: ClientIpcOpenSessionTest001
+ * @tc.desc: test ClientIpcOpenSession finds the session, deep copies session info under
+ *           the lock and reaches the IPC stage, verified by session state OPENING
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransClientSessionManagerTest, ClientIpcOpenSessionTest001, TestSize.Level1)
+{
+    int32_t ret = TransClientInit();
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    (void)ClientDeleteSessionServer(SEC_TYPE_PLAINTEXT, g_sessionName);
+    uint64_t timestamp = 0;
+    ret = ClientAddSessionServer(SEC_TYPE_PLAINTEXT, g_pkgName, g_sessionName, &g_sessionlistener, &timestamp);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    SessionParam *sessionParam = reinterpret_cast<SessionParam *>(SoftBusCalloc(sizeof(SessionParam)));
+    ASSERT_TRUE(sessionParam != nullptr);
+    GenerateCommParam(sessionParam);
+    SessionInfo *session = GenerateSession(sessionParam);
+    ASSERT_TRUE(session != nullptr);
+    session->enableMultipath = true;
+    ret = ClientAddNewSession(g_sessionName, session);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    int32_t sessionId = session->sessionId;
+
+    TransInfo transInfo = { 0 };
+    ret = ClientIpcOpenSession(sessionId, nullptr, 0, &transInfo, false);
+    EXPECT_NE(ret, SOFTBUS_TRANS_SESSION_INFO_NOT_FOUND);
+    EXPECT_NE(ret, SOFTBUS_STRCPY_ERR);
+
+    SocketLifecycleData lifecycle;
+    (void)memset_s(&lifecycle, sizeof(SocketLifecycleData), 0, sizeof(SocketLifecycleData));
+    ret = GetSocketLifecycleAndSessionNameBySessionId(sessionId, nullptr, &lifecycle);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    EXPECT_EQ(lifecycle.sessionState, SESSION_STATE_OPENING);
+
+    ret = ClientDeleteSession(sessionId);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    session = nullptr;
+    ret = ClientDeleteSessionServer(SEC_TYPE_PLAINTEXT, g_sessionName);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    SoftBusFree(sessionParam);
+    TransClientDeinit();
+}
+
+/*
+ * @tc.name: ClientDfsIpcOpenSessionTest001
+ * @tc.desc: test ClientDfsIpcOpenSession finds the session, deep copies session info under
+ *           the lock and reaches the IPC stage, verified by session state OPENING
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransClientSessionManagerTest, ClientDfsIpcOpenSessionTest001, TestSize.Level1)
+{
+    int32_t ret = TransClientInit();
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    (void)ClientDeleteSessionServer(SEC_TYPE_PLAINTEXT, g_sessionName);
+    uint64_t timestamp = 0;
+    ret = ClientAddSessionServer(SEC_TYPE_PLAINTEXT, g_pkgName, g_sessionName, &g_sessionlistener, &timestamp);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    SessionParam *sessionParam = reinterpret_cast<SessionParam *>(SoftBusCalloc(sizeof(SessionParam)));
+    ASSERT_TRUE(sessionParam != nullptr);
+    GenerateCommParam(sessionParam);
+    SessionInfo *session = GenerateSession(sessionParam);
+    ASSERT_TRUE(session != nullptr);
+    ret = ClientAddNewSession(g_sessionName, session);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    int32_t sessionId = session->sessionId;
+
+    TransInfo transInfo = { 0 };
+    ret = ClientDfsIpcOpenSession(sessionId, &transInfo);
+    EXPECT_NE(ret, SOFTBUS_TRANS_SESSION_INFO_NOT_FOUND);
+    EXPECT_NE(ret, SOFTBUS_STRCPY_ERR);
+
+    SocketLifecycleData lifecycle;
+    (void)memset_s(&lifecycle, sizeof(SocketLifecycleData), 0, sizeof(SocketLifecycleData));
+    ret = GetSocketLifecycleAndSessionNameBySessionId(sessionId, nullptr, &lifecycle);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    EXPECT_EQ(lifecycle.sessionState, SESSION_STATE_OPENING);
+
+    ret = ClientDeleteSession(sessionId);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    session = nullptr;
+    ret = ClientDeleteSessionServer(SEC_TYPE_PLAINTEXT, g_sessionName);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    SoftBusFree(sessionParam);
+    TransClientDeinit();
+}
+
+/*
+ * @tc.name: SetSessionStateExpectCancelBySessionIdTest001
+ * @tc.desc: test SetSessionStateExpectCancelBySessionId updates state when session is not cancelled
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransClientSessionManagerTest, SetSessionStateExpectCancelBySessionIdTest001, TestSize.Level1)
+{
+    int32_t ret = TransClientInit();
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    (void)ClientDeleteSessionServer(SEC_TYPE_PLAINTEXT, g_sessionName);
+    uint64_t timestamp = 0;
+    ret = ClientAddSessionServer(SEC_TYPE_PLAINTEXT, g_pkgName, g_sessionName, &g_sessionlistener, &timestamp);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    SessionParam *sessionParam = reinterpret_cast<SessionParam *>(SoftBusCalloc(sizeof(SessionParam)));
+    ASSERT_TRUE(sessionParam != nullptr);
+    GenerateCommParam(sessionParam);
+    SessionInfo *session = GenerateSession(sessionParam);
+    ASSERT_TRUE(session != nullptr);
+    ret = ClientAddNewSession(g_sessionName, session);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    int32_t sessionId = session->sessionId;
+
+    ret = SetSessionStateExpectCancelBySessionId(TRANS_TEST_INVALID_SESSION_ID, SESSION_STATE_OPENING, nullptr);
+    EXPECT_EQ(ret, SOFTBUS_TRANS_INVALID_SESSION_ID);
+
+    int32_t errCode = 0;
+    ret = SetSessionStateExpectCancelBySessionId(sessionId, SESSION_STATE_OPENING, &errCode);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    SocketLifecycleData lifecycle;
+    (void)memset_s(&lifecycle, sizeof(SocketLifecycleData), 0, sizeof(SocketLifecycleData));
+    ret = GetSocketLifecycleAndSessionNameBySessionId(sessionId, nullptr, &lifecycle);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    EXPECT_EQ(lifecycle.sessionState, SESSION_STATE_OPENING);
+
+    ret = ClientDeleteSession(sessionId);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    session = nullptr;
+    ret = ClientDeleteSessionServer(SEC_TYPE_PLAINTEXT, g_sessionName);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    SoftBusFree(sessionParam);
+    TransClientDeinit();
+}
+
+/*
+ * @tc.name: SetSessionStateExpectCancelBySessionIdTest002
+ * @tc.desc: test SetSessionStateExpectCancelBySessionId keeps CANCELLING state, reports the cancel
+ *           reason and does not overwrite it
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransClientSessionManagerTest, SetSessionStateExpectCancelBySessionIdTest002, TestSize.Level1)
+{
+    int32_t ret = TransClientInit();
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    (void)ClientDeleteSessionServer(SEC_TYPE_PLAINTEXT, g_sessionName);
+    uint64_t timestamp = 0;
+    ret = ClientAddSessionServer(SEC_TYPE_PLAINTEXT, g_pkgName, g_sessionName, &g_sessionlistener, &timestamp);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    SessionParam *sessionParam = reinterpret_cast<SessionParam *>(SoftBusCalloc(sizeof(SessionParam)));
+    ASSERT_TRUE(sessionParam != nullptr);
+    GenerateCommParam(sessionParam);
+    SessionInfo *session = GenerateSession(sessionParam);
+    ASSERT_TRUE(session != nullptr);
+    ret = ClientAddNewSession(g_sessionName, session);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    int32_t sessionId = session->sessionId;
+
+    /* Simulate a concurrent Shutdown marking the session CANCELLING. */
+    ret = SetSessionStateBySessionId(sessionId, SESSION_STATE_CANCELLING, SOFTBUS_TRANS_STOP_BIND_BY_TIMEOUT);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+
+    /* The open flow must not overwrite CANCELLING and must report the cancel reason. */
+    int32_t errCode = 0;
+    ret = SetSessionStateExpectCancelBySessionId(sessionId, SESSION_STATE_OPENING, &errCode);
+    EXPECT_EQ(ret, SOFTBUS_TRANS_STOP_BIND_BY_CANCEL);
+    EXPECT_EQ(errCode, SOFTBUS_TRANS_STOP_BIND_BY_TIMEOUT);
+
+    SocketLifecycleData lifecycle;
+    (void)memset_s(&lifecycle, sizeof(SocketLifecycleData), 0, sizeof(SocketLifecycleData));
+    ret = GetSocketLifecycleAndSessionNameBySessionId(sessionId, nullptr, &lifecycle);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    EXPECT_EQ(lifecycle.sessionState, SESSION_STATE_CANCELLING);
+
+    ret = ClientDeleteSession(sessionId);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    session = nullptr;
+    ret = ClientDeleteSessionServer(SEC_TYPE_PLAINTEXT, g_sessionName);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    SoftBusFree(sessionParam);
+    TransClientDeinit();
+}
+
+/*
+ * @tc.name: SetSessionStateExpectCancelBySessionIdTest003
+ * @tc.desc: test SetSessionStateExpectCancelBySessionId returns NOT_FIND when the session
+ *           has been deleted by a concurrent close
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransClientSessionManagerTest, SetSessionStateExpectCancelBySessionIdTest003, TestSize.Level1)
+{
+    int32_t ret = TransClientInit();
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    int32_t errCode = 0;
+    /* No session with this id: it has been deleted by a concurrent close. */
+    ret = SetSessionStateExpectCancelBySessionId(TRANS_TEST_SESSION_ID, SESSION_STATE_OPENING, &errCode);
+    EXPECT_EQ(ret, SOFTBUS_TRANS_SESSION_INFO_NOT_FOUND);
+    TransClientDeinit();
+}
+
+/*
+ * @tc.name: CancelSessionStateBySessionIdTest001
+ * @tc.desc: test CancelSessionStateBySessionId writes CANCELLING with previous state and reason,
+ *           and is idempotent when the session is already cancelling
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransClientSessionManagerTest, CancelSessionStateBySessionIdTest001, TestSize.Level1)
+{
+    int32_t ret = TransClientInit();
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    (void)ClientDeleteSessionServer(SEC_TYPE_PLAINTEXT, g_sessionName);
+    uint64_t timestamp = 0;
+    ret = ClientAddSessionServer(SEC_TYPE_PLAINTEXT, g_pkgName, g_sessionName, &g_sessionlistener, &timestamp);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    SessionParam *sessionParam = reinterpret_cast<SessionParam *>(SoftBusCalloc(sizeof(SessionParam)));
+    ASSERT_TRUE(sessionParam != nullptr);
+    GenerateCommParam(sessionParam);
+    SessionInfo *session = GenerateSession(sessionParam);
+    ASSERT_TRUE(session != nullptr);
+    ret = ClientAddNewSession(g_sessionName, session);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    int32_t sessionId = session->sessionId;
+
+    SessionState preState = SESSION_STATE_BUTT;
+    ret = CancelSessionStateBySessionId(sessionId, SOFTBUS_TRANS_STOP_BIND_BY_TIMEOUT, &preState);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    EXPECT_EQ(preState, SESSION_STATE_INIT);
+
+    SocketLifecycleData lifecycle;
+    (void)memset_s(&lifecycle, sizeof(SocketLifecycleData), 0, sizeof(SocketLifecycleData));
+    ret = GetSocketLifecycleAndSessionNameBySessionId(sessionId, nullptr, &lifecycle);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    EXPECT_EQ(lifecycle.sessionState, SESSION_STATE_CANCELLING);
+    EXPECT_EQ(lifecycle.bindErrCode, SOFTBUS_TRANS_STOP_BIND_BY_TIMEOUT);
+
+    /* Already cancelling: nothing written, reports the cancelling state. */
+    ret = CancelSessionStateBySessionId(sessionId, SOFTBUS_OK, &preState);
+    EXPECT_EQ(ret, SOFTBUS_TRANS_STOP_BIND_BY_CANCEL);
+    EXPECT_EQ(preState, SESSION_STATE_CANCELLING);
+
+    ret = ClientDeleteSession(sessionId);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    session = nullptr;
+    ret = ClientDeleteSessionServer(SEC_TYPE_PLAINTEXT, g_sessionName);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    SoftBusFree(sessionParam);
+    TransClientDeinit();
+}
 } // namespace OHOS

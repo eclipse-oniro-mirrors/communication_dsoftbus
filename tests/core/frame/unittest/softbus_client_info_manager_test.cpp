@@ -14,9 +14,12 @@
  */
 
 #include <gtest/gtest.h>
+#include <securec.h>
 
+#include "iservice_registry.h"
 #include "softbus_client_info_manager.h"
 #include "softbus_error_code.h"
+#include "system_ability_definition.h"
 
 #define TEST_PID 100
 
@@ -38,6 +41,23 @@ public:
     void TearDown() override
     {}
 };
+
+class TestDeathRecipient : public IRemoteObject::DeathRecipient {
+public:
+    void OnRemoteDied(const wptr<IRemoteObject> &object) override
+    {
+        (void)object;
+    }
+};
+
+static sptr<IRemoteObject> GenerateRemoteObject(void)
+{
+    auto samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (samgr != nullptr) {
+        return samgr->GetSystemAbility(SOFTBUS_SERVER_SA_ID);
+    }
+    return nullptr;
+}
 
 /*
  * @tc.name: SoftbusClientInfoManagerTest001
@@ -134,5 +154,131 @@ HWTEST_F(SoftbusClientInfoManagerTest, SoftbusClientInfoManagerTest005, TestSize
     sptr<IRemoteObject> clientObject =
         SoftbusClientInfoManager::GetInstance().GetSoftbusClientProxy(sessionName);
     EXPECT_EQ(clientObject, nullptr);
+}
+
+/*
+ * @tc.name: SoftbusClientInfoManagerTest006
+ * @tc.desc: SoftbusAddService and SoftbusRemoveService success path test
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(SoftbusClientInfoManagerTest, SoftbusClientInfoManagerTest006, TestSize.Level1)
+{
+    sptr<IRemoteObject> object = GenerateRemoteObject();
+    ASSERT_NE(object, nullptr);
+    sptr<IRemoteObject::DeathRecipient> deathRecipient = new TestDeathRecipient();
+    ASSERT_NE(deathRecipient, nullptr);
+    std::string pkgName = "softbus.client.info.test006";
+    std::string permissionName = "ohos.permission.DISTRIBUTED_DATASYNC";
+
+    int32_t ret = SoftbusClientInfoManager::GetInstance().SoftbusAddService(
+        pkgName, object, deathRecipient, TEST_PID, permissionName);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+
+    sptr<IRemoteObject> clientObject = SoftbusClientInfoManager::GetInstance().GetSoftbusClientProxy(pkgName);
+    EXPECT_EQ(clientObject, object);
+    clientObject = SoftbusClientInfoManager::GetInstance().GetSoftbusClientProxy(pkgName, TEST_PID);
+    EXPECT_EQ(clientObject, object);
+    clientObject = SoftbusClientInfoManager::GetInstance().GetSoftbusClientProxy(pkgName, TEST_PID + 1);
+    EXPECT_EQ(clientObject, nullptr);
+
+    bool isExist = SoftbusClientInfoManager::GetInstance().SoftbusClientIsExist(pkgName, TEST_PID);
+    EXPECT_EQ(isExist, true);
+    isExist = SoftbusClientInfoManager::GetInstance().SoftbusClientIsExist(pkgName, TEST_PID + 1);
+    EXPECT_EQ(isExist, false);
+
+    std::multimap<std::string, sptr<IRemoteObject>> clientMap;
+    SoftbusClientInfoManager::GetInstance().GetSoftbusClientProxyMap(clientMap);
+    EXPECT_GE(clientMap.count(pkgName), 1);
+
+    std::string removedPkgName;
+    int32_t removedPid = 0;
+    ret = SoftbusClientInfoManager::GetInstance().SoftbusRemoveService(object, removedPkgName, &removedPid);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    EXPECT_EQ(removedPkgName, pkgName);
+    EXPECT_EQ(removedPid, TEST_PID);
+    clientObject = SoftbusClientInfoManager::GetInstance().GetSoftbusClientProxy(pkgName);
+    EXPECT_EQ(clientObject, nullptr);
+}
+
+/*
+ * @tc.name: SoftbusClientInfoManagerTest007
+ * @tc.desc: SoftbusRemoveServiceWithPid success path test
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(SoftbusClientInfoManagerTest, SoftbusClientInfoManagerTest007, TestSize.Level1)
+{
+    sptr<IRemoteObject> object = GenerateRemoteObject();
+    ASSERT_NE(object, nullptr);
+    sptr<IRemoteObject::DeathRecipient> deathRecipient = new TestDeathRecipient();
+    ASSERT_NE(deathRecipient, nullptr);
+    std::string pkgName = "softbus.client.info.test007";
+    std::string permissionName = "ohos.permission.DISTRIBUTED_DATASYNC";
+
+    int32_t ret = SoftbusClientInfoManager::GetInstance().SoftbusAddService(
+        pkgName, object, deathRecipient, TEST_PID, permissionName);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+
+    ret = SoftbusClientInfoManager::GetInstance().SoftbusRemoveServiceWithPid(pkgName, TEST_PID + 1);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    bool isExist = SoftbusClientInfoManager::GetInstance().SoftbusClientIsExist(pkgName, TEST_PID);
+    EXPECT_EQ(isExist, true);
+
+    ret = SoftbusClientInfoManager::GetInstance().SoftbusRemoveServiceWithPid(pkgName, TEST_PID);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    isExist = SoftbusClientInfoManager::GetInstance().SoftbusClientIsExist(pkgName, TEST_PID);
+    EXPECT_EQ(isExist, false);
+}
+
+/*
+ * @tc.name: SoftbusClientInfoManagerTest008
+ * @tc.desc: SoftbusAddServiceInner and GetSoftbusInnerObject success path test
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(SoftbusClientInfoManagerTest, SoftbusClientInfoManagerTest008, TestSize.Level1)
+{
+    std::string pkgName = "softbus.client.info.test008";
+    ISessionListenerInner listener;
+    (void)memset_s(&listener, sizeof(ISessionListenerInner), 0, sizeof(ISessionListenerInner));
+
+    int32_t ret = SoftbusClientInfoManager::GetInstance().SoftbusAddServiceInner(pkgName, &listener, TEST_PID);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+
+    ISessionListenerInner getListener;
+    (void)memset_s(&getListener, sizeof(ISessionListenerInner), 0, sizeof(ISessionListenerInner));
+    ret = SoftbusClientInfoManager::GetInstance().GetSoftbusInnerObject(pkgName, &getListener);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+
+    ret = SoftbusClientInfoManager::GetInstance().SoftbusRemoveServiceInner(pkgName);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    ret = SoftbusClientInfoManager::GetInstance().GetSoftbusInnerObject(pkgName, &getListener);
+    EXPECT_EQ(ret, SOFTBUS_NOT_FIND);
+}
+
+/*
+ * @tc.name: SoftbusClientInfoManagerTest009
+ * @tc.desc: SoftbusAddServiceInnerForEnhance function test
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(SoftbusClientInfoManagerTest, SoftbusClientInfoManagerTest009, TestSize.Level1)
+{
+    const char *pkgName = "softbus.client.info.test009";
+    ISessionListenerInner listener;
+    (void)memset_s(&listener, sizeof(ISessionListenerInner), 0, sizeof(ISessionListenerInner));
+
+    int32_t ret = SoftbusAddServiceInnerForEnhance(pkgName, &listener, TEST_PID);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    ret = SoftbusAddServiceInnerForEnhance(pkgName, nullptr, TEST_PID);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+
+    ret = SoftbusClientInfoManager::GetInstance().SoftbusRemoveServiceInner(pkgName);
+    EXPECT_EQ(ret, SOFTBUS_OK);
 }
 }

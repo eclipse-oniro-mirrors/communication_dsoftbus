@@ -206,7 +206,7 @@ static void CloseAllConnect()
     int32_t count = 0;
     int32_t ret = GetServerListCount(&count);
     if (ret != SOFTBUS_OK) {
-        TRANS_LOGE(TRANS_SVC, "[br_proxy] get list conut failed! ret:%{public}d", ret);
+        TRANS_LOGE(TRANS_SVC, "[br_proxy] get list count failed! ret:%{public}d", ret);
         return;
     }
     int32_t channelId = 0;
@@ -1245,7 +1245,7 @@ static void OnOpenFail(uint32_t requestId, int32_t reason, const char *brMac)
     (void)memset_s(&proxyInfo, sizeof(BrProxyInfo), 0, sizeof(BrProxyInfo));
     ret = GetBrProxy(info.proxyInfo.brMac, info.proxyInfo.uuid, info.requestId, &proxyInfo);
     if (ret == SOFTBUS_OK && (proxyInfo.isEnable || reason == SOFTBUS_FAR_FIELD_OPEN_FAIL)) {
-        TRANS_LOGE(TRANS_SVC, "[br_proxy] the connecet requestId=%{public}d is virtual connect", requestId);
+        TRANS_LOGE(TRANS_SVC, "[br_proxy] the connect requestId=%{public}d is virtual connect", requestId);
         (void)SetCurrentConnect(info.proxyInfo.brMac, info.proxyInfo.uuid, requestId, true);
         ClientIpcBrProxyOpened(info.callingPid, info.channelId,
             (const char *)info.proxyInfo.brMac, (const char *)info.proxyInfo.uuid, SOFTBUS_OK);
@@ -2367,7 +2367,7 @@ static void DeleteServerByAppIndexAndUserId(int32_t appIndex, int32_t userId)
         TransBrProxyRemoveObject(info->callingPid);
         SoftBusFree(info);
         g_serverList->cnt--;
-        TRANS_LOGI(TRANS_SVC, "[br_proxy] del node, uinstall cnt=%{public}d, appIndex=%{public}d, userId=%{public}d",
+        TRANS_LOGI(TRANS_SVC, "[br_proxy] del node, uninstall cnt=%{public}d, appIndex=%{public}d, userId=%{public}d",
             g_serverList->cnt, appIndex, userId);
     }
     (void)SoftBusMutexUnlock(&(g_serverList->lock));
@@ -2390,7 +2390,7 @@ static void DisableProxyByAppIndexAndUserId(int32_t appIndex, int32_t userId)
         }
         if (nodeInfo->channel.close != NULL) {
             nodeInfo->channel.close(&nodeInfo->channel, true);
-            TRANS_LOGI(TRANS_SVC, "[br_proxy] close channel, uinstall appIndex=%{public}d, userId=%{public}d", appIndex,
+            TRANS_LOGI(TRANS_SVC, "[br_proxy] close channel, uninstall appIndex=%{public}d, userId=%{public}d", appIndex,
                 userId);
         } else {
             TRANS_LOGW(

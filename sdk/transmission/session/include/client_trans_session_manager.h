@@ -176,6 +176,19 @@ int32_t DeleteSocketSession(int32_t sessionId, char *pkgName, char *sessionName)
 
 int32_t SetSessionStateBySessionId(int32_t sessionId, SessionState sessionState, int32_t optional);
 
+/* Update the session state unless a concurrent Shutdown has already marked it CANCELLING.
+ * Returns SOFTBUS_OK on update, SOFTBUS_TRANS_STOP_BIND_BY_CANCEL if the state is CANCELLING
+ * (the CANCELLING state is kept and the cancel reason is written to errCode when errCode is
+ * not NULL), or an error code on failure. */
+int32_t SetSessionStateExpectCancelBySessionId(int32_t sessionId, SessionState sessionState, int32_t *errCode);
+
+/* Atomically mark the session CANCELLING and report the previous state taken under the same
+ * lock, so the caller can decide follow-up actions based on the real state instead of a
+ * possibly stale snapshot. Returns SOFTBUS_OK when the CANCELLING state is written,
+ * SOFTBUS_TRANS_STOP_BIND_BY_CANCEL if the session is already CANCELLING (nothing written),
+ * or an error code on failure. */
+int32_t CancelSessionStateBySessionId(int32_t sessionId, int32_t cancelReason, SessionState *preState);
+
 int32_t GetSocketLifecycleAndSessionNameBySessionId(
     int32_t sessionId, char *sessionName, SocketLifecycleData *lifecycle);
 
