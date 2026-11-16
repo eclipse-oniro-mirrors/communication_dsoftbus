@@ -75,7 +75,6 @@ static const MockBtDevice *FindMockDevice(const std::string &addr)
 
 // ---------------------------------------------------------------------------
 // Link-time mock implementations of Bluetooth C++ member functions.
-//
 // These definitions override the symbols from libbtframework.so at link time
 // because object-file definitions take precedence over shared-library ones.
 // They read from ProxyObserverBtMock global state so the test can control
@@ -146,7 +145,6 @@ int OHOS::Bluetooth::BluetoothRemoteDevice::GetDeviceUuids(std::vector<std::stri
 
 // ---------------------------------------------------------------------------
 // Link-time mock implementations of dsoftbus C utility functions.
-//
 // proxy_observer.cpp calls SoftBusGenerateStrHash and ConvertBytesToHexString
 // inside ConvertRealMacToHashMac. These wrappers delegate to the gmock so the
 // test can drive both the success and failure branches.
@@ -185,15 +183,15 @@ int32_t ProxyObserverUtilMock::ActionOfSoftBusGenerateStrHash(
 int32_t ProxyObserverUtilMock::ActionOfConvertBytesToHexString(
     char *outBuf, uint32_t outBufLen, const unsigned char *inBuf, uint32_t inLen)
 {
-    if (outBuf == nullptr || inBuf == nullptr || outBufLen < (inLen * 2 + 1)) {
+    if (outBuf == nullptr || inBuf == nullptr || outBufLen < (inLen * HEXIFY_UNIT_LEN + 1)) {
         return SOFTBUS_INVALID_PARAM;
     }
     static const char hexChars[] = "0123456789abcdef";
     for (uint32_t i = 0; i < inLen; i++) {
-        outBuf[i * 2] = hexChars[(inBuf[i] >> 4) & 0x0F];
-        outBuf[i * 2 + 1] = hexChars[inBuf[i] & 0x0F];
+        outBuf[i * HEXIFY_UNIT_LEN] = hexChars[(inBuf[i] >> 4) & 0x0F];
+        outBuf[i * HEXIFY_UNIT_LEN + 1] = hexChars[inBuf[i] & 0x0F];
     }
-    outBuf[inLen * 2] = '\0';
+    outBuf[inLen * HEXIFY_UNIT_LEN] = '\0';
     return SOFTBUS_OK;
 }
 

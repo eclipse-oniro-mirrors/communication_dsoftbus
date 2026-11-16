@@ -14,7 +14,6 @@
  */
 
 // proxy_observer UT: core/connection/proxy/br/proxy_observer.cpp.
-//
 // The test compiles proxy_observer.cpp directly (the real implementation) and
 // provides link-time mock implementations of the Bluetooth C++ APIs
 // (BluetoothHost, HandsFreeAudioGateway, BluetoothRemoteDevice) and the dsoftbus
