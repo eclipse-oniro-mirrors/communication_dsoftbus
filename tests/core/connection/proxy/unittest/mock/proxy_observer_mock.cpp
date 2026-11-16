@@ -28,7 +28,7 @@
 // ---------------------------------------------------------------------------
 namespace ProxyObserverBtMock {
 static std::vector<MockBtDevice> g_mockDevices;
-static int32_t g_getPairedDevicesResult = 0; // 0 = success
+static int32_t g_getPairedDevicesResult = OHOS::Bluetooth::BT_SUCCESS;
 static std::shared_ptr<OHOS::Bluetooth::HandsFreeAudioGatewayObserver> g_hfpObserver;
 static std::shared_ptr<OHOS::Bluetooth::BluetoothRemoteDeviceObserver> g_remoteDeviceObserver;
 
@@ -55,7 +55,7 @@ std::shared_ptr<OHOS::Bluetooth::BluetoothRemoteDeviceObserver> GetRemoteDeviceO
 void Reset()
 {
     g_mockDevices.clear();
-    g_getPairedDevicesResult = 0;
+    g_getPairedDevicesResult = OHOS::Bluetooth::BT_SUCCESS;
     g_hfpObserver.reset();
     g_remoteDeviceObserver.reset();
 }
@@ -85,14 +85,14 @@ static const MockBtDevice *FindMockDevice(const std::string &addr)
 int32_t OHOS::Bluetooth::BluetoothHost::GetPairedDevices(
     int transport, std::vector<OHOS::Bluetooth::BluetoothRemoteDevice> &pairedDevices) const
 {
-    if (ProxyObserverBtMock::g_getPairedDevicesResult != 0) {
+    if (ProxyObserverBtMock::g_getPairedDevicesResult != OHOS::Bluetooth::BT_SUCCESS) {
         return ProxyObserverBtMock::g_getPairedDevicesResult;
     }
     pairedDevices.clear();
     for (const auto &dev : ProxyObserverBtMock::g_mockDevices) {
         pairedDevices.emplace_back(dev.address, OHOS::Bluetooth::BT_TRANSPORT_BREDR);
     }
-    return 0;
+    return OHOS::Bluetooth::BT_SUCCESS;
 }
 
 // BluetoothHost::RegisterRemoteDeviceObserver — captures the observer.
@@ -188,8 +188,8 @@ int32_t ProxyObserverUtilMock::ActionOfConvertBytesToHexString(
     }
     static const char hexChars[] = "0123456789abcdef";
     for (uint32_t i = 0; i < inLen; i++) {
-        outBuf[i * HEXIFY_UNIT_LEN] = hexChars[(inBuf[i] >> 4) & 0x0F];
-        outBuf[i * HEXIFY_UNIT_LEN + 1] = hexChars[inBuf[i] & 0x0F];
+        outBuf[i * HEXIFY_UNIT_LEN] = hexChars[inBuf[i] / HEX_MAX_NUM];
+        outBuf[i * HEXIFY_UNIT_LEN + 1] = hexChars[inBuf[i] % HEX_MAX_NUM];
     }
     outBuf[inLen * HEXIFY_UNIT_LEN] = '\0';
     return SOFTBUS_OK;
