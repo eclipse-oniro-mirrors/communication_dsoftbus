@@ -1556,6 +1556,9 @@ static void TransStopP2pListenerHandle(const LnnEventBasicInfo *info)
     }
     LnnHaLeaveMetaNodeEvent *leaveInfo = (LnnHaLeaveMetaNodeEvent *)info;
     StopP2pListenerByRemoteUuid(leaveInfo->metaNodeId);
+    if (strlen(leaveInfo->uuid) != 0) {
+        StopP2pListenerByRemoteUuid(leaveInfo->uuid);
+    }
 }
 
 int32_t P2pDirectChannelInit(void)
