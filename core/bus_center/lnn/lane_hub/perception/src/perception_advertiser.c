@@ -134,15 +134,21 @@ static void BuildBcParam(BroadcastParam *bcParam, PerceptionAdvFreqState freq)
     bcParam->isSupportRpa = false;
 }
 
-static void CacheParam(PerceptionType type, const PerceptionAdvParam *param)
+static int32_t CacheParam(PerceptionType type, const PerceptionAdvParam *param)
 {
     g_advCtx.currentType = type;
-    (void)memset_s(g_advCtx.currentParam.customData, PERCEPTION_CUSTOM_DATA_MAX_LEN, 0, PERCEPTION_CUSTOM_DATA_MAX_LEN);
+    (void)memset_s(g_advCtx.currentParam.customData, PERCEPTION_CUSTOM_DATA_MAX_LEN, 0,
+        PERCEPTION_CUSTOM_DATA_MAX_LEN);
     if (param->customDataLen > 0) {
-        (void)memcpy_s(
-            g_advCtx.currentParam.customData, PERCEPTION_CUSTOM_DATA_MAX_LEN, param->customData, param->customDataLen);
+        if (memcpy_s(g_advCtx.currentParam.customData, PERCEPTION_CUSTOM_DATA_MAX_LEN,
+            param->customData, param->customDataLen) != EOK) {
+            g_advCtx.currentParam.customDataLen = 0;
+            LNN_LOGE(LNN_STATE, "perception adv cache customData fail");
+            return SOFTBUS_MEM_ERR;
+        }
     }
     g_advCtx.currentParam.customDataLen = param->customDataLen;
+    return SOFTBUS_OK;
 }
 
 static int32_t AcquireAdvLock(void)
@@ -252,9 +258,13 @@ static void HandleAdvMessage(SoftBusMessage *msg)
 
 static int32_t DoStartBroadcast(PerceptionType type, const PerceptionAdvParam *param, PerceptionAdvFreqState freq)
 {
-    CacheParam(type, param);
+    int32_t ret = CacheParam(type, param);
+    if (ret != SOFTBUS_OK) {
+        LNN_LOGE(LNN_STATE, "cache adv param fail, ret=%{public}d", ret);
+        return ret;
+    }
     BroadcastPacket packet;
-    int32_t ret = BuildAdvPacket(type, param, &packet);
+    ret = BuildAdvPacket(type, param, &packet);
     if (ret != SOFTBUS_OK) {
         LNN_LOGE(LNN_STATE, "build adv packet fail, ret=%{public}d", ret);
         return ret;
@@ -273,9 +283,13 @@ static int32_t DoStartBroadcast(PerceptionType type, const PerceptionAdvParam *p
 
 static int32_t UpdateAdvDataLocked(PerceptionType type, const PerceptionAdvParam *param)
 {
-    CacheParam(type, param);
+    int32_t ret = CacheParam(type, param);
+    if (ret != SOFTBUS_OK) {
+        LNN_LOGE(LNN_STATE, "cache adv param fail, ret=%{public}d", ret);
+        return ret;
+    }
     BroadcastPacket packet;
-    int32_t ret = BuildAdvPacket(type, param, &packet);
+    ret = BuildAdvPacket(type, param, &packet);
     if (ret != SOFTBUS_OK) {
         LNN_LOGE(LNN_STATE, "build adv packet fail, ret=%{public}d", ret);
         return ret;
