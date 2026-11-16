@@ -972,4 +972,46 @@ HWTEST_F(BusCenterEventTest, BusCenterEventTest048, TestSize.Level1)
     EXPECT_NO_FATAL_FAILURE(LnnNotifyMultiScreenStateChangeEvent(SOFTBUS_MULTI_SCREEN_ON, 100, 100));
     EXPECT_NO_FATAL_FAILURE(LnnNotifyMultiScreenStateChangeEvent(SOFTBUS_MULTI_SCREEN_OFF, 200, 100));
 }
+
+/*
+* @tc.name: BusCenterEventTest049
+* @tc.desc: Test LnnNotifyHaLeaveMetaNodeEvent with null metaNodeId
+* @tc.type: FUNC
+* @tc.level: Level1
+* @tc.require: 1
+*/
+HWTEST_F(BusCenterEventTest, BusCenterEventTest049, TestSize.Level1)
+{
+    const char *metaNodeId = nullptr;
+    const char *uuid = "testUuid";
+    EXPECT_NO_FATAL_FAILURE(LnnNotifyHaLeaveMetaNodeEvent(metaNodeId, uuid));
+}
+
+/*
+* @tc.name: BusCenterEventTest050
+* @tc.desc: Test LnnNotifyHaLeaveMetaNodeEvent with null uuid
+* @tc.type: FUNC
+* @tc.level: Level1
+* @tc.require: 1
+*/
+HWTEST_F(BusCenterEventTest, BusCenterEventTest050, TestSize.Level1)
+{
+    const char *metaNodeId = "testMetaNodeId";
+    const char *uuid = nullptr;
+    EXPECT_NO_FATAL_FAILURE(LnnNotifyHaLeaveMetaNodeEvent(metaNodeId, uuid));
+}
+
+/*
+* @tc.name: BusCenterEventTest051
+* @tc.desc: Test LnnNotifyHaLeaveMetaNodeEvent with valid params
+* @tc.type: FUNC
+* @tc.level: Level1
+* @tc.require: 1
+*/
+HWTEST_F(BusCenterEventTest, BusCenterEventTest051, TestSize.Level1)
+{
+    const char *metaNodeId = "testMetaNodeId";
+    const char *uuid = "testUuid";
+    EXPECT_NO_FATAL_FAILURE(LnnNotifyHaLeaveMetaNodeEvent(metaNodeId, uuid));
+}
 }

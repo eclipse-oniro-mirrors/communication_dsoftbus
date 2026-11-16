@@ -359,6 +359,7 @@ typedef struct {
 typedef struct {
     LnnEventBasicInfo basic;
     char metaNodeId[NETWORK_ID_BUF_LEN];
+    char uuid[UUID_BUF_LEN];
 } LnnHaLeaveMetaNodeEvent;
 
 typedef struct {
