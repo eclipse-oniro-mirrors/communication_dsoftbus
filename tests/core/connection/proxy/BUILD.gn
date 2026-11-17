@@ -191,3 +191,45 @@ ohos_unittest("FarFieldProxyAdapterTest") {
     "hilog:libhilog",
   ]
 }
+
+ohos_unittest("ProxyObserverTest") {
+  module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
+  include_dirs = [
+    "$dsoftbus_root_path/core/connection/proxy/br",
+    "$dsoftbus_root_path/test/core/connection/proxy/unittest/mock",
+    "$dsoftbus_root_path/core/connection/common/include",
+    "$dsoftbus_root_path/core/common/include",
+    "$softbus_adapter_common/include",
+    "$dsoftbus_root_path/interfaces/kits/common",
+    "$dsoftbus_root_path/adapter/common/include",
+    "$dsoftbus_root_path/dfx/interface/include",
+  ]
+
+  deps = [
+    "$dsoftbus_dfx_path:softbus_dfx",
+    "$dsoftbus_root_path/adapter:softbus_adapter",
+    "$dsoftbus_root_path/core/common:softbus_utils",
+  ]
+
+  sources = [
+    # Real implementation under test
+    "$dsoftbus_root_path/core/connection/proxy/br/proxy_observer.cpp",
+    # Link-time mock for Bluetooth C++ APIs and dsoftbus utility functions
+    "$dsoftbus_root_path/tests/core/connection/proxy/unittest/mock/proxy_observer_mock.cpp",
+    # Test cases
+    "$dsoftbus_root_path/tests/core/connection/proxy/unittest/proxy_observer_test.cpp",
+  ]
+
+  external_deps = [
+    "bluetooth:btframework",
+    "c_utils:utils",
+    "googletest:gmock_main",
+    "hilog:libhilog",
+  ]
+}

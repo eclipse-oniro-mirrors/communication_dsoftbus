@@ -36,6 +36,7 @@ group("unittest") {
       "br:ConnBrTransUnitTest",
       "br:ConnectionBrTest",
       "br:SoftbusBrConnectionTest",
+      "proxy:ProxyObserverTest",
     ]
   }
   if (support_bluetooth && dsoftbus_feature_conn_ble) {
