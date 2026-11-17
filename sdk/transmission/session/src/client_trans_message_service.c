@@ -30,7 +30,7 @@
 #include "softbus_feature_config.h"
 #include "trans_log.h"
 
-#define OH_OS_TYPE 10
+#define OH_OS_TYPE    10
 #define OTHER_OS_TYPE 12
 
 int32_t CheckSendLenForBooster(unsigned int len)

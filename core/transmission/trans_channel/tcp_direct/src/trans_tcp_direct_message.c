@@ -38,11 +38,11 @@
 #include "softbus_adapter_thread.h"
 #include "softbus_adapter_timer.h"
 #include "softbus_app_info.h"
+#include "softbus_def.h"
 #include "softbus_error_code.h"
 #include "softbus_feature_config.h"
 #include "softbus_json_utils.h"
 #include "softbus_message_open_channel.h"
-#include "softbus_def.h"
 #include "softbus_socket.h"
 #include "softbus_tcp_socket.h"
 #include "softbus_utils.h"
@@ -582,6 +582,13 @@ static void ClearAppInfoSessionKey(AppInfo *appInfo)
     (void)memset_s(appInfo->sinkSessionKey, sizeof(appInfo->sinkSessionKey), 0, sizeof(appInfo->sinkSessionKey));
 }
 
+static void TryOpenMultipathSecondChannel(const ChannelInfo *info)
+{
+    if (!info->isServer && info->enableMultipath && TransMultipathNeedReallocSecondLane(info->channelId)) {
+        TransMultipathOpenSecondChannel(info->channelId, info->laneId, false);
+    }
+}
+
 static int32_t NotifyChannelOpened(int32_t channelId)
 {
     SessionConn conn;
@@ -629,9 +636,7 @@ static int32_t NotifyChannelOpened(int32_t channelId)
     TransGetLaneIdByChannelId(channelId, &info.laneId);
     info.isSupportTlv = GetCapabilityBit(conn.appInfo.channelCapability, TRANS_CAPABILITY_TLV_OFFSET);
     ret = TransTdcOnChannelOpened(pkgName, pid, conn.appInfo.myData.sessionName, &info);
-    if (!info.isServer && info.enableMultipath && TransMultipathNeedReallocSecondLane(info.channelId)) {
-        TransMultipathOpenSecondChannel(info.channelId, info.laneId, false);
-    }
+    TryOpenMultipathSecondChannel(&info);
     ClearAppInfoSessionKey(&conn.appInfo);
     conn.status = TCP_DIRECT_CHANNEL_STATUS_CONNECTED;
     SetSessionConnStatusById(channelId, conn.status);

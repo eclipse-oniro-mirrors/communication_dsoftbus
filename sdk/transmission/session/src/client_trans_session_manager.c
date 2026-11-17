@@ -1431,6 +1431,35 @@ static void ClientSetAuthSessionTimer(const ClientSessionServer *serverNode, Ses
     }
 }
 
+static int32_t FillSessionFromChannel(
+    SessionInfo *sessionNode, const ClientSessionServer *serverNode, const ChannelInfo *channel, int32_t *sessionId)
+{
+    sessionNode->peerPid = channel->peerPid;
+    sessionNode->peerUid = channel->peerUid;
+    sessionNode->isServer = channel->isServer;
+    sessionNode->enableStatus = ENABLE_STATUS_SUCCESS;
+    sessionNode->routeType = channel->routeType;
+    sessionNode->businessType = channel->businessType;
+    sessionNode->fileEncrypt = channel->fileEncrypt;
+    sessionNode->dataConfig = channel->dataConfig;
+    sessionNode->algorithm = channel->algorithm;
+    sessionNode->crc = channel->crc;
+    sessionNode->isEncrypt = channel->isEncrypt;
+    sessionNode->osType = channel->osType;
+    *sessionId = sessionNode->sessionId;
+    sessionNode->isSupportTlv = channel->isSupportTlv;
+    sessionNode->enableMultipath = channel->enableMultipath;
+    sessionNode->keyType = channel->keyType;
+    (void)TransMultipathMarkUpOnNode(sessionNode, channel->routeType);
+    if (channel->channelType == CHANNEL_TYPE_AUTH || !sessionNode->isEncrypt || channel->isD2D) {
+        ClientSetAuthSessionTimer(serverNode, sessionNode);
+        if (strcpy_s(sessionNode->info.peerDeviceId, DEVICE_ID_SIZE_MAX, channel->peerDeviceId) != EOK) {
+            return SOFTBUS_MEM_ERR;
+        }
+    }
+    return SOFTBUS_OK;
+}
+
 int32_t ClientEnableSessionByChannelId(const ChannelInfo *channel, int32_t *sessionId)
 {
     TRANS_CHECK_AND_RETURN_RET_LOGE(
@@ -1451,60 +1480,13 @@ int32_t ClientEnableSessionByChannelId(const ChannelInfo *channel, int32_t *sess
         }
 
         LIST_FOR_EACH_ENTRY(sessionNode, &(serverNode->sessionList), SessionInfo, node) {
-            if ((sessionNode->channelId == channel->channelId) &&
-                (sessionNode->channelType == (ChannelType)(channel->channelType))) {
-                sessionNode->peerPid = channel->peerPid;
-                sessionNode->peerUid = channel->peerUid;
-                sessionNode->isServer = channel->isServer;
-                sessionNode->enableStatus = ENABLE_STATUS_SUCCESS;
-                sessionNode->routeType = channel->routeType;
-                sessionNode->businessType = channel->businessType;
-                sessionNode->fileEncrypt = channel->fileEncrypt;
-                sessionNode->dataConfig = channel->dataConfig;
-                sessionNode->algorithm = channel->algorithm;
-                sessionNode->crc = channel->crc;
-                sessionNode->isEncrypt = channel->isEncrypt;
-                sessionNode->osType = channel->osType;
-                *sessionId = sessionNode->sessionId;
-                sessionNode->isSupportTlv = channel->isSupportTlv;
-                sessionNode->enableMultipath = channel->enableMultipath;
-                sessionNode->keyType = channel->keyType;
-                (void)TransMultipathMarkUpOnNode(sessionNode, channel->routeType);
-                if (channel->channelType == CHANNEL_TYPE_AUTH || !sessionNode->isEncrypt || channel->isD2D) {
-                    ClientSetAuthSessionTimer(serverNode, sessionNode);
-                    if (strcpy_s(sessionNode->info.peerDeviceId, DEVICE_ID_SIZE_MAX, channel->peerDeviceId) != EOK) {
-                        UnlockClientSessionServerList();
-                        return SOFTBUS_MEM_ERR;
-                    }
-                }
+            if ((sessionNode->channelId == channel->channelId &&
+                 sessionNode->channelType == (ChannelType)(channel->channelType)) ||
+                (sessionNode->channelIdReserve == channel->channelId &&
+                 sessionNode->channelTypeReserve == (ChannelType)(channel->channelType))) {
+                ret = FillSessionFromChannel(sessionNode, serverNode, channel, sessionId);
                 UnlockClientSessionServerList();
-                return SOFTBUS_OK;
-            } else if ((sessionNode->channelIdReserve == channel->channelId) &&
-                (sessionNode->channelTypeReserve == (ChannelType)(channel->channelType))) {
-                sessionNode->peerPid = channel->peerPid;
-                sessionNode->peerUid = channel->peerUid;
-                sessionNode->isServer = channel->isServer;
-                sessionNode->enableStatus = ENABLE_STATUS_SUCCESS;
-                sessionNode->routeType = channel->routeType;
-                sessionNode->businessType = channel->businessType;
-                sessionNode->fileEncrypt = channel->fileEncrypt;
-                sessionNode->dataConfig = channel->dataConfig;
-                sessionNode->algorithm = channel->algorithm;
-                sessionNode->crc = channel->crc;
-                sessionNode->isEncrypt = channel->isEncrypt;
-                sessionNode->osType = channel->osType;
-                *sessionId = sessionNode->sessionId;
-                sessionNode->isSupportTlv = channel->isSupportTlv;
-                sessionNode->enableMultipath = channel->enableMultipath;
-                if (channel->channelType == CHANNEL_TYPE_AUTH || !sessionNode->isEncrypt || channel->isD2D) {
-                    ClientSetAuthSessionTimer(serverNode, sessionNode);
-                    if (strcpy_s(sessionNode->info.peerDeviceId, DEVICE_ID_SIZE_MAX, channel->peerDeviceId) != EOK) {
-                        UnlockClientSessionServerList();
-                        return SOFTBUS_MEM_ERR;
-                    }
-                }
-                UnlockClientSessionServerList();
-                return SOFTBUS_OK;
+                return ret;
             }
         }
     }

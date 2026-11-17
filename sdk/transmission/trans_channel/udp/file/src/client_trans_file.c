@@ -368,10 +368,10 @@ static void FileSendListenerEx(UdpChannel *udpChannel, DFileMsgType msgType, con
     }
     if (msgType == DFILE_ON_MP_PATHNUM_CHANGE) {
         LinkMediumType linkMediumType = ConvertDFileLinkToLinkMedium(msgData->pathNumChange.linkType);
-        enum SoftBusMPErrNo reason = ConvertOnEventReason(
-            msgData->pathNumChange.changeType, msgData->pathNumChange.linkType);
-        TransMultipathOnEvent(udpChannel->channelId, CHANNEL_TYPE_UDP,
-            msgData->pathNumChange.changeType, linkMediumType, reason);
+        enum SoftBusMPErrNo reason =
+            ConvertOnEventReason(msgData->pathNumChange.changeType, msgData->pathNumChange.linkType);
+        TransMultipathOnEvent(
+            udpChannel->channelId, CHANNEL_TYPE_UDP, msgData->pathNumChange.changeType, linkMediumType, reason);
         return;
     }
     (void)g_udpChannelMgrCb->OnIdleTimeoutReset(sessionId);
@@ -551,10 +551,10 @@ static void FileReceiveListener(int32_t dfileId, DFileMsgType msgType, const DFi
     }
     if (msgType == DFILE_ON_MP_PATHNUM_CHANGE) {
         LinkMediumType linkMediumType = ConvertDFileLinkToLinkMedium(msgData->pathNumChange.linkType);
-        enum SoftBusMPErrNo reason = ConvertOnEventReason(
-            msgData->pathNumChange.changeType, msgData->pathNumChange.linkType);
-        TransMultipathOnEvent(udpChannel.channelId, CHANNEL_TYPE_UDP,
-            msgData->pathNumChange.changeType, linkMediumType, reason);
+        enum SoftBusMPErrNo reason =
+            ConvertOnEventReason(msgData->pathNumChange.changeType, msgData->pathNumChange.linkType);
+        TransMultipathOnEvent(
+            udpChannel.channelId, CHANNEL_TYPE_UDP, msgData->pathNumChange.changeType, linkMediumType, reason);
         return;
     }
     int32_t sessionId = -1;

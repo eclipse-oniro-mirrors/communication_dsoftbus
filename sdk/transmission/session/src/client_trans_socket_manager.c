@@ -126,8 +126,7 @@ SessionInfo *CreateNewSession(const SessionParam *param)
     return session;
 }
 
-DestroySessionInfo *CreateDestroySessionNode(
-    SessionInfo *sessionNode, const ClientSessionServer *server, bool otherUp)
+DestroySessionInfo *CreateDestroySessionNode(SessionInfo *sessionNode, const ClientSessionServer *server, bool otherUp)
 {
     if (sessionNode == NULL || server == NULL) {
         TRANS_LOGE(TRANS_SDK, "invalid param.");

@@ -19,34 +19,32 @@
 #include "softbus_def.h"
 
 #ifdef __cplusplus
-#if __cplusplus
 extern "C" {
 #endif
-#endif
 
-#define HEXIFY_UNIT_LEN 2
-#define UN_HEXIFY_LEN(len) ((len) / HEXIFY_UNIT_LEN)
-#define HEXIFY_LEN(len) ((len) * HEXIFY_UNIT_LEN + 1)
-#define HEX_MAX_NUM 16
-#define DEC_MAX_NUM 10
-#define HEX_MAX_BIT_NUM 4
-#define MAX_QUERY_LEN 64
+#define HEXIFY_UNIT_LEN      2
+#define UN_HEXIFY_LEN(len)   ((len) / HEXIFY_UNIT_LEN)
+#define HEXIFY_LEN(len)      ((len) * HEXIFY_UNIT_LEN + 1)
+#define HEX_MAX_NUM          16
+#define DEC_MAX_NUM          10
+#define HEX_MAX_BIT_NUM      4
+#define MAX_QUERY_LEN        64
 #define INT64_TO_STR_MAX_LEN 21
 
-#define TIMER_TIMEOUT 1000 // 1s
-#define BT_MAC_NO_COLON_LEN 13
-#define TRANS_CAPABILITY_TLV_OFFSET 0
-#define TRANS_CHANNEL_INNER_ENCRYPT_OFFSET 1
+#define TIMER_TIMEOUT                          1000 // 1s
+#define BT_MAC_NO_COLON_LEN                    13
+#define TRANS_CAPABILITY_TLV_OFFSET            0
+#define TRANS_CHANNEL_INNER_ENCRYPT_OFFSET     1
 #define TRANS_CHANNEL_SINK_GENERATE_KEY_OFFSET 2
-#define TRANS_CHANNEL_SINK_KEY_ENCRYPT_OFFSET 3
-#define TRANS_CHANNEL_ACL_CHECK_OFFSET 4
-#define TRANS_CHANNEL_MULTIPATH_OFFSET 5
-#define TRANS_CHANNEL_INNER_ENCRYPT (1u << TRANS_CHANNEL_INNER_ENCRYPT_OFFSET) /* bit1 */
-#define TRANS_CHANNEL_CAPABILITY 0x37 /* bit0 & bit1 & bit2 & bit4 & bit5 */
+#define TRANS_CHANNEL_SINK_KEY_ENCRYPT_OFFSET  3
+#define TRANS_CHANNEL_ACL_CHECK_OFFSET         4
+#define TRANS_CHANNEL_MULTIPATH_OFFSET         5
+#define TRANS_CHANNEL_INNER_ENCRYPT            (1u << TRANS_CHANNEL_INNER_ENCRYPT_OFFSET) /* bit1 */
+#define TRANS_CHANNEL_CAPABILITY               0x37 /* bit0 & bit1 & bit2 & bit4 & bit5 */
 
 #define MAC_DELIMITER ':'
-#define IP_DELIMITER '.'
-#define ID_DELIMITER ' '
+#define IP_DELIMITER  '.'
+#define ID_DELIMITER  ' '
 
 typedef void (*TimerFunCallback)(void);
 
@@ -82,13 +80,11 @@ void DestroySoftBusList(SoftBusList *list);
 
 int32_t ConvertBytesToHexString(char *outBuf, uint32_t outBufLen, const unsigned char *inBuf, uint32_t inLen);
 
-int32_t ConvertBtMacToStrNoColon(char *strMac, uint32_t strMacLen, const uint8_t *binMac,
-    uint32_t binMacLen);
+int32_t ConvertBtMacToStrNoColon(char *strMac, uint32_t strMacLen, const uint8_t *binMac, uint32_t binMacLen);
 
 int32_t ConvertHexStringToBytes(unsigned char *outBuf, uint32_t outBufLen, const char *inBuf, uint32_t inLen);
 
-int32_t ConvertBytesToUpperCaseHexString(char *outBuf, uint32_t outBufLen,
-    const unsigned char *inBuf, uint32_t inLen);
+int32_t ConvertBytesToUpperCaseHexString(char *outBuf, uint32_t outBufLen, const unsigned char *inBuf, uint32_t inLen);
 
 int32_t GenerateRandomStr(char *str, uint32_t size);
 
@@ -147,8 +143,8 @@ bool GetSignalingMsgSwitch(void);
 void SignalingMsgPrint(const char *distinguish, unsigned char *data, unsigned char dataLen, uint32_t module);
 
 void DataMasking(const char *data, uint32_t length, char delimiter, char *container);
-int32_t GenerateStrHashAndConvertToHexString(const unsigned char *str, uint32_t len, unsigned char *hashStr,
-    uint32_t hashStrLen);
+int32_t GenerateStrHashAndConvertToHexString(
+    const unsigned char *str, uint32_t len, unsigned char *hashStr, uint32_t hashStrLen);
 
 void EnableCapabilityBit(uint32_t *value, uint32_t offSet);
 
@@ -161,9 +157,7 @@ void SoftbusDumpBytes(const char *message, const uint8_t *data, uint32_t dataLen
 int32_t AddNumberToSocketName(uint32_t num, const char *prefix, uint32_t preLen, char *socketName);
 
 #ifdef __cplusplus
-#if __cplusplus
 }
-#endif /* __cplusplus */
 #endif /* __cplusplus */
 
 #endif /* SOFTBUS_UTILS_H */

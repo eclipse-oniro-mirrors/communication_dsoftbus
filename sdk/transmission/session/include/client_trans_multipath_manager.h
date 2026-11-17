@@ -67,8 +67,8 @@ void TransMultipathUpdateClosingState(SessionInfo *sessionNode, bool isClosing);
 
 /* ========== Event reporting ========== */
 
-void TransMultipathOnEvent(int32_t channelId, int32_t channelType, uint8_t changeType,
-    int32_t linkType, int32_t reason);
+void TransMultipathOnEvent(
+    int32_t channelId, int32_t channelType, uint8_t changeType, int32_t linkType, int32_t reason);
 
 /* ========== Control-plane route selection ========== */
 
@@ -76,30 +76,29 @@ bool TransMultipathIsWiredRoute(int32_t routeType);
 
 int32_t TransMultipathSelectCtrlChannel(int32_t sessionId, int32_t *channelId, int32_t *channelType);
 
-int32_t TransMultipathGetOtherCtrlChannel(int32_t sessionId, int32_t failChannelId,
-    int32_t *altChannelId, int32_t *altChannelType);
+int32_t TransMultipathGetOtherCtrlChannel(
+    int32_t sessionId, int32_t failChannelId, int32_t *altChannelId, int32_t *altChannelType);
 
 int32_t TransMultipathMarkDown(int32_t sessionId, int32_t channelId);
 
 /* ========== Channel close handling ========== */
 
-bool TransMultipathHandleChannelClose(int32_t sessionId, int32_t channelId,
-    int32_t *surviveChannelId, int32_t *surviveChannelType, int32_t *deadRouteType);
+bool TransMultipathHandleChannelClose(int32_t sessionId, int32_t channelId, int32_t *surviveChannelId,
+    int32_t *surviveChannelType, int32_t *deadRouteType);
 
 /* ========== Dead channel close ========== */
 
 int32_t TransMultipathCloseDeadChannel(int32_t sessionId, int32_t channelId, int32_t channelType, bool async);
 
 /* Core selector operating directly on SessionInfo; used by unit tests and sessionId wrappers. */
-int32_t TransMultipathSelectCtrlChannelOnNode(const SessionInfo *node,
-    int32_t *channelId, int32_t *channelType);
+int32_t TransMultipathSelectCtrlChannelOnNode(const SessionInfo *node, int32_t *channelId, int32_t *channelType);
 
 int32_t TransMultipathMarkDownOnNode(SessionInfo *node, int32_t channelId);
 
 int32_t TransMultipathClearChannelSlotOnNode(SessionInfo *node, int32_t channelId);
 
-int32_t TransMultipathGetOtherCtrlChannelOnNode(const SessionInfo *node, int32_t failChannelId,
-    int32_t *altChannelId, int32_t *altChannelType);
+int32_t TransMultipathGetOtherCtrlChannelOnNode(
+    const SessionInfo *node, int32_t failChannelId, int32_t *altChannelId, int32_t *altChannelType);
 
 int32_t TransMultipathMarkUpOnNode(SessionInfo *node, int32_t routeType);
 

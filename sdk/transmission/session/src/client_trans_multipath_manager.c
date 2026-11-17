@@ -396,8 +396,8 @@ bool TransMultipathDelReserveLinkDown(
     }
     int32_t deadChannelId = onlyReserveLinkDown ? sessionNode->channelIdReserve : sessionNode->channelId;
     (void)TransMultipathMarkDownOnNode(sessionNode, deadChannelId);
-    bool otherUp = (sessionNode->ctrlWirelessStatus == CTRL_CH_STATUS_UP) ||
-        (sessionNode->ctrlWiredStatus == CTRL_CH_STATUS_UP);
+    bool otherUp =
+        (sessionNode->ctrlWirelessStatus == CTRL_CH_STATUS_UP) || (sessionNode->ctrlWiredStatus == CTRL_CH_STATUS_UP);
     if (!otherUp) {
         return false;
     }
@@ -430,8 +430,7 @@ void TransMultipathUpdateClosingState(SessionInfo *sessionNode, bool isClosing)
     }
 }
 
-void TransMultipathOnEvent(int32_t channelId, int32_t channelType, uint8_t changeType,
-    int32_t linkType, int32_t reason)
+void TransMultipathOnEvent(int32_t channelId, int32_t channelType, uint8_t changeType, int32_t linkType, int32_t reason)
 {
     if (channelId == INVALID_CHANNEL_ID) {
         TRANS_LOGE(TRANS_SDK, "Invalid param");
@@ -460,8 +459,7 @@ bool TransMultipathIsWiredRoute(int32_t routeType)
     return routeType == WIFI_USB;
 }
 
-int32_t TransMultipathSelectCtrlChannelOnNode(const SessionInfo *node,
-    int32_t *channelId, int32_t *channelType)
+int32_t TransMultipathSelectCtrlChannelOnNode(const SessionInfo *node, int32_t *channelId, int32_t *channelType)
 {
     if (node == NULL || channelId == NULL || channelType == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -542,8 +540,8 @@ int32_t TransMultipathClearChannelSlotOnNode(SessionInfo *node, int32_t channelI
     return SOFTBUS_INVALID_PARAM;
 }
 
-int32_t TransMultipathGetOtherCtrlChannelOnNode(const SessionInfo *node, int32_t failChannelId,
-    int32_t *altChannelId, int32_t *altChannelType)
+int32_t TransMultipathGetOtherCtrlChannelOnNode(
+    const SessionInfo *node, int32_t failChannelId, int32_t *altChannelId, int32_t *altChannelType)
 {
     if (node == NULL || altChannelId == NULL || altChannelType == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -556,8 +554,8 @@ int32_t TransMultipathGetOtherCtrlChannelOnNode(const SessionInfo *node, int32_t
     int32_t otherId = failIsPrimary ? node->channelIdReserve : node->channelId;
     int32_t otherType = failIsPrimary ? node->channelTypeReserve : node->channelType;
     int32_t otherRoute = failIsPrimary ? node->routeTypeReserve : node->routeType;
-    CtrlChannelStatus otherStatus = TransMultipathIsWiredRoute(otherRoute) ?
-        node->ctrlWiredStatus : node->ctrlWirelessStatus;
+    CtrlChannelStatus otherStatus =
+        TransMultipathIsWiredRoute(otherRoute) ? node->ctrlWiredStatus : node->ctrlWirelessStatus;
     if (otherStatus != CTRL_CH_STATUS_UP) {
         return SOFTBUS_TRANS_INVALID_CHANNEL_TYPE;
     }
@@ -605,8 +603,8 @@ int32_t TransMultipathSelectCtrlChannel(int32_t sessionId, int32_t *channelId, i
     return ret;
 }
 
-int32_t TransMultipathGetOtherCtrlChannel(int32_t sessionId, int32_t failChannelId,
-    int32_t *altChannelId, int32_t *altChannelType)
+int32_t TransMultipathGetOtherCtrlChannel(
+    int32_t sessionId, int32_t failChannelId, int32_t *altChannelId, int32_t *altChannelType)
 {
     if (altChannelId == NULL || altChannelType == NULL) {
         TRANS_LOGE(TRANS_SDK, "Invalid param");
@@ -653,8 +651,8 @@ int32_t TransMultipathMarkDown(int32_t sessionId, int32_t channelId)
     return ret;
 }
 
-bool TransMultipathHandleChannelClose(int32_t sessionId, int32_t channelId,
-    int32_t *surviveChannelId, int32_t *surviveChannelType, int32_t *deadRouteType)
+bool TransMultipathHandleChannelClose(int32_t sessionId, int32_t channelId, int32_t *surviveChannelId,
+    int32_t *surviveChannelType, int32_t *deadRouteType)
 {
     if (surviveChannelId == NULL || surviveChannelType == NULL || deadRouteType == NULL) {
         return false;
@@ -683,8 +681,8 @@ bool TransMultipathHandleChannelClose(int32_t sessionId, int32_t channelId,
     *deadRouteType = isPrimary ? sessionNode->routeType : sessionNode->routeTypeReserve;
     (void)TransMultipathMarkDownOnNode(sessionNode, channelId);
     int32_t otherRoute = isPrimary ? sessionNode->routeTypeReserve : sessionNode->routeType;
-    CtrlChannelStatus otherStatus = TransMultipathIsWiredRoute(otherRoute) ?
-        sessionNode->ctrlWiredStatus : sessionNode->ctrlWirelessStatus;
+    CtrlChannelStatus otherStatus =
+        TransMultipathIsWiredRoute(otherRoute) ? sessionNode->ctrlWiredStatus : sessionNode->ctrlWirelessStatus;
     if (otherStatus != CTRL_CH_STATUS_UP) {
         UnlockClientSessionServerList();
         return false;
