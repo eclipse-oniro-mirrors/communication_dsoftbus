@@ -806,11 +806,6 @@ int32_t TransSetSocketChannelStateBySession(const char *sessionName, int32_t ses
     return SOFTBUS_NOT_FIND;
 }
 
-/* Atomically update the socket channel state unless the session has been cancelled concurrently.
- * The check and the update are performed under the same lock, so a concurrent Shutdown which
- * marks the session CANCELLING can no longer be overwritten by the open-channel flow.
- * Returns SOFTBUS_OK on update, SOFTBUS_TRANS_STOP_BIND_BY_CANCEL if the state is CANCELLING,
- * SOFTBUS_NOT_FIND if the socket record has been deleted by a concurrent close. */
 int32_t TransSetSocketChannelStateExpectCancelBySession(
     const char *sessionName, int32_t sessionId, CoreSessionState state)
 {

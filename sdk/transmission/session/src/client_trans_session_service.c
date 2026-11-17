@@ -1260,8 +1260,6 @@ void ClientShutdown(int32_t socket, int32_t cancelReason)
         TRANS_LOGE(TRANS_SDK, "get socket state failed, socket=%{public}d failed, ret=%{public}d", socket, ret);
         return;
     }
-    /* Mark CANCELLING and take the previous state under the same lock, so the follow-up
-     * actions below are based on the real state instead of a possibly stale snapshot. */
     SessionState preState = SESSION_STATE_INIT;
     ret = CancelSessionStateBySessionId(socket, cancelReason, &preState);
     if (ret == SOFTBUS_TRANS_STOP_BIND_BY_CANCEL) {

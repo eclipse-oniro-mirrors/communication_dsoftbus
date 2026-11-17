@@ -2204,8 +2204,6 @@ typedef struct {
     char groupId[GROUP_ID_SIZE_MAX];
 } IpcSessionInfoBuffer;
 
-/* Deep copy session info under the lock: the SessionParam strings must not reference the
- * session heap block after unlocking, which may be freed by a concurrent close. */
 static int32_t CopySessionInfoForIpc(SessionParam *param, const ClientSessionServer *serverNode,
     const SessionInfo *sessionNode, IpcSessionInfoBuffer *buf)
 {
@@ -2238,8 +2236,6 @@ static int32_t CopyDfsSessionInfoForIpc(SessionParam *param, const ClientSession
     return SOFTBUS_OK;
 }
 
-/* Mark the session OPENING unless a concurrent Shutdown has already cancelled it,
- * in which case keep CANCELLING and return the cancel reason. */
 static int32_t SetSessionStateOpeningExpectCancel(int32_t sessionId)
 {
     int32_t cancelErr = 0;
