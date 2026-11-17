@@ -98,7 +98,7 @@ static int32_t JsonObjectPackRequestEx(const AppInfo *appInfo, cJSON *json, unsi
     (void)AddNumber64ToJsonObject(json, SOURCE_ACL_TOKEN_ID, (int64_t)appInfo->myData.tokenId);
     (void)AddStringToJsonObject(json, SOURCE_ACL_EXTRA_INFO, appInfo->extraAccessInfo);
     (void)AddBoolToJsonObject(json, FORCE_GENERATE_UK, appInfo->forceGenerateUk);
-    (void)AddNumberToJsonObject(json, "LINKED_CHANNEL_ID", (int32_t)appInfo->linkedChannelId);
+    (void)AddNumberToJsonObject(json, LINKED_CHANNEL_ID, (int32_t)appInfo->linkedChannelId);
     return SOFTBUS_OK;
 }
 
@@ -284,7 +284,7 @@ SOFTBUS_VISIBILITY int32_t UnpackRequest(const cJSON *msg, AppInfo *appInfo)
     (void)GetJsonObjectNumberItem(msg, TRANS_CAPABILITY, (int32_t *)&remoteCapability);
     appInfo->channelCapability = remoteCapability & TRANS_CHANNEL_CAPABILITY;
     appInfo->enableMultipath = GetCapabilityBit(appInfo->channelCapability, TRANS_CHANNEL_MULTIPATH_OFFSET);
-    (void)GetJsonObjectNumberItem(msg, "LINKED_CHANNEL_ID", &appInfo->linkedChannelId);
+    (void)GetJsonObjectNumberItem(msg, LINKED_CHANNEL_ID, &appInfo->linkedChannelId);
     appInfo->isMultiNeg = (appInfo->linkedChannelId > 0);
     return SOFTBUS_OK;
 }
