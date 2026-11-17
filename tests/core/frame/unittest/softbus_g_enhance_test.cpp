@@ -49,10 +49,6 @@ namespace OHOS {
 #define TEST_PID 1570
 #define TEST_CHANNEL_ID 2531
 #define TEST_REQUEST_ID 1251
-#define TEST_BLE_POWER_MOCK (-17)
-#define TEST_RANGE_CAPACITY_VALUE 100
-#define TEST_SLE_LISTENER_ID 1
-#define TEST_ANTI_SLEEP_TIMEOUT_MS 1000
 
 static const char *TEST_PKG_NAME = "TEST_PKG_NAME";
 static const char *TEST_UDID = "11223344";
@@ -1341,5 +1337,4 @@ HWTEST_F(SoftbusGEnhanceTest, DcWifiDirectExclusiveCancelBySessionNamePackedTest
     ret = DcWifiDirectExclusiveCancelBySessionNamePacked(TEST_PKG_NAME);
     EXPECT_EQ(ret, SOFTBUS_OK);
 }
-
-} // namespace OHOS
+}
