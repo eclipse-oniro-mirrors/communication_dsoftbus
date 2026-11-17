@@ -22,20 +22,22 @@
 #include "data/link_manager.h"
 #include "event/wifi_direct_event_dispatcher.h"
 #include "conn_log.h"
-#include "qos.h"
+#include "ffrt.h"
 #include "concurrent_task_client.h"
 #include "utils/wifi_direct_anonymous.h"
 #include "utils/wifi_direct_utils.h"
 #include "wifi_direct_scheduler_factory.h"
 #include "command/negotiate_command.h"
 
-using namespace OHOS::QOS;
-
 namespace OHOS::SoftBus {
+namespace {
+constexpr auto FFRT_TASK_NAME = "wifi_direct_exec";
+}
 SOFTBUS_DEFAULT_USED_EXPORT
 WifiDirectExecutor::WifiDirectExecutor(const std::string &remoteDeviceId, WifiDirectScheduler &scheduler,
                                        std::shared_ptr<WifiDirectProcessor> &processor, bool active)
-    : remoteDeviceId_(remoteDeviceId), scheduler_(scheduler), processor_(processor), active_(active), started_(false)
+    : remoteDeviceId_(remoteDeviceId), scheduler_(scheduler), processor_(processor), active_(active),
+      boostQos_(false), started_(false)
 {
     CONN_LOGI(CONN_WIFI_DIRECT, "remoteDeviceId=%{public}s, active=%{public}d",
               WifiDirectAnonymizeDeviceId(remoteDeviceId_).c_str(), active_);
@@ -54,20 +56,38 @@ void WifiDirectExecutor::Start()
         return;
     }
     started_ = true;
-    std::thread thread(&WifiDirectExecutor::Run, this, processor_);
-    thread_.swap(thread);
-    thread_.detach();
+    SubmitProcessorTask();
 }
 
-void WifiDirectExecutor::Run(std::shared_ptr<WifiDirectProcessor> processor)
+void WifiDirectExecutor::RequestQosAuth()
 {
     std::unordered_map<std::string, std::string> payload;
     payload["pid"] = std::to_string(getpid());
     OHOS::ConcurrentTask::ConcurrentTaskClient::GetInstance().RequestAuth(payload);
-    const auto qosRet = SetThreadQos(QosLevel::QOS_USER_INTERACTIVE);
-    if (qosRet != 0) {
-        CONN_LOGE(CONN_WIFI_DIRECT, "set thread qos fail, ret=%{public}d", qosRet);
+}
+
+void WifiDirectExecutor::SetBoostQos(bool boostQos)
+{
+    boostQos_ = boostQos;
+}
+
+void WifiDirectExecutor::SubmitProcessorTask()
+{
+    ffrt::task_attr attr;
+    attr.name(FFRT_TASK_NAME);
+    if (boostQos_) {
+        RequestQosAuth();
+        attr.qos(ffrt::qos_user_interactive);
     }
+    ffrt::submit(
+        [this] {
+            Run(processor_);
+        },
+        attr);
+}
+
+void WifiDirectExecutor::Run(std::shared_ptr<WifiDirectProcessor> processor)
+{
     processor_ = std::move(processor);
     do {
         if (IsActive()) {

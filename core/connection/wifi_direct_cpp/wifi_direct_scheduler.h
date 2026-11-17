@@ -80,7 +80,7 @@ public:
             CONN_LOGE(CONN_WIFI_DIRECT, "get processor fail");
             return;
         }
-        executor = WifiDirectExecutorFactory::GetInstance().NewExecutor(remoteDeviceId, *this, processor, false);
+        executor = WifiDirectExecutorFactory::GetInstance().NewExecutor(remoteDeviceId, *this, processor, false, false);
         if (executor == nullptr) {
             return;
         }

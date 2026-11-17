@@ -30,7 +30,7 @@ public:
         WifiDirectScheduler &scheduler, std::shared_ptr<WifiDirectProcessor> &processor, bool active)>;
 
     std::shared_ptr<WifiDirectExecutor> NewExecutor(const std::string &remoteDeviceId, WifiDirectScheduler &scheduler,
-        std::shared_ptr<WifiDirectProcessor> &processor, bool active);
+        std::shared_ptr<WifiDirectProcessor> &processor, bool active, bool boostQos);
 
     void Register(ExecutorGenerator generator);
 

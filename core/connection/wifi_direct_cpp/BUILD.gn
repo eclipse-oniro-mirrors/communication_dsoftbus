@@ -166,7 +166,7 @@ if (!softbus_config_enhance && defined(ohos_lite)) {
           "netmanager_base:net_conn_manager_if",
           "samgr:samgr_proxy",
           "wifi:wifi_sdk",
-          "qos_manager:qos",
+          "ffrt:libffrt",
           "qos_manager:concurrent_task_client",
         ]
 
@@ -326,7 +326,7 @@ if (!softbus_config_enhance && defined(ohos_lite)) {
             "netmanager_base:net_conn_manager_if",
             "samgr:samgr_proxy",
             "wifi:wifi_sdk",
-            "qos_manager:qos",
+            "ffrt:libffrt",
             "qos_manager:concurrent_task_client",
           ]
 
@@ -507,7 +507,7 @@ if (!softbus_config_enhance && defined(ohos_lite)) {
           "netmanager_base:net_conn_manager_if",
           "samgr:samgr_proxy",
           "wifi:wifi_sdk",
-          "qos_manager:qos",
+          "ffrt:libffrt",
           "qos_manager:concurrent_task_client",
         ]
 

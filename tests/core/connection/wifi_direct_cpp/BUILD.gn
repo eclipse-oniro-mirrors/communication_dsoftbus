@@ -484,6 +484,7 @@ ohos_unittest("WifiDirectExecutorQosTest") {
     "$wifi_direct_cpp_path/adapter",
     "$wifi_direct_cpp_path/utils",
     "//foundation/resourceschedule/qos_manager/interfaces/inner_api",
+    "//foundation/resourceschedule/ffrt/interfaces/kits",
   ]
   sources = [
     "$wifi_direct_cpp_path/utils/wifi_direct_anonymous.cpp",
@@ -514,6 +515,7 @@ ohos_unittest("WifiDirectExecutorQosTest") {
     "bounds_checking_function:libsec_shared",
     "cJSON:cjson",
     "c_utils:utils",
+    "ffrt:libffrt",
     "googletest:gmock_rtti",
     "googletest:gtest_rtti",
     "hilog:libhilog",

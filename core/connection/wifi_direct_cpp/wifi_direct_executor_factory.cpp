@@ -25,11 +25,12 @@ SOFTBUS_DEFAULT_USED_EXPORT WifiDirectExecutorFactory& WifiDirectExecutorFactory
 
 SOFTBUS_DEFAULT_USED_EXPORT
 std::shared_ptr<WifiDirectExecutor> WifiDirectExecutorFactory::NewExecutor(const std::string &remoteDeviceId,
-    WifiDirectScheduler &scheduler, std::shared_ptr<WifiDirectProcessor> &processor, bool active)
+    WifiDirectScheduler &scheduler, std::shared_ptr<WifiDirectProcessor> &processor, bool active, bool boostQos)
 {
     std::shared_ptr<WifiDirectExecutor> executor = (executorGenerator_ == nullptr) ?
         std::make_shared<WifiDirectExecutor>(remoteDeviceId, scheduler, processor, active) :
         executorGenerator_(remoteDeviceId, scheduler, processor, active);
+    executor->SetBoostQos(boostQos);
     executor->Start();
     return executor;
 }

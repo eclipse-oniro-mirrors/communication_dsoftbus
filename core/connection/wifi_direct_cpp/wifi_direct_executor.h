@@ -19,7 +19,6 @@
 #include <list>
 #include <memory>
 #include <queue>
-#include <thread>
 
 #include "dfx/wifi_direct_trace.h"
 #include "event/wifi_direct_event_receiver.h"
@@ -41,6 +40,7 @@ public:
     void SetRemoteDeviceId(const std::string &remoteDeviceId);
     bool IsActive() const;
     void SetActive(bool active);
+    void SetBoostQos(bool boostQos);
     bool CanAcceptNegotiateData(WifiDirectCommand &command);
     bool HasAnyConnectCommand(WifiDirectLinkType linkType);
 
@@ -64,15 +64,17 @@ protected:
     WifiDirectEventSender GetSender() { return receiver_; }
 
     virtual void ProcessUnHandleCommand();
+    void SubmitProcessorTask();
+    static void RequestQosAuth();
 
     std::string remoteDeviceId_;
     WifiDirectEventReceiver receiver_;
     WifiDirectScheduler &scheduler_;
     std::recursive_mutex processorLock_;
     std::shared_ptr<WifiDirectProcessor> processor_;
-    std::thread thread_;
 
     bool active_;
+    bool boostQos_;
 
     bool started_;
 };

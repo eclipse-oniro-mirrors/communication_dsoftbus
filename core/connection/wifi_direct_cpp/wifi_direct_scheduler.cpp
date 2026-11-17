@@ -206,8 +206,11 @@ int WifiDirectScheduler::ScheduleActiveCommand(const std::shared_ptr<WifiDirectC
         CONN_LOGE(CONN_WIFI_DIRECT, "get processor fail");
         return SOFTBUS_CONN_GET_PROCESSOR_FAILED;
     }
-    CONN_LOGI(CONN_WIFI_DIRECT, "create executor=%{public}s", WifiDirectAnonymizeDeviceId(remoteDeviceId).c_str());
-    executor = WifiDirectExecutorFactory::GetInstance().NewExecutor(remoteDeviceId, *this, processor, true);
+    const bool boostQos = command->GetType() == CommandType::CONNECT_COMMAND &&
+        std::static_pointer_cast<ConnectCommand>(command)->GetLinkType() == WIFI_DIRECT_LINK_TYPE_HML;
+    CONN_LOGI(CONN_WIFI_DIRECT, "create executor=%{public}s, boostQos=%{public}d",
+        WifiDirectAnonymizeDeviceId(remoteDeviceId).c_str(), boostQos);
+    executor = WifiDirectExecutorFactory::GetInstance().NewExecutor(remoteDeviceId, *this, processor, true, boostQos);
     if (executor == nullptr) {
         return SOFTBUS_MALLOC_ERR;
     }
