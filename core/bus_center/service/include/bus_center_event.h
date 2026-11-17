@@ -97,7 +97,7 @@ void LnnNotifyAddRawEnhanceP2pEvent(LnnNotifyRawEnhanceP2pEvent *event);
 
 void LnnNotifyDeviceRiskStateChangeEvent(void);
 
-void LnnNotifyHaLeaveMetaNodeEvent(const char *metaNodeId);
+void LnnNotifyHaLeaveMetaNodeEvent(const char *metaNodeId, const char *uuid);
 
 void LnnNotifyConstraintStateChangeEvent(bool isConstraint);
 

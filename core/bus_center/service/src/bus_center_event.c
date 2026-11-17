@@ -998,16 +998,20 @@ void LnnNotifyNetworkIdChangeEvent(const char *networkId)
     NotifyEvent((LnnEventBasicInfo *)&eventInfo);
 }
 
-SOFTBUS_SYMBOL_EXPORT void LnnNotifyHaLeaveMetaNodeEvent(const char *metaNodeId)
+SOFTBUS_SYMBOL_EXPORT void LnnNotifyHaLeaveMetaNodeEvent(const char *metaNodeId, const char *uuid)
 {
-    if (metaNodeId == NULL) {
-        LNN_LOGW(LNN_EVENT, "networkId is null");
+    if (metaNodeId == NULL || uuid == NULL) {
+        LNN_LOGW(LNN_EVENT, "metaNodeId or uuid is null");
         return;
     }
     LnnHaLeaveMetaNodeEvent eventInfo;
     (void)memset_s(&eventInfo, sizeof(eventInfo), 0, sizeof(eventInfo));
     eventInfo.basic.event = LNN_EVENT_HA_LEAVE_META_NODE;
     if (strcpy_s(eventInfo.metaNodeId, NETWORK_ID_BUF_LEN, metaNodeId) != EOK) {
+        return;
+    }
+    if (strcpy_s(eventInfo.uuid, UUID_BUF_LEN, uuid) != EOK) {
+        LNN_LOGW(LNN_EVENT, "copy uuid failed");
         return;
     }
     NotifyEvent((LnnEventBasicInfo *)&eventInfo);
