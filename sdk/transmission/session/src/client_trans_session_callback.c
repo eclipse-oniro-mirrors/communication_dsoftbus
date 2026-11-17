@@ -677,6 +677,20 @@ int32_t TransOnSessionOpenFailed(int32_t channelId, int32_t channelType, int32_t
     return SOFTBUS_OK;
 }
 
+static bool HandleMultipathChannelClose(int32_t sessionId, int32_t channelId)
+{
+    int32_t surviveChannelId = INVALID_CHANNEL_ID;
+    int32_t surviveChannelType = CHANNEL_TYPE_UNDEFINED;
+    int32_t deadRouteType = INVALID_ROUTE_TYPE;
+    if (!TransMultipathHandleChannelClose(
+            sessionId, channelId, &surviveChannelId, &surviveChannelType, &deadRouteType)) {
+        return false;
+    }
+    LinkMediumType linkType = TransMultipathIsWiredRoute(deadRouteType) ? LINK_TYPE_WIRED : LINK_TYPE_WIFI;
+    TransMultipathOnEvent(surviveChannelId, surviveChannelType, 0, (int32_t)linkType, 0);
+    return true;
+}
+
 int32_t TransOnSessionClosed(int32_t channelId, int32_t channelType, ShutdownReason reason)
 {
     TRANS_LOGI(TRANS_SDK, "channelId=%{public}d, channelType=%{public}d", channelId, channelType);
@@ -694,14 +708,7 @@ int32_t TransOnSessionClosed(int32_t channelId, int32_t channelType, ShutdownRea
     if (!isServer) {
         SessionInfoReport(sessionId);
     }
-    int32_t surviveChannelId = INVALID_CHANNEL_ID;
-    int32_t surviveChannelType = CHANNEL_TYPE_UNDEFINED;
-    int32_t deadRouteType = INVALID_ROUTE_TYPE;
-    if (TransMultipathHandleChannelClose(sessionId, channelId, &surviveChannelId,
-        &surviveChannelType, &deadRouteType)) {
-        LinkMediumType linkType = TransMultipathIsWiredRoute(deadRouteType) ?
-            LINK_TYPE_WIRED : LINK_TYPE_WIFI;
-        TransMultipathOnEvent(surviveChannelId, surviveChannelType, 0, (int32_t)linkType, 0);
+    if (HandleMultipathChannelClose(sessionId, channelId)) {
         return SOFTBUS_OK;
     }
     SessionEnableStatus enableStatus = ENABLE_STATUS_INIT;
