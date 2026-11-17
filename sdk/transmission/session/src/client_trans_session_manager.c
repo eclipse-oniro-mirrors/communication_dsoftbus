@@ -2197,18 +2197,70 @@ int32_t ClientSetListenerBySessionId(int32_t sessionId, const ISocketListener *l
     return SOFTBUS_OK;
 }
 
+typedef struct {
+    char sessionName[SESSION_NAME_SIZE_MAX];
+    char peerSessionName[SESSION_NAME_SIZE_MAX];
+    char peerDeviceId[DEVICE_ID_SIZE_MAX];
+    char groupId[GROUP_ID_SIZE_MAX];
+} IpcSessionInfoBuffer;
+
+/* Deep copy session info under the lock: the SessionParam strings must not reference the
+ * session heap block after unlocking, which may be freed by a concurrent close. */
+static int32_t CopySessionInfoForIpc(SessionParam *param, const ClientSessionServer *serverNode,
+    const SessionInfo *sessionNode, IpcSessionInfoBuffer *buf)
+{
+    param->enableMultipath = sessionNode->enableMultipath;
+    param->cancelEncryptionBit = sessionNode->cancelEncryptionBit;
+    if (strcpy_s(buf->sessionName, sizeof(buf->sessionName), serverNode->sessionName) != EOK ||
+        strcpy_s(buf->peerSessionName, sizeof(buf->peerSessionName), sessionNode->info.peerSessionName) != EOK ||
+        strcpy_s(buf->peerDeviceId, sizeof(buf->peerDeviceId), sessionNode->info.peerDeviceId) != EOK ||
+        strcpy_s(buf->groupId, sizeof(buf->groupId), sessionNode->info.groupId) != EOK) {
+        return SOFTBUS_STRCPY_ERR;
+    }
+    param->sessionName = buf->sessionName;
+    param->peerSessionName = buf->peerSessionName;
+    param->peerDeviceId = buf->peerDeviceId;
+    param->groupId = buf->groupId;
+    return SOFTBUS_OK;
+}
+
+static int32_t CopyDfsSessionInfoForIpc(SessionParam *param, const ClientSessionServer *serverNode,
+    const SessionInfo *sessionNode, IpcSessionInfoBuffer *buf)
+{
+    if (strcpy_s(buf->sessionName, sizeof(buf->sessionName), serverNode->sessionName) != EOK ||
+        strcpy_s(buf->peerSessionName, sizeof(buf->peerSessionName), sessionNode->info.peerSessionName) != EOK ||
+        strcpy_s(buf->peerDeviceId, sizeof(buf->peerDeviceId), sessionNode->info.peerDeviceId) != EOK) {
+        return SOFTBUS_STRCPY_ERR;
+    }
+    param->sessionName = buf->sessionName;
+    param->peerSessionName = buf->peerSessionName;
+    param->peerDeviceId = buf->peerDeviceId;
+    return SOFTBUS_OK;
+}
+
+/* Mark the session OPENING unless a concurrent Shutdown has already cancelled it,
+ * in which case keep CANCELLING and return the cancel reason. */
+static int32_t SetSessionStateOpeningExpectCancel(int32_t sessionId)
+{
+    int32_t cancelErr = 0;
+    int32_t ret = SetSessionStateExpectCancelBySessionId(sessionId, SESSION_STATE_OPENING, &cancelErr);
+    if (ret == SOFTBUS_TRANS_STOP_BIND_BY_CANCEL) {
+        TRANS_LOGI(TRANS_SDK, "socket cancelled before open session. sessionId=%{public}d, err=%{public}d",
+            sessionId, cancelErr);
+        return cancelErr != 0 ? cancelErr : SOFTBUS_TRANS_STOP_BIND_BY_CANCEL;
+    }
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_SDK, "set session state failed, maybe cancel, ret=%{public}d", ret);
+    }
+    return ret;
+}
+
 int32_t ClientIpcOpenSession(int32_t sessionId, const QosTV *qos, uint32_t qosCount, TransInfo *transInfo, bool isAsync)
 {
-    if (sessionId < 0 || transInfo == NULL) {
-        TRANS_LOGE(TRANS_SDK, "Invalid param");
-        return SOFTBUS_INVALID_PARAM;
-    }
-
+    TRANS_CHECK_AND_RETURN_RET_LOGE(sessionId >= 0 && transInfo != NULL, SOFTBUS_INVALID_PARAM,
+        TRANS_SDK, "Invalid param");
     int32_t ret = LockClientSessionServerList();
-    if (ret != SOFTBUS_OK) {
-        TRANS_LOGE(TRANS_SDK, "lock failed");
-        return ret;
-    }
+    TRANS_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret, TRANS_SDK, "lock failed");
 
     ClientSessionServer *serverNode = NULL;
     SessionInfo *sessionNode = NULL;
@@ -2226,27 +2278,14 @@ int32_t ClientIpcOpenSession(int32_t sessionId, const QosTV *qos, uint32_t qosCo
 
     SessionAttribute tmpAttr = { 0 };
     SessionParam param = { 0 };
+    IpcSessionInfoBuffer buf;
     FillSessionParam(&param, &tmpAttr, serverNode, sessionNode);
-    /* Deep copy session info under the lock, otherwise the pointers may dangle
-     * after unlocking if another thread deletes the session concurrently. */
-    char sessionName[SESSION_NAME_SIZE_MAX];
-    char peerSessionName[SESSION_NAME_SIZE_MAX];
-    char peerDeviceId[DEVICE_ID_SIZE_MAX];
-    char groupId[GROUP_ID_SIZE_MAX];
-    param.enableMultipath = sessionNode->enableMultipath;
-    param.cancelEncryptionBit = sessionNode->cancelEncryptionBit;
-    if (strcpy_s(sessionName, sizeof(sessionName), serverNode->sessionName) != EOK ||
-        strcpy_s(peerSessionName, sizeof(peerSessionName), sessionNode->info.peerSessionName) != EOK ||
-        strcpy_s(peerDeviceId, sizeof(peerDeviceId), sessionNode->info.peerDeviceId) != EOK ||
-        strcpy_s(groupId, sizeof(groupId), sessionNode->info.groupId) != EOK) {
+    ret = CopySessionInfoForIpc(&param, serverNode, sessionNode, &buf);
+    if (ret != SOFTBUS_OK) {
         UnlockClientSessionServerList();
         TRANS_LOGE(TRANS_SDK, "copy session info failed. sessionId=%{public}d", sessionId);
-        return SOFTBUS_STRCPY_ERR;
+        return ret;
     }
-    param.sessionName = sessionName;
-    param.peerSessionName = peerSessionName;
-    param.peerDeviceId = peerDeviceId;
-    param.groupId = groupId;
     UnlockClientSessionServerList();
 
     param.qosCount = qosCount;
@@ -2256,15 +2295,10 @@ int32_t ClientIpcOpenSession(int32_t sessionId, const QosTV *qos, uint32_t qosCo
     }
     param.isAsync = isAsync;
     param.sessionId = sessionId;
-    int32_t cancelErr = 0;
-    ret = SetSessionStateExpectCancelBySessionId(param.sessionId, SESSION_STATE_OPENING, &cancelErr);
-    if (ret == SOFTBUS_TRANS_STOP_BIND_BY_CANCEL) {
-        TRANS_LOGI(TRANS_SDK, "socket cancelled before open session. sessionId=%{public}d, err=%{public}d",
-            param.sessionId, cancelErr);
-        return cancelErr != 0 ? cancelErr : SOFTBUS_TRANS_STOP_BIND_BY_CANCEL;
+    ret = SetSessionStateOpeningExpectCancel(sessionId);
+    if (ret != SOFTBUS_OK) {
+        return ret;
     }
-    TRANS_CHECK_AND_RETURN_RET_LOGE(
-        ret == SOFTBUS_OK, ret, TRANS_SDK, "set session state failed, maybe cancel, ret=%{public}d", ret);
     ret = ServerIpcOpenSession(&param, transInfo);
     if (ret != SOFTBUS_OK) {
         ClientConvertRetVal(sessionId, &ret);
@@ -2391,16 +2425,10 @@ int32_t ClientSetSocketState(int32_t socket, uint32_t maxIdleTimeout, SessionRol
 
 int32_t ClientDfsIpcOpenSession(int32_t sessionId, TransInfo *transInfo)
 {
-    if (sessionId < 0 || transInfo == NULL) {
-        TRANS_LOGE(TRANS_SDK, "Invalid param");
-        return SOFTBUS_INVALID_PARAM;
-    }
-
+    TRANS_CHECK_AND_RETURN_RET_LOGE(sessionId >= 0 && transInfo != NULL, SOFTBUS_INVALID_PARAM,
+        TRANS_SDK, "Invalid param");
     int32_t ret = LockClientSessionServerList();
-    if (ret != SOFTBUS_OK) {
-        TRANS_LOGE(TRANS_SDK, "lock failed");
-        return ret;
-    }
+    TRANS_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret, TRANS_SDK, "lock failed");
 
     ClientSessionServer *serverNode = NULL;
     SessionInfo *sessionNode = NULL;
@@ -2416,37 +2444,23 @@ int32_t ClientDfsIpcOpenSession(int32_t sessionId, TransInfo *transInfo)
         return ret;
     }
 
-    SessionAttribute tmpAttr;
-    (void)memset_s(&tmpAttr, sizeof(SessionAttribute), 0, sizeof(SessionAttribute));
+    SessionAttribute tmpAttr = { 0 };
     SessionParam param = { 0 };
+    IpcSessionInfoBuffer buf;
     FillDfsSocketParam(&param, &tmpAttr, serverNode, sessionNode);
-    /* Deep copy session info under the lock, otherwise the pointers may dangle
-     * after unlocking if another thread deletes the session concurrently. */
-    char sessionName[SESSION_NAME_SIZE_MAX];
-    char peerSessionName[SESSION_NAME_SIZE_MAX];
-    char peerDeviceId[DEVICE_ID_SIZE_MAX];
-    if (strcpy_s(sessionName, sizeof(sessionName), serverNode->sessionName) != EOK ||
-        strcpy_s(peerSessionName, sizeof(peerSessionName), sessionNode->info.peerSessionName) != EOK ||
-        strcpy_s(peerDeviceId, sizeof(peerDeviceId), sessionNode->info.peerDeviceId) != EOK) {
+    ret = CopyDfsSessionInfoForIpc(&param, serverNode, sessionNode, &buf);
+    if (ret != SOFTBUS_OK) {
         UnlockClientSessionServerList();
         TRANS_LOGE(TRANS_SDK, "copy session info failed. sessionId=%{public}d", sessionId);
-        return SOFTBUS_STRCPY_ERR;
+        return ret;
     }
-    param.sessionName = sessionName;
-    param.peerSessionName = peerSessionName;
-    param.peerDeviceId = peerDeviceId;
     UnlockClientSessionServerList();
 
     param.sessionId = sessionId;
-    int32_t cancelErr = 0;
-    ret = SetSessionStateExpectCancelBySessionId(param.sessionId, SESSION_STATE_OPENING, &cancelErr);
-    if (ret == SOFTBUS_TRANS_STOP_BIND_BY_CANCEL) {
-        TRANS_LOGI(TRANS_SDK, "socket cancelled before open session. sessionId=%{public}d, err=%{public}d",
-            param.sessionId, cancelErr);
-        return cancelErr != 0 ? cancelErr : SOFTBUS_TRANS_STOP_BIND_BY_CANCEL;
+    ret = SetSessionStateOpeningExpectCancel(sessionId);
+    if (ret != SOFTBUS_OK) {
+        return ret;
     }
-    TRANS_CHECK_AND_RETURN_RET_LOGE(
-        ret == SOFTBUS_OK, ret, TRANS_SDK, "set session state failed, maybe cancel, ret=%{public}d", ret);
     ret = ServerIpcOpenSession(&param, transInfo);
     if (ret != SOFTBUS_OK) {
         ClientConvertRetVal(sessionId, &ret);

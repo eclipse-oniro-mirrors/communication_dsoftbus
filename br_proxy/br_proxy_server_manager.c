@@ -2390,8 +2390,8 @@ static void DisableProxyByAppIndexAndUserId(int32_t appIndex, int32_t userId)
         }
         if (nodeInfo->channel.close != NULL) {
             nodeInfo->channel.close(&nodeInfo->channel, true);
-            TRANS_LOGI(TRANS_SVC, "[br_proxy] close channel, uninstall appIndex=%{public}d, userId=%{public}d", appIndex,
-                userId);
+            TRANS_LOGI(TRANS_SVC,
+                "[br_proxy] close channel, uninstall appIndex=%{public}d, userId=%{public}d", appIndex, userId);
         } else {
             TRANS_LOGW(
                 TRANS_SVC, "[br_proxy] close func is null, appIndex=%{public}d, userId=%{public}d", appIndex, userId);
