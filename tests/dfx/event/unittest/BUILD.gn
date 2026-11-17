@@ -30,6 +30,7 @@ ohos_unittest("SoftBusDfxEventTest") {
     "src/lnn_event_test.cpp",
     "src/softbus_event_test.cpp",
     "src/trans_event_test.cpp",
+    "$dsoftbus_dfx_path/event/src/softbus_event_virtual.c",
   ]
   include_dirs = [
     "$dsoftbus_dfx_path/event/src",

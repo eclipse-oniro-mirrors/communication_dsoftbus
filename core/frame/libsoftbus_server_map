@@ -199,6 +199,7 @@
         DiscPcCollaborationEventDeinit;
         DiscPcCollaborationEventInit;
         DiscPcCollaborationInit;
+        DiscRegisterEnhanceFunc;
         DiscShareBleDeinit;
         DiscShareBleInit;
         DiscShareNfcDeinit;
@@ -482,6 +483,7 @@
         LnnNotifyOOBEStateChangeEvent;
         LnnNotifyPhysicalSubnetStatusChanged;
         LnnNotifyReportEvent;
+        LnnNotifyScreenStateChangeEvent;
         LnnOfflineTimingByHeartbeat;
         LnnOfflineTimingBySleHb;
         LnnPackCloudSyncAckSeq;

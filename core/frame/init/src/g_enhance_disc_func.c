@@ -18,6 +18,7 @@
 #include <securec.h>
 #include <dlfcn.h>
 
+#include "softbus_def.h"
 #include "softbus_error_code.h"
 #ifndef NULL
 #define NULL 0
@@ -92,7 +93,7 @@ static void DiscRegisterInitEnhanceFunc(void *soHandle)
     g_discEnhanceFuncList.discShareNfcDeinit = dlsym(soHandle, "DiscShareNfcDeinit");
 }
 
-int32_t DiscRegisterEnhanceFunc(void *soHandle)
+SOFTBUS_SYMBOL_EXPORT int32_t DiscRegisterEnhanceFunc(void *soHandle)
 {
     DiscRegisterInitEnhanceFunc(soHandle);
 

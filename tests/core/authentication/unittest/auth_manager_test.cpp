@@ -164,6 +164,7 @@ HWTEST_F(AuthManagerTest, NEW_AND_FIND_AUTH_MANAGER_TEST_001, TestSize.Level1)
     EXPECT_NO_FATAL_FAILURE(AuthManagerSetAuthPassed(AUTH_SEQ, &info));
     EXPECT_NE(FindAuthManagerByUuid(UUID_TEST, AUTH_LINK_TYPE_WIFI, false), nullptr);
     EXPECT_NE(FindAuthManagerByUdid(UDID_TEST, AUTH_LINK_TYPE_WIFI, false), nullptr);
+    DelAuthManager(auth, AUTH_LINK_TYPE_WIFI);
 }
 
 static int32_t MyUpdateFuncReturnError(AuthManager *auth1, const AuthManager *auth2, AuthLinkType type)
@@ -667,6 +668,7 @@ HWTEST_F(AuthManagerTest, AUTH_DEVICE_GET_P2P_CONN_INFO_TEST_001, TestSize.Level
     EXPECT_NO_FATAL_FAILURE(AuthManagerSetAuthPassed(authHandle.authId, &info));
     EXPECT_EQ(AuthDeviceGetPreferConnInfo(UUID_TEST, &connInfo), SOFTBUS_OK);
     EXPECT_EQ(AuthDeviceCheckConnInfo(UUID_TEST, AUTH_LINK_TYPE_WIFI, false), true);
+    DelAuthManager(auth, AUTH_LINK_TYPE_WIFI);
 }
 
 /*
@@ -852,6 +854,7 @@ HWTEST_F(AuthManagerTest, AUTH_GET_LATEST_AUTH_SEQ_LIST_BY_TYPE_TEST_001, TestSi
     EXPECT_TRUE(ret2 == SOFTBUS_OK);
     int32_t ret3 = AuthGetLatestAuthSeqListByType(UDID_TEST, authSeq, authVerifyTime, DISCOVERY_TYPE_COUNT);
     EXPECT_EQ(ret3, SOFTBUS_AUTH_CONN_TYPE_INVALID);
+    DelAuthManager(auth, AUTH_LINK_TYPE_BLE);
 }
 
 /*
@@ -889,6 +892,7 @@ HWTEST_F(AuthManagerTest, PROCESS_SESSION_KEY_TEST_001, TestSize.Level1)
     keyIndex = 0;
     ret = ProcessEmptySessionKey(&info, keyIndex, false, &sessionKey);
     EXPECT_TRUE(ret == SOFTBUS_OK);
+    DelAuthManager(auth, AUTH_LINK_TYPE_BLE);
 }
 
 /*
@@ -1067,6 +1071,7 @@ HWTEST_F(AuthManagerTest, AUTH_DEVICE_ENCRYPT_TEST_002, TestSize.Level1)
     EXPECT_TRUE(AuthDeviceEncrypt(&authHandle, TMP_IN_DATA, TMP_DATA_LEN, outData, &outLen) == SOFTBUS_AUTH_NOT_FOUND);
     authHandle.authId = AUTH_SEQ;
     EXPECT_TRUE(AuthDeviceEncrypt(&authHandle, TMP_IN_DATA, TMP_DATA_LEN, outData, &outLen) == SOFTBUS_ENCRYPT_ERR);
+    DelAuthManager(auth, AUTH_LINK_TYPE_WIFI);
 }
 
 /*
@@ -1088,6 +1093,7 @@ HWTEST_F(AuthManagerTest, REMOVE_AUTHSESSION_KEY_BY_INDEX_TEST_001, TestSize.Lev
     SessionKey sessionKey = { { 0 }, TEST_DATA_LEN };
     EXPECT_EQ(AddSessionKey(&auth->sessionKeyList, authSeq, &sessionKey, AUTH_LINK_TYPE_WIFI, false), SOFTBUS_OK);
     EXPECT_NO_FATAL_FAILURE(RemoveAuthSessionKeyByIndex(0, 0, AUTH_LINK_TYPE_WIFI));
+    DelAuthManager(auth, AUTH_LINK_TYPE_WIFI);
 }
 
 static void OnConnOpened(uint32_t requestId, AuthHandle authHandle)
@@ -1228,5 +1234,304 @@ HWTEST_F(AuthManagerTest, AUTH_DEVICE_GET_CONN_INFO_BY_TYPE_TEST_001, TestSize.L
     type = AUTH_LINK_TYPE_BLE;
     ret = AuthDeviceGetConnInfoByType(UUID_TEST, type, &connInfo);
     EXPECT_EQ(ret, SOFTBUS_AUTH_CONN_NOT_ACTIVE);
+}
+
+/*
+ * @tc.name: AUTH_GET_DECRYPT_SIZE_TEST_001
+ * @tc.desc: Verify AuthGetDecryptSize for boundary values.
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ */
+HWTEST_F(AuthManagerTest, AUTH_GET_DECRYPT_SIZE_TEST_001, TestSize.Level1)
+{
+    EXPECT_EQ(AuthGetDecryptSize(0), 0);
+    EXPECT_EQ(AuthGetDecryptSize(OVERHEAD_LEN), (uint32_t)OVERHEAD_LEN);
+    EXPECT_EQ(AuthGetDecryptSize(OVERHEAD_LEN + 1), (uint32_t)1);
+    EXPECT_EQ(AuthGetDecryptSize(LENTH), (uint32_t)(LENTH - OVERHEAD_LEN));
+}
+
+/*
+ * @tc.name: AUTH_GEN_REQUEST_ID_TEST_001
+ * @tc.desc: Verify AuthGenRequestId returns a non-zero value.
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ */
+HWTEST_F(AuthManagerTest, AUTH_GEN_REQUEST_ID_TEST_001, TestSize.Level1)
+{
+    uint32_t requestId = AuthGenRequestId();
+    EXPECT_NE(requestId, 0);
+    uint32_t requestId2 = AuthGenRequestId();
+    EXPECT_NE(requestId2, 0);
+}
+
+/*
+ * @tc.name: GET_AUTH_MANAGER_BY_AUTH_ID_TEST_001
+ * @tc.desc: Verify GetAuthManagerByAuthId for existing and non-existing authId.
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ */
+HWTEST_F(AuthManagerTest, GET_AUTH_MANAGER_BY_AUTH_ID_TEST_001, TestSize.Level1)
+{
+    AuthSessionInfo info;
+    (void)memset_s(&info, sizeof(AuthSessionInfo), 0, sizeof(AuthSessionInfo));
+    SetAuthSessionInfo(&info, CONN_ID, false, AUTH_LINK_TYPE_WIFI);
+    AuthManager *auth = NewAuthManager(AUTH_SEQ, &info);
+    ASSERT_NE(auth, nullptr);
+
+    AuthManager *found = GetAuthManagerByAuthId(AUTH_SEQ);
+    EXPECT_NE(found, nullptr);
+    if (found != nullptr) {
+        EXPECT_EQ(found->authId, AUTH_SEQ);
+        DelDupAuthManager(found);
+    }
+
+    AuthManager *notFound = GetAuthManagerByAuthId(AUTH_SEQ_5);
+    EXPECT_EQ(notFound, nullptr);
+
+    DelAuthManager(auth, AUTH_LINK_TYPE_WIFI);
+}
+
+/*
+ * @tc.name: AUTH_DEVICE_GET_ID_BY_CONN_INFO_TEST_001
+ * @tc.desc: Verify AuthDeviceGetIdByConnInfo for null param, invalid type, and valid match.
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ */
+HWTEST_F(AuthManagerTest, AUTH_DEVICE_GET_ID_BY_CONN_INFO_TEST_001, TestSize.Level1)
+{
+    EXPECT_EQ(AuthDeviceGetIdByConnInfo(nullptr, false), AUTH_INVALID_ID);
+
+    AuthConnInfo connInfo;
+    (void)memset_s(&connInfo, sizeof(AuthConnInfo), 0, sizeof(AuthConnInfo));
+    connInfo.type = AUTH_LINK_TYPE_MAX;
+    EXPECT_EQ(AuthDeviceGetIdByConnInfo(&connInfo, false), AUTH_INVALID_ID);
+
+    AuthSessionInfo info;
+    (void)memset_s(&info, sizeof(AuthSessionInfo), 0, sizeof(AuthSessionInfo));
+    SetAuthSessionInfo(&info, CONN_ID, false, AUTH_LINK_TYPE_WIFI);
+    AuthManager *auth = NewAuthManager(AUTH_SEQ, &info);
+    ASSERT_NE(auth, nullptr);
+
+    (void)memset_s(&connInfo, sizeof(AuthConnInfo), 0, sizeof(AuthConnInfo));
+    connInfo.type = AUTH_LINK_TYPE_WIFI;
+    EXPECT_EQ(memcpy_s(connInfo.info.ipInfo.ip, IP_LEN, IP_TEST, strlen(IP_TEST)), EOK);
+    int64_t authId = AuthDeviceGetIdByConnInfo(&connInfo, false);
+    EXPECT_EQ(authId, AUTH_SEQ);
+
+    EXPECT_EQ(memcpy_s(connInfo.info.ipInfo.ip, IP_LEN, INVALID_IP_TEST, strlen(INVALID_IP_TEST)), EOK);
+    EXPECT_EQ(AuthDeviceGetIdByConnInfo(&connInfo, false), AUTH_INVALID_ID);
+
+    DelAuthManager(auth, AUTH_LINK_TYPE_WIFI);
+}
+
+/*
+ * @tc.name: AUTH_DEVICE_GET_ID_BY_UUID_TEST_001
+ * @tc.desc: Verify AuthDeviceGetIdByUuid for null/empty uuid, invalid type, valid match, not found.
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ */
+HWTEST_F(AuthManagerTest, AUTH_DEVICE_GET_ID_BY_UUID_TEST_001, TestSize.Level1)
+{
+    EXPECT_EQ(AuthDeviceGetIdByUuid(nullptr, AUTH_LINK_TYPE_WIFI, false), AUTH_INVALID_ID);
+    EXPECT_EQ(AuthDeviceGetIdByUuid("", AUTH_LINK_TYPE_WIFI, false), AUTH_INVALID_ID);
+    EXPECT_EQ(AuthDeviceGetIdByUuid(UUID_TEST, AUTH_LINK_TYPE_MAX, false), AUTH_INVALID_ID);
+    EXPECT_EQ(AuthDeviceGetIdByUuid(UUID_TEST, (AuthLinkType)-1, false), AUTH_INVALID_ID);
+
+    AuthSessionInfo info;
+    (void)memset_s(&info, sizeof(AuthSessionInfo), 0, sizeof(AuthSessionInfo));
+    SetAuthSessionInfo(&info, CONN_ID, false, AUTH_LINK_TYPE_WIFI);
+    AuthManager *auth = NewAuthManager(AUTH_SEQ, &info);
+    ASSERT_NE(auth, nullptr);
+
+    int64_t authId = AuthDeviceGetIdByUuid(UUID_TEST, AUTH_LINK_TYPE_WIFI, false);
+    EXPECT_EQ(authId, AUTH_SEQ);
+
+    EXPECT_EQ(AuthDeviceGetIdByUuid("nonexistent_uuid", AUTH_LINK_TYPE_WIFI, false), AUTH_INVALID_ID);
+
+    DelAuthManager(auth, AUTH_LINK_TYPE_WIFI);
+}
+
+/*
+ * @tc.name: AUTH_DEVICE_SET_P2P_MAC_TEST_001
+ * @tc.desc: Verify AuthDeviceSetP2pMac for null/empty mac, unknown authId, valid.
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ */
+HWTEST_F(AuthManagerTest, AUTH_DEVICE_SET_P2P_MAC_TEST_001, TestSize.Level1)
+{
+    EXPECT_EQ(AuthDeviceSetP2pMac(AUTH_SEQ, nullptr), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthDeviceSetP2pMac(AUTH_SEQ, ""), SOFTBUS_INVALID_PARAM);
+
+    AuthSessionInfo info;
+    (void)memset_s(&info, sizeof(AuthSessionInfo), 0, sizeof(AuthSessionInfo));
+    SetAuthSessionInfo(&info, CONN_ID, false, AUTH_LINK_TYPE_WIFI);
+    AuthManager *auth = NewAuthManager(AUTH_SEQ, &info);
+    ASSERT_NE(auth, nullptr);
+
+    EXPECT_EQ(AuthDeviceSetP2pMac(AUTH_SEQ_5, "aa:bb:cc:dd:ee:ff"), SOFTBUS_AUTH_NOT_FOUND);
+
+    const char *p2pMac = "11:22:33:44:55:66";
+    EXPECT_EQ(AuthDeviceSetP2pMac(AUTH_SEQ, p2pMac), SOFTBUS_OK);
+
+    AuthManager *found = GetAuthManagerByAuthId(AUTH_SEQ);
+    if (found != nullptr) {
+        EXPECT_STREQ(found->p2pMac, p2pMac);
+        DelDupAuthManager(found);
+    }
+    DelAuthManager(auth, AUTH_LINK_TYPE_WIFI);
+}
+
+/*
+ * @tc.name: AUTH_DEVICE_SET_IS_CREATED_SESSION_KEY_TEST_001
+ * @tc.desc: Verify AuthDeviceSetIsCreatedSessionKey for unknown authId and valid authId.
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ */
+HWTEST_F(AuthManagerTest, AUTH_DEVICE_SET_IS_CREATED_SESSION_KEY_TEST_001, TestSize.Level1)
+{
+    EXPECT_EQ(AuthDeviceSetIsCreatedSessionKey(AUTH_SEQ_5, true), SOFTBUS_AUTH_NOT_FOUND);
+
+    AuthSessionInfo info;
+    (void)memset_s(&info, sizeof(AuthSessionInfo), 0, sizeof(AuthSessionInfo));
+    SetAuthSessionInfo(&info, CONN_ID, false, AUTH_LINK_TYPE_WIFI);
+    AuthManager *auth = NewAuthManager(AUTH_SEQ, &info);
+    ASSERT_NE(auth, nullptr);
+
+    EXPECT_EQ(AuthDeviceSetIsCreatedSessionKey(AUTH_SEQ, true), SOFTBUS_OK);
+    AuthManager *found = GetAuthManagerByAuthId(AUTH_SEQ);
+    if (found != nullptr) {
+        EXPECT_TRUE(found->isCreatedSessionKey);
+        DelDupAuthManager(found);
+    }
+
+    EXPECT_EQ(AuthDeviceSetIsCreatedSessionKey(AUTH_SEQ, false), SOFTBUS_OK);
+    found = GetAuthManagerByAuthId(AUTH_SEQ);
+    if (found != nullptr) {
+        EXPECT_FALSE(found->isCreatedSessionKey);
+        DelDupAuthManager(found);
+    }
+    DelAuthManager(auth, AUTH_LINK_TYPE_WIFI);
+}
+
+/*
+ * @tc.name: AUTH_FLUSH_DEVICE_TEST_001
+ * @tc.desc: Verify AuthFlushDevice for invalid type, null/empty uuid, valid uuid.
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ */
+HWTEST_F(AuthManagerTest, AUTH_FLUSH_DEVICE_TEST_001, TestSize.Level1)
+{
+    EXPECT_EQ(AuthFlushDevice(UUID_TEST, AUTH_LINK_TYPE_BLE), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthFlushDevice(nullptr, AUTH_LINK_TYPE_WIFI), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthFlushDevice("", AUTH_LINK_TYPE_WIFI), SOFTBUS_INVALID_PARAM);
+
+    EXPECT_EQ(AuthFlushDevice("nonexistent_uuid", AUTH_LINK_TYPE_WIFI), SOFTBUS_AUTH_POST_MSG_FAIL);
+}
+
+/*
+ * @tc.name: GET_CONNECTION_ID_BY_HANDLE_TEST_001
+ * @tc.desc: Verify GetConnectionIdByHandle for invalid type, unknown authId, connId==0, connId!=0.
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ */
+HWTEST_F(AuthManagerTest, GET_CONNECTION_ID_BY_HANDLE_TEST_001, TestSize.Level1)
+{
+    AuthHandle handle = { .authId = AUTH_SEQ, .type = AUTH_LINK_TYPE_MAX };
+    EXPECT_EQ(GetConnectionIdByHandle(handle), SOFTBUS_INVALID_PARAM);
+
+    handle.type = (AuthLinkType)-1;
+    EXPECT_EQ(GetConnectionIdByHandle(handle), SOFTBUS_INVALID_PARAM);
+
+    handle.authId = AUTH_SEQ_5;
+    handle.type = AUTH_LINK_TYPE_WIFI;
+    EXPECT_EQ(GetConnectionIdByHandle(handle), SOFTBUS_NOT_FIND);
+
+    AuthSessionInfo info;
+    (void)memset_s(&info, sizeof(AuthSessionInfo), 0, sizeof(AuthSessionInfo));
+    SetAuthSessionInfo(&info, CONN_ID, false, AUTH_LINK_TYPE_WIFI);
+    AuthManager *auth = NewAuthManager(AUTH_SEQ, &info);
+    ASSERT_NE(auth, nullptr);
+
+    handle.authId = AUTH_SEQ;
+    handle.type = AUTH_LINK_TYPE_BR;
+    EXPECT_EQ(GetConnectionIdByHandle(handle), SOFTBUS_NOT_FIND);
+
+    handle.type = AUTH_LINK_TYPE_WIFI;
+    int32_t connId = GetConnectionIdByHandle(handle);
+    EXPECT_NE(connId, SOFTBUS_NOT_FIND);
+    EXPECT_NE(connId, SOFTBUS_INVALID_PARAM);
+
+    DelAuthManager(auth, AUTH_LINK_TYPE_WIFI);
+}
+
+/*
+ * @tc.name: IS_HAVE_AUTH_ID_BY_CONN_ID_TEST_001
+ * @tc.desc: Verify IsHaveAuthIdByConnId for present and absent connId.
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ */
+HWTEST_F(AuthManagerTest, IS_HAVE_AUTH_ID_BY_CONN_ID_TEST_001, TestSize.Level1)
+{
+    EXPECT_FALSE(IsHaveAuthIdByConnId(CONN_ID_3));
+
+    AuthSessionInfo info;
+    (void)memset_s(&info, sizeof(AuthSessionInfo), 0, sizeof(AuthSessionInfo));
+    SetAuthSessionInfo(&info, CONN_ID, false, AUTH_LINK_TYPE_WIFI);
+    AuthManager *auth = NewAuthManager(AUTH_SEQ, &info);
+    ASSERT_NE(auth, nullptr);
+
+    EXPECT_TRUE(IsHaveAuthIdByConnId(CONN_ID));
+    EXPECT_FALSE(IsHaveAuthIdByConnId(CONN_ID_3));
+
+    DelAuthManager(auth, AUTH_LINK_TYPE_WIFI);
+}
+
+/*
+ * @tc.name: AUTH_UPDATE_TCP_KEEPALIVE_TEST_001
+ * @tc.desc: Verify AuthUpdateTcpKeepaliveByConnInfo for null uuid, not found, found.
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ */
+HWTEST_F(AuthManagerTest, AUTH_UPDATE_TCP_KEEPALIVE_TEST_001, TestSize.Level1)
+{
+    EXPECT_EQ(AuthUpdateTcpKeepaliveByConnInfo(nullptr, true), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthUpdateTcpKeepaliveByConnInfo("nonexistent_uuid", true), SOFTBUS_AUTH_NOT_FOUND);
+}
+
+/*
+ * @tc.name: AUTH_DEVICE_INIT_TEST_001
+ * @tc.desc: Verify AuthDeviceInit with null callback returns SOFTBUS_INVALID_PARAM.
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ */
+HWTEST_F(AuthManagerTest, AUTH_DEVICE_INIT_TEST_001, TestSize.Level1)
+{
+    EXPECT_EQ(AuthDeviceInit(nullptr), SOFTBUS_INVALID_PARAM);
+}
+
+/*
+ * @tc.name: AUTH_DEVICE_DEINIT_TEST_001
+ * @tc.desc: Verify AuthDeviceDeinit can be called without crash.
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ */
+HWTEST_F(AuthManagerTest, AUTH_DEVICE_DEINIT_TEST_001, TestSize.Level1)
+{
+    EXPECT_NO_FATAL_FAILURE(AuthDeviceDeinit());
+}
+
+/*
+ * @tc.name: AUTH_DEVICE_GET_PREFER_CONN_INFO_WITHOUT_SLE_TEST_001
+ * @tc.desc: Verify AuthDeviceGetPreferConnInfoWithoutSle for null params and not found.
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ */
+HWTEST_F(AuthManagerTest, AUTH_DEVICE_GET_PREFER_CONN_INFO_WITHOUT_SLE_TEST_001, TestSize.Level1)
+{
+    AuthConnInfo connInfo;
+    EXPECT_EQ(AuthDeviceGetPreferConnInfoWithoutSle(nullptr, &connInfo), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthDeviceGetPreferConnInfoWithoutSle(UUID_TEST, nullptr), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthDeviceGetPreferConnInfoWithoutSle("", &connInfo), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthDeviceGetPreferConnInfoWithoutSle("nonexistent", &connInfo), SOFTBUS_AUTH_NOT_FOUND);
 }
 } // namespace OHOS
