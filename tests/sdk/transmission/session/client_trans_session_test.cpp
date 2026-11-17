@@ -1256,11 +1256,11 @@ HWTEST_F(TransClientSessionTest, CreateDestroySessionNodeTest001, TestSize.Level
     sessionNode->lifecycle.condIsWaiting = true;
     SessionServer->listener.isSocketListener = true;
 
-    DestroySessionInfo *destroyInfo = CreateDestroySessionNode(nullptr, SessionServer, NOT_MULTIPATH);
+    DestroySessionInfo *destroyInfo = CreateDestroySessionNode(nullptr, SessionServer, false);
     EXPECT_TRUE(destroyInfo == nullptr);
-    destroyInfo = CreateDestroySessionNode(sessionNode, nullptr, NOT_MULTIPATH);
+    destroyInfo = CreateDestroySessionNode(sessionNode, nullptr, false);
     EXPECT_TRUE(destroyInfo == nullptr);
-    destroyInfo = CreateDestroySessionNode(sessionNode, SessionServer, NOT_MULTIPATH);
+    destroyInfo = CreateDestroySessionNode(sessionNode, SessionServer, false);
     ASSERT_TRUE(destroyInfo != nullptr);
     ClientDestroySession(nullptr, SHUTDOWN_REASON_BLOCK_MODE);
     SoftBusFree(destroyInfo);

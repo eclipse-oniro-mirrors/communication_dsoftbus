@@ -127,9 +127,9 @@ SessionInfo *CreateNewSession(const SessionParam *param)
 }
 
 DestroySessionInfo *CreateDestroySessionNode(
-    SessionInfo *sessionNode, const ClientSessionServer *server, LinkDownType linkDownType)
+    SessionInfo *sessionNode, const ClientSessionServer *server, bool otherUp)
 {
-    if (sessionNode == NULL || server == NULL || linkDownType == LINK_DOWN_MAX_NUM_TYPE) {
+    if (sessionNode == NULL || server == NULL) {
         TRANS_LOGE(TRANS_SDK, "invalid param.");
         return NULL;
     }
@@ -139,7 +139,7 @@ DestroySessionInfo *CreateDestroySessionNode(
         return NULL;
     }
     destroyNode->sessionId = sessionNode->sessionId;
-    if (linkDownType == NOT_MULTIPATH || linkDownType == MULTIPATH_FIRST_CHANNEL) {
+    if (!otherUp) {
         destroyNode->channelId = sessionNode->channelId;
         destroyNode->channelType = sessionNode->channelType;
         destroyNode->routeType = sessionNode->routeType;
@@ -148,7 +148,7 @@ DestroySessionInfo *CreateDestroySessionNode(
         destroyNode->channelType = sessionNode->channelTypeReserve;
         destroyNode->routeType = sessionNode->routeTypeReserve;
     }
-    destroyNode->linkDownType = linkDownType;
+    destroyNode->otherUp = otherUp;
     destroyNode->isAsync = sessionNode->isAsync;
     if (!sessionNode->lifecycle.condIsWaiting) {
         (void)SoftBusCondDestroy(&(sessionNode->lifecycle.callbackCond));
@@ -190,11 +190,13 @@ SOFTBUS_VISIBILITY void ClientDestroySession(const ListNode *destroyList, Shutdo
     TRANS_LOGD(TRANS_SDK, "enter.");
     LIST_FOR_EACH_ENTRY_SAFE(destroyNode, destroyNodeNext, destroyList, DestroySessionInfo, node) {
         int32_t id = destroyNode->sessionId;
-        if (destroyNode->linkDownType == MULTIPATH_ONLY_SECOND_CHANNEL ||
-            destroyNode->linkDownType == MULTIPATH_BOTH_CHANNEL) {
-            bool delSecondPath = destroyNode->linkDownType == MULTIPATH_ONLY_SECOND_CHANNEL ? true : false;
-            (void)ClientTransCloseReserveChannel(
-                destroyNode->channelId, destroyNode->channelType, destroyNode->routeType, delSecondPath);
+        if (destroyNode->otherUp) {
+            if (destroyNode->channelType == CHANNEL_TYPE_UDP) {
+                (void)ClientTransCloseReserveChannel(
+                    destroyNode->channelId, destroyNode->channelType, destroyNode->routeType, true);
+            } else {
+                (void)ClientTransCloseChannel(destroyNode->channelId, destroyNode->channelType, id, false);
+            }
             ListDelete(&(destroyNode->node));
             SoftBusFree(destroyNode);
             continue;
@@ -231,7 +233,7 @@ void DestroyClientSessionServer(ClientSessionServer *server, ListNode *destroyLi
         LIST_FOR_EACH_ENTRY_SAFE(sessionNode, sessionNodeNext, &(server->sessionList), SessionInfo, node) {
             DestroySessionInfo *destroyNode = NULL;
             if (sessionNode->enableMultipath && sessionNode->channelIdReserve != INVALID_CHANNEL_ID) {
-                destroyNode = CreateDestroySessionNode(sessionNode, server, MULTIPATH_BOTH_CHANNEL);
+                destroyNode = CreateDestroySessionNode(sessionNode, server, true);
                 sessionNode->channelIdReserve = INVALID_CHANNEL_ID;
                 sessionNode->channelTypeReserve = CHANNEL_TYPE_UNDEFINED;
                 sessionNode->routeTypeReserve = -1;
@@ -240,7 +242,7 @@ void DestroyClientSessionServer(ClientSessionServer *server, ListNode *destroyLi
                 ListAdd(destroyList, &(destroyNode->node));
                 destroyNode = NULL;
             }
-            destroyNode = CreateDestroySessionNode(sessionNode, server, NOT_MULTIPATH);
+            destroyNode = CreateDestroySessionNode(sessionNode, server, false);
             if (destroyNode == NULL) {
                 continue;
             }
@@ -460,7 +462,7 @@ void DestroyAllClientSession(const ClientSessionServer *server, ListNode *destro
     LIST_FOR_EACH_ENTRY_SAFE(sessionNode, sessionNodeNext, &(server->sessionList), SessionInfo, node) {
         TRANS_LOGI(TRANS_SDK, "channelId=%{public}d, channelType=%{public}d, routeType=%{public}d",
             sessionNode->channelId, sessionNode->channelType, sessionNode->routeType);
-        DestroySessionInfo *destroyNode = CreateDestroySessionNode(sessionNode, server, NOT_MULTIPATH);
+        DestroySessionInfo *destroyNode = CreateDestroySessionNode(sessionNode, server, false);
         if (destroyNode == NULL) {
             continue;
         }
@@ -495,24 +497,9 @@ SOFTBUS_VISIBILITY void DestroyClientSessionByNetworkId(
         if (strcmp(sessionNode->info.peerDeviceId, networkId) != 0) {
             continue;
         }
-        bool onlyReserveLinkDown = true;
-        if (TransMultipathNeedDelReserve(sessionNode, routeType, &onlyReserveLinkDown)) {
-            int32_t deadChannelId = (sessionNode->routeType == routeType) ?
-                sessionNode->channelId : sessionNode->channelIdReserve;
-            int32_t deadChannelType = (sessionNode->routeType == routeType) ?
-                sessionNode->channelType : sessionNode->channelTypeReserve;
-            bool otherUp = TransMultipathIsWiredRoute(routeType) ?
-                (sessionNode->ctrlWirelessStatus == CTRL_CH_STATUS_UP) :
-                (sessionNode->ctrlWiredStatus == CTRL_CH_STATUS_UP);
-            (void)TransMultipathMarkDown(sessionNode->sessionId, deadChannelId);
-            if (otherUp) {
-                (void)TransMultipathCloseDeadChannel(
-                    sessionNode->sessionId, deadChannelId, deadChannelType, false);
-                TRANS_LOGI(TRANS_SDK, "multipath one link down, session preserved, routeType=%{public}d", routeType);
-                continue;
-            }
-            (void)TransMultipathDelReserveLinkDown(sessionNode, server, destroyList, onlyReserveLinkDown);
-            TRANS_LOGI(TRANS_SDK, "multipath both down, destroy session, routeType=%{public}d", routeType);
+        if (TransMultipathDelReserveLinkDown(sessionNode, server, destroyList, routeType)) {
+            TRANS_LOGI(TRANS_SDK, "multipath one link down, session preserved, routeType=%{public}d", routeType);
+            continue;
         }
 
         if (!ClientTransCheckNeedDel(server->sessionName, sessionNode, routeType, connType)) {
@@ -521,7 +508,7 @@ SOFTBUS_VISIBILITY void DestroyClientSessionByNetworkId(
 
         TRANS_LOGI(TRANS_SDK, "channelId=%{public}d, channelType=%{public}d, routeType=%{public}d, type=%{public}d",
             sessionNode->channelId, sessionNode->channelType, sessionNode->routeType, type);
-        DestroySessionInfo *destroyNode = CreateDestroySessionNode(sessionNode, server, NOT_MULTIPATH);
+        DestroySessionInfo *destroyNode = CreateDestroySessionNode(sessionNode, server, false);
         if (destroyNode == NULL) {
             continue;
         }
@@ -556,7 +543,7 @@ SOFTBUS_VISIBILITY void DestroyClientSessionByServiceIds(
         sessionNode->routeType);
     AnonymizeFree(tmpName);
     AnonymizeFree(tmpPeerName);
-    DestroySessionInfo *destroyNode = CreateDestroySessionNode(sessionNode, server, NOT_MULTIPATH);
+    DestroySessionInfo *destroyNode = CreateDestroySessionNode(sessionNode, server, false);
     if (destroyNode == NULL) {
         return;
     }
@@ -928,7 +915,7 @@ void ClientUpdateIdleTimeout(const ClientSessionServer *serverNode, SessionInfo 
         return;
     }
 
-    DestroySessionInfo *destroyNode = CreateDestroySessionNode(sessionNode, serverNode, NOT_MULTIPATH);
+    DestroySessionInfo *destroyNode = CreateDestroySessionNode(sessionNode, serverNode, false);
     if (destroyNode == NULL) {
         TRANS_LOGE(TRANS_SDK, "failed to create destory session Node, sessionId=%{public}d", sessionNode->sessionId);
         return;
@@ -1110,7 +1097,7 @@ void PrivilegeDestroyAllClientSession(
         }
         TRANS_LOGI(TRANS_SDK, "channelId=%{public}d, channelType=%{public}d, routeType=%{public}d",
             sessionNode->channelId, sessionNode->channelType, sessionNode->routeType);
-        DestroySessionInfo *destroyNode = CreateDestroySessionNode(sessionNode, server, NOT_MULTIPATH);
+        DestroySessionInfo *destroyNode = CreateDestroySessionNode(sessionNode, server, false);
         if (destroyNode == NULL) {
             continue;
         }

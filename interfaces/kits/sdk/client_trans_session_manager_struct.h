@@ -203,7 +203,7 @@ typedef struct {
     int32_t sessionId;
     int32_t channelId;
     int32_t routeType;
-    LinkDownType linkDownType;
+    bool otherUp;
     ChannelType channelType;
     bool isAsync;
     void (*OnSessionClosed)(int sessionId);

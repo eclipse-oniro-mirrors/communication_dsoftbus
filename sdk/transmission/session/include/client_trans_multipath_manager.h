@@ -60,8 +60,8 @@ bool TransMultipathIsSessionActive(const char *sessionName, int32_t *multipathSe
 
 bool TransMultipathNeedDelReserve(SessionInfo *sessionNode, int32_t routeType, bool *onlyReserveLinkDown);
 
-void TransMultipathDelReserveLinkDown(
-    SessionInfo *sessionNode, const ClientSessionServer *server, ListNode *destroyList, bool onlyReserveLinkDown);
+bool TransMultipathDelReserveLinkDown(
+    SessionInfo *sessionNode, const ClientSessionServer *server, ListNode *destroyList, int32_t routeType);
 
 void TransMultipathUpdateClosingState(SessionInfo *sessionNode, bool isClosing);
 

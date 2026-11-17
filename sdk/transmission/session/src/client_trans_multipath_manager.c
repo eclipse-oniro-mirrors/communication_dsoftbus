@@ -364,7 +364,7 @@ int32_t TransMultipathGetChannelRole(int32_t sessionId, int32_t channelId, Chann
 
 bool TransMultipathNeedDelReserve(SessionInfo *sessionNode, int32_t routeType, bool *onlyReserveLinkDown)
 {
-    if (sessionNode == NULL || routeType == INVALID_ROUTE_TYPE || onlyReserveLinkDown == NULL) {
+    if (sessionNode == NULL || routeType == INVALID_ROUTE_TYPE) {
         TRANS_LOGW(TRANS_SDK, "Invalid param");
         return false;
     }
@@ -373,29 +373,51 @@ bool TransMultipathNeedDelReserve(SessionInfo *sessionNode, int32_t routeType, b
     }
     if ((sessionNode->routeType == routeType && sessionNode->routeTypeReserve != INVALID_ROUTE_TYPE) ||
         sessionNode->routeTypeReserve == routeType) {
-        TRANS_LOGI(TRANS_SDK, "sessionId=%{public}d, type1=%{public}d, type2=%{public}d, linkDownType=%{public}d",
+        TRANS_LOGI(TRANS_SDK, "sessionId=%{public}d, type1=%{public}d, type2=%{public}d, routeType=%{public}d",
             sessionNode->sessionId, sessionNode->routeType, sessionNode->routeTypeReserve, routeType);
-        *onlyReserveLinkDown = sessionNode->routeType == routeType ? false : true;
+        if (onlyReserveLinkDown != NULL) {
+            *onlyReserveLinkDown = sessionNode->routeType == routeType ? false : true;
+        }
         return true;
     }
     return false;
 }
 
-void TransMultipathDelReserveLinkDown(
-    SessionInfo *sessionNode, const ClientSessionServer *server, ListNode *destroyList, bool onlyReserveLinkDown)
+bool TransMultipathDelReserveLinkDown(
+    SessionInfo *sessionNode, const ClientSessionServer *server, ListNode *destroyList, int32_t routeType)
 {
     if (sessionNode == NULL || destroyList == NULL) {
         TRANS_LOGW(TRANS_SDK, "Invalid param");
-        return;
+        return false;
     }
-    LinkDownType linkDownType = onlyReserveLinkDown ? MULTIPATH_ONLY_SECOND_CHANNEL : MULTIPATH_BOTH_CHANNEL;
-    DestroySessionInfo *destroyNode = CreateDestroySessionNode(sessionNode, server, linkDownType);
-    sessionNode->channelIdReserve = INVALID_CHANNEL_ID;
-    sessionNode->channelTypeReserve = CHANNEL_TYPE_UNDEFINED;
-    sessionNode->routeTypeReserve = -1;
+    bool onlyReserveLinkDown = true;
+    if (!TransMultipathNeedDelReserve(sessionNode, routeType, &onlyReserveLinkDown)) {
+        return false;
+    }
+    int32_t deadChannelId = onlyReserveLinkDown ? sessionNode->channelIdReserve : sessionNode->channelId;
+    (void)TransMultipathMarkDownOnNode(sessionNode, deadChannelId);
+    bool otherUp = (sessionNode->ctrlWirelessStatus == CTRL_CH_STATUS_UP) ||
+        (sessionNode->ctrlWiredStatus == CTRL_CH_STATUS_UP);
+    if (!otherUp) {
+        return false;
+    }
+    if (!onlyReserveLinkDown) {
+        int32_t tmpId = sessionNode->channelId;
+        sessionNode->channelId = sessionNode->channelIdReserve;
+        sessionNode->channelIdReserve = tmpId;
+        ChannelType tmpType = sessionNode->channelType;
+        sessionNode->channelType = sessionNode->channelTypeReserve;
+        sessionNode->channelTypeReserve = tmpType;
+        int32_t tmpRoute = sessionNode->routeType;
+        sessionNode->routeType = sessionNode->routeTypeReserve;
+        sessionNode->routeTypeReserve = tmpRoute;
+    }
+    DestroySessionInfo *destroyNode = CreateDestroySessionNode(sessionNode, server, true);
     if (destroyNode != NULL) {
+        (void)TransMultipathClearChannelSlotOnNode(sessionNode, deadChannelId);
         ListAdd(destroyList, &destroyNode->node);
     }
+    return true;
 }
 
 void TransMultipathUpdateClosingState(SessionInfo *sessionNode, bool isClosing)

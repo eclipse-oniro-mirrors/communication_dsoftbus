@@ -1761,7 +1761,7 @@ void ClientCleanAllSessionWhenServerDeath(ListNode *sessionServerInfoList)
                 TRANS_LOGD(TRANS_SDK, "cannot delete socket for listening, socket=%{public}d", sessionNode->sessionId);
                 continue;
             }
-            DestroySessionInfo *destroyNode = CreateDestroySessionNode(sessionNode, serverNode, NOT_MULTIPATH);
+            DestroySessionInfo *destroyNode = CreateDestroySessionNode(sessionNode, serverNode, false);
             if (destroyNode == NULL) {
                 continue;
             }
