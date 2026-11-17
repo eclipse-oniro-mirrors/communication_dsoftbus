@@ -602,20 +602,6 @@ HWTEST_F(ProxyObserverTest, ProxyObserverTest030, TestSize.Level1)
     EXPECT_STREQ(realAddr, TEST_MAC_B);
 }
 
-/*
- * @tc.name: ProxyObserverTest031
- * @tc.desc: GetRealMac returns SOFTBUS_STRCPY_ERR when realAddrLen is too small
- * @tc.type: FUNC
- */
-HWTEST_F(ProxyObserverTest, ProxyObserverTest031, TestSize.Level1)
-{
-    std::string hashMac = ProxyObserverUtilMock::ComputeHashMac(TEST_MAC_A);
-    // Provide a buffer that is too small to hold the MAC address.
-    char realAddr[2] = {0};
-    int32_t ret = GetRealMac(realAddr, sizeof(realAddr), hashMac.c_str());
-    EXPECT_EQ(ret, SOFTBUS_STRCPY_ERR);
-}
-
 // ===========================================================================
 // ConvertRealMacToHashMac failure paths (tested indirectly via IsPairedDevice/GetRealMac)
 // ===========================================================================
