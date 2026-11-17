@@ -499,7 +499,9 @@ HWTEST_F(TransPendingPktTest, PendingPacketWakeUpBySet001, TestSize.Level1)
     EXPECT_EQ(SOFTBUS_OK, ret);
 
     std::atomic<int32_t> procRet(SOFTBUS_INVALID_PARAM);
-    std::thread procThread([&]() { procRet = ProcPendingPacket(channelId, seqNum, type); });
+    std::thread procThread([&procRet, channelId, seqNum, type]() {
+        procRet = ProcPendingPacket(channelId, seqNum, type);
+    });
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
     ret = SetPendingPacket(channelId, seqNum, type);
     EXPECT_EQ(SOFTBUS_OK, ret);
@@ -528,7 +530,9 @@ HWTEST_F(TransPendingPktTest, PendingPacketWakeUpByDel001, TestSize.Level1)
     EXPECT_EQ(SOFTBUS_OK, ret);
 
     std::atomic<int32_t> procRet(SOFTBUS_OK);
-    std::thread procThread([&]() { procRet = ProcPendingPacket(channelId, seqNum, type); });
+    std::thread procThread([&procRet, channelId, seqNum, type]() {
+        procRet = ProcPendingPacket(channelId, seqNum, type);
+    });
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
     ret = DelPendingPacket(channelId, type);
     EXPECT_EQ(SOFTBUS_OK, ret);

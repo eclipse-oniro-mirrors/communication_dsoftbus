@@ -49,6 +49,10 @@ namespace OHOS {
 #define TEST_PID 1570
 #define TEST_CHANNEL_ID 2531
 #define TEST_REQUEST_ID 1251
+#define TEST_BLE_POWER_MOCK (-17)
+#define TEST_RANGE_CAPACITY_VALUE 100
+#define TEST_SLE_LISTENER_ID 1
+#define TEST_ANTI_SLEEP_TIMEOUT_MS 1000
 
 static const char *TEST_PKG_NAME = "TEST_PKG_NAME";
 static const char *TEST_UDID = "11223344";
@@ -1345,14 +1349,14 @@ static void RegisterRadarCbForOpenSrcStub(void *callback)
 
 static int SoftBusGetBlePowerStub(int8_t *power)
 {
-    *power = -17;
+    *power = TEST_BLE_POWER_MOCK;
     return SOFTBUS_OK;
 }
 
 static int SoftBusBleRangeStub(SoftBusRangeParam *param, int32_t *range)
 {
     (void)param;
-    *range = 100;
+    *range = TEST_RANGE_CAPACITY_VALUE;
     return SOFTBUS_OK;
 }
 
@@ -1387,7 +1391,7 @@ static void SoftBusRemoveSleStateListenerStub(int listenerId)
 
 static int32_t GetSleRangeCapacityStub(void)
 {
-    return 100;
+    return TEST_RANGE_CAPACITY_VALUE;
 }
 
 static int32_t GetLocalSleAddrStub(char *sleAddr, uint32_t sleAddrLen)
@@ -1436,7 +1440,7 @@ HWTEST_F(SoftbusGEnhanceTest, SoftbusGEnhanceTest040, TestSize.Level1)
     power = 0;
     ret = SoftBusGetBlePowerPacked(&power);
     EXPECT_EQ(ret, SOFTBUS_OK);
-    EXPECT_EQ(power, -17);
+    EXPECT_EQ(power, TEST_BLE_POWER_MOCK);
 #endif
 
     int32_t range = 0;
@@ -1449,12 +1453,12 @@ HWTEST_F(SoftbusGEnhanceTest, SoftbusGEnhanceTest040, TestSize.Level1)
     pfnAdapterEnhanceFuncList->softBusBleRange = SoftBusBleRangeStub;
     ret = SoftBusBleRangePacked(&rangeParam, &range);
     EXPECT_EQ(ret, SOFTBUS_OK);
-    EXPECT_EQ(range, 100);
+    EXPECT_EQ(range, TEST_RANGE_CAPACITY_VALUE);
 }
 
 /*
  * @tc.name: SoftbusGEnhanceTest041
- * @tc.desc: adapter sle and anti sleep pack forwarding branch test
+ * @tc.desc: adapter range callback and sle listener pack forwarding branch test
  * @tc.type: FUNC
  * @tc.level: Level1
  * @tc.require:
@@ -1479,7 +1483,7 @@ HWTEST_F(SoftbusGEnhanceTest, SoftbusGEnhanceTest041, TestSize.Level1)
     pfnAdapterEnhanceFuncList->softBusAddSleStateListener = SoftBusAddSleStateListenerStub;
     ret = SoftBusAddSleStateListenerPacked(nullptr, &listenerId);
     EXPECT_EQ(ret, SOFTBUS_OK);
-    EXPECT_EQ(listenerId, 1);
+    EXPECT_EQ(listenerId, TEST_SLE_LISTENER_ID);
     pfnAdapterEnhanceFuncList->softBusAddSleStateListener = nullptr;
     listenerId = 0;
     ret = SoftBusAddSleStateListenerPacked(nullptr, &listenerId);
@@ -1491,18 +1495,30 @@ HWTEST_F(SoftbusGEnhanceTest, SoftbusGEnhanceTest041, TestSize.Level1)
     EXPECT_EQ(IsSleEnabledPacked(), false);
 
     pfnAdapterEnhanceFuncList->softBusRemoveSleStateListener = SoftBusRemoveSleStateListenerStub;
-    EXPECT_NO_FATAL_FAILURE(SoftBusRemoveSleStateListenerPacked(1));
+    EXPECT_NO_FATAL_FAILURE(SoftBusRemoveSleStateListenerPacked(TEST_SLE_LISTENER_ID));
     pfnAdapterEnhanceFuncList->softBusRemoveSleStateListener = nullptr;
-    EXPECT_NO_FATAL_FAILURE(SoftBusRemoveSleStateListenerPacked(1));
+    EXPECT_NO_FATAL_FAILURE(SoftBusRemoveSleStateListenerPacked(TEST_SLE_LISTENER_ID));
+}
+
+/*
+ * @tc.name: SoftbusGEnhanceTest043
+ * @tc.desc: adapter sle address, sle adapter init and anti sleep pack forwarding branch test
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(SoftbusGEnhanceTest, SoftbusGEnhanceTest043, TestSize.Level1)
+{
+    AdapterEnhanceFuncList *pfnAdapterEnhanceFuncList = AdapterEnhanceFuncListGet();
 
     pfnAdapterEnhanceFuncList->getSleRangeCapacity = GetSleRangeCapacityStub;
-    EXPECT_EQ(GetSleRangeCapacityPacked(), 100);
+    EXPECT_EQ(GetSleRangeCapacityPacked(), TEST_RANGE_CAPACITY_VALUE);
     pfnAdapterEnhanceFuncList->getSleRangeCapacity = nullptr;
     EXPECT_EQ(GetSleRangeCapacityPacked(), SOFTBUS_OK);
 
     char sleAddr[SOFTBUS_DEV_IDENTITY_LEN] = {0};
     pfnAdapterEnhanceFuncList->getLocalSleAddr = GetLocalSleAddrStub;
-    ret = GetLocalSleAddrPacked(sleAddr, sizeof(sleAddr));
+    int32_t ret = GetLocalSleAddrPacked(sleAddr, sizeof(sleAddr));
     EXPECT_EQ(ret, SOFTBUS_OK);
     pfnAdapterEnhanceFuncList->getLocalSleAddr = nullptr;
     ret = GetLocalSleAddrPacked(sleAddr, sizeof(sleAddr));
@@ -1519,11 +1535,11 @@ HWTEST_F(SoftbusGEnhanceTest, SoftbusGEnhanceTest041, TestSize.Level1)
 
     pfnAdapterEnhanceFuncList->antiSleepHoldRunningLock = AntiSleepHoldRunningLockStub;
     pfnAdapterEnhanceFuncList->antiSleepUnHoldRunningLock = AntiSleepUnHoldRunningLockStub;
-    EXPECT_NO_FATAL_FAILURE(AntiSleepHoldRunningLockPacked(1000));
+    EXPECT_NO_FATAL_FAILURE(AntiSleepHoldRunningLockPacked(TEST_ANTI_SLEEP_TIMEOUT_MS));
     EXPECT_NO_FATAL_FAILURE(AntiSleepUnHoldRunningLockPacked());
     pfnAdapterEnhanceFuncList->antiSleepHoldRunningLock = nullptr;
     pfnAdapterEnhanceFuncList->antiSleepUnHoldRunningLock = nullptr;
-    EXPECT_NO_FATAL_FAILURE(AntiSleepHoldRunningLockPacked(1000));
+    EXPECT_NO_FATAL_FAILURE(AntiSleepHoldRunningLockPacked(TEST_ANTI_SLEEP_TIMEOUT_MS));
     EXPECT_NO_FATAL_FAILURE(AntiSleepUnHoldRunningLockPacked());
 }
 
@@ -1599,7 +1615,7 @@ static int32_t ConnPagingConnectInitStub(void)
 
 /*
  * @tc.name: SoftbusGEnhanceTest042
- * @tc.desc: conn pack forwarding branch test
+ * @tc.desc: conn coap listen and ble conflict pack forwarding branch test
  * @tc.type: FUNC
  * @tc.level: Level1
  * @tc.require:
@@ -1636,9 +1652,21 @@ HWTEST_F(SoftbusGEnhanceTest, SoftbusGEnhanceTest042, TestSize.Level1)
     EXPECT_NO_FATAL_FAILURE(SoftbusBleConflictNotifyDateReceivePacked(0, nullptr, 0));
     EXPECT_NO_FATAL_FAILURE(SoftbusBleConflictNotifyConnectResultPacked(0, 0, false));
     EXPECT_NO_FATAL_FAILURE(SoftbusBleConflictRegisterListenerPacked(nullptr));
+}
+
+/*
+ * @tc.name: SoftbusGEnhanceTest044
+ * @tc.desc: conn ext init, direct connect and sle pack forwarding branch test
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(SoftbusGEnhanceTest, SoftbusGEnhanceTest044, TestSize.Level1)
+{
+    ConnEnhanceFuncList *pfnConnEnhanceFuncList = ConnEnhanceFuncListGet();
 
     pfnConnEnhanceFuncList->connExtInit = ConnExtInitStub;
-    ret = ConnExtInitPacked();
+    int32_t ret = ConnExtInitPacked();
     EXPECT_EQ(ret, SOFTBUS_OK);
     pfnConnEnhanceFuncList->connExtInit = nullptr;
     ret = ConnExtInitPacked();

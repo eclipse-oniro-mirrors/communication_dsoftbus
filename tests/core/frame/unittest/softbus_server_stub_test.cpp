@@ -2918,7 +2918,8 @@ HWTEST_F(SoftbusServerStubTest, SoftbusServerStubTest067, TestSize.Level1)
     EXPECT_EQ(SOFTBUS_OK, ret);
     SessionServer *sessionServer = (SessionServer *)SoftBusCalloc(sizeof(SessionServer));
     ASSERT_NE(nullptr, sessionServer);
-    ASSERT_EQ(EOK, strcpy_s(sessionServer->sessionName, sizeof(sessionServer->sessionName), "com.test.trans.session.new"));
+    const char *newSessionName = "com.test.trans.session.new";
+    ASSERT_EQ(EOK, strcpy_s(sessionServer->sessionName, sizeof(sessionServer->sessionName), newSessionName));
     ASSERT_EQ(EOK, strcpy_s(sessionServer->pkgName, sizeof(sessionServer->pkgName), g_myPkgName));
     ret = TransSessionServerAddItem(sessionServer);
     EXPECT_EQ(SOFTBUS_OK, ret);
@@ -3047,7 +3048,7 @@ HWTEST_F(SoftbusServerStubTest, SoftbusServerStubTest069, TestSize.Level1)
 
 /*
  * @tc.name: SoftbusServerStubTest070
- * @tc.desc: Verify the SetSocketOptEdcaInner read fail, pid check fail and edca param invalid branches
+ * @tc.desc: Verify the SetSocketOptEdcaInner read fail and pid check fail branches
  * @tc.type: FUNC
  * @tc.level: Level1
  * @tc.require:
@@ -3085,6 +3086,22 @@ HWTEST_F(SoftbusServerStubTest, SoftbusServerStubTest070, TestSize.Level1)
     datas.WriteInt32(EDCA_SCENE_DATA_CLONE);
     ret = softBusServer->SetSocketOptEdcaInner(datas, reply);
     EXPECT_EQ(SOFTBUS_TRANS_PROXY_READINT_FAILED, ret);
+}
+
+/*
+ * @tc.name: SoftbusServerStubTest089
+ * @tc.desc: Verify the SetSocketOptEdcaInner edca param invalid and channel not exist branches
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(SoftbusServerStubTest, SoftbusServerStubTest089, TestSize.Level1)
+{
+    NiceMock<SoftbusServerStubTestInterfaceMock> softbusServerStubMock;
+    EXPECT_CALL(softbusServerStubMock, TransGetAndComparePid).WillRepeatedly(Return(SOFTBUS_OK));
+    sptr<OHOS::SoftBusServerStub> softBusServer = new OHOS::SoftBusServer(SOFTBUS_SERVER_SA_ID, true);
+    ASSERT_NE(nullptr, softBusServer);
+    int32_t ret;
 
     // invalid scene, TransSetEdcaParamForChannel returns SOFTBUS_INVALID_PARAM
     {
