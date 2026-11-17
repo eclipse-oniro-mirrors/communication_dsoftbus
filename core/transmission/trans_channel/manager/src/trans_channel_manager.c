@@ -455,6 +455,9 @@ SOFTBUS_VISIBILITY int32_t TransOpenChannel(const SessionParam *param, TransInfo
         AnonymizeWrapper(tmpName), param->sessionId, param->actionId, param->isQosLane, param->isAsync);
     AnonymizeFree(tmpName);
     uint32_t laneHandle = INVALID_LANE_REQ_ID;
+    /* Declared at function entry: this file is compiled as C++ in unit tests, where a goto
+     * must not jump over a declaration with an initializer. */
+    CoreSessionState curState = CORE_SESSION_STATE_INIT;
     AppInfo *appInfo = (AppInfo *)SoftBusCalloc(sizeof(AppInfo));
     if (appInfo == NULL) {
         TRANS_LOGE(TRANS_CTRL, "calloc appInfo failed.");
@@ -549,7 +552,6 @@ SOFTBUS_VISIBILITY int32_t TransOpenChannel(const SessionParam *param, TransInfo
     /* Recheck after the channel is actually opened: a concurrent Shutdown may have marked the
      * socket CANCELLING while TransOpenChannelProc was establishing the connection. Close the
      * freshly created channel in that case, otherwise it would outlive the cancelled socket. */
-    CoreSessionState curState = CORE_SESSION_STATE_INIT;
     if (TransGetSocketChannelStateBySession(param->sessionName, param->sessionId, &curState) != SOFTBUS_OK ||
         curState == CORE_SESSION_STATE_CANCELLING) {
         TRANS_LOGW(TRANS_CTRL, "socket cancelled while opening channel, close it. socket=%{public}d",

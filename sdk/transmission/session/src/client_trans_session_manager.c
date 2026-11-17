@@ -3059,7 +3059,7 @@ SOFTBUS_VISIBILITY int32_t SetSessionStateExpectCancelBySessionId(int32_t sessio
     SessionInfo *sessionNode = NULL;
     if (GetSessionById(sessionId, &serverNode, &sessionNode) != SOFTBUS_OK) {
         UnlockClientSessionServerList();
-        TRANS_LOGE(TRANS_SDK, "socket not found. socketFd=%{public}d", sessionId);
+        TRANS_LOGE(TRANS_SDK, "session not found. sessionId=%{public}d", sessionId);
         return SOFTBUS_TRANS_SESSION_INFO_NOT_FOUND;
     }
 
@@ -3098,7 +3098,7 @@ SOFTBUS_VISIBILITY int32_t CancelSessionStateBySessionId(int32_t sessionId, int3
     SessionInfo *sessionNode = NULL;
     if (GetSessionById(sessionId, &serverNode, &sessionNode) != SOFTBUS_OK) {
         UnlockClientSessionServerList();
-        TRANS_LOGE(TRANS_SDK, "socket not found. socketFd=%{public}d", sessionId);
+        TRANS_LOGE(TRANS_SDK, "session not found. sessionId=%{public}d", sessionId);
         return SOFTBUS_TRANS_SESSION_INFO_NOT_FOUND;
     }
 

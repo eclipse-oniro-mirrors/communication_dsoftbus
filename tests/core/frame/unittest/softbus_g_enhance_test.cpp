@@ -1347,11 +1347,13 @@ static void RegisterRadarCbForOpenSrcStub(void *callback)
     (void)callback;
 }
 
+#ifdef DISC_COMMUNITY
 static int SoftBusGetBlePowerStub(int8_t *power)
 {
     *power = TEST_BLE_POWER_MOCK;
     return SOFTBUS_OK;
 }
+#endif /* DISC_COMMUNITY */
 
 static int SoftBusBleRangeStub(SoftBusRangeParam *param, int32_t *range)
 {

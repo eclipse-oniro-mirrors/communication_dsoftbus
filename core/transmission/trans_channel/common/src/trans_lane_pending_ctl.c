@@ -807,6 +807,9 @@ static void TransAsyncOpenChannelProc(uint32_t laneHandle, SessionParam *param, 
 {
     TransInfo transInfo = { .channelId = INVALID_CHANNEL_ID, .channelType = CHANNEL_TYPE_BUTT };
     ConnectOption connOpt;
+    /* Declared at function entry: this file is compiled as C++ in unit tests, where a goto
+     * must not jump over a declaration with an initializer. */
+    CoreSessionState curState = CORE_SESSION_STATE_INIT;
     (void)memset_s(&connOpt, sizeof(ConnectOption), 0, sizeof(ConnectOption));
     int32_t ret = TransGetConnectOptByConnInfo(connInnerInfo, &connOpt);
     if (ret != SOFTBUS_OK) {
@@ -829,7 +832,6 @@ static void TransAsyncOpenChannelProc(uint32_t laneHandle, SessionParam *param, 
     /* Recheck after the channel is actually opened: a concurrent Shutdown may have marked the
      * socket CANCELLING while TransOpenChannelProc was establishing the connection. Close the
      * freshly created channel in that case, otherwise it would outlive the cancelled socket. */
-    CoreSessionState curState = CORE_SESSION_STATE_INIT;
     if (TransGetSocketChannelStateBySession(param->sessionName, param->sessionId, &curState) != SOFTBUS_OK ||
         curState == CORE_SESSION_STATE_CANCELLING) {
         TRANS_LOGW(TRANS_SVC, "socket cancelled while opening channel, close it. sessionId=%{public}d",
@@ -1725,7 +1727,11 @@ int32_t TransAsyncGetLaneInfoByQos(
     }
     ret = TransSetSocketChannelStateExpectCancelBySession(
         param->sessionName, param->sessionId, CORE_SESSION_STATE_WAIT_LANE);
-    if (ret == SOFTBUS_TRANS_STOP_BIND_BY_CANCEL) {
+    if (ret == SOFTBUS_TRANS_STOP_BIND_BY_CANCEL || ret == SOFTBUS_NOT_FIND) {
+        /* The lane has been allocated and the request is already in the pending list, both must be
+         * recycled before returning, otherwise the caller frees an INVALID handle and leaks them. */
+        TRANS_LOGI(TRANS_SVC, "socket cancelled or record deleted. laneHandle=%{public}u, ret=%{public}d",
+            *laneHandle, ret);
         CancelLaneOnWaitLaneState(*laneHandle, param->isQosLane);
         (void)TransDelLaneReqFromPendingList(*laneHandle, true);
         return SOFTBUS_TRANS_STOP_BIND_BY_CANCEL;

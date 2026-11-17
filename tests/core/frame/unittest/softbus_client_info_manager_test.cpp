@@ -26,6 +26,12 @@
 using namespace testing::ext;
 
 namespace OHOS {
+/* Forward declaration: the implementation lives in softbus_client_info_manager.cpp and is not
+ * declared in the manager header. */
+extern "C" {
+int32_t SoftbusAddServiceInnerForEnhance(const char *pkgName, ISessionListenerInner *listener, int32_t pid);
+}
+
 class SoftbusClientInfoManagerTest : public testing::Test {
 public:
     SoftbusClientInfoManagerTest()

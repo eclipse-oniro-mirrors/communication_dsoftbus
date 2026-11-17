@@ -3708,7 +3708,7 @@ HWTEST_F(SoftbusServerStubTest, SoftbusServerStubTest085, TestSize.Level1)
     sptr<OHOS::SoftBusServerStub> softBusServer = new OHOS::SoftBusServer(SOFTBUS_SERVER_SA_ID, true);
     ASSERT_NE(nullptr, softBusServer);
     char test[10] = "test";
-    PerceptionAdvParam advParam = { 0 };
+    PerceptionAdvParam advParam = {};
     MessageParcel datas;
     MessageParcel reply;
 
