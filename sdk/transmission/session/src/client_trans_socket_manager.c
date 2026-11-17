@@ -191,12 +191,8 @@ SOFTBUS_VISIBILITY void ClientDestroySession(const ListNode *destroyList, Shutdo
     LIST_FOR_EACH_ENTRY_SAFE(destroyNode, destroyNodeNext, destroyList, DestroySessionInfo, node) {
         int32_t id = destroyNode->sessionId;
         if (destroyNode->otherUp) {
-            if (destroyNode->channelType == CHANNEL_TYPE_UDP) {
-                (void)ClientTransCloseReserveChannel(
-                    destroyNode->channelId, destroyNode->channelType, destroyNode->routeType, true);
-            } else {
-                (void)ClientTransCloseChannel(destroyNode->channelId, destroyNode->channelType, id, false);
-            }
+            (void)ClientTransCloseReserveChannel(
+                destroyNode->channelId, destroyNode->channelType, destroyNode->routeType, true);
             ListDelete(&(destroyNode->node));
             SoftBusFree(destroyNode);
             continue;

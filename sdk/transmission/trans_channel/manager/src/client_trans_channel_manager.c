@@ -99,6 +99,11 @@ int32_t ClientTransCloseReserveChannel(
         case CHANNEL_TYPE_UDP:
             ret = ClientTransCloseReserveUdpChannel(channelId, SHUTDOWN_REASON_LOCAL, routeType, delSecondPath);
             break;
+        case CHANNEL_TYPE_TCP_DIRECT:
+            TransStopTimeSync(channelId);
+            TransDelDataBufNode(channelId);
+            TransTdcCloseChannel(channelId, false);
+            break;
         default:
             TRANS_LOGE(TRANS_SDK, "Invalid type");
             return SOFTBUS_TRANS_INVALID_CHANNEL_TYPE;
