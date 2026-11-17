@@ -620,5 +620,115 @@ bool IsForegroundUserId(int32_t userId)
     (void)userId;
     return true;
 }
+
+int32_t GenerateCertificatePacked(SoftbusCertChain *softbusCertChain, const AuthSessionInfo *info)
+{
+    return GetInterface()->GenerateCertificate(softbusCertChain, info);
+}
+
+void DelAuthGenCertParaNodeById(int32_t requestId)
+{
+    (void)requestId;
+}
+
+void FreeSoftbusChainPacked(SoftbusCertChain *softbusCertChain)
+{
+    GetInterface()->FreeSoftbusChain(softbusCertChain);
+}
+
+int32_t InitSoftbusChainPacked(SoftbusCertChain *softbusCertChain)
+{
+    return GetInterface()->InitSoftbusChain(softbusCertChain);
+}
+
+int32_t VerifyCertificatePacked(SoftbusCertChain *softbusCertChain, const NodeInfo *nodeInfo,
+    const AuthSessionInfo *info)
+{
+    return GetInterface()->VerifyCertificate(softbusCertChain, nodeInfo, info);
+}
+
+int32_t AuthFindLatestNormalizeKeyPacked(const char *udidHash, AuthDeviceKeyInfo *deviceKey, bool clearOldKey)
+{
+    return GetInterface()->AuthFindLatestNormalizeKey(udidHash, deviceKey, clearOldKey);
+}
+
+int32_t AuthFindDeviceKeyPacked(const char *udidHash, int32_t keyType, AuthDeviceKeyInfo *deviceKey)
+{
+    return GetInterface()->AuthFindDeviceKey(udidHash, keyType, deviceKey);
+}
+
+int32_t AuthFindNormalizeKeyByServerSidePacked(const char *udidHash, bool isServer, AuthDeviceKeyInfo *deviceKey)
+{
+    return GetInterface()->AuthFindNormalizeKeyByServerSide(udidHash, isServer, deviceKey);
+}
+
+void AuthUpdateCreateTimePacked(const char *udidHash, int32_t keyType, bool isServer)
+{
+    GetInterface()->AuthUpdateCreateTime(udidHash, keyType, isServer);
+}
+
+bool PackCipherKeySyncMsgPacked(void *json)
+{
+    return GetInterface()->PackCipherKeySyncMsg(json);
+}
+
+int32_t LnnUpdateLocalBroadcastCipherKeyPacked(BroadcastCipherKey *broadcastKey)
+{
+    return GetInterface()->LnnUpdateLocalBroadcastCipherKey(broadcastKey);
+}
+
+void ProcessCipherKeySyncInfoPacked(const void *json, const char *networkId)
+{
+    GetInterface()->ProcessCipherKeySyncInfo(json, networkId);
+}
+
+int32_t FindAuthPreLinkNodeById(uint32_t requestId, AuthPreLinkNode *reuseNode)
+{
+    return GetInterface()->FindAuthPreLinkNodeById(requestId, reuseNode);
+}
+
+int32_t LnnGetUdidByBrMacPacked(const char *brMac, char *udid, uint32_t udidLen)
+{
+    return GetInterface()->LnnGetUdidByBrMac(brMac, udid, udidLen);
+}
+
+bool IsSupportUDIDAbatementPacked(void)
+{
+    return GetInterface()->IsSupportUDIDAbatement();
+}
+
+bool IsNeedUDIDAbatementPacked(const AuthSessionInfo *info)
+{
+    return GetInterface()->IsNeedUDIDAbatement(info);
+}
+
+bool IsAuthPreLinkNodeExist(uint32_t requestId)
+{
+    (void)requestId;
+    return false;
+}
+
+int32_t AddToAuthPreLinkList(uint32_t requestId, int32_t fd, ConnectionAddr *connAddr)
+{
+    (void)requestId;
+    (void)fd;
+    (void)connAddr;
+    return SOFTBUS_INVALID_PARAM;
+}
+
+int32_t LnnGetLocalPtkByUuidPacked(const char *uuid, char *localPtk, uint32_t len)
+{
+    return GetInterface()->LnnGetLocalPtkByUuid(uuid, localPtk, len);
+}
+
+int32_t AuthMetaGetConnIdByInfoPacked(const AuthConnInfo *connInfo, uint32_t *connectionId)
+{
+    return GetInterface()->AuthMetaGetConnIdByInfo(connInfo, connectionId);
+}
+
+int32_t LnnGetMetaPtkPacked(uint32_t connId, char *metaPtk, uint32_t len)
+{
+    return GetInterface()->LnnGetMetaPtk(connId, metaPtk, len);
+}
 }
 } // namespace OHOS
