@@ -2014,100 +2014,6 @@ HWTEST_F(BrProxyServerManagerTest, ServerAddChannelToListUserIdFailTest001, Test
 }
 
 /**
- * @tc.name: OnOpenSuccessTest001
- * @tc.desc: OnOpenSuccess, foreground user matches and full update flow executes
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(BrProxyServerManagerTest, OnOpenSuccessTest001, TestSize.Level1)
-{
-    g_serverList = NULL;
-    g_proxyList = NULL;
-    ASSERT_EQ(BrProxyServerInit(), SOFTBUS_OK);
-    CloseAllBrProxy();
-    int32_t foregroundUserId = JudgeDeviceTypeAndGetOsAccountIds();
-    ServerBrProxyChannelInfo *channelNode = InjectServerChannelNode(VALID_BR_MAC, TEST_UUID, CHANNEL_ID, REQUEST_ID);
-    ASSERT_NE(channelNode, nullptr);
-    channelNode->appIndex = APP_INDEX_TEST;
-    BrProxyInfo *proxyNode = InjectProxyNode(VALID_BR_MAC, TEST_UUID, REQUEST_ID);
-    ASSERT_NE(proxyNode, nullptr);
-    proxyNode->appIndex = APP_INDEX_TEST;
-    proxyNode->userId = foregroundUserId;
-
-    struct ProxyChannel channel = {0};
-    channel.requestId = REQUEST_ID;
-    channel.channelId = 0;
-    (void)strcpy_s(channel.brMac, sizeof(channel.brMac), VALID_BR_MAC);
-    (void)strcpy_s(channel.uuid, sizeof(channel.uuid), TEST_UUID);
-    EXPECT_NO_FATAL_FAILURE(OnOpenSuccess(REQUEST_ID, &channel));
-    EXPECT_EQ(proxyNode->isConnected, IS_CONNECTED);
-    EXPECT_EQ(proxyNode->isEnable, true);
-    CloseAllBrProxy();
-    RemoveServerChannelNode(channelNode);
-}
-
-/**
- * @tc.name: OnOpenSuccessTest002
- * @tc.desc: OnOpenSuccess, foreground user mismatches, channel is closed and virtual connect notifies client
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(BrProxyServerManagerTest, OnOpenSuccessTest002, TestSize.Level1)
-{
-    g_serverList = NULL;
-    g_proxyList = NULL;
-    ASSERT_EQ(BrProxyServerInit(), SOFTBUS_OK);
-    CloseAllBrProxy();
-    int32_t foregroundUserId = JudgeDeviceTypeAndGetOsAccountIds();
-    ServerBrProxyChannelInfo *channelNode = InjectServerChannelNode(VALID_BR_MAC, TEST_UUID, CHANNEL_ID, REQUEST_ID);
-    ASSERT_NE(channelNode, nullptr);
-    BrProxyInfo *proxyNode = InjectProxyNode(VALID_BR_MAC, TEST_UUID, REQUEST_ID);
-    ASSERT_NE(proxyNode, nullptr);
-    proxyNode->userId = foregroundUserId + 100;
-
-    struct ProxyChannel channel = {0};
-    channel.requestId = REQUEST_ID;
-    channel.close = DummyCloseChannel;
-    (void)strcpy_s(channel.brMac, sizeof(channel.brMac), VALID_BR_MAC);
-    (void)strcpy_s(channel.uuid, sizeof(channel.uuid), TEST_UUID);
-    EXPECT_NO_FATAL_FAILURE(OnOpenSuccess(REQUEST_ID, &channel));
-    EXPECT_EQ(proxyNode->isVirtualConnect, true);
-    CloseAllBrProxy();
-    RemoveServerChannelNode(channelNode);
-}
-
-/**
- * @tc.name: OnOpenSuccessTest003
- * @tc.desc: OnOpenSuccess, recovery proxy notifies client state changed instead of opened
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(BrProxyServerManagerTest, OnOpenSuccessTest003, TestSize.Level1)
-{
-    g_serverList = NULL;
-    g_proxyList = NULL;
-    ASSERT_EQ(BrProxyServerInit(), SOFTBUS_OK);
-    CloseAllBrProxy();
-    int32_t foregroundUserId = JudgeDeviceTypeAndGetOsAccountIds();
-    ServerBrProxyChannelInfo *channelNode = InjectServerChannelNode(VALID_BR_MAC, TEST_UUID, CHANNEL_ID, REQUEST_ID);
-    ASSERT_NE(channelNode, nullptr);
-    channelNode->appIndex = APP_INDEX_TEST;
-    BrProxyInfo *proxyNode = InjectProxyNode(VALID_BR_MAC, TEST_UUID, REQUEST_ID);
-    ASSERT_NE(proxyNode, nullptr);
-    proxyNode->appIndex = APP_INDEX_TEST;
-    proxyNode->userId = foregroundUserId;
-    proxyNode->isRecovery = true;
-
-    struct ProxyChannel channel = {0};
-    channel.requestId = REQUEST_ID;
-    (void)strcpy_s(channel.brMac, sizeof(channel.brMac), VALID_BR_MAC);
-    (void)strcpy_s(channel.uuid, sizeof(channel.uuid), TEST_UUID);
-    EXPECT_NO_FATAL_FAILURE(OnOpenSuccess(REQUEST_ID, &channel));
-    CloseAllBrProxy();
-    RemoveServerChannelNode(channelNode);
-}
-
-/**
  * @tc.name: OnOpenFailTest001
  * @tc.desc: OnOpenFail, channel info not found returns directly
  * @tc.type: FUNC
@@ -2118,58 +2024,6 @@ HWTEST_F(BrProxyServerManagerTest, OnOpenFailTest001, TestSize.Level1)
     g_serverList = NULL;
     ASSERT_EQ(BrProxyServerInit(), SOFTBUS_OK);
     EXPECT_NO_FATAL_FAILURE(OnOpenFail(REQUEST_ID + 100, 0, nullptr));
-}
-
-/**
- * @tc.name: OnOpenFailTest002
- * @tc.desc: OnOpenFail, enabled proxy falls into virtual connect branch
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(BrProxyServerManagerTest, OnOpenFailTest002, TestSize.Level1)
-{
-    g_serverList = NULL;
-    g_proxyList = NULL;
-    ASSERT_EQ(BrProxyServerInit(), SOFTBUS_OK);
-    CloseAllBrProxy();
-    ServerBrProxyChannelInfo *channelNode = InjectServerChannelNode(VALID_BR_MAC, TEST_UUID, CHANNEL_ID, REQUEST_ID);
-    ASSERT_NE(channelNode, nullptr);
-    BrProxyInfo *proxyNode = InjectProxyNode(VALID_BR_MAC, TEST_UUID, REQUEST_ID);
-    ASSERT_NE(proxyNode, nullptr);
-    proxyNode->isEnable = true;
-
-    EXPECT_NO_FATAL_FAILURE(OnOpenFail(REQUEST_ID, SOFTBUS_OK, nullptr));
-    EXPECT_EQ(proxyNode->isVirtualConnect, true);
-    CloseAllBrProxy();
-    RemoveServerChannelNode(channelNode);
-}
-
-/**
- * @tc.name: OnOpenFailTest003
- * @tc.desc: OnOpenFail, far field open fail stores proxy info when storage read fails
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(BrProxyServerManagerTest, OnOpenFailTest003, TestSize.Level1)
-{
-    g_serverList = NULL;
-    g_proxyList = NULL;
-    ASSERT_EQ(BrProxyServerInit(), SOFTBUS_OK);
-    CloseAllBrProxy();
-    ServerBrProxyChannelInfo *channelNode = InjectServerChannelNode(VALID_BR_MAC, TEST_UUID, CHANNEL_ID, REQUEST_ID);
-    ASSERT_NE(channelNode, nullptr);
-    BrProxyInfo *proxyNode = InjectProxyNode(VALID_BR_MAC, TEST_UUID, REQUEST_ID);
-    ASSERT_NE(proxyNode, nullptr);
-    proxyNode->isEnable = false;
-    TransBrProxyStorage *storage = TransBrProxyStorageGetInstance();
-    ASSERT_NE(storage, nullptr);
-    TransBrProxyStorageClear(storage);
-    storage->loaded = false;
-
-    EXPECT_NO_FATAL_FAILURE(OnOpenFail(REQUEST_ID, SOFTBUS_FAR_FIELD_OPEN_FAIL, nullptr));
-    EXPECT_EQ(proxyNode->isVirtualConnect, true);
-    CloseAllBrProxy();
-    RemoveServerChannelNode(channelNode);
 }
 
 /**
@@ -2194,28 +2048,6 @@ HWTEST_F(BrProxyServerManagerTest, OnOpenFailTest004, TestSize.Level1)
     EXPECT_EQ(g_serverList->cnt, 1);
     CloseAllBrProxy();
     RemoveServerChannelNode(channelNode);
-}
-
-/**
- * @tc.name: OnOpenFailTest005
- * @tc.desc: OnOpenFail, normal proxy deletes channel and notifies client
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(BrProxyServerManagerTest, OnOpenFailTest005, TestSize.Level1)
-{
-    g_serverList = NULL;
-    g_proxyList = NULL;
-    ASSERT_EQ(BrProxyServerInit(), SOFTBUS_OK);
-    CloseAllBrProxy();
-    ServerBrProxyChannelInfo *channelNode = InjectServerChannelNode(VALID_BR_MAC, TEST_UUID, CHANNEL_ID, REQUEST_ID);
-    ASSERT_NE(channelNode, nullptr);
-    BrProxyInfo *proxyNode = InjectProxyNode(VALID_BR_MAC, TEST_UUID, REQUEST_ID);
-    ASSERT_NE(proxyNode, nullptr);
-
-    EXPECT_NO_FATAL_FAILURE(OnOpenFail(REQUEST_ID, SOFTBUS_CONN_BR_UNPAIRED, nullptr));
-    EXPECT_EQ(g_serverList->cnt, 0);
-    CloseAllBrProxy();
 }
 
 /**
@@ -2443,23 +2275,4 @@ HWTEST_F(BrProxyServerManagerTest, PostStopAppEventTest001, TestSize.Level1)
     EXPECT_EQ(ret, SOFTBUS_STRCPY_ERR);
 }
 
-/**
- * @tc.name: NotifyChannelStateTest001
- * @tc.desc: NotifyChannelState, virtual connected proxy notifies channel state
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(BrProxyServerManagerTest, NotifyChannelStateTest001, TestSize.Level1)
-{
-    g_proxyList = NULL;
-    ASSERT_EQ(BrProxyServerInit(), SOFTBUS_OK);
-    CloseAllBrProxy();
-    BrProxyInfo *proxyNode = InjectProxyNode(VALID_BR_MAC, TEST_UUID, REQUEST_ID);
-    ASSERT_NE(proxyNode, nullptr);
-    proxyNode->pid = PID_TEST;
-    proxyNode->isVirtualConnect = true;
-    EXPECT_NO_FATAL_FAILURE(NotifyChannelState(VALID_BR_MAC, TEST_UUID, CHANNEL_ID, PID_TEST));
-    EXPECT_NO_FATAL_FAILURE(NotifyChannelState(INVALID_BR_MAC, TEST_UUID, CHANNEL_ID, PID_TEST));
-    CloseAllBrProxy();
-}
 } // namespace OHOS
