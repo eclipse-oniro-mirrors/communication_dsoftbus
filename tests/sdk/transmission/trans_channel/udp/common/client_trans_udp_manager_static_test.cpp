@@ -831,7 +831,7 @@ HWTEST_F(ClientTransUdpManagerStaticTest, TransCheckIsSecondPathTest001, TestSiz
 
 /*
  * @tc.name: TransCheckIsSecondPathTest002
- * @tc.desc: trans check is second path with reserve channel returns true
+ * @tc.desc: trans check is second path returns false when no multipath session registered
  * @tc.type: FUNC
  * @tc.require:
  */
@@ -845,12 +845,11 @@ HWTEST_F(ClientTransUdpManagerStaticTest, TransCheckIsSecondPathTest002, TestSiz
     ASSERT_TRUE(udpChannel != nullptr);
     udpChannel->channelId = TEST_CHANNELID;
     udpChannel->routeType = WIFI_USB;
-    udpChannel->isReserveChannel = true;
     ret = ClientTransAddUdpChannel(udpChannel);
     ASSERT_EQ(SOFTBUS_OK, ret);
     int32_t routeType = -1;
     bool isSecondPath = TransCheckIsSecondPath(TEST_CHANNELID, &routeType);
-    EXPECT_TRUE(isSecondPath);
+    EXPECT_FALSE(isSecondPath);
     EXPECT_EQ(WIFI_USB, routeType);
     (void)TransDeleteUdpChannel(udpChannel->channelId);
     ClientTransChannelDeinit();
@@ -877,7 +876,7 @@ HWTEST_F(ClientTransUdpManagerStaticTest, TransAddSecondPathFailTest001, TestSiz
 
 /*
  * @tc.name: TransAddSecondPathFailTest002
- * @tc.desc: trans add second path fail with reserve channel returns access token denied
+ * @tc.desc: trans add second path fail returns ok when channel is not a multipath second path
  * @tc.type: FUNC
  * @tc.require:
  */
@@ -890,11 +889,10 @@ HWTEST_F(ClientTransUdpManagerStaticTest, TransAddSecondPathFailTest002, TestSiz
     UdpChannel *udpChannel = reinterpret_cast<UdpChannel *>(SoftBusCalloc(sizeof(UdpChannel)));
     ASSERT_TRUE(udpChannel != nullptr);
     udpChannel->channelId = TEST_CHANNELID;
-    udpChannel->isReserveChannel = true;
     ret = ClientTransAddUdpChannel(udpChannel);
     ASSERT_EQ(SOFTBUS_OK, ret);
     ret = TransAddSecondPathFail(udpChannel->channelId);
-    EXPECT_EQ(SOFTBUS_ACCESS_TOKEN_DENIED, ret);
+    EXPECT_EQ(SOFTBUS_OK, ret);
     (void)TransDeleteUdpChannel(udpChannel->channelId);
     ClientTransChannelDeinit();
     g_sessionCb = nullptr;
