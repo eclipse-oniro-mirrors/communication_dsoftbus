@@ -16,6 +16,7 @@
 #include "command/command_factory.h"
 #include "command/negotiate_command.h"
 #include "data/link_manager.h"
+#include "lnn_device_info_struct.h"
 
 namespace OHOS::SoftBus {
 WifiDirectScheduler& WifiDirectScheduler::GetInstance()
@@ -207,7 +208,9 @@ int WifiDirectScheduler::ScheduleActiveCommand(const std::shared_ptr<WifiDirectC
         return SOFTBUS_CONN_GET_PROCESSOR_FAILED;
     }
     const bool boostQos = command->GetType() == CommandType::CONNECT_COMMAND &&
-        std::static_pointer_cast<ConnectCommand>(command)->GetLinkType() == WIFI_DIRECT_LINK_TYPE_HML;
+        std::static_pointer_cast<ConnectCommand>(command)->GetLinkType() == WIFI_DIRECT_LINK_TYPE_HML &&
+        (WifiDirectUtils::GetDeviceType() == TYPE_GLASS_ID ||
+            WifiDirectUtils::GetDeviceType(WifiDirectUtils::UuidToNetworkId(remoteDeviceId).c_str()) == TYPE_GLASS_ID);
     CONN_LOGI(CONN_WIFI_DIRECT, "create executor=%{public}s, boostQos=%{public}d",
         WifiDirectAnonymizeDeviceId(remoteDeviceId).c_str(), boostQos);
     executor = WifiDirectExecutorFactory::GetInstance().NewExecutor(remoteDeviceId, *this, processor, true, boostQos);
