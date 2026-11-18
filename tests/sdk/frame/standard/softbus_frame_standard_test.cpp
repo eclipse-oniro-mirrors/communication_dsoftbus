@@ -1171,42 +1171,43 @@ HWTEST_F(SoftBusServerProxyFrameTest, OnRemoteDiedTest, TestSize.Level1)
 
 /**
  * @tc.name: ClientDeathProcTaskCasPendingTest
- * @tc.desc: ClientDeathProcTask CAS fail when task already scheduled, set death pending
+ * @tc.desc: ClientDeathProcTask CAS fail when task already scheduled, set needRecover pending
  * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(SoftBusServerProxyFrameTest, ClientDeathProcTaskCasPendingTest, TestSize.Level1)
 {
     g_taskScheduled.store(true);
-    g_deathPending.store(false);
+    g_needRecover.store(false);
     ClientDeathProcTask();
     ClientDeathProcTask();
-    EXPECT_TRUE(g_deathPending.load());
+    EXPECT_TRUE(g_needRecover.load());
     EXPECT_TRUE(g_taskScheduled.load());
-    EXPECT_TRUE(g_deathPending.exchange(false));
+    EXPECT_TRUE(g_needRecover.exchange(false));
     g_taskScheduled.store(false);
-    g_deathPending.store(false);
+    g_needRecover.store(false);
 }
 
 /**
- * @tc.name: DoClientDeathProcBreakTest
- * @tc.desc: DoClientDeathProc recovery cycle fail (ServerProxyInit timeout), break and reset flag
+ * @tc.name: DoRecoveryBreakTest
+ * @tc.desc: DoRecovery with g_needRecover true, runs one cycle and resets g_taskScheduled
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(SoftBusServerProxyFrameTest, DoClientDeathProcBreakTest, TestSize.Level1)
+HWTEST_F(SoftBusServerProxyFrameTest, DoRecoveryBreakTest, TestSize.Level1)
 {
     g_taskScheduled.store(true);
-    g_deathPending.store(false);
+    g_needRecover.store(true);
     {
         std::lock_guard<std::mutex> lock(g_mutex);
         g_oldServerProxy = GetSystemAbility();
         g_serverProxy = nullptr;
     }
-    DoClientDeathProc();
+    DoRecovery();
     EXPECT_FALSE(g_taskScheduled.load());
+    EXPECT_FALSE(g_needRecover.load());
     g_taskScheduled.store(false);
-    g_deathPending.store(false);
+    g_needRecover.store(false);
     {
         std::lock_guard<std::mutex> lock(g_mutex);
         g_oldServerProxy = nullptr;
@@ -2037,25 +2038,25 @@ HWTEST_F(SoftBusServerProxyFrameTest, OnRemoteRequestProfileDeletedTest002, Test
 }
 
 /**
- * @tc.name: DoClientDeathProcRetryTest
- * @tc.desc: DoClientDeathProc retry one more cycle when death pending is set during recovery
+ * @tc.name: DoRecoveryRetryTest
+ * @tc.desc: DoRecovery retry one more cycle when needRecover is set during recovery
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(SoftBusServerProxyFrameTest, DoClientDeathProcRetryTest, TestSize.Level1)
+HWTEST_F(SoftBusServerProxyFrameTest, DoRecoveryRetryTest, TestSize.Level1)
 {
     g_taskScheduled.store(true);
-    g_deathPending.store(true);
+    g_needRecover.store(true);
     {
         std::lock_guard<std::mutex> lock(g_mutex);
         g_oldServerProxy = nullptr;
         g_serverProxy = nullptr;
     }
-    DoClientDeathProc();
+    DoRecovery();
     EXPECT_FALSE(g_taskScheduled.load());
-    EXPECT_FALSE(g_deathPending.load());
+    EXPECT_FALSE(g_needRecover.load());
     g_taskScheduled.store(false);
-    g_deathPending.store(false);
+    g_needRecover.store(false);
     {
         std::lock_guard<std::mutex> lock(g_mutex);
         g_oldServerProxy = nullptr;
@@ -2072,7 +2073,7 @@ HWTEST_F(SoftBusServerProxyFrameTest, DoClientDeathProcRetryTest, TestSize.Level
 HWTEST_F(SoftBusServerProxyFrameTest, ClientDeathProcTaskCasSuccessTest, TestSize.Level1)
 {
     g_taskScheduled.store(false);
-    g_deathPending.store(false);
+    g_needRecover.store(false);
     {
         std::lock_guard<std::mutex> lock(g_mutex);
         g_oldServerProxy = nullptr;
@@ -2087,5 +2088,108 @@ HWTEST_F(SoftBusServerProxyFrameTest, ClientDeathProcTaskCasSuccessTest, TestSiz
         SoftBusSleepMs(WAIT_SERVER_INTERVAL);
     }
     EXPECT_FALSE(g_taskScheduled.load());
+}
+
+/**
+ * @tc.name: FreeSessionServerInfoListTest001
+ * @tc.desc: FreeSessionServerInfoList, null param return without crash
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftBusServerProxyFrameTest, FreeSessionServerInfoListTest001, TestSize.Level1)
+{
+    FreeSessionServerInfoList(nullptr);
+    EXPECT_TRUE(true);
+}
+
+/**
+ * @tc.name: FreeSessionServerInfoListTest002
+ * @tc.desc: FreeSessionServerInfoList, empty list (only head) no crash
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftBusServerProxyFrameTest, FreeSessionServerInfoListTest002, TestSize.Level1)
+{
+    ListNode list;
+    ListInit(&list);
+    FreeSessionServerInfoList(&list);
+    EXPECT_EQ(list.next, &list);
+}
+
+/**
+ * @tc.name: FreeSessionServerInfoListTest003
+ * @tc.desc: FreeSessionServerInfoList, list with allocated nodes, all freed and list empty
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftBusServerProxyFrameTest, FreeSessionServerInfoListTest003, TestSize.Level1)
+{
+    ListNode list;
+    ListInit(&list);
+    SessionServerInfo *info1 = static_cast<SessionServerInfo *>(SoftBusCalloc(sizeof(SessionServerInfo)));
+    ASSERT_NE(nullptr, info1);
+    ListAdd(&list, &info1->node);
+    SessionServerInfo *info2 = static_cast<SessionServerInfo *>(SoftBusCalloc(sizeof(SessionServerInfo)));
+    ASSERT_NE(nullptr, info2);
+    ListAdd(&list, &info2->node);
+    EXPECT_NE(list.next, &list);
+    FreeSessionServerInfoList(&list);
+    EXPECT_EQ(list.next, &list);
+}
+
+/**
+ * @tc.name: ScheduleRecoveryAlreadyScheduledTest
+ * @tc.desc: ScheduleRecovery, g_taskScheduled already true, CAS fail and no new thread spawned
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftBusServerProxyFrameTest, ScheduleRecoveryAlreadyScheduledTest, TestSize.Level1)
+{
+    g_taskScheduled.store(true);
+    g_needRecover.store(false);
+    ScheduleRecovery();
+    EXPECT_TRUE(g_taskScheduled.load());
+    EXPECT_FALSE(g_needRecover.load());
+    g_taskScheduled.store(false);
+    g_needRecover.store(false);
+}
+
+/**
+ * @tc.name: DoRecoveryNoOpTest
+ * @tc.desc: DoRecovery, g_needRecover is false, skip loop and reset g_taskScheduled
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftBusServerProxyFrameTest, DoRecoveryNoOpTest, TestSize.Level1)
+{
+    g_taskScheduled.store(true);
+    g_needRecover.store(false);
+    {
+        std::lock_guard<std::mutex> lock(g_mutex);
+        g_oldServerProxy = nullptr;
+        g_serverProxy = nullptr;
+    }
+    DoRecovery();
+    EXPECT_FALSE(g_taskScheduled.load());
+    EXPECT_FALSE(g_needRecover.load());
+    g_taskScheduled.store(false);
+    g_needRecover.store(false);
+}
+
+/**
+ * @tc.name: ClientDeathProcTaskSetNeedRecoverTest
+ * @tc.desc: ClientDeathProcTask, sets g_needRecover and calls ScheduleRecovery
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftBusServerProxyFrameTest, ClientDeathProcTaskSetNeedRecoverTest, TestSize.Level1)
+{
+    g_taskScheduled.store(true);
+    g_needRecover.store(false);
+    ClientDeathProcTask();
+    EXPECT_TRUE(g_needRecover.load());
+    EXPECT_TRUE(g_taskScheduled.load());
+    g_needRecover.store(false);
+    g_taskScheduled.store(false);
 }
 } // namespace OHOS
