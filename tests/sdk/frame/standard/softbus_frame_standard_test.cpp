@@ -2235,4 +2235,58 @@ HWTEST_F(SoftBusServerProxyFrameTest, NeedRecoverAndFreeRemainingTest002, TestSi
     SoftBusFree(clientName[0]);
     g_needRecover.store(false);
 }
+
+/**
+ * @tc.name: DoCleanUpWithDeathRecipientTest
+ * @tc.desc: DoCleanUp, g_serverProxy and g_clientDeath both non-null, RemoveDeathRecipient called
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftBusServerProxyFrameTest, DoCleanUpWithDeathRecipientTest, TestSize.Level1)
+{
+    {
+        std::lock_guard<std::mutex> lock(g_mutex);
+        g_serverProxy = GetSystemAbility();
+        g_oldServerProxy = nullptr;
+        g_clientDeath = new SoftBusClientDeathRecipient();
+    }
+    ASSERT_NE(nullptr, g_serverProxy);
+    ASSERT_NE(nullptr, g_clientDeath);
+    DoCleanUp();
+    EXPECT_EQ(g_serverProxy, nullptr);
+    EXPECT_NE(g_oldServerProxy, nullptr);
+    {
+        std::lock_guard<std::mutex> lock(g_mutex);
+        g_oldServerProxy = nullptr;
+        g_serverProxy = nullptr;
+        g_clientDeath = nullptr;
+    }
+}
+
+/**
+ * @tc.name: DoRecoveryServerProxyInitFailTest
+ * @tc.desc: DoRecovery, ServerProxyInit fails all retries, FreeClientPkgName and continue
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftBusServerProxyFrameTest, DoRecoveryServerProxyInitFailTest, TestSize.Level1)
+{
+    g_taskScheduled.store(true);
+    g_needRecover.store(true);
+    {
+        std::lock_guard<std::mutex> lock(g_mutex);
+        g_serverProxy = GetSystemAbility();
+        g_oldServerProxy = nullptr;
+    }
+    DoRecovery();
+    EXPECT_FALSE(g_taskScheduled.load());
+    EXPECT_FALSE(g_needRecover.load());
+    g_taskScheduled.store(false);
+    g_needRecover.store(false);
+    {
+        std::lock_guard<std::mutex> lock(g_mutex);
+        g_oldServerProxy = nullptr;
+        g_serverProxy = nullptr;
+    }
+}
 } // namespace OHOS
