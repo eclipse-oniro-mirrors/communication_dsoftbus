@@ -66,7 +66,6 @@ protected:
 
     virtual void ProcessUnHandleCommand();
     void SubmitProcessorTask();
-    static void RequestQosAuth();
 
     std::string remoteDeviceId_;
     WifiDirectEventReceiver receiver_;

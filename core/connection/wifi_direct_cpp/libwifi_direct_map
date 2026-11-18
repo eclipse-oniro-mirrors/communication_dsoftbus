@@ -345,6 +345,7 @@
             "OHOS::SoftBus::WifiDirectExecutor::CanAcceptNegotiateData(OHOS::SoftBus::WifiDirectCommand&)";
             "OHOS::SoftBus::WifiDirectExecutor::GetRemoteDeviceId()";
             "OHOS::SoftBus::WifiDirectExecutor::SetActive(bool)";
+            "OHOS::SoftBus::WifiDirectExecutor::SetBoostQos(bool)";
             "OHOS::SoftBus::WifiDirectExecutor::SetRemoteDeviceId(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
             "OHOS::SoftBus::WifiDirectExecutor::WaitEvent()";
             "OHOS::SoftBus::WifiDirectExecutor::WifiDirectExecutor(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, OHOS::SoftBus::WifiDirectScheduler&, std::__h::shared_ptr<OHOS::SoftBus::WifiDirectProcessor>&, bool)";
@@ -352,7 +353,7 @@
 
             /* WifiDirectExecutorFactory */
             "OHOS::SoftBus::WifiDirectExecutorFactory::GetInstance()";
-            "OHOS::SoftBus::WifiDirectExecutorFactory::NewExecutor(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, OHOS::SoftBus::WifiDirectScheduler&, std::__h::shared_ptr<OHOS::SoftBus::WifiDirectProcessor>&, bool)";
+            "OHOS::SoftBus::WifiDirectExecutorFactory::NewExecutor(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, OHOS::SoftBus::WifiDirectScheduler&, std::__h::shared_ptr<OHOS::SoftBus::WifiDirectProcessor>&, bool, bool)";
             "OHOS::SoftBus::WifiDirectExecutorFactory::Register(std::__h::function<std::__h::shared_ptr<OHOS::SoftBus::WifiDirectExecutor> (std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, OHOS::SoftBus::WifiDirectScheduler&, std::__h::shared_ptr<OHOS::SoftBus::WifiDirectProcessor>&, bool)>)";
 
             /* WifiDirectExecutorManager */

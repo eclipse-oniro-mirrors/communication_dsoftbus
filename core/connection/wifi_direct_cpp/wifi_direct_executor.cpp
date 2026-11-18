@@ -14,7 +14,6 @@
  */
 #include "wifi_direct_executor.h"
 
-#include <unordered_map>
 #include <utility>
 #include <unistd.h>
 
@@ -22,17 +21,22 @@
 #include "data/link_manager.h"
 #include "event/wifi_direct_event_dispatcher.h"
 #include "conn_log.h"
+#ifdef DSOFTBUS_FEATURE_QOS_BOOST
+#include <unordered_map>
 #include "ffrt.h"
 #include "concurrent_task_client.h"
+#endif
 #include "utils/wifi_direct_anonymous.h"
 #include "utils/wifi_direct_utils.h"
 #include "wifi_direct_scheduler_factory.h"
 #include "command/negotiate_command.h"
 
 namespace OHOS::SoftBus {
+#ifdef DSOFTBUS_FEATURE_QOS_BOOST
 namespace {
 constexpr auto FFRT_TASK_NAME = "wifi_direct_exec";
 }
+#endif
 SOFTBUS_DEFAULT_USED_EXPORT
 WifiDirectExecutor::WifiDirectExecutor(const std::string &remoteDeviceId, WifiDirectScheduler &scheduler,
                                        std::shared_ptr<WifiDirectProcessor> &processor, bool active)
@@ -59,32 +63,29 @@ void WifiDirectExecutor::Start()
     SubmitProcessorTask();
 }
 
-void WifiDirectExecutor::RequestQosAuth()
-{
-    std::unordered_map<std::string, std::string> payload;
-    payload["pid"] = std::to_string(getpid());
-    OHOS::ConcurrentTask::ConcurrentTaskClient::GetInstance().RequestAuth(payload);
-}
-
-void WifiDirectExecutor::SetBoostQos(bool boostQos)
+SOFTBUS_DEFAULT_USED_EXPORT void WifiDirectExecutor::SetBoostQos(bool boostQos)
 {
     boostQos_ = boostQos;
 }
 
 void WifiDirectExecutor::SubmitProcessorTask()
 {
+#ifdef DSOFTBUS_FEATURE_QOS_BOOST
     if (boostQos_) {
         ffrt::task_attr attr;
         attr.name(FFRT_TASK_NAME);
-        RequestQosAuth();
+        std::unordered_map<std::string, std::string> payload;
+        payload["pid"] = std::to_string(getpid());
+        OHOS::ConcurrentTask::ConcurrentTaskClient::GetInstance().RequestAuth(payload);
         attr.qos(ffrt::qos_user_interactive);
         ffrt::submit(
-            [this] {
-                Run(processor_);
+            [this, processor = processor_] {
+                Run(processor);
             },
             attr);
         return;
     }
+#endif
     std::thread thread(&WifiDirectExecutor::Run, this, processor_);
     thread_.swap(thread);
     thread_.detach();
