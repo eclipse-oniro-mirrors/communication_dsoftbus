@@ -201,6 +201,64 @@ ohos_unittest("PerceptionAdvTest") {
   ]
 }
 
+ohos_unittest("PerceptionAdvMockTest") {
+  module_out_path = module_output_path
+  sources = [
+    "lane/lane_hub/perception/perception_advertiser_mock_test.cpp",
+    "lane/lane_hub/perception/perception_ext_deps_mock.cpp",
+  ]
+  include_dirs = bus_center_unittest_dirs + [
+    "$dsoftbus_root_path/adapter/common/net/bluetooth/broadcast/interface",
+    "$dsoftbus_root_path/core/bus_center/lnn/lane_hub/perception/include",
+    "$dsoftbus_root_path/core/bus_center/lnn/lane_hub/perception/src",
+    "$dsoftbus_root_path/core/broadcast/scheduler/interface",
+    "$dsoftbus_root_path/core/frame/init/include",
+    "$dsoftbus_root_path/interfaces/kits/adapter",
+    "$dsoftbus_root_path/interfaces/kits/broadcast/enhance",
+    "lane/lane_hub/perception",
+  ]
+  deps = [
+    "$dsoftbus_dfx_path:softbus_dfx",
+    "$dsoftbus_root_path/adapter:softbus_adapter",
+    "$dsoftbus_root_path/core/common:softbus_utils",
+  ]
+  external_deps = [
+    "c_utils:utils",
+    "googletest:gmock",
+    "googletest:gtest_main",
+    "hilog:libhilog",
+  ]
+}
+
+ohos_unittest("PerceptionScanMockTest") {
+  module_out_path = module_output_path
+  sources = [
+    "lane/lane_hub/perception/perception_scanner_mock_test.cpp",
+    "lane/lane_hub/perception/perception_ext_deps_mock.cpp",
+  ]
+  include_dirs = bus_center_unittest_dirs + [
+    "$dsoftbus_root_path/adapter/common/net/bluetooth/broadcast/interface",
+    "$dsoftbus_root_path/core/bus_center/lnn/lane_hub/perception/include",
+    "$dsoftbus_root_path/core/bus_center/lnn/lane_hub/perception/src",
+    "$dsoftbus_root_path/core/broadcast/scheduler/interface",
+    "$dsoftbus_root_path/core/frame/init/include",
+    "$dsoftbus_root_path/interfaces/kits/adapter",
+    "$dsoftbus_root_path/interfaces/kits/broadcast/enhance",
+    "lane/lane_hub/perception",
+  ]
+  deps = [
+    "$dsoftbus_dfx_path:softbus_dfx",
+    "$dsoftbus_root_path/adapter:softbus_adapter",
+    "$dsoftbus_root_path/core/common:softbus_utils",
+  ]
+  external_deps = [
+    "c_utils:utils",
+    "googletest:gmock",
+    "googletest:gtest_main",
+    "hilog:libhilog",
+  ]
+}
+
 ohos_unittest("NetLedgerTest") {
   module_out_path = module_output_path
   sanitize = {
@@ -4851,6 +4909,8 @@ group("unittest") {
     deps += [
       ":PerceptionManagerTest",
       ":PerceptionAdvTest",
+      ":PerceptionAdvMockTest",
+      ":PerceptionScanMockTest",
     ]
   }
   if (dsoftbus_feature_lnn_lane_mgr) {
