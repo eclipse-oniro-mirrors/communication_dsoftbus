@@ -19,6 +19,7 @@
 #include <list>
 #include <memory>
 #include <queue>
+#include <thread>
 
 #include "dfx/wifi_direct_trace.h"
 #include "event/wifi_direct_event_receiver.h"
@@ -72,6 +73,7 @@ protected:
     WifiDirectScheduler &scheduler_;
     std::recursive_mutex processorLock_;
     std::shared_ptr<WifiDirectProcessor> processor_;
+    std::thread thread_;
 
     bool active_;
     bool boostQos_;

@@ -73,17 +73,21 @@ void WifiDirectExecutor::SetBoostQos(bool boostQos)
 
 void WifiDirectExecutor::SubmitProcessorTask()
 {
-    ffrt::task_attr attr;
-    attr.name(FFRT_TASK_NAME);
     if (boostQos_) {
+        ffrt::task_attr attr;
+        attr.name(FFRT_TASK_NAME);
         RequestQosAuth();
         attr.qos(ffrt::qos_user_interactive);
+        ffrt::submit(
+            [this] {
+                Run(processor_);
+            },
+            attr);
+        return;
     }
-    ffrt::submit(
-        [this] {
-            Run(processor_);
-        },
-        attr);
+    std::thread thread(&WifiDirectExecutor::Run, this, processor_);
+    thread_.swap(thread);
+    thread_.detach();
 }
 
 void WifiDirectExecutor::Run(std::shared_ptr<WifiDirectProcessor> processor)
