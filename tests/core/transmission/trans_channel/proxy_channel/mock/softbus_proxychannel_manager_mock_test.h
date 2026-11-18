@@ -19,6 +19,7 @@
 #include <gmock/gmock.h>
 
 #include "bus_center_info_key.h"
+#include "bus_center_event.h"
 #include "softbus_conn_interface_struct.h"
 #include "softbus_feature_config.h"
 #include "softbus_proxychannel_control.h"
@@ -52,6 +53,7 @@ public:
     virtual int32_t TransProxyUnpackIdentity(const char *msg, char *identity, uint32_t identitySize, int32_t len) = 0;
     virtual int32_t TransProxyTransInit(void) = 0;
     virtual int32_t RegisterTimeoutCallback(int32_t timerFunId, TimerFunCallback callback) = 0;
+    virtual int32_t LnnRegisterEventHandler(LnnEventType event, LnnEventHandler handler) = 0;
     virtual int32_t TransGetPidAndPkgName(
         const char *sessionName, int32_t uid, int32_t *pid, char *pkgName, uint32_t len) = 0;
     virtual int32_t OnProxyChannelOpened(int32_t channelId, const AppInfo *appInfo, unsigned char isServer) = 0;
@@ -102,6 +104,8 @@ public:
     MOCK_METHOD(int32_t, TransProxyTransInit, (), (override));
 
     MOCK_METHOD(int32_t, RegisterTimeoutCallback, (int32_t timerFunId, TimerFunCallback callback), (override));
+
+    MOCK_METHOD(int32_t, LnnRegisterEventHandler, (LnnEventType event, LnnEventHandler handler), (override));
 
     MOCK_METHOD(int32_t, TransGetPidAndPkgName,
         (const char *sessionName, int32_t uid, int32_t *pid, char *pkgName, uint32_t len), (override));

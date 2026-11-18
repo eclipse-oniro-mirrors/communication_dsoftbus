@@ -830,6 +830,159 @@ HWTEST_F(SoftbusTransProxyChannelManagerTest, TransProxyManagerInitTest001, Test
 }
 
 /*
+ * @tc.name: TransProxyManagerInitTest002
+ * @tc.desc: TransProxyManagerInit success when all deps ok, then deinit cleanup.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusTransProxyChannelManagerTest, TransProxyManagerInitTest002, TestSize.Level1)
+{
+    IServerChannelCallBack callBack;
+    (void)memset_s(&callBack, sizeof(callBack), 0, sizeof(callBack));
+    callBack.OnChannelOpened = OnChannelOpenedTest;
+
+    SoftbusTransProxyChannelManagerMock mock;
+    EXPECT_CALL(mock, TransProxyTransInit).WillOnce(Return(SOFTBUS_OK));
+    EXPECT_CALL(mock, RegisterTimeoutCallback(_, _)).WillOnce(Return(SOFTBUS_OK));
+    EXPECT_CALL(mock, LnnRegisterEventHandler(_, _)).Times(6).WillRepeatedly(Return(SOFTBUS_OK));
+
+    int32_t ret = TransProxyManagerInit(&callBack);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    EXPECT_TRUE(g_proxyChannelList != nullptr);
+
+    TransProxyManagerDeinit();
+    EXPECT_TRUE(g_proxyChannelList == nullptr);
+}
+
+/*
+ * @tc.name: TransProxyManagerInitTest003
+ * @tc.desc: TransProxyManagerInit rollback when LnnRegisterEventHandler(SINGLE_NETWORK_OFFLINE) fails.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusTransProxyChannelManagerTest, TransProxyManagerInitTest003, TestSize.Level1)
+{
+    IServerChannelCallBack callBack;
+    (void)memset_s(&callBack, sizeof(callBack), 0, sizeof(callBack));
+    callBack.OnChannelOpened = OnChannelOpenedTest;
+
+    SoftbusTransProxyChannelManagerMock mock;
+    EXPECT_CALL(mock, TransProxyTransInit).WillOnce(Return(SOFTBUS_OK));
+    EXPECT_CALL(mock, RegisterTimeoutCallback(_, _)).WillOnce(Return(SOFTBUS_OK));
+    EXPECT_CALL(mock, LnnRegisterEventHandler(_, _)).WillOnce(Return(SOFTBUS_ERR));
+
+    int32_t ret = TransProxyManagerInit(&callBack);
+    EXPECT_NE(ret, SOFTBUS_OK);
+    EXPECT_TRUE(g_proxyChannelList == nullptr);
+}
+
+/*
+ * @tc.name: TransProxyManagerInitTest004
+ * @tc.desc: TransProxyManagerInit rollback when LnnRegisterEventHandler(NODE_ONLINE_STATE_CHANGED) fails.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusTransProxyChannelManagerTest, TransProxyManagerInitTest004, TestSize.Level1)
+{
+    IServerChannelCallBack callBack;
+    (void)memset_s(&callBack, sizeof(callBack), 0, sizeof(callBack));
+    callBack.OnChannelOpened = OnChannelOpenedTest;
+
+    SoftbusTransProxyChannelManagerMock mock;
+    EXPECT_CALL(mock, TransProxyTransInit).WillOnce(Return(SOFTBUS_OK));
+    EXPECT_CALL(mock, RegisterTimeoutCallback(_, _)).WillOnce(Return(SOFTBUS_OK));
+    EXPECT_CALL(mock, LnnRegisterEventHandler(_, _))
+        .WillOnce(Return(SOFTBUS_OK))
+        .WillOnce(Return(SOFTBUS_OK))
+        .WillOnce(Return(SOFTBUS_ERR));
+
+    int32_t ret = TransProxyManagerInit(&callBack);
+    EXPECT_NE(ret, SOFTBUS_OK);
+    EXPECT_TRUE(g_proxyChannelList == nullptr);
+}
+
+/*
+ * @tc.name: TransProxyManagerInitTest005
+ * @tc.desc: TransProxyManagerInit rollback when LnnRegisterEventHandler(USER_SWITCHED) fails.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusTransProxyChannelManagerTest, TransProxyManagerInitTest005, TestSize.Level1)
+{
+    IServerChannelCallBack callBack;
+    (void)memset_s(&callBack, sizeof(callBack), 0, sizeof(callBack));
+    callBack.OnChannelOpened = OnChannelOpenedTest;
+
+    SoftbusTransProxyChannelManagerMock mock;
+    EXPECT_CALL(mock, TransProxyTransInit).WillOnce(Return(SOFTBUS_OK));
+    EXPECT_CALL(mock, RegisterTimeoutCallback(_, _)).WillOnce(Return(SOFTBUS_OK));
+    EXPECT_CALL(mock, LnnRegisterEventHandler(_, _))
+        .WillOnce(Return(SOFTBUS_OK))
+        .WillOnce(Return(SOFTBUS_OK))
+        .WillOnce(Return(SOFTBUS_OK))
+        .WillOnce(Return(SOFTBUS_ERR));
+
+    int32_t ret = TransProxyManagerInit(&callBack);
+    EXPECT_NE(ret, SOFTBUS_OK);
+    EXPECT_TRUE(g_proxyChannelList == nullptr);
+}
+
+/*
+ * @tc.name: TransProxyManagerInitTest006
+ * @tc.desc: TransProxyManagerInit rollback when LnnRegisterEventHandler(CONSTRAINT_ENABLE) fails.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusTransProxyChannelManagerTest, TransProxyManagerInitTest006, TestSize.Level1)
+{
+    IServerChannelCallBack callBack;
+    (void)memset_s(&callBack, sizeof(callBack), 0, sizeof(callBack));
+    callBack.OnChannelOpened = OnChannelOpenedTest;
+
+    SoftbusTransProxyChannelManagerMock mock;
+    EXPECT_CALL(mock, TransProxyTransInit).WillOnce(Return(SOFTBUS_OK));
+    EXPECT_CALL(mock, RegisterTimeoutCallback(_, _)).WillOnce(Return(SOFTBUS_OK));
+    EXPECT_CALL(mock, LnnRegisterEventHandler(_, _))
+        .WillOnce(Return(SOFTBUS_OK))
+        .WillOnce(Return(SOFTBUS_OK))
+        .WillOnce(Return(SOFTBUS_OK))
+        .WillOnce(Return(SOFTBUS_OK))
+        .WillOnce(Return(SOFTBUS_ERR));
+
+    int32_t ret = TransProxyManagerInit(&callBack);
+    EXPECT_NE(ret, SOFTBUS_OK);
+    EXPECT_TRUE(g_proxyChannelList == nullptr);
+}
+
+/*
+ * @tc.name: TransProxyManagerInitTest007
+ * @tc.desc: TransProxyManagerInit rollback when LnnRegisterEventHandler(ACCOUNT_ACL_CHANGE) fails.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusTransProxyChannelManagerTest, TransProxyManagerInitTest007, TestSize.Level1)
+{
+    IServerChannelCallBack callBack;
+    (void)memset_s(&callBack, sizeof(callBack), 0, sizeof(callBack));
+    callBack.OnChannelOpened = OnChannelOpenedTest;
+
+    SoftbusTransProxyChannelManagerMock mock;
+    EXPECT_CALL(mock, TransProxyTransInit).WillOnce(Return(SOFTBUS_OK));
+    EXPECT_CALL(mock, RegisterTimeoutCallback(_, _)).WillOnce(Return(SOFTBUS_OK));
+    EXPECT_CALL(mock, LnnRegisterEventHandler(_, _))
+        .WillOnce(Return(SOFTBUS_OK))
+        .WillOnce(Return(SOFTBUS_OK))
+        .WillOnce(Return(SOFTBUS_OK))
+        .WillOnce(Return(SOFTBUS_OK))
+        .WillOnce(Return(SOFTBUS_OK))
+        .WillOnce(Return(SOFTBUS_ERR));
+
+    int32_t ret = TransProxyManagerInit(&callBack);
+    EXPECT_NE(ret, SOFTBUS_OK);
+    EXPECT_TRUE(g_proxyChannelList == nullptr);
+}
+
+/*
  * @tc.name: TransProxyResetReplyCntTest001
  * @tc.desc: TransProxyResetReplyCnt
  * @tc.type: FUNC

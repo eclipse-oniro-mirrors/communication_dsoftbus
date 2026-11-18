@@ -152,6 +152,12 @@ int32_t RegisterTimeoutCallback(int32_t timerFunId, TimerFunCallback callback)
     return SoftbusTransProxyChannelManagerMock::GetMockObj().RegisterTimeoutCallback(timerFunId, callback);
 }
 
+int32_t LnnRegisterEventHandler(LnnEventType event, LnnEventHandler handler)
+{
+    std::cout << "LnnRegisterEventHandler calling enter" << std::endl;
+    return SoftbusTransProxyChannelManagerMock::GetMockObj().LnnRegisterEventHandler(event, handler);
+}
+
 int32_t TransGetPidAndPkgName(const char *sessionName, int32_t uid, int32_t *pid, char *pkgName, uint32_t len)
 {
     std::cout << "TransGetPidAndPkgName calling enter" << std::endl;

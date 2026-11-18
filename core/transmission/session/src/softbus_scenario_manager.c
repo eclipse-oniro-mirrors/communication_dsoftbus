@@ -468,6 +468,30 @@ static void ShowLocalScenarioCountMessage(const LocalScenarioCount *localScenari
         localScenarioCount->allMacAudioCount, localScenarioCount->allMacFileCount);
 }
 
+static BusinessCounter *GetOrCreateBusinessCounter(ScenarioItem *scenarioItem, int32_t localPid, bool *newlyAdded)
+{
+    if (scenarioItem == NULL || newlyAdded == NULL) {
+        TRANS_LOGE(TRANS_CTRL, "invalid param");
+        return NULL;
+    }
+    BusinessCounter *tmp = NULL;
+    LIST_FOR_EACH_ENTRY(tmp, &scenarioItem->businessCounterList, BusinessCounter, node) {
+        if (tmp->localPid == localPid) {
+            return tmp;
+        }
+    }
+    BusinessCounter *counter = (BusinessCounter *)SoftBusCalloc(sizeof(BusinessCounter));
+    if (counter == NULL) {
+        TRANS_LOGE(TRANS_CTRL, "error, out of memory");
+        return NULL;
+    }
+    counter->localPid = localPid;
+    ListAdd(&scenarioItem->businessCounterList, &counter->node);
+    *newlyAdded = true;
+    TRANS_LOGI(TRANS_CTRL, "add localPid = %{public}d", counter->localPid);
+    return counter;
+}
+
 static int32_t AddOriginalScenario(ScenarioManager *manager, OriginalScenario *info)
 {
     if (SoftBusMutexLock(&(manager->scenarioItemList->lock)) != SOFTBUS_OK) {
@@ -480,25 +504,13 @@ static int32_t AddOriginalScenario(ScenarioManager *manager, OriginalScenario *i
         (void)SoftBusMutexUnlock(&(manager->scenarioItemList->lock));
         return SOFTBUS_NOT_FIND;
     }
-    BusinessCounter *counter = NULL;
-    BusinessCounter *tmp = NULL;
-    LIST_FOR_EACH_ENTRY(tmp, &scenarioItem->businessCounterList, BusinessCounter, node) {
-        if (tmp->localPid == info->localPid) {
-            counter = tmp;
-            break;
-        }
-    }
+    bool counterNewlyAdded = false;
+    BusinessCounter *counter = GetOrCreateBusinessCounter(scenarioItem, info->localPid, &counterNewlyAdded);
     if (counter == NULL) {
-        counter = (BusinessCounter *)SoftBusCalloc(sizeof(BusinessCounter));
-        if (counter == NULL) {
-            TRANS_LOGE(TRANS_CTRL, "error, out of memory");
-            (void)SoftBusMutexUnlock(&(manager->scenarioItemList->lock));
-            return SOFTBUS_MALLOC_ERR;
-        }
-        counter->localPid = info->localPid;
-        ListAdd(&scenarioItem->businessCounterList, &counter->node);
-        TRANS_LOGI(TRANS_CTRL, "add localPid = %{public}d", counter->localPid);
-    } else {
+        (void)SoftBusMutexUnlock(&(manager->scenarioItemList->lock));
+        return SOFTBUS_MALLOC_ERR;
+    }
+    if (!counterNewlyAdded) {
         TRANS_LOGI(TRANS_CTRL, "businessCounter already exist");
     }
     ScenarioManagerDoNotifyIfNeed(manager, info, true);
@@ -506,6 +518,11 @@ static int32_t AddOriginalScenario(ScenarioManager *manager, OriginalScenario *i
     LocalScenarioCount *localScenarioCount = GetScenarioCount(manager);
     if (localScenarioCount == NULL) {
         TRANS_LOGE(TRANS_CTRL, "failed to apply for memory");
+        if (counterNewlyAdded) {
+            ListDelete(&counter->node);
+            SoftBusFree(counter);
+            counter = NULL;
+        }
         (void)SoftBusMutexUnlock(&(manager->scenarioItemList->lock));
         return SOFTBUS_MALLOC_ERR;
     }

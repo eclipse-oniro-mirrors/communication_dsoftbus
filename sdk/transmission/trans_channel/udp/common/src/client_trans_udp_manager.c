@@ -822,6 +822,8 @@ int32_t ClientTransUdpMgrInit(IClientSessionCallBack *callback)
     (void)TransFileSchemaInitPacked();
     if (PendingInit(PENDING_TYPE_UDP) != SOFTBUS_OK) {
         TRANS_LOGE(TRANS_INIT, "trans udp pending init failed.");
+        UnregisterStreamCb();
+        g_sessionCb = NULL;
         return SOFTBUS_TRANS_SERVER_INIT_FAILED;
     }
 #ifdef DSOFTBUS_FEATURE_TRANS_UDP_FILE
@@ -831,6 +833,9 @@ int32_t ClientTransUdpMgrInit(IClientSessionCallBack *callback)
     g_udpChannelMgr = CreateSoftBusList();
     if (g_udpChannelMgr == NULL) {
         TRANS_LOGE(TRANS_INIT, "create udp channel manager list failed.");
+        RegisterFileCb(NULL);
+        PendingDeinit(PENDING_TYPE_UDP);
+        g_sessionCb = NULL;
         return SOFTBUS_MALLOC_ERR;
     }
     TRANS_LOGI(TRANS_INIT, "trans udp channel manager init success.");
