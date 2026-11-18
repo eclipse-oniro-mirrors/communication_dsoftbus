@@ -2201,7 +2201,7 @@ HWTEST_F(SoftBusServerProxyFrameTest, ClientDeathProcTaskSetNeedRecoverTest, Tes
  */
 HWTEST_F(SoftBusServerProxyFrameTest, NeedRecoverAndFreeRemainingTest001, TestSize.Level1)
 {
-    char *clientName[2] = {0};
+    char *clientName[2] = {nullptr};
     clientName[0] = static_cast<char *>(SoftBusCalloc(16));
     ASSERT_NE(nullptr, clientName[0]);
     clientName[1] = static_cast<char *>(SoftBusCalloc(16));
@@ -2222,7 +2222,7 @@ HWTEST_F(SoftBusServerProxyFrameTest, NeedRecoverAndFreeRemainingTest001, TestSi
  */
 HWTEST_F(SoftBusServerProxyFrameTest, NeedRecoverAndFreeRemainingTest002, TestSize.Level1)
 {
-    char *clientName[3] = {0};
+    char *clientName[3] = {nullptr};
     clientName[0] = static_cast<char *>(SoftBusCalloc(16));
     ASSERT_NE(nullptr, clientName[0]);
     clientName[1] = static_cast<char *>(SoftBusCalloc(16));
