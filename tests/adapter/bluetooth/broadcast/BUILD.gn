@@ -29,6 +29,8 @@ ohos_unittest("SoftbusBroadcastMgrTest") {
     "$dsoftbus_root_path/adapter/common/net/bluetooth/broadcast/manager/src/softbus_broadcast_mgr.c",
     "softbus_ble_mock.cpp",
     "softbus_broadcast_mgr_test.cpp",
+    "softbus_broadcast_mgr_cover_test.cpp",
+    "softbus_broadcast_mgr_test_common.cpp",
   ]
 
   include_dirs = [
@@ -48,6 +50,7 @@ ohos_unittest("SoftbusBroadcastMgrTest") {
     "$dsoftbus_root_path/core/bus_center/utils/include",
     "$dsoftbus_root_path/core/adapter/bus_center/include",
     "$dsoftbus_root_path/core/common/include",
+    "$dsoftbus_root_path/core/frame/init/include",
   ]
 
   deps = [

@@ -16,7 +16,12 @@
 #ifndef VIRLINK_LINKLESS_ADAPTER_MOCK_H
 #define VIRLINK_LINKLESS_ADAPTER_MOCK_H
 
+#ifdef __cplusplus
 #include <cstdint>
+#else
+#include <stdbool.h>
+#include <stdint.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,6 +33,9 @@ void VirlinkTestDeviceOnline(const char *remoteMac, const char *remoteIp,
     const char *remoteUuid, bool isSource);
 void VirlinkTestDeviceOffline(const char *remoteMac, const char *remoteIp,
     const char *remoteUuid, const char *localIp);
+void VirlinkTestSetAuthIdValid(bool isValid);
+void VirlinkTestSetNetworkIdByUdidValid(bool isValid);
+void VirlinkTestSetNetworkIdByUuidValid(bool isValid);
 
 #ifdef __cplusplus
 }

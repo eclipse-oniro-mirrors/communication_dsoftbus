@@ -15,15 +15,22 @@
 
 #include <securec.h>
 
+#include <cstdlib>
+#include <cstring>
+#include <pthread.h>
+
 #include "bluetooth_mock.h"
 #include "disc_log.h"
+#include "softbus_adapter_mem.h"
+#include "softbus_adapter_thread.h"
+#include "softbus_error_code.h"
 
 MockBluetooth *MockBluetooth::targetMocker = nullptr;
 BtGapCallBacks *MockBluetooth::btGapCallback = nullptr;
 BtGattCallbacks *MockBluetooth::btGattCallback = nullptr;
 BleScanCallbacks *MockBluetooth::bleScanCallback = nullptr;
 const SoftbusBroadcastMediumInterface *MockBluetooth::interface = nullptr;
-int32_t MockBluetooth::g_btAdvId = 0;
+int32_t MockBluetooth::gBtAdvId = 0;
 
 static int32_t ActionGapRegisterCallbacks(BtGapCallBacks *func)
 {
@@ -60,8 +67,117 @@ int32_t MockBluetooth::ActionBleStartAdvEx(int32_t *advId, const StartAdvRawData
 {
     (void)rawData;
     (void)advParam;
-    *advId = g_btAdvId;
+    *advId = gBtAdvId;
     return OHOS_BT_STATUS_SUCCESS;
+}
+
+// ---------------------------------------------------------------------------
+// Configurable stubs: drive error/edge branches of softbus_ble_gatt.c.
+// Defaults keep the behaviour expected by the original tests.
+// ---------------------------------------------------------------------------
+
+static int32_t g_callocFailCountdown = -1;
+static int32_t g_mutexInitFailCountdown = -1;
+static int32_t g_bleEnableAdvRet = OHOS_BT_STATUS_SUCCESS;
+static int32_t g_bleDisableAdvRet = OHOS_BT_STATUS_SUCCESS;
+static int32_t g_setScanReportChannelRet = OHOS_BT_STATUS_SUCCESS;
+static int32_t g_setLpDeviceAdvParamRet = OHOS_BT_STATUS_SUCCESS;
+static int32_t g_enableSyncDataRet = OHOS_BT_STATUS_SUCCESS;
+static int32_t g_disableSyncDataRet = OHOS_BT_STATUS_SUCCESS;
+static bool g_isLpAvailable = true;
+
+void SetBleGattCallocFailCountdown(int32_t countdown)
+{
+    g_callocFailCountdown = countdown;
+}
+
+void SetBleGattMutexInitFailCountdown(int32_t countdown)
+{
+    g_mutexInitFailCountdown = countdown;
+}
+
+void SetBleAdvExReturnValue(int32_t enableRet, int32_t disableRet)
+{
+    g_bleEnableAdvRet = enableRet;
+    g_bleDisableAdvRet = disableRet;
+}
+
+void SetScanReportChannelReturnValue(int32_t ret)
+{
+    g_setScanReportChannelRet = ret;
+}
+
+void SetLpDeviceAdvParamReturnValue(int32_t ret)
+{
+    g_setLpDeviceAdvParamRet = ret;
+}
+
+void SetSyncDataToLpReturnValue(int32_t enableRet, int32_t disableRet)
+{
+    g_enableSyncDataRet = enableRet;
+    g_disableSyncDataRet = disableRet;
+}
+
+void SetIsLpAvailable(bool available)
+{
+    g_isLpAvailable = available;
+}
+
+extern "C" void *SoftBusCalloc(unsigned int size)
+{
+    if (g_callocFailCountdown >= 0) {
+        if (g_callocFailCountdown == 0) {
+            g_callocFailCountdown = -1;
+            return nullptr;
+        }
+        g_callocFailCountdown--;
+    }
+    if (size > MAX_MALLOC_SIZE) {
+        return nullptr;
+    }
+    void *ptr = malloc(size);
+    if (ptr != nullptr) {
+        (void)memset_s(ptr, size, 0, size);
+    }
+    return ptr;
+}
+
+extern "C" int32_t SoftBusMutexInit(SoftBusMutex *mutex, SoftBusMutexAttr *mutexAttr)
+{
+    if (g_mutexInitFailCountdown >= 0) {
+        if (g_mutexInitFailCountdown == 0) {
+            g_mutexInitFailCountdown = -1;
+            return SOFTBUS_ERR;
+        }
+        g_mutexInitFailCountdown--;
+    }
+    if (mutex == NULL) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    if ((void *)mutex->mutex != NULL) {
+        return SOFTBUS_OK;
+    }
+    pthread_mutex_t *tempMutex = (pthread_mutex_t *)calloc(1, sizeof(pthread_mutex_t));
+    if (tempMutex == nullptr) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    pthread_mutexattr_t attr;
+    (void)pthread_mutexattr_init(&attr);
+    if (mutexAttr == NULL) {
+        (void)pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_NORMAL);
+    } else if (mutexAttr->type == SOFTBUS_MUTEX_RECURSIVE) {
+        (void)pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+    } else {
+        (void)pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_NORMAL);
+    }
+    if (pthread_mutex_init(tempMutex, &attr) != 0) {
+        free(tempMutex);
+        return SOFTBUS_ERR;
+    }
+    (void)pthread_mutexattr_destroy(&attr);
+    mutex->mutex = (uintptr_t)tempMutex;
+    mutex->holder = 0;
+    return SOFTBUS_OK;
 }
 
 MockBluetooth *MockBluetooth::GetMocker()
@@ -102,7 +218,7 @@ bool IsBleEnabled()
 
 bool IsLpDeviceAvailable()
 {
-    return true;
+    return g_isLpAvailable;
 }
 
 bool GetLocalAddr(unsigned char *mac, unsigned int len)
@@ -170,18 +286,56 @@ int32_t GetAdvHandle(int32_t btAdvId, int32_t *bcHandle)
 
 int32_t EnableSyncDataToLpDevice()
 {
-    return OHOS_BT_STATUS_SUCCESS;
+    return g_enableSyncDataRet;
 }
 
 int32_t DisableSyncDataToLpDevice()
 {
-    return OHOS_BT_STATUS_SUCCESS;
+    return g_disableSyncDataRet;
 }
 
 int32_t SetLpDeviceAdvParam(
     int32_t duration, int32_t maxExtAdvEvents, int32_t window, int32_t interval, int32_t bcHandle)
 {
+    (void)duration;
+    (void)maxExtAdvEvents;
+    (void)window;
+    (void)interval;
+    (void)bcHandle;
+    return g_setLpDeviceAdvParamRet;
+}
+
+int BleSetAdvData(int advId, const StartAdvRawData data)
+{
+    (void)advId;
+    (void)data;
     return OHOS_BT_STATUS_SUCCESS;
+}
+
+int BleChangeAdvParams(int advId, const BleAdvParams advParam)
+{
+    (void)advId;
+    (void)advParam;
+    return OHOS_BT_STATUS_SUCCESS;
+}
+
+int BleEnableAdvEx(int advId)
+{
+    (void)advId;
+    return g_bleEnableAdvRet;
+}
+
+int BleDisableAdvEx(int advId)
+{
+    (void)advId;
+    return g_bleDisableAdvRet;
+}
+
+int SetScanReportChannelToLpDevice(int32_t scannerId, bool enable)
+{
+    (void)scannerId;
+    (void)enable;
+    return g_setScanReportChannelRet;
 }
 
 int32_t SendParamsToLpDevice(const uint8_t *data, uint32_t dataSize, int32_t type)
