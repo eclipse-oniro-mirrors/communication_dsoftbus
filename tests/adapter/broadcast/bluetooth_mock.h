@@ -178,10 +178,19 @@ public:
     static BtGattCallbacks *btGattCallback;
     static BleScanCallbacks *bleScanCallback;
     static const SoftbusBroadcastMediumInterface *interface;
-    static int32_t g_btAdvId;
+    static int32_t gBtAdvId;
 
 private:
     static MockBluetooth *targetMocker;
 };
+
+// Configurable stub controls used to drive error/edge branches of softbus_ble_gatt.c.
+void SetBleGattCallocFailCountdown(int32_t countdown);
+void SetBleGattMutexInitFailCountdown(int32_t countdown);
+void SetBleAdvExReturnValue(int32_t enableRet, int32_t disableRet);
+void SetScanReportChannelReturnValue(int32_t ret);
+void SetLpDeviceAdvParamReturnValue(int32_t ret);
+void SetSyncDataToLpReturnValue(int32_t enableRet, int32_t disableRet);
+void SetIsLpAvailable(bool available);
 
 #endif

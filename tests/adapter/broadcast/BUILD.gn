@@ -55,7 +55,11 @@ if (!defined(ohos_lite)) {
     debug = false
   }
     sources = bc_gatt_test_sources
-    sources += [ "softbus_ble_gatt_test.cpp" ]
+    sources += [
+      "softbus_ble_gatt_test.cpp",
+      "softbus_ble_gatt_cover_test.cpp",
+      "softbus_ble_gatt_test_common.cpp",
+    ]
 
     include_dirs = bc_gatt_test_inc
     deps = bc_gatt_test_deps

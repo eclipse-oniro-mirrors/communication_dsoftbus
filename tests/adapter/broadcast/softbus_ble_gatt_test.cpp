@@ -19,6 +19,7 @@
 #include "disc_log.h"
 #include "softbus_adapter_mem.h"
 #include "softbus_ble_gatt_public.h"
+#include "softbus_ble_gatt_test_common.h"
 #include "softbus_broadcast_type.h"
 #include "softbus_error_code.h"
 #include "gmock/gmock.h"
@@ -140,33 +141,6 @@ static testing::AssertionResult PrepareScanListener(int32_t *scannerId)
     return testing::AssertionSuccess();
 }
 
-static SoftBusBcScanFilter *CreateScanFilter()
-{
-    unsigned char serviceData[] = { 0xE, 0xE, 0xF, 0xF, 0x04, 0x05 };
-    int32_t len = sizeof(serviceData);
-
-    SoftBusBcScanFilter *filter = static_cast<SoftBusBcScanFilter *>(SoftBusCalloc(sizeof(SoftBusBcScanFilter)));
-    unsigned char *serviceDataPtr = static_cast<unsigned char *>(SoftBusCalloc(len));
-    unsigned char *serviceDataMaskPtr = static_cast<unsigned char *>(SoftBusCalloc(len));
-    if (filter == nullptr || serviceDataPtr == nullptr || serviceDataMaskPtr == nullptr) {
-        goto EXIT;
-    }
-    if (memcpy_s(serviceDataPtr, len, serviceData, len) != EOK) {
-        goto EXIT;
-    }
-    if (memset_s(serviceDataMaskPtr, len, 0xFF, len) != EOK) {
-        goto EXIT;
-    }
-    filter->serviceData = serviceDataPtr;
-    filter->serviceDataMask = serviceDataMaskPtr;
-    filter->serviceDataLength = len;
-    return filter;
-EXIT:
-    SoftBusFree(filter);
-    SoftBusFree(serviceDataPtr);
-    SoftBusFree(serviceDataMaskPtr);
-    return nullptr;
-}
 
 /*
  * @tc.name: SoftbusGattInit001
@@ -513,47 +487,6 @@ HWTEST_F(SoftbusBleGattTest, SoftbusStartAdv001, TestSize.Level1)
     EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
 }
 
-const char ADV_DATA_EXAMPLE[] = {
-    0x02,
-    0x01,
-    0x02,
-    0x15,
-    0x16,
-    0xEE,
-    0xFD,
-    0x04,
-    0x05,
-    0x90,
-    0x00,
-    0x00,
-    0x04,
-    0x00,
-    0x18,
-    0x33,
-    0x39,
-    0x36,
-    0x62,
-    0x33,
-    0x61,
-    0x33,
-    0x31,
-    0x21,
-    0x00,
-    0x02,
-    0x0A,
-    0xEF,
-};
-const unsigned char SCAN_RSP_DATA_EXAMPLE[] = { 0x03, 0xFF, 0x7D, 0x02 };
-
-static SoftbusBroadcastData BuildBcData(void)
-{
-    SoftbusBroadcastData data = {};
-    data.bcData.payloadLen = sizeof(ADV_DATA_EXAMPLE);
-    data.bcData.payload = (uint8_t *)ADV_DATA_EXAMPLE;
-    data.rspData.payloadLen = sizeof(SCAN_RSP_DATA_EXAMPLE);
-    data.rspData.payload = (uint8_t *)SCAN_RSP_DATA_EXAMPLE;
-    return data;
-}
 
 /*
  * @tc.name: SoftbusStartAdv002
@@ -1083,7 +1016,7 @@ HWTEST_F(SoftbusBleGattTest, WrapperAdvEnableCb001, TestSize.Level1)
     MockBluetooth::btGattCallback->advEnableCb(invalidBtAdvId, OHOS_BT_STATUS_SUCCESS);
     EXPECT_FALSE(SoftbusBleGattTest::g_adapterBcld == advld && SoftbusBleGattTest::g_status == OHOS_BT_STATUS_SUCCESS);
 
-    MockBluetooth::btGattCallback->advEnableCb(MockBluetooth::g_btAdvId, OHOS_BT_STATUS_FAIL);
+    MockBluetooth::btGattCallback->advEnableCb(MockBluetooth::gBtAdvId, OHOS_BT_STATUS_FAIL);
     EXPECT_FALSE(SoftbusBleGattTest::g_adapterBcld == advld && SoftbusBleGattTest::g_status == OHOS_BT_STATUS_SUCCESS);
 
     MockBluetooth::interface->StopBroadcasting(advld);
@@ -1119,7 +1052,7 @@ HWTEST_F(SoftbusBleGattTest, WrapperAdvEnableCb002, TestSize.Level1)
     EXPECT_CALL(mock, BleStartAdvEx).WillRepeatedly(MockBluetooth::ActionBleStartAdvEx);
     ret = MockBluetooth::interface->StartBroadcasting(advld, &params, &data);
     EXPECT_EQ(ret, SOFTBUS_OK);
-    MockBluetooth::btGattCallback->advEnableCb(MockBluetooth::g_btAdvId, OHOS_BT_STATUS_SUCCESS);
+    MockBluetooth::btGattCallback->advEnableCb(MockBluetooth::gBtAdvId, OHOS_BT_STATUS_SUCCESS);
     EXPECT_FALSE(SoftbusBleGattTest::g_adapterBcld == advld && SoftbusBleGattTest::g_status == OHOS_BT_STATUS_SUCCESS);
 
     MockBluetooth::interface->StopBroadcasting(advld);
@@ -1129,7 +1062,7 @@ HWTEST_F(SoftbusBleGattTest, WrapperAdvEnableCb002, TestSize.Level1)
     MockBluetooth::interface->RegisterBroadcaster(&advld, &g_softbusBcBleCbTest);
     ret = MockBluetooth::interface->StartBroadcasting(advld, &params, &data);
     EXPECT_EQ(ret, SOFTBUS_OK);
-    MockBluetooth::btGattCallback->advEnableCb(MockBluetooth::g_btAdvId, OHOS_BT_STATUS_SUCCESS);
+    MockBluetooth::btGattCallback->advEnableCb(MockBluetooth::gBtAdvId, OHOS_BT_STATUS_SUCCESS);
     EXPECT_TRUE(SoftbusBleGattTest::g_adapterBcld == advld && SoftbusBleGattTest::g_status == OHOS_BT_STATUS_SUCCESS);
 
     MockBluetooth::interface->StopBroadcasting(advld);
@@ -1203,7 +1136,7 @@ HWTEST_F(SoftbusBleGattTest, WrapperAdvDisableCb002, TestSize.Level1)
     EXPECT_CALL(mock, BleStartAdvEx).WillRepeatedly(MockBluetooth::ActionBleStartAdvEx);
     ret = MockBluetooth::interface->StartBroadcasting(advld, &params, &data);
     EXPECT_EQ(ret, SOFTBUS_OK);
-    MockBluetooth::btGattCallback->advDisableCb(MockBluetooth::g_btAdvId, OHOS_BT_STATUS_SUCCESS);
+    MockBluetooth::btGattCallback->advDisableCb(MockBluetooth::gBtAdvId, OHOS_BT_STATUS_SUCCESS);
     EXPECT_FALSE(SoftbusBleGattTest::g_adapterBcld == advld && SoftbusBleGattTest::g_status == OHOS_BT_STATUS_SUCCESS);
 
     MockBluetooth::interface->StopBroadcasting(advld);
@@ -1213,7 +1146,7 @@ HWTEST_F(SoftbusBleGattTest, WrapperAdvDisableCb002, TestSize.Level1)
     MockBluetooth::interface->RegisterBroadcaster(&advld, &g_softbusBcBleCbTest);
     ret = MockBluetooth::interface->StartBroadcasting(advld, &params, &data);
     EXPECT_EQ(ret, SOFTBUS_OK);
-    MockBluetooth::btGattCallback->advDisableCb(MockBluetooth::g_btAdvId, OHOS_BT_STATUS_SUCCESS);
+    MockBluetooth::btGattCallback->advDisableCb(MockBluetooth::gBtAdvId, OHOS_BT_STATUS_SUCCESS);
     EXPECT_TRUE(SoftbusBleGattTest::g_adapterBcld == advld && SoftbusBleGattTest::g_status == OHOS_BT_STATUS_SUCCESS);
 
     MockBluetooth::interface->StopBroadcasting(advld);
@@ -1289,7 +1222,7 @@ HWTEST_F(SoftbusBleGattTest, WrapperAdvSetDataCb002, TestSize.Level1)
     EXPECT_CALL(mock, BleStartAdvEx).WillRepeatedly(MockBluetooth::ActionBleStartAdvEx);
     ret = MockBluetooth::interface->StartBroadcasting(advld, &params, &data);
     EXPECT_EQ(ret, SOFTBUS_OK);
-    MockBluetooth::btGattCallback->advDataCb(MockBluetooth::g_btAdvId, OHOS_BT_STATUS_SUCCESS);
+    MockBluetooth::btGattCallback->advDataCb(MockBluetooth::gBtAdvId, OHOS_BT_STATUS_SUCCESS);
     EXPECT_FALSE(SoftbusBleGattTest::g_adapterBcld == advld && SoftbusBleGattTest::g_status == OHOS_BT_STATUS_SUCCESS);
 
     MockBluetooth::interface->StopBroadcasting(advld);
@@ -1299,7 +1232,7 @@ HWTEST_F(SoftbusBleGattTest, WrapperAdvSetDataCb002, TestSize.Level1)
     MockBluetooth::interface->RegisterBroadcaster(&advld, &g_softbusBcBleCbTest);
     ret = MockBluetooth::interface->StartBroadcasting(advld, &params, &data);
     EXPECT_EQ(ret, SOFTBUS_OK);
-    MockBluetooth::btGattCallback->advDataCb(MockBluetooth::g_btAdvId, OHOS_BT_STATUS_SUCCESS);
+    MockBluetooth::btGattCallback->advDataCb(MockBluetooth::gBtAdvId, OHOS_BT_STATUS_SUCCESS);
     EXPECT_TRUE(SoftbusBleGattTest::g_adapterBcld == advld && SoftbusBleGattTest::g_status == OHOS_BT_STATUS_SUCCESS);
 
     MockBluetooth::interface->StopBroadcasting(advld);
@@ -1375,7 +1308,7 @@ HWTEST_F(SoftbusBleGattTest, WrapperAdvUpdateDataCb002, TestSize.Level1)
     EXPECT_CALL(mock, BleStartAdvEx).WillRepeatedly(MockBluetooth::ActionBleStartAdvEx);
     ret = MockBluetooth::interface->StartBroadcasting(advld, &params, &data);
     EXPECT_EQ(ret, SOFTBUS_OK);
-    MockBluetooth::btGattCallback->advUpdateCb(MockBluetooth::g_btAdvId, OHOS_BT_STATUS_SUCCESS);
+    MockBluetooth::btGattCallback->advUpdateCb(MockBluetooth::gBtAdvId, OHOS_BT_STATUS_SUCCESS);
     EXPECT_FALSE(SoftbusBleGattTest::g_adapterBcld == advld && SoftbusBleGattTest::g_status == OHOS_BT_STATUS_SUCCESS);
 
     MockBluetooth::interface->StopBroadcasting(advld);
@@ -1385,7 +1318,7 @@ HWTEST_F(SoftbusBleGattTest, WrapperAdvUpdateDataCb002, TestSize.Level1)
     MockBluetooth::interface->RegisterBroadcaster(&advld, &g_softbusBcBleCbTest);
     ret = MockBluetooth::interface->StartBroadcasting(advld, &params, &data);
     EXPECT_EQ(ret, SOFTBUS_OK);
-    MockBluetooth::btGattCallback->advUpdateCb(MockBluetooth::g_btAdvId, OHOS_BT_STATUS_SUCCESS);
+    MockBluetooth::btGattCallback->advUpdateCb(MockBluetooth::gBtAdvId, OHOS_BT_STATUS_SUCCESS);
     EXPECT_TRUE(SoftbusBleGattTest::g_adapterBcld == advld && SoftbusBleGattTest::g_status == OHOS_BT_STATUS_SUCCESS);
 
     MockBluetooth::interface->StopBroadcasting(advld);
@@ -1460,7 +1393,7 @@ HWTEST_F(SoftbusBleGattTest, WrapperAdvUpdateParamCb002, TestSize.Level1)
     EXPECT_CALL(mock, BleStartAdvEx).WillRepeatedly(MockBluetooth::ActionBleStartAdvEx);
     ret = MockBluetooth::interface->StartBroadcasting(advld, &params, &data);
     EXPECT_EQ(ret, SOFTBUS_OK);
-    MockBluetooth::btGattCallback->advChangeCb(MockBluetooth::g_btAdvId, OHOS_BT_STATUS_SUCCESS);
+    MockBluetooth::btGattCallback->advChangeCb(MockBluetooth::gBtAdvId, OHOS_BT_STATUS_SUCCESS);
     EXPECT_FALSE(SoftbusBleGattTest::g_adapterBcld == advld && SoftbusBleGattTest::g_status == OHOS_BT_STATUS_SUCCESS);
 
     MockBluetooth::interface->StopBroadcasting(advld);
@@ -1471,7 +1404,7 @@ HWTEST_F(SoftbusBleGattTest, WrapperAdvUpdateParamCb002, TestSize.Level1)
     ret = MockBluetooth::interface->StartBroadcasting(advld, &params, &data);
     EXPECT_EQ(ret, SOFTBUS_OK);
 
-    MockBluetooth::btGattCallback->advChangeCb(MockBluetooth::g_btAdvId, OHOS_BT_STATUS_SUCCESS);
+    MockBluetooth::btGattCallback->advChangeCb(MockBluetooth::gBtAdvId, OHOS_BT_STATUS_SUCCESS);
     EXPECT_TRUE(SoftbusBleGattTest::g_adapterBcld == advld && SoftbusBleGattTest::g_status == OHOS_BT_STATUS_SUCCESS);
 
     MockBluetooth::interface->StopBroadcasting(advld);
@@ -1545,7 +1478,7 @@ HWTEST_F(SoftbusBleGattTest, WrapperOnAdvEnableExCb002, TestSize.Level1)
     EXPECT_CALL(mock, BleStartAdvEx).WillRepeatedly(MockBluetooth::ActionBleStartAdvEx);
     ret = MockBluetooth::interface->StartBroadcasting(advld, &params, &data);
     EXPECT_EQ(ret, SOFTBUS_OK);
-    MockBluetooth::btGattCallback->onEnableExCb(MockBluetooth::g_btAdvId, OHOS_BT_STATUS_SUCCESS);
+    MockBluetooth::btGattCallback->onEnableExCb(MockBluetooth::gBtAdvId, OHOS_BT_STATUS_SUCCESS);
     EXPECT_FALSE(SoftbusBleGattTest::g_adapterBcld == advld && SoftbusBleGattTest::g_status == OHOS_BT_STATUS_SUCCESS);
 
     MockBluetooth::interface->StopBroadcasting(advld);
@@ -1555,7 +1488,7 @@ HWTEST_F(SoftbusBleGattTest, WrapperOnAdvEnableExCb002, TestSize.Level1)
     MockBluetooth::interface->RegisterBroadcaster(&advld, &g_softbusBcBleCbTest);
     ret = MockBluetooth::interface->StartBroadcasting(advld, &params, &data);
     EXPECT_EQ(ret, SOFTBUS_OK);
-    MockBluetooth::btGattCallback->onEnableExCb(MockBluetooth::g_btAdvId, OHOS_BT_STATUS_SUCCESS);
+    MockBluetooth::btGattCallback->onEnableExCb(MockBluetooth::gBtAdvId, OHOS_BT_STATUS_SUCCESS);
     EXPECT_TRUE(SoftbusBleGattTest::g_adapterBcld == advld && SoftbusBleGattTest::g_status == OHOS_BT_STATUS_SUCCESS);
 
     MockBluetooth::interface->StopBroadcasting(advld);
@@ -1629,7 +1562,7 @@ HWTEST_F(SoftbusBleGattTest, WrapperOnAdvDisableExCb002, TestSize.Level1)
     EXPECT_CALL(mock, BleStartAdvEx).WillRepeatedly(MockBluetooth::ActionBleStartAdvEx);
     ret = MockBluetooth::interface->StartBroadcasting(advld, &params, &data);
     EXPECT_EQ(ret, SOFTBUS_OK);
-    MockBluetooth::btGattCallback->onDisableExCb(MockBluetooth::g_btAdvId, OHOS_BT_STATUS_SUCCESS);
+    MockBluetooth::btGattCallback->onDisableExCb(MockBluetooth::gBtAdvId, OHOS_BT_STATUS_SUCCESS);
     EXPECT_FALSE(SoftbusBleGattTest::g_adapterBcld == advld && SoftbusBleGattTest::g_status == OHOS_BT_STATUS_SUCCESS);
 
     MockBluetooth::interface->StopBroadcasting(advld);
@@ -1639,7 +1572,7 @@ HWTEST_F(SoftbusBleGattTest, WrapperOnAdvDisableExCb002, TestSize.Level1)
     MockBluetooth::interface->RegisterBroadcaster(&advld, &g_softbusBcBleCbTest);
     ret = MockBluetooth::interface->StartBroadcasting(advld, &params, &data);
     EXPECT_EQ(ret, SOFTBUS_OK);
-    MockBluetooth::btGattCallback->onDisableExCb(MockBluetooth::g_btAdvId, OHOS_BT_STATUS_SUCCESS);
+    MockBluetooth::btGattCallback->onDisableExCb(MockBluetooth::gBtAdvId, OHOS_BT_STATUS_SUCCESS);
     EXPECT_TRUE(SoftbusBleGattTest::g_adapterBcld == advld && SoftbusBleGattTest::g_status == OHOS_BT_STATUS_SUCCESS);
 
     MockBluetooth::interface->StopBroadcasting(advld);
@@ -1930,6 +1863,7 @@ void ScanResultCtx::Reset()
     SoftBusFree(scanResult.data.rspData.payload);
     scanResult.data.bcData.payload = nullptr;
     scanResult.data.rspData.payload = nullptr;
+    scanResult.data.uuidData.payload = nullptr;
 }
 
 bool ScanResultCtx::Update(int32_t id, const SoftBusBcScanResult *scanResult)
@@ -1938,6 +1872,12 @@ bool ScanResultCtx::Update(int32_t id, const SoftBusBcScanResult *scanResult)
         return false;
     }
     this->scanResult = *scanResult;
+    // rspData/uuidData payloads are owned by the caller and freed right after the
+    // scan result callback returns. Drop them here so that Reset() never frees
+    // dangling or already-freed pointers. Only bcData.payload is deep-copied below.
+    this->scanResult.data.rspData.payload = nullptr;
+    this->scanResult.data.uuidData.payload = nullptr;
+
     unsigned char *cpyAdvData = static_cast<unsigned char *>(SoftBusCalloc(this->scanResult.data.bcData.payloadLen));
     if (cpyAdvData == nullptr) {
         DISC_LOGE(DISC_TEST, "malloc failed in OnReportScanDataCallback, can not save ctx, id=%{public}d", id);

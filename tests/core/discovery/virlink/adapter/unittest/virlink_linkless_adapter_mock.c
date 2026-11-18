@@ -13,6 +13,10 @@
  * limitations under the License.
  */
 
+#include "virlink_linkless_adapter_mock.h"
+
+#include <stdbool.h>
+
 #include "auth_interface.h"
 #include "auth_manager.h"
 #include "wifi_direct_manager.h"
@@ -31,11 +35,18 @@ int32_t LnnConvertDlId(const char *srcId, IdCategory srcIdType, IdCategory dstId
     return 0;
 }
 
+static bool g_isAuthIdValid = true;
+
+void VirlinkTestSetAuthIdValid(bool isValid)
+{
+    g_isAuthIdValid = isValid;
+}
+
 void AuthDeviceGetLatestIdByUuid(const char *uuid, AuthLinkType type, AuthHandle *authHandle)
 {
     (void)uuid;
     (void)type;
-    if (authHandle != NULL) {
+    if (authHandle != NULL && g_isAuthIdValid) {
         authHandle->authId = 1;
     }
 }
@@ -76,9 +87,19 @@ int32_t RegAuthTransListener(int32_t module, const AuthTransListener *listener)
     return 0;
 }
 
+static bool g_isNetworkIdByUdidValid = true;
+
+void VirlinkTestSetNetworkIdByUdidValid(bool isValid)
+{
+    g_isNetworkIdByUdidValid = isValid;
+}
+
 int32_t LnnGetNetworkIdByUdid(const char *udid, char *buf, uint32_t len)
 {
     (void)udid;
+    if (!g_isNetworkIdByUdidValid) {
+        return -1;
+    }
     if (buf != NULL && len > 1) {
         buf[0] = 'n';
         buf[1] = '\0';
@@ -86,9 +107,19 @@ int32_t LnnGetNetworkIdByUdid(const char *udid, char *buf, uint32_t len)
     return 0;
 }
 
+static bool g_isNetworkIdByUuidValid = true;
+
+void VirlinkTestSetNetworkIdByUuidValid(bool isValid)
+{
+    g_isNetworkIdByUuidValid = isValid;
+}
+
 int32_t LnnGetNetworkIdByUuid(const char *uuid, char *buf, uint32_t len)
 {
     (void)uuid;
+    if (!g_isNetworkIdByUuidValid) {
+        return -1;
+    }
     if (buf != NULL && len > 1) {
         buf[0] = 'n';
         buf[1] = '\0';
