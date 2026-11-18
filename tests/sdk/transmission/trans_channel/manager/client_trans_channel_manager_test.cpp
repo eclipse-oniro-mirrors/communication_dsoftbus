@@ -26,6 +26,9 @@
 #include "softbus_error_code.h"
 
 #define TEST_DATA_LENGTH 1024
+#define TEST_CHANNEL_ID 1
+#define TEST_DATA "test"
+#define TEST_FILE_PATH "/data/test.txt"
 
 using namespace std;
 using namespace testing::ext;
@@ -37,39 +40,65 @@ public:
     ~ClientTransChannelManagerTest() { }
     static void SetUpTestCase(void);
     static void TearDownTestCase(void);
-    void SetUp() override { }
-    void TearDown() override { }
+    void SetUp(void) override { }
+    void TearDown(void) override { }
 };
 
 int32_t OnSessionOpened(
     const char *sessionName, const ChannelInfo *channel, SessionType flag, SocketAccessInfo *accessInfo)
 {
+    (void)sessionName;
+    (void)channel;
+    (void)flag;
+    (void)accessInfo;
     return SOFTBUS_OK;
 }
+
 int32_t OnSessionClosed(int32_t channelId, int32_t channelType, ShutdownReason reason)
 {
+    (void)channelId;
+    (void)channelType;
+    (void)reason;
     return SOFTBUS_OK;
 }
 
 int32_t OnSessionOpenFailed(int32_t channelId, int32_t channelType, int32_t errCode)
 {
+    (void)channelId;
+    (void)channelType;
+    (void)errCode;
     return SOFTBUS_OK;
 }
 
 static int32_t OnDataReceived(
     int32_t channelId, int32_t channelType, const void *data, uint32_t len, SessionPktType type)
 {
+    (void)channelId;
+    (void)channelType;
+    (void)data;
+    (void)len;
+    (void)type;
     return SOFTBUS_OK;
 }
 
 static int32_t OnStreamReceived(
     int32_t channelId, int32_t channelType, const StreamData *data, const StreamData *ext, const StreamFrameInfo *param)
 {
+    (void)channelId;
+    (void)channelType;
+    (void)data;
+    (void)ext;
+    (void)param;
     return SOFTBUS_OK;
 }
 
 static int32_t OnQosEvent(int32_t channelId, int32_t channelType, int32_t eventId, int32_t tvCount, const QosTv *tvList)
 {
+    (void)channelId;
+    (void)channelType;
+    (void)eventId;
+    (void)tvCount;
+    (void)tvList;
     return SOFTBUS_OK;
 }
 
@@ -86,191 +115,204 @@ void ClientTransChannelManagerTest::SetUpTestCase(void)
 {
     int32_t ret = ClientTransAuthInit(&g_clientSessionCb);
     EXPECT_EQ(SOFTBUS_OK, ret);
-
     ret = ClientTransProxyInit(&g_clientSessionCb);
     EXPECT_EQ(SOFTBUS_OK, ret);
-
     ret = ClientTransTdcSetCallBack(&g_clientSessionCb);
     EXPECT_EQ(SOFTBUS_OK, ret);
-
     ret = ClientTransUdpMgrInit(&g_clientSessionCb);
     EXPECT_EQ(SOFTBUS_OK, ret);
 }
+
 void ClientTransChannelManagerTest::TearDownTestCase(void) { }
 
-/**
- * @tc.name: ClientTransCloseChannelTest001
- * @tc.desc: ClientTransCloseChannel with proxy and tcp direct channel type
+/*
+ * @tc.name: ClientTransCloseChannelProxyTest001
+ * @tc.desc: test ClientTransCloseChannel with proxy channel type returns SOFTBUS_OK
  * @tc.type: FUNC
+ * @tc.level: Level1
  * @tc.require:
  */
-HWTEST_F(ClientTransChannelManagerTest, ClientTransCloseChannelTest001, TestSize.Level1)
+HWTEST_F(ClientTransChannelManagerTest, ClientTransCloseChannelProxyTest001, TestSize.Level1)
 {
-    int32_t channelId = 1;
-    int32_t ret = ClientTransCloseChannel(channelId, CHANNEL_TYPE_PROXY, 1, false);
+    int32_t ret = ClientTransCloseChannel(TEST_CHANNEL_ID, CHANNEL_TYPE_PROXY, TEST_CHANNEL_ID, false);
     EXPECT_EQ(SOFTBUS_OK, ret);
-    ret = ClientTransCloseChannel(channelId, CHANNEL_TYPE_TCP_DIRECT, 1, false);
+    ret = ClientTransCloseChannel(TEST_CHANNEL_ID, CHANNEL_TYPE_PROXY, TEST_CHANNEL_ID + 1, false);
     EXPECT_EQ(SOFTBUS_OK, ret);
 }
 
-/**
- * @tc.name: ClientTransCloseChannelTest002
- * @tc.desc: ClientTransCloseChannel with auth and invalid channel type
+/*
+ * @tc.name: ClientTransCloseChannelTcpDirectTest001
+ * @tc.desc: test ClientTransCloseChannel with tcp direct channel type returns SOFTBUS_OK
  * @tc.type: FUNC
+ * @tc.level: Level1
  * @tc.require:
  */
-HWTEST_F(ClientTransChannelManagerTest, ClientTransCloseChannelTest002, TestSize.Level1)
+HWTEST_F(ClientTransChannelManagerTest, ClientTransCloseChannelTcpDirectTest001, TestSize.Level1)
 {
-    int32_t channelId = 1;
-    int32_t ret = ClientTransCloseChannel(channelId, CHANNEL_TYPE_AUTH, 1, false);
+    int32_t ret = ClientTransCloseChannel(TEST_CHANNEL_ID, CHANNEL_TYPE_TCP_DIRECT, TEST_CHANNEL_ID, false);
     EXPECT_EQ(SOFTBUS_OK, ret);
-    ret = ClientTransCloseChannel(channelId, CHANNEL_TYPE_BUTT, 1, false);
+    ret = ClientTransCloseChannel(TEST_CHANNEL_ID, CHANNEL_TYPE_TCP_DIRECT, TEST_CHANNEL_ID + 1, false);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+}
+
+/*
+ * @tc.name: ClientTransCloseChannelAuthTest001
+ * @tc.desc: test ClientTransCloseChannel with auth channel type returns SOFTBUS_OK
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(ClientTransChannelManagerTest, ClientTransCloseChannelAuthTest001, TestSize.Level1)
+{
+    int32_t ret = ClientTransCloseChannel(TEST_CHANNEL_ID, CHANNEL_TYPE_AUTH, TEST_CHANNEL_ID, false);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    ret = ClientTransCloseChannel(TEST_CHANNEL_ID, CHANNEL_TYPE_AUTH, TEST_CHANNEL_ID + 1, false);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+}
+
+/*
+ * @tc.name: ClientTransCloseChannelInvalidTypeTest001
+ * @tc.desc: test ClientTransCloseChannel with invalid channel types returns error
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(ClientTransChannelManagerTest, ClientTransCloseChannelInvalidTypeTest001, TestSize.Level1)
+{
+    int32_t ret = ClientTransCloseChannel(TEST_CHANNEL_ID, CHANNEL_TYPE_BUTT, TEST_CHANNEL_ID, false);
+    EXPECT_EQ(SOFTBUS_TRANS_INVALID_CHANNEL_TYPE, ret);
+    ret = ClientTransCloseChannel(TEST_CHANNEL_ID, CHANNEL_TYPE_UNDEFINED, TEST_CHANNEL_ID, false);
     EXPECT_EQ(SOFTBUS_TRANS_INVALID_CHANNEL_TYPE, ret);
 }
 
-/**
- * @tc.name: ClientTransCloseReserveChannelTest001
- * @tc.desc: ClientTransCloseChannel with invalid channel id and invalid channel types
+/*
+ * @tc.name: ClientTransCloseChannelInvalidIdTest001
+ * @tc.desc: test ClientTransCloseChannel with invalid channel id returns SOFTBUS_INVALID_PARAM
  * @tc.type: FUNC
+ * @tc.level: Level1
  * @tc.require:
  */
-HWTEST_F(ClientTransChannelManagerTest, ClientTransCloseReserveChannelTest001, TestSize.Level1)
+HWTEST_F(ClientTransChannelManagerTest, ClientTransCloseChannelInvalidIdTest001, TestSize.Level1)
 {
-    int32_t ret = ClientTransCloseChannel(INVALID_CHANNEL_ID, CHANNEL_TYPE_TCP_DIRECT, 1, false);
+    int32_t ret = ClientTransCloseChannel(INVALID_CHANNEL_ID, CHANNEL_TYPE_PROXY, TEST_CHANNEL_ID, false);
     EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
-    int32_t channelId = 1;
-    ret = ClientTransCloseChannel(channelId, CHANNEL_TYPE_BUTT, 1, false);
-    EXPECT_EQ(SOFTBUS_TRANS_INVALID_CHANNEL_TYPE, ret);
-    ret = ClientTransCloseChannel(channelId, CHANNEL_TYPE_UNDEFINED, 1, false);
-    EXPECT_EQ(SOFTBUS_TRANS_INVALID_CHANNEL_TYPE, ret);
-}
-
-/**
- * @tc.name: ClientTransChannelSendBytesTest001
- * @tc.desc: ClientTransChannelSendBytes with null data and zero len
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendBytesTest001, TestSize.Level1)
-{
-    int32_t channelId = 1;
-    const char *data = "test";
-
-    int32_t ret = ClientTransChannelSendBytes(channelId, CHANNEL_TYPE_AUTH, nullptr, TEST_DATA_LENGTH);
+    ret = ClientTransCloseChannel(INVALID_CHANNEL_ID, CHANNEL_TYPE_TCP_DIRECT, TEST_CHANNEL_ID, false);
     EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
-
-    ret = ClientTransChannelSendBytes(channelId, CHANNEL_TYPE_AUTH, data, 0);
+    ret = ClientTransCloseChannel(INVALID_CHANNEL_ID, CHANNEL_TYPE_AUTH, TEST_CHANNEL_ID, false);
     EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
 }
 
-/**
- * @tc.name: ClientTransChannelSendBytesTest002
- * @tc.desc: ClientTransChannelSendBytes with auth channel type
+/*
+ * @tc.name: ClientTransChannelSendBytesInvalidParamTest001
+ * @tc.desc: test ClientTransChannelSendBytes with null data and zero len returns SOFTBUS_INVALID_PARAM
  * @tc.type: FUNC
+ * @tc.level: Level1
  * @tc.require:
  */
-HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendBytesTest002, TestSize.Level1)
+HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendBytesInvalidParamTest001, TestSize.Level1)
 {
-    int32_t channelId = 1;
-    const char *data = "test";
+    int32_t ret = ClientTransChannelSendBytes(TEST_CHANNEL_ID, CHANNEL_TYPE_AUTH, nullptr, TEST_DATA_LENGTH);
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
+    ret = ClientTransChannelSendBytes(TEST_CHANNEL_ID, CHANNEL_TYPE_AUTH, TEST_DATA, 0);
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
+}
 
-    int32_t ret = ClientTransChannelSendBytes(channelId, CHANNEL_TYPE_AUTH, data, TEST_DATA_LENGTH);
+/*
+ * @tc.name: ClientTransChannelSendBytesAuthTest001
+ * @tc.desc: test ClientTransChannelSendBytes with auth channel type returns SOFTBUS_TRANS_SESSION_SERVER_NOINIT
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendBytesAuthTest001, TestSize.Level1)
+{
+    int32_t ret = ClientTransChannelSendBytes(TEST_CHANNEL_ID, CHANNEL_TYPE_AUTH, TEST_DATA, TEST_DATA_LENGTH);
     EXPECT_EQ(SOFTBUS_TRANS_SESSION_SERVER_NOINIT, ret);
 }
 
-/**
- * @tc.name: ClientTransChannelSendBytesTest003
- * @tc.desc: ClientTransChannelSendBytes with proxy channel type
+/*
+ * @tc.name: ClientTransChannelSendBytesProxyTest001
+ * @tc.desc: test ClientTransChannelSendBytes with proxy channel type returns SOFTBUS_TRANS_SESSION_SERVER_NOINIT
  * @tc.type: FUNC
+ * @tc.level: Level1
  * @tc.require:
  */
-HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendBytesTest003, TestSize.Level1)
+HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendBytesProxyTest001, TestSize.Level1)
 {
-    int32_t channelId = 1;
-    const char *data = "test";
-
-    int32_t ret = ClientTransChannelSendBytes(channelId, CHANNEL_TYPE_PROXY, data, TEST_DATA_LENGTH);
+    int32_t ret = ClientTransChannelSendBytes(TEST_CHANNEL_ID, CHANNEL_TYPE_PROXY, TEST_DATA, TEST_DATA_LENGTH);
     EXPECT_EQ(SOFTBUS_TRANS_SESSION_SERVER_NOINIT, ret);
 }
 
-/**
- * @tc.name: ClientTransChannelSendBytesTest004
- * @tc.desc: ClientTransChannelSendBytes with tcp direct channel type
+/*
+ * @tc.name: ClientTransChannelSendBytesTcpDirectTest001
+ * @tc.desc: test ClientTransChannelSendBytes with tcp direct channel type returns SOFTBUS_TRANS_SESSION_SERVER_NOINIT
  * @tc.type: FUNC
+ * @tc.level: Level1
  * @tc.require:
  */
-HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendBytesTest004, TestSize.Level1)
+HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendBytesTcpDirectTest001, TestSize.Level1)
 {
-    int32_t channelId = 1;
-    const char *data = "test";
-
-    int32_t ret = ClientTransChannelSendBytes(channelId, CHANNEL_TYPE_TCP_DIRECT, data, TEST_DATA_LENGTH);
+    int32_t ret = ClientTransChannelSendBytes(TEST_CHANNEL_ID, CHANNEL_TYPE_TCP_DIRECT, TEST_DATA, TEST_DATA_LENGTH);
     EXPECT_EQ(SOFTBUS_TRANS_SESSION_SERVER_NOINIT, ret);
 }
 
-/**
- * @tc.name: ClientTransChannelSendBytesTest005
- * @tc.desc: ClientTransChannelSendBytes with invalid channel type
+/*
+ * @tc.name: ClientTransChannelSendBytesInvalidTypeTest001
+ * @tc.desc: test ClientTransChannelSendBytes with invalid channel type returns SOFTBUS_TRANS_SESSION_SERVER_NOINIT
  * @tc.type: FUNC
+ * @tc.level: Level1
  * @tc.require:
  */
-HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendBytesTest005, TestSize.Level1)
+HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendBytesInvalidTypeTest001, TestSize.Level1)
 {
-    int32_t channelId = 1;
-    const char *data = "test";
-
-    int32_t ret = ClientTransChannelSendBytes(channelId, CHANNEL_TYPE_BUTT, data, TEST_DATA_LENGTH);
+    int32_t ret = ClientTransChannelSendBytes(TEST_CHANNEL_ID, CHANNEL_TYPE_BUTT, TEST_DATA, TEST_DATA_LENGTH);
     EXPECT_EQ(SOFTBUS_TRANS_SESSION_SERVER_NOINIT, ret);
 }
 
-/**
- * @tc.name: ClientTransChannelAsyncSendBytesTest001
- * @tc.desc: ClientTransChannelAsyncSendBytes with null data and zero len
+/*
+ * @tc.name: ClientTransChannelAsyncSendBytesInvalidParamTest001
+ * @tc.desc: test ClientTransChannelAsyncSendBytes with null data and zero len returns SOFTBUS_INVALID_PARAM
  * @tc.type: FUNC
+ * @tc.level: Level1
  * @tc.require:
  */
-HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelAsyncSendBytesTest001, TestSize.Level1)
+HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelAsyncSendBytesInvalidParamTest001, TestSize.Level1)
 {
-    int32_t channelId = 1;
-    const char *data = "test";
     uint32_t dataSeq = 1;
-
-    int32_t ret = ClientTransChannelAsyncSendBytes(channelId, CHANNEL_TYPE_AUTH, nullptr, TEST_DATA_LENGTH, dataSeq);
+    int32_t ret = ClientTransChannelAsyncSendBytes(
+        TEST_CHANNEL_ID, CHANNEL_TYPE_AUTH, nullptr, TEST_DATA_LENGTH, dataSeq);
     EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
-
-    ret = ClientTransChannelAsyncSendBytes(channelId, CHANNEL_TYPE_AUTH, data, 0, dataSeq);
+    ret = ClientTransChannelAsyncSendBytes(TEST_CHANNEL_ID, CHANNEL_TYPE_AUTH, TEST_DATA, 0, dataSeq);
     EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
 }
 
-/**
- * @tc.name: ClientTransChannelAsyncSendBytesTest002
- * @tc.desc: ClientTransChannelAsyncSendBytes with auth channel type
+/*
+ * @tc.name: ClientTransChannelAsyncSendBytesAuthTest001
+ * @tc.desc: test ClientTransChannelAsyncSendBytes with auth channel type returns SOFTBUS_TRANS_INVALID_CHANNEL_TYPE
  * @tc.type: FUNC
+ * @tc.level: Level1
  * @tc.require:
  */
-HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelAsyncSendBytesTest002, TestSize.Level1)
+HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelAsyncSendBytesAuthTest001, TestSize.Level1)
 {
-    int32_t channelId = 1;
-    const char *data = "test";
     uint32_t dataSeq = 1;
-
-    int32_t ret = ClientTransChannelAsyncSendBytes(channelId, CHANNEL_TYPE_AUTH, data, TEST_DATA_LENGTH, dataSeq);
+    int32_t ret = ClientTransChannelAsyncSendBytes(
+        TEST_CHANNEL_ID, CHANNEL_TYPE_AUTH, TEST_DATA, TEST_DATA_LENGTH, dataSeq);
     EXPECT_EQ(SOFTBUS_TRANS_INVALID_CHANNEL_TYPE, ret);
 }
 
-/**
- * @tc.name: ClientTransChannelAsyncSendBytesTest003
- * @tc.desc: ClientTransChannelAsyncSendBytes with proxy channel type
+/*
+ * @tc.name: ClientTransChannelAsyncSendBytesProxyTest001
+ * @tc.desc: test ClientTransChannelAsyncSendBytes with proxy channel type
  * @tc.type: FUNC
+ * @tc.level: Level1
  * @tc.require:
  */
-HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelAsyncSendBytesTest003, TestSize.Level1)
+HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelAsyncSendBytesProxyTest001, TestSize.Level1)
 {
-    int32_t channelId = 1;
-    const char *data = "test";
     uint32_t dataSeq = 1;
-
-    int32_t ret = ClientTransChannelAsyncSendBytes(channelId, CHANNEL_TYPE_PROXY, data, TEST_DATA_LENGTH, dataSeq);
+    int32_t ret = ClientTransChannelAsyncSendBytes(
+        TEST_CHANNEL_ID, CHANNEL_TYPE_PROXY, TEST_DATA, TEST_DATA_LENGTH, dataSeq);
 #ifdef DSOFTBUS_FEATURE_PROXY_CHANNEL
     EXPECT_EQ(SOFTBUS_TRANS_PROXY_CHANNEL_NOT_FOUND, ret);
 #else
@@ -278,66 +320,60 @@ HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelAsyncSendBytesTest003,
 #endif
 }
 
-/**
- * @tc.name: ClientTransChannelAsyncSendBytesTest004
- * @tc.desc: ClientTransChannelAsyncSendBytes with tcp direct channel type
+/*
+ * @tc.name: ClientTransChannelAsyncSendBytesTcpDirectTest001
+ * @tc.desc: test ClientTransChannelAsyncSendBytes with tcp direct channel type
+ *           returns SOFTBUS_TRANS_TDC_CHANNEL_NOT_FOUND
  * @tc.type: FUNC
+ * @tc.level: Level1
  * @tc.require:
  */
-HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelAsyncSendBytesTest004, TestSize.Level1)
+HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelAsyncSendBytesTcpDirectTest001, TestSize.Level1)
 {
-    int32_t channelId = 1;
-    const char *data = "test";
     uint32_t dataSeq = 1;
-
-    int32_t ret = ClientTransChannelAsyncSendBytes(channelId, CHANNEL_TYPE_TCP_DIRECT, data, TEST_DATA_LENGTH, dataSeq);
+    int32_t ret = ClientTransChannelAsyncSendBytes(
+        TEST_CHANNEL_ID, CHANNEL_TYPE_TCP_DIRECT, TEST_DATA, TEST_DATA_LENGTH, dataSeq);
     EXPECT_EQ(SOFTBUS_TRANS_TDC_CHANNEL_NOT_FOUND, ret);
 }
 
-/**
- * @tc.name: ClientTransChannelSendMessageTest001
- * @tc.desc: ClientTransChannelSendMessage with null data
+/*
+ * @tc.name: ClientTransChannelSendMessageInvalidParamTest001
+ * @tc.desc: test ClientTransChannelSendMessage with null data returns SOFTBUS_INVALID_PARAM
  * @tc.type: FUNC
+ * @tc.level: Level1
  * @tc.require:
  */
-HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendMessageTest001, TestSize.Level1)
+HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendMessageInvalidParamTest001, TestSize.Level1)
 {
-    int32_t channelId = 1;
-
-    int32_t ret = ClientTransChannelSendMessage(channelId, CHANNEL_TYPE_AUTH, nullptr, TEST_DATA_LENGTH);
+    int32_t ret = ClientTransChannelSendMessage(TEST_CHANNEL_ID, CHANNEL_TYPE_AUTH, nullptr, TEST_DATA_LENGTH);
     EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
-
-    ret = ClientTransChannelSendMessage(channelId, CHANNEL_TYPE_AUTH, nullptr, 0);
+    ret = ClientTransChannelSendMessage(TEST_CHANNEL_ID, CHANNEL_TYPE_AUTH, nullptr, 0);
     EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
 }
 
-/**
- * @tc.name: ClientTransChannelSendMessageTest002
- * @tc.desc: ClientTransChannelSendMessage with auth channel type
+/*
+ * @tc.name: ClientTransChannelSendMessageAuthTest001
+ * @tc.desc: test ClientTransChannelSendMessage with auth channel type returns SOFTBUS_PERMISSION_DENIED
  * @tc.type: FUNC
+ * @tc.level: Level1
  * @tc.require:
  */
-HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendMessageTest002, TestSize.Level1)
+HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendMessageAuthTest001, TestSize.Level1)
 {
-    int32_t channelId = 1;
-    const char *data = "test";
-
-    int32_t ret = ClientTransChannelSendMessage(channelId, CHANNEL_TYPE_AUTH, data, TEST_DATA_LENGTH);
+    int32_t ret = ClientTransChannelSendMessage(TEST_CHANNEL_ID, CHANNEL_TYPE_AUTH, TEST_DATA, TEST_DATA_LENGTH);
     EXPECT_EQ(SOFTBUS_PERMISSION_DENIED, ret);
 }
 
-/**
- * @tc.name: ClientTransChannelSendMessageTest003
- * @tc.desc: ClientTransChannelSendMessage with proxy channel type
+/*
+ * @tc.name: ClientTransChannelSendMessageProxyTest001
+ * @tc.desc: test ClientTransChannelSendMessage with proxy channel type
  * @tc.type: FUNC
+ * @tc.level: Level1
  * @tc.require:
  */
-HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendMessageTest003, TestSize.Level1)
+HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendMessageProxyTest001, TestSize.Level1)
 {
-    int32_t channelId = 1;
-    const char *data = "test";
-
-    int32_t ret = ClientTransChannelSendMessage(channelId, CHANNEL_TYPE_PROXY, data, TEST_DATA_LENGTH);
+    int32_t ret = ClientTransChannelSendMessage(TEST_CHANNEL_ID, CHANNEL_TYPE_PROXY, TEST_DATA, TEST_DATA_LENGTH);
 #ifdef DSOFTBUS_FEATURE_PROXY_CHANNEL
     EXPECT_EQ(SOFTBUS_TRANS_PROXY_CHANNEL_NOT_FOUND, ret);
 #else
@@ -345,181 +381,164 @@ HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendMessageTest003, Te
 #endif
 }
 
-/**
- * @tc.name: ClientTransChannelSendMessageTest004
- * @tc.desc: ClientTransChannelSendMessage with tcp direct channel type
+/*
+ * @tc.name: ClientTransChannelSendMessageTcpDirectTest001
+ * @tc.desc: test ClientTransChannelSendMessage with tcp direct channel type
+ *           returns SOFTBUS_TRANS_TDC_CHANNEL_NOT_FOUND
  * @tc.type: FUNC
+ * @tc.level: Level1
  * @tc.require:
  */
-HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendMessageTest004, TestSize.Level1)
+HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendMessageTcpDirectTest001, TestSize.Level1)
 {
-    int32_t channelId = 1;
-    const char *data = "test";
-
-    int32_t ret = ClientTransChannelSendMessage(channelId, CHANNEL_TYPE_TCP_DIRECT, data, TEST_DATA_LENGTH);
+    int32_t ret = ClientTransChannelSendMessage(TEST_CHANNEL_ID, CHANNEL_TYPE_TCP_DIRECT, TEST_DATA, TEST_DATA_LENGTH);
     EXPECT_EQ(SOFTBUS_TRANS_TDC_CHANNEL_NOT_FOUND, ret);
 }
 
-/**
- * @tc.name: ClientTransChannelSendMessageTest005
- * @tc.desc: ClientTransChannelSendMessage with invalid channel type
+/*
+ * @tc.name: ClientTransChannelSendMessageInvalidTypeTest001
+ * @tc.desc: test ClientTransChannelSendMessage with invalid channel type returns error
  * @tc.type: FUNC
+ * @tc.level: Level1
  * @tc.require:
  */
-HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendMessageTest005, TestSize.Level1)
+HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendMessageInvalidTypeTest001, TestSize.Level1)
 {
-    int32_t channelId = 1;
-    const char *data = "test";
-
-    int32_t ret = ClientTransChannelSendMessage(channelId, CHANNEL_TYPE_BUTT, data, TEST_DATA_LENGTH);
+    int32_t ret = ClientTransChannelSendMessage(TEST_CHANNEL_ID, CHANNEL_TYPE_BUTT, TEST_DATA, TEST_DATA_LENGTH);
     EXPECT_EQ(SOFTBUS_TRANS_CHANNEL_TYPE_INVALID, ret);
 }
 
-/**
- * @tc.name: ClientTransChannelSendStreamTest001
- * @tc.desc: ClientTransChannelSendStream with null data, ext or param
+/*
+ * @tc.name: ClientTransChannelSendStreamInvalidParamTest001
+ * @tc.desc: test ClientTransChannelSendStream with null data, ext or param returns SOFTBUS_INVALID_PARAM
  * @tc.type: FUNC
+ * @tc.level: Level1
  * @tc.require:
  */
-HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendStreamTest001, TestSize.Level1)
+HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendStreamInvalidParamTest001, TestSize.Level1)
 {
-    int32_t channelId = 1;
-    const StreamData data = { 0 };
-    const StreamData ext = { 0 };
-    const StreamFrameInfo param = { 0 };
-
-    int32_t ret = ClientTransChannelSendStream(channelId, CHANNEL_TYPE_UDP, nullptr, &ext, &param);
+    const StreamData data = {};
+    const StreamData ext = {};
+    const StreamFrameInfo param = {};
+    int32_t ret = ClientTransChannelSendStream(TEST_CHANNEL_ID, CHANNEL_TYPE_UDP, nullptr, &ext, &param);
     EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
-
-    ret = ClientTransChannelSendStream(channelId, CHANNEL_TYPE_UDP, &data, nullptr, &param);
+    ret = ClientTransChannelSendStream(TEST_CHANNEL_ID, CHANNEL_TYPE_UDP, &data, nullptr, &param);
     EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
-
-    ret = ClientTransChannelSendStream(channelId, CHANNEL_TYPE_UDP, &data, &ext, nullptr);
+    ret = ClientTransChannelSendStream(TEST_CHANNEL_ID, CHANNEL_TYPE_UDP, &data, &ext, nullptr);
     EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
 }
 
-/**
- * @tc.name: ClientTransChannelSendStreamTest002
- * @tc.desc: ClientTransChannelSendStream with UDP channel type and valid parameters
+/*
+ * @tc.name: ClientTransChannelSendStreamUdpTest001
+ * @tc.desc: test ClientTransChannelSendStream with UDP channel type returns SOFTBUS_TRANS_UDP_GET_CHANNEL_FAILED
  * @tc.type: FUNC
+ * @tc.level: Level1
  * @tc.require:
  */
-HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendStreamTest002, TestSize.Level1)
+HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendStreamUdpTest001, TestSize.Level1)
 {
-    int32_t channelId = 1;
-    const StreamData data = { 0 };
-    const StreamData ext = { 0 };
-    const StreamFrameInfo param = { 0 };
-
-    int32_t ret = ClientTransChannelSendStream(channelId, CHANNEL_TYPE_UDP, &data, &ext, &param);
+    const StreamData data = {};
+    const StreamData ext = {};
+    const StreamFrameInfo param = {};
+    int32_t ret = ClientTransChannelSendStream(TEST_CHANNEL_ID, CHANNEL_TYPE_UDP, &data, &ext, &param);
     EXPECT_EQ(SOFTBUS_TRANS_UDP_GET_CHANNEL_FAILED, ret);
 }
 
-/**
- * @tc.name: ClientTransChannelSendStreamTest003
- * @tc.desc: ClientTransChannelSendStream with invalid channel type
+/*
+ * @tc.name: ClientTransChannelSendStreamInvalidTypeTest001
+ * @tc.desc: test ClientTransChannelSendStream with invalid channel type returns error
  * @tc.type: FUNC
+ * @tc.level: Level1
  * @tc.require:
  */
-HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendStreamTest003, TestSize.Level1)
+HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendStreamInvalidTypeTest001, TestSize.Level1)
 {
-    int32_t channelId = 1;
-    const StreamData data = { 0 };
-    const StreamData ext = { 0 };
-    const StreamFrameInfo param = { 0 };
-
-    int32_t ret = ClientTransChannelSendStream(channelId, CHANNEL_TYPE_BUTT, &data, &ext, &param);
+    const StreamData data = {};
+    const StreamData ext = {};
+    const StreamFrameInfo param = {};
+    int32_t ret = ClientTransChannelSendStream(TEST_CHANNEL_ID, CHANNEL_TYPE_BUTT, &data, &ext, &param);
     EXPECT_EQ(SOFTBUS_TRANS_CHANNEL_TYPE_INVALID, ret);
 }
 
 #ifdef DSOFTBUS_FEATURE_TRANS_FILE
-/**
- * @tc.name: ClientTransChannelSendFileTest001
- * @tc.desc: ClientTransChannelSendFile with UDP channel type
+/*
+ * @tc.name: ClientTransChannelSendFileUdpTest001
+ * @tc.desc: test ClientTransChannelSendFile with UDP channel type returns SOFTBUS_TRANS_UDP_GET_CHANNEL_FAILED
  * @tc.type: FUNC
+ * @tc.level: Level1
  * @tc.require:
  */
-HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendFileTest001, TestSize.Level1)
+HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendFileUdpTest001, TestSize.Level1)
 {
-    int32_t channelId = 1;
-    int32_t fileCnt = 1;
-    const char *sFileList[] = { "/data/test.txt" };
-    const char *dFileList[] = { "/data/test.txt" };
-
-    int32_t ret = ClientTransChannelSendFile(channelId, CHANNEL_TYPE_UDP, sFileList, dFileList, fileCnt);
+    const char *sFileList[] = { TEST_FILE_PATH };
+    const char *dFileList[] = { TEST_FILE_PATH };
+    int32_t ret = ClientTransChannelSendFile(TEST_CHANNEL_ID, CHANNEL_TYPE_UDP, sFileList, dFileList, 1);
     EXPECT_EQ(SOFTBUS_TRANS_UDP_GET_CHANNEL_FAILED, ret);
 }
 
-/**
- * @tc.name: ClientTransChannelSendFileTest002
- * @tc.desc: ClientTransChannelSendFile with proxy channel type
+/*
+ * @tc.name: ClientTransChannelSendFileProxyTest001
+ * @tc.desc: test ClientTransChannelSendFile with proxy channel type returns SOFTBUS_TRANS_SESSION_SERVER_NOINIT
  * @tc.type: FUNC
+ * @tc.level: Level1
  * @tc.require:
  */
-HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendFileTest002, TestSize.Level1)
+HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendFileProxyTest001, TestSize.Level1)
 {
-    int32_t channelId = 1;
-    int32_t fileCnt = 1;
-    const char *sFileList[] = { "/data/test.txt" };
-    const char *dFileList[] = { "/data/test.txt" };
-
-    int32_t ret = ClientTransChannelSendFile(channelId, CHANNEL_TYPE_PROXY, sFileList, dFileList, fileCnt);
+    const char *sFileList[] = { TEST_FILE_PATH };
+    const char *dFileList[] = { TEST_FILE_PATH };
+    int32_t ret = ClientTransChannelSendFile(TEST_CHANNEL_ID, CHANNEL_TYPE_PROXY, sFileList, dFileList, 1);
     EXPECT_EQ(SOFTBUS_TRANS_SESSION_SERVER_NOINIT, ret);
 }
 
-/**
- * @tc.name: ClientTransChannelSendFileTest003
- * @tc.desc: ClientTransChannelSendFile with invalid channel type
+/*
+ * @tc.name: ClientTransChannelSendFileInvalidTypeTest001
+ * @tc.desc: test ClientTransChannelSendFile with invalid channel type returns error
  * @tc.type: FUNC
+ * @tc.level: Level1
  * @tc.require:
  */
-HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendFileTest003, TestSize.Level1)
+HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelSendFileInvalidTypeTest001, TestSize.Level1)
 {
-    int32_t channelId = 1;
-    int32_t fileCnt = 1;
-    const char *sFileList[] = { "/data/test.txt" };
-    const char *dFileList[] = { "/data/test.txt" };
-
-    int32_t ret = ClientTransChannelSendFile(channelId, CHANNEL_TYPE_BUTT, sFileList, dFileList, fileCnt);
+    const char *sFileList[] = { TEST_FILE_PATH };
+    const char *dFileList[] = { TEST_FILE_PATH };
+    int32_t ret = ClientTransChannelSendFile(TEST_CHANNEL_ID, CHANNEL_TYPE_BUTT, sFileList, dFileList, 1);
     EXPECT_EQ(SOFTBUS_TRANS_CHANNEL_TYPE_INVALID, ret);
 }
 #endif
 
-/**
- * @tc.name: ClientTransChannelAsyncSendMessageTest001
- * @tc.desc: ClientTransChannelAsyncSendMessage with null data, zero len and zero seq
+/*
+ * @tc.name: ClientTransChannelAsyncSendMessageInvalidParamTest001
+ * @tc.desc: test ClientTransChannelAsyncSendMessage with null data, zero len and zero seq
+ *           returns SOFTBUS_INVALID_PARAM
  * @tc.type: FUNC
+ * @tc.level: Level1
  * @tc.require:
  */
-HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelAsyncSendMessageTest001, TestSize.Level1)
+HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelAsyncSendMessageInvalidParamTest001, TestSize.Level1)
 {
-    int32_t channelId = 1;
-    const char *data = "test";
     uint16_t dataSeq = 1;
-
-    int32_t ret = ClientTransChannelAsyncSendMessage(channelId, CHANNEL_TYPE_AUTH, nullptr, TEST_DATA_LENGTH, dataSeq);
+    int32_t ret = ClientTransChannelAsyncSendMessage(
+        TEST_CHANNEL_ID, CHANNEL_TYPE_AUTH, nullptr, TEST_DATA_LENGTH, dataSeq);
     EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
-
-    ret = ClientTransChannelAsyncSendMessage(channelId, CHANNEL_TYPE_AUTH, data, 0, dataSeq);
+    ret = ClientTransChannelAsyncSendMessage(TEST_CHANNEL_ID, CHANNEL_TYPE_AUTH, TEST_DATA, 0, dataSeq);
     EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
-
-    ret = ClientTransChannelAsyncSendMessage(channelId, CHANNEL_TYPE_AUTH, data, TEST_DATA_LENGTH, 0);
+    ret = ClientTransChannelAsyncSendMessage(TEST_CHANNEL_ID, CHANNEL_TYPE_AUTH, TEST_DATA, TEST_DATA_LENGTH, 0);
     EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
 }
 
-/**
- * @tc.name: ClientTransChannelAsyncSendMessageTest002
- * @tc.desc: ClientTransChannelAsyncSendMessage with proxy channel type
+/*
+ * @tc.name: ClientTransChannelAsyncSendMessageProxyTest001
+ * @tc.desc: test ClientTransChannelAsyncSendMessage with proxy channel type
  * @tc.type: FUNC
+ * @tc.level: Level1
  * @tc.require:
  */
-HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelAsyncSendMessageTest002, TestSize.Level1)
+HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelAsyncSendMessageProxyTest001, TestSize.Level1)
 {
-    int32_t channelId = 1;
-    const char *data = "test";
     uint16_t dataSeq = 1;
-
-    int32_t ret = ClientTransChannelAsyncSendMessage(channelId, CHANNEL_TYPE_PROXY, data, TEST_DATA_LENGTH, dataSeq);
+    int32_t ret = ClientTransChannelAsyncSendMessage(
+        TEST_CHANNEL_ID, CHANNEL_TYPE_PROXY, TEST_DATA, TEST_DATA_LENGTH, dataSeq);
 #ifdef DSOFTBUS_FEATURE_PROXY_CHANNEL
     EXPECT_EQ(SOFTBUS_TRANS_PROXY_CHANNEL_NOT_FOUND, ret);
 #else
@@ -527,40 +546,38 @@ HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelAsyncSendMessageTest00
 #endif
 }
 
-/**
- * @tc.name: ClientTransChannelAsyncSendMessageTest003
- * @tc.desc: ClientTransChannelAsyncSendMessage with tcp direct channel type
+/*
+ * @tc.name: ClientTransChannelAsyncSendMessageTcpDirectTest001
+ * @tc.desc: test ClientTransChannelAsyncSendMessage with tcp direct channel type
+ *           returns SOFTBUS_TRANS_INVALID_CHANNEL_TYPE
  * @tc.type: FUNC
+ * @tc.level: Level1
  * @tc.require:
  */
-HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelAsyncSendMessageTest003, TestSize.Level1)
+HWTEST_F(ClientTransChannelManagerTest, ClientTransChannelAsyncSendMessageTcpDirectTest001, TestSize.Level1)
 {
-    int32_t channelId = 1;
-    const char *data = "test";
     uint16_t dataSeq = 1;
-
-    int32_t ret =
-        ClientTransChannelAsyncSendMessage(channelId, CHANNEL_TYPE_TCP_DIRECT, data, TEST_DATA_LENGTH, dataSeq);
+    int32_t ret = ClientTransChannelAsyncSendMessage(
+        TEST_CHANNEL_ID, CHANNEL_TYPE_TCP_DIRECT, TEST_DATA, TEST_DATA_LENGTH, dataSeq);
     EXPECT_EQ(SOFTBUS_TRANS_INVALID_CHANNEL_TYPE, ret);
 }
 
 /*
  * @tc.name: ClientTransCloseReserveChannelInvalidParamTest001
- * @tc.desc: test ClientTransCloseReserveChannel returns SOFTBUS_INVALID_PARAM
- *           when channelId is invalid (less than zero)
+ * @tc.desc: test ClientTransCloseReserveChannel with invalid channelId returns SOFTBUS_INVALID_PARAM
  * @tc.type: FUNC
+ * @tc.level: Level1
  * @tc.require:
  */
 HWTEST_F(ClientTransChannelManagerTest, ClientTransCloseReserveChannelInvalidParamTest001, TestSize.Level1)
 {
     int32_t ret = ClientTransCloseReserveChannel(
         INVALID_CHANNEL_ID, CHANNEL_TYPE_AUTH, INVALID_CHANNEL_ID, true);
-    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
     ret = ClientTransCloseReserveChannel(
         INVALID_CHANNEL_ID, CHANNEL_TYPE_TCP_DIRECT, INVALID_CHANNEL_ID, false);
-    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
-    ret = ClientTransCloseReserveChannel(
-        INVALID_CHANNEL_ID, CHANNEL_TYPE_AUTH, INVALID_CHANNEL_ID, true);
-    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
+    ret = ClientTransCloseReserveChannel(-1, CHANNEL_TYPE_UDP, 0, true);
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
 }
 } // namespace OHOS
