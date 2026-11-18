@@ -1179,8 +1179,8 @@ HWTEST_F(TransLanePendingTest, TransAsyncOpenChannelProcTest003, TestSize.Level1
     ret = TransAddSocketChannelInfo(TEST_SESSION_NAME, TEST_SESSION_ID,
         TEST_CHANNEL_ID, CHANNEL_TYPE_TCP_DIRECT, CORE_SESSION_STATE_LAN_COMPLETE);
     ASSERT_EQ(SOFTBUS_OK, ret);
-    (void)TransDeleteSocketChannelInfoBySession(TEST_SESSION_NAME, TEST_SESSION_ID);
     TransAsyncOpenChannelProc(TEST_LANE_ID, param, &appInfo, &extra, &connInnerInfo);
+    (void)TransDeleteSocketChannelInfoBySession(TEST_SESSION_NAME, TEST_SESSION_ID);
     SoftBusFree(const_cast<SessionAttribute *>(param->attr));
     param->attr = nullptr;
     SoftBusFree(param);
@@ -1212,8 +1212,8 @@ HWTEST_F(TransLanePendingTest, TransAsyncOpenChannelProcTest004, TestSize.Level1
     ret = TransAddSocketChannelInfo(TEST_SESSION_NAME, TEST_SESSION_ID,
         TEST_CHANNEL_ID, CHANNEL_TYPE_TCP_DIRECT, CORE_SESSION_STATE_LAN_COMPLETE);
     ASSERT_EQ(SOFTBUS_OK, ret);
-    (void)TransDeleteSocketChannelInfoBySession(TEST_SESSION_NAME, TEST_SESSION_ID);
     TransAsyncOpenChannelProc(TEST_LANE_ID, param, &appInfo, &extra, &connInnerInfo);
+    (void)TransDeleteSocketChannelInfoBySession(TEST_SESSION_NAME, TEST_SESSION_ID);
     SoftBusFree(const_cast<SessionAttribute *>(param->attr));
     param->attr = nullptr;
     SoftBusFree(param);
