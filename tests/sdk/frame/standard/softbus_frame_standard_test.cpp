@@ -2250,8 +2250,8 @@ HWTEST_F(SoftBusServerProxyFrameTest, DoCleanUpWithDeathRecipientTest, TestSize.
         g_oldServerProxy = nullptr;
         g_clientDeath = new SoftBusClientDeathRecipient();
     }
-    ASSERT_NE(nullptr, g_serverProxy);
-    ASSERT_NE(nullptr, g_clientDeath);
+    ASSERT_NE(g_serverProxy, nullptr);
+    ASSERT_NE(g_clientDeath, nullptr);
     DoCleanUp();
     EXPECT_EQ(g_serverProxy, nullptr);
     EXPECT_NE(g_oldServerProxy, nullptr);
