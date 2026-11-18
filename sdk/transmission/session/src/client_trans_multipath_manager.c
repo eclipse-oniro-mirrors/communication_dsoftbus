@@ -651,7 +651,7 @@ int32_t TransMultipathMarkDown(int32_t sessionId, int32_t channelId)
     return ret;
 }
 
-bool TransMultipathIsOtherUp(int32_t sessionId, int32_t channelId, int32_t *deadRouteType)
+bool TransMultipathIsOtherUp(int32_t sessionId, int32_t channelId)
 {
     int32_t ret = LockClientSessionServerList();
     if (ret != SOFTBUS_OK) {
@@ -673,9 +673,6 @@ bool TransMultipathIsOtherUp(int32_t sessionId, int32_t channelId, int32_t *dead
     if (!isPrimary && !isReserve) {
         UnlockClientSessionServerList();
         return false;
-    }
-    if (deadRouteType != NULL) {
-        *deadRouteType = isPrimary ? sessionNode->routeType : sessionNode->routeTypeReserve;
     }
     int32_t otherRoute = isPrimary ? sessionNode->routeTypeReserve : sessionNode->routeType;
     CtrlChannelStatus otherStatus =

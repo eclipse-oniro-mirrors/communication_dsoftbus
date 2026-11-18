@@ -69,7 +69,6 @@ typedef struct {
     char peerAccountId[ACCOUNT_UID_LEN_MAX];
     char extraAccessInfo[EXTRA_ACCESS_INFO_LEN_MAX];
     bool enableMultipath;
-    bool isReserveChannel;
     socklen_t addrLen;
     struct sockaddr_storage addr;
 } UdpChannel;

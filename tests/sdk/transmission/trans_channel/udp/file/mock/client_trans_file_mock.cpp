@@ -51,12 +51,12 @@ int32_t TransGetUdpChannelByFileId(int32_t dfileId, UdpChannel *udpChannel)
     return GetClientTransFileInterface()->TransGetUdpChannelByFileId(dfileId, udpChannel);
 }
 
-int32_t TransGetReserveUdpChannelByFileId(int32_t dfileId, UdpChannel *udpChannel)
+void TransCloseUdpChannelByFileId(int32_t dfileId, ShutdownReason reason)
 {
     if (GetClientTransFileInterface() == nullptr) {
-        return SOFTBUS_ERR;
+        return;
     }
-    return GetClientTransFileInterface()->TransGetReserveUdpChannelByFileId(dfileId, udpChannel);
+    GetClientTransFileInterface()->TransCloseUdpChannelByFileId(dfileId, reason);
 }
 
 int32_t TransGetUdpChannel(int32_t channelId, UdpChannel *udpChannel)

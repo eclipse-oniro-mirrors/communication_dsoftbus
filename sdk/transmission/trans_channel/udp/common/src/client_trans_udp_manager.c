@@ -35,6 +35,7 @@
 #include "trans_server_proxy.h"
 
 #define LIMIT_CHANGE_INFO_NUM 2
+#define MULTIPATH_CHANNEL_MAX_NUM 2
 
 static SoftBusList *g_udpChannelMgr = NULL;
 static IClientSessionCallBack *g_sessionCb = NULL;
@@ -261,7 +262,6 @@ static UdpChannel *ConvertChannelInfoToUdpChannel(const char *sessionName, const
     newChannel->routeType = channel->routeType;
     newChannel->tokenType = channel->tokenType;
     newChannel->enableMultipath = channel->enableMultipath;
-    newChannel->isReserveChannel = channel->isMultiNeg;
     newChannel->keyType = channel->keyType;
     if (strcpy_s(newChannel->info.peerSessionName, SESSION_NAME_SIZE_MAX, channel->peerSessionName) != EOK ||
         strcpy_s(newChannel->info.mySessionName, SESSION_NAME_SIZE_MAX, sessionName) != EOK ||
@@ -325,12 +325,10 @@ static bool TransCheckIsSecondPath(int32_t channelId, int32_t *routeType)
         TRANS_LOGE(TRANS_SDK, "get udp channel by channelId=%{public}d failed.", channelId);
         return false;
     }
-    int32_t deadRouteType = INVALID_ROUTE_TYPE;
-    bool otherUp = TransMultipathIsOtherUp(channel.sessionId, channelId, &deadRouteType);
     if (routeType != NULL) {
-        *routeType = deadRouteType;
+        *routeType = channel.routeType;
     }
-    return otherUp;
+    return TransMultipathIsOtherUp(channel.sessionId, channelId);
 }
 
 static int32_t ClosePeerUdpChannel(int32_t channelId)
@@ -911,9 +909,6 @@ int32_t TransGetUdpChannelByFileId(int32_t dfileId, UdpChannel *udpChannel)
     UdpChannel *channelNode = NULL;
     LIST_FOR_EACH_ENTRY(channelNode, &(g_udpChannelMgr->list), UdpChannel, node) {
         if (channelNode->dfileId == dfileId) {
-            if (channelNode->isReserveChannel) {
-                continue;
-            }
             if (memcpy_s(udpChannel, sizeof(UdpChannel), channelNode, sizeof(UdpChannel)) != EOK) {
                 TRANS_LOGE(TRANS_FILE, "memcpy_s failed.");
                 (void)SoftBusMutexUnlock(&(g_udpChannelMgr->lock));
@@ -929,41 +924,28 @@ int32_t TransGetUdpChannelByFileId(int32_t dfileId, UdpChannel *udpChannel)
     return SOFTBUS_TRANS_UDP_CHANNEL_NOT_FOUND;
 }
 
-int32_t TransGetReserveUdpChannelByFileId(int32_t dfileId, UdpChannel *udpChannel)
+void TransCloseUdpChannelByFileId(int32_t dfileId, ShutdownReason reason)
 {
-    if (udpChannel == NULL) {
-        TRANS_LOGE(TRANS_SDK, "invalid param");
-        return SOFTBUS_INVALID_PARAM;
-    }
     if (g_udpChannelMgr == NULL) {
         TRANS_LOGE(TRANS_INIT, "udp channel manager hasn't init.");
-        return SOFTBUS_NO_INIT;
+        return;
     }
-
     if (SoftBusMutexLock(&(g_udpChannelMgr->lock)) != SOFTBUS_OK) {
         TRANS_LOGE(TRANS_FILE, "lock failed");
-        return SOFTBUS_LOCK_ERR;
+        return;
     }
-
+    int32_t channelIds[MULTIPATH_CHANNEL_MAX_NUM] = { INVALID_CHANNEL_ID, INVALID_CHANNEL_ID };
+    uint32_t count = 0;
     UdpChannel *channelNode = NULL;
     LIST_FOR_EACH_ENTRY(channelNode, &(g_udpChannelMgr->list), UdpChannel, node) {
-        if (channelNode->dfileId == dfileId) {
-            if (!channelNode->isReserveChannel) {
-                continue;
-            }
-            if (memcpy_s(udpChannel, sizeof(UdpChannel), channelNode, sizeof(UdpChannel)) != EOK) {
-                TRANS_LOGE(TRANS_FILE, "memcpy_s failed.");
-                (void)SoftBusMutexUnlock(&(g_udpChannelMgr->lock));
-                return SOFTBUS_MEM_ERR;
-            }
-            TRANS_LOGI(TRANS_FILE, "find reserve channelId=%{public}d, with dfileId=%{public}d.",
-                channelNode->channelId, dfileId);
-            (void)SoftBusMutexUnlock(&(g_udpChannelMgr->lock));
-            return SOFTBUS_OK;
+        if (channelNode->dfileId == dfileId && count < MULTIPATH_CHANNEL_MAX_NUM) {
+            channelIds[count++] = channelNode->channelId;
         }
     }
     (void)SoftBusMutexUnlock(&(g_udpChannelMgr->lock));
-    return SOFTBUS_TRANS_UDP_CHANNEL_NOT_FOUND;
+    for (uint32_t i = 0; i < count; i++) {
+        TransOnUdpChannelClosed(channelIds[i], reason);
+    }
 }
 
 void TransUdpDeleteFileListener(const char *sessionName)
