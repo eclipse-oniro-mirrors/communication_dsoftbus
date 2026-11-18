@@ -2192,4 +2192,47 @@ HWTEST_F(SoftBusServerProxyFrameTest, ClientDeathProcTaskSetNeedRecoverTest, Tes
     g_needRecover.store(false);
     g_taskScheduled.store(false);
 }
+
+/**
+ * @tc.name: NeedRecoverAndFreeRemainingTest001
+ * @tc.desc: NeedRecoverAndFreeRemaining, g_needRecover is false, return false without freeing
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftBusServerProxyFrameTest, NeedRecoverAndFreeRemainingTest001, TestSize.Level1)
+{
+    char *clientName[2] = {0};
+    clientName[0] = static_cast<char *>(SoftBusCalloc(16));
+    ASSERT_NE(nullptr, clientName[0]);
+    clientName[1] = static_cast<char *>(SoftBusCalloc(16));
+    ASSERT_NE(nullptr, clientName[1]);
+    g_needRecover.store(false);
+    EXPECT_FALSE(NeedRecoverAndFreeRemaining(clientName, 0, 2));
+    EXPECT_FALSE(g_needRecover.load());
+    SoftBusFree(clientName[0]);
+    SoftBusFree(clientName[1]);
+    g_needRecover.store(false);
+}
+
+/**
+ * @tc.name: NeedRecoverAndFreeRemainingTest002
+ * @tc.desc: NeedRecoverAndFreeRemaining, g_needRecover is true, free remaining names and return true
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftBusServerProxyFrameTest, NeedRecoverAndFreeRemainingTest002, TestSize.Level1)
+{
+    char *clientName[3] = {0};
+    clientName[0] = static_cast<char *>(SoftBusCalloc(16));
+    ASSERT_NE(nullptr, clientName[0]);
+    clientName[1] = static_cast<char *>(SoftBusCalloc(16));
+    ASSERT_NE(nullptr, clientName[1]);
+    clientName[2] = static_cast<char *>(SoftBusCalloc(16));
+    ASSERT_NE(nullptr, clientName[2]);
+    g_needRecover.store(true);
+    EXPECT_TRUE(NeedRecoverAndFreeRemaining(clientName, 1, 3));
+    EXPECT_FALSE(g_needRecover.load());
+    SoftBusFree(clientName[0]);
+    g_needRecover.store(false);
+}
 } // namespace OHOS
