@@ -82,7 +82,7 @@ static int InnerRegisterService(ListNode *sessionServerInfoList)
         COMM_LOGE(COMM_SDK, "serverProxyFrame is nullptr!");
         return SOFTBUS_INVALID_PARAM;
     }
-    char *clientName[SOFTBUS_PKGNAME_MAX_NUM] = {0};
+    char *clientName[SOFTBUS_PKGNAME_MAX_NUM] = {nullptr};
     uint32_t clientNameNum = GetSoftBusClientNameList(clientName, SOFTBUS_PKGNAME_MAX_NUM);
     if (clientNameNum == 0) {
         COMM_LOGE(COMM_SDK, "get client name failed");
