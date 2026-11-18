@@ -52,6 +52,18 @@ std::atomic<bool> g_taskScheduled{false};
 std::atomic<bool> g_needRecover{false};
 }
 
+static bool NeedRecoverAndFreeRemaining(char *clientName[], uint32_t startIndex, uint32_t clientNameNum)
+{
+    if (!g_needRecover.load()) {
+        return false;
+    }
+    COMM_LOGI(COMM_SDK, "new death during register, abandon this round");
+    for (uint32_t j = startIndex; j < clientNameNum; j++) {
+        SoftBusFree(clientName[j]);
+    }
+    return true;
+}
+
 static int InnerRegisterService(ListNode *sessionServerInfoList)
 {
     srand(time(nullptr));
@@ -78,11 +90,7 @@ static int InnerRegisterService(ListNode *sessionServerInfoList)
     }
     for (uint32_t i = 0; i < clientNameNum; i++) {
         while (serverProxyFrame->SoftbusRegisterService(clientName[i], nullptr, nullptr) != SOFTBUS_OK) {
-            if (g_needRecover.load()) {
-                COMM_LOGI(COMM_SDK, "new death during register, abandon this round");
-                for (uint32_t j = i; j < clientNameNum; j++) {
-                    SoftBusFree(clientName[j]);
-                }
+            if (NeedRecoverAndFreeRemaining(clientName, i, clientNameNum)) {
                 return SOFTBUS_OK;
             }
             SoftBusSleepMs(WAIT_SERVER_READY_INTERVAL);
