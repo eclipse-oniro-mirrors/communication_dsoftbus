@@ -1170,6 +1170,51 @@ HWTEST_F(SoftBusServerProxyFrameTest, OnRemoteDiedTest, TestSize.Level1)
 }
 
 /**
+ * @tc.name: ClientDeathProcTaskCasPendingTest
+ * @tc.desc: ClientDeathProcTask CAS fail when task already scheduled, set death pending
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftBusServerProxyFrameTest, ClientDeathProcTaskCasPendingTest, TestSize.Level1)
+{
+    g_taskScheduled.store(true);
+    g_deathPending.store(false);
+    ClientDeathProcTask();
+    ClientDeathProcTask();
+    EXPECT_TRUE(g_deathPending.load());
+    EXPECT_TRUE(g_taskScheduled.load());
+    EXPECT_TRUE(g_deathPending.exchange(false));
+    g_taskScheduled.store(false);
+    g_deathPending.store(false);
+}
+
+/**
+ * @tc.name: DoClientDeathProcBreakTest
+ * @tc.desc: DoClientDeathProc recovery cycle fail (ServerProxyInit timeout), break and reset flag
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftBusServerProxyFrameTest, DoClientDeathProcBreakTest, TestSize.Level1)
+{
+    g_taskScheduled.store(true);
+    g_deathPending.store(false);
+    {
+        std::lock_guard<std::mutex> lock(g_mutex);
+        g_oldServerProxy = GetSystemAbility();
+        g_serverProxy = nullptr;
+    }
+    DoClientDeathProc();
+    EXPECT_FALSE(g_taskScheduled.load());
+    g_taskScheduled.store(false);
+    g_deathPending.store(false);
+    {
+        std::lock_guard<std::mutex> lock(g_mutex);
+        g_oldServerProxy = nullptr;
+        g_serverProxy = nullptr;
+    }
+}
+
+/**
  * @tc.name: OnConnectionStateChangeInner
  * @tc.desc: OnConnectionStateChangeInner, MessageParcel failed return SOFTBUS_IPC_ERR
  * @tc.desc: OnConnectionStateChangeInner, success return SOFTBUS_OK
@@ -1989,5 +2034,58 @@ HWTEST_F(SoftBusServerProxyFrameTest, OnRemoteRequestProfileDeletedTest002, Test
     data.WriteInt32(1);
     data.WriteInt64(1001);
     EXPECT_EQ(g_stub->OnRemoteRequest(code, data, reply, option), SOFTBUS_TRANS_PROXY_READRAWDATA_FAILED);
+}
+
+/**
+ * @tc.name: DoClientDeathProcRetryTest
+ * @tc.desc: DoClientDeathProc retry one more cycle when death pending is set during recovery
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftBusServerProxyFrameTest, DoClientDeathProcRetryTest, TestSize.Level1)
+{
+    g_taskScheduled.store(true);
+    g_deathPending.store(true);
+    {
+        std::lock_guard<std::mutex> lock(g_mutex);
+        g_oldServerProxy = nullptr;
+        g_serverProxy = nullptr;
+    }
+    DoClientDeathProc();
+    EXPECT_FALSE(g_taskScheduled.load());
+    EXPECT_FALSE(g_deathPending.load());
+    g_taskScheduled.store(false);
+    g_deathPending.store(false);
+    {
+        std::lock_guard<std::mutex> lock(g_mutex);
+        g_oldServerProxy = nullptr;
+        g_serverProxy = nullptr;
+    }
+}
+
+/**
+ * @tc.name: ClientDeathProcTaskCasSuccessTest
+ * @tc.desc: ClientDeathProcTask CAS success launches worker thread and resets flag on completion
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftBusServerProxyFrameTest, ClientDeathProcTaskCasSuccessTest, TestSize.Level1)
+{
+    g_taskScheduled.store(false);
+    g_deathPending.store(false);
+    {
+        std::lock_guard<std::mutex> lock(g_mutex);
+        g_oldServerProxy = nullptr;
+        g_serverProxy = nullptr;
+    }
+    ClientDeathProcTask();
+    EXPECT_TRUE(g_taskScheduled.load());
+    for (int32_t i = 0; i < 200; i++) {
+        if (!g_taskScheduled.load()) {
+            break;
+        }
+        SoftBusSleepMs(WAIT_SERVER_INTERVAL);
+    }
+    EXPECT_FALSE(g_taskScheduled.load());
 }
 } // namespace OHOS
