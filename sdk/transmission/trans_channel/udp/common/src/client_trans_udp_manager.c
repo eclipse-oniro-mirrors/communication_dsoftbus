@@ -18,6 +18,7 @@
 #include <stdbool.h>
 #include "client_trans_file.h"
 #include "client_trans_file_listener.h"
+#include "client_trans_multipath_manager.h"
 #include "client_trans_socket_manager.h"
 #include "client_trans_stream.h"
 #include "g_enhance_sdk_func.h"
@@ -324,10 +325,12 @@ static bool TransCheckIsSecondPath(int32_t channelId, int32_t *routeType)
         TRANS_LOGE(TRANS_SDK, "get udp channel by channelId=%{public}d failed.", channelId);
         return false;
     }
+    int32_t deadRouteType = INVALID_ROUTE_TYPE;
+    bool otherUp = TransMultipathIsOtherUp(channel.sessionId, channelId, &deadRouteType);
     if (routeType != NULL) {
-        *routeType = channel.routeType;
+        *routeType = deadRouteType;
     }
-    return channel.isReserveChannel;
+    return otherUp;
 }
 
 static int32_t ClosePeerUdpChannel(int32_t channelId)

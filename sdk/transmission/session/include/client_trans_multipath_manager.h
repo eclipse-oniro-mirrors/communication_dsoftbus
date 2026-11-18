@@ -83,6 +83,8 @@ int32_t TransMultipathMarkDown(int32_t sessionId, int32_t channelId);
 
 /* ========== Channel close handling ========== */
 
+bool TransMultipathIsOtherUp(int32_t sessionId, int32_t channelId, int32_t *deadRouteType);
+
 bool TransMultipathHandleChannelClose(int32_t sessionId, int32_t channelId, int32_t *surviveChannelId,
     int32_t *surviveChannelType, int32_t *deadRouteType);
 

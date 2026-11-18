@@ -651,6 +651,39 @@ int32_t TransMultipathMarkDown(int32_t sessionId, int32_t channelId)
     return ret;
 }
 
+bool TransMultipathIsOtherUp(int32_t sessionId, int32_t channelId, int32_t *deadRouteType)
+{
+    int32_t ret = LockClientSessionServerList();
+    if (ret != SOFTBUS_OK) {
+        return false;
+    }
+    ClientSessionServer *serverNode = NULL;
+    SessionInfo *sessionNode = NULL;
+    ret = GetSessionById(sessionId, &serverNode, &sessionNode);
+    if (ret != SOFTBUS_OK) {
+        UnlockClientSessionServerList();
+        return false;
+    }
+    if (!sessionNode->enableMultipath) {
+        UnlockClientSessionServerList();
+        return false;
+    }
+    bool isPrimary = (sessionNode->channelId == channelId);
+    bool isReserve = (sessionNode->channelIdReserve == channelId);
+    if (!isPrimary && !isReserve) {
+        UnlockClientSessionServerList();
+        return false;
+    }
+    if (deadRouteType != NULL) {
+        *deadRouteType = isPrimary ? sessionNode->routeType : sessionNode->routeTypeReserve;
+    }
+    int32_t otherRoute = isPrimary ? sessionNode->routeTypeReserve : sessionNode->routeType;
+    CtrlChannelStatus otherStatus =
+        TransMultipathIsWiredRoute(otherRoute) ? sessionNode->ctrlWiredStatus : sessionNode->ctrlWirelessStatus;
+    UnlockClientSessionServerList();
+    return otherStatus == CTRL_CH_STATUS_UP;
+}
+
 bool TransMultipathHandleChannelClose(int32_t sessionId, int32_t channelId, int32_t *surviveChannelId,
     int32_t *surviveChannelType, int32_t *deadRouteType)
 {
