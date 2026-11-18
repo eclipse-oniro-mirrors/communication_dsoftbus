@@ -1369,4 +1369,461 @@ HWTEST_F(AuthSessionFsmTest, AUTH_SESSION_GET_USER_ID_TEST_001, TestSize.Level1)
     ListInit(&g_authFsmList);
 }
 
+/*
+ * @tc.name: GET_FIRST_FSM_STATE_TEST_001
+ * @tc.desc: Verify GetFirstFsmState checks params, selects first state by connect
+ *           side, local state and peer nego support
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(AuthSessionFsmTest, GET_FIRST_FSM_STATE_TEST_001, TestSize.Level1)
+{
+    AuthSessionFsmInterfaceMock fsmMock;
+    EXPECT_CALL(fsmMock, GetUdidShortHash).WillRepeatedly(Return(true));
+    EXPECT_CALL(fsmMock, LnnRetrieveDeviceInfoPacked).WillRepeatedly(Return(SOFTBUS_OK));
+    EXPECT_CALL(fsmMock, IsSupportFeatureByCapaBit).WillRepeatedly(Return(true));
+    AuthSessionInfo info;
+    (void)memset_s(&info, sizeof(AuthSessionInfo), 0, sizeof(AuthSessionInfo));
+    AuthFsmStateIndex state = STATE_SYNC_NEGOTIATION;
+    EXPECT_EQ(GetFirstFsmState(nullptr, AUTH_SEQ, &state), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(GetFirstFsmState(&info, AUTH_SEQ, nullptr), SOFTBUS_INVALID_PARAM);
+    info.isConnectServer = true;
+    EXPECT_EQ(GetFirstFsmState(&info, AUTH_SEQ, &state), SOFTBUS_OK);
+    EXPECT_EQ(state, STATE_SYNC_NEGOTIATION);
+    info.isConnectServer = false;
+    info.localState = AUTH_STATE_ACK;
+    EXPECT_EQ(GetFirstFsmState(&info, AUTH_SEQ, &state), SOFTBUS_OK);
+    EXPECT_EQ(state, STATE_SYNC_NEGOTIATION);
+    info.localState = AUTH_STATE_START;
+    EXPECT_EQ(GetFirstFsmState(&info, AUTH_SEQ, &state), SOFTBUS_OK);
+    EXPECT_EQ(state, STATE_SYNC_DEVICE_ID);
+    EXPECT_CALL(fsmMock, IsSupportFeatureByCapaBit).WillRepeatedly(Return(false));
+    info.localState = AUTH_STATE_START;
+    EXPECT_EQ(GetFirstFsmState(&info, AUTH_SEQ, &state), SOFTBUS_OK);
+    EXPECT_EQ(info.localState, AUTH_STATE_COMPATIBLE);
+    EXPECT_EQ(state, STATE_SYNC_DEVICE_ID);
+    AuthFsm authFsm;
+    (void)memset_s(&authFsm, sizeof(AuthFsm), 0, sizeof(AuthFsm));
+    SetAuthStartTime(&authFsm);
+    EXPECT_NE(authFsm.statisticData.startAuthTime, 0U);
+}
+
+/*
+ * @tc.name: AUTH_SESSION_START_AUTH_TEST_001
+ * @tc.desc: Verify AuthSessionStartAuth rejects invalid params and duplicate authSeq
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(AuthSessionFsmTest, AUTH_SESSION_START_AUTH_TEST_001, TestSize.Level1)
+{
+    AuthConnInfo connInfo;
+    (void)memset_s(&connInfo, sizeof(AuthConnInfo), 0, sizeof(AuthConnInfo));
+    connInfo.type = AUTH_LINK_TYPE_WIFI;
+    AuthParam authParam;
+    (void)memset_s(&authParam, sizeof(AuthParam), 0, sizeof(AuthParam));
+    authParam.authSeq = AUTH_SEQ;
+    authParam.requestId = REQUEST_ID;
+    authParam.connId = CONN_ID;
+    authParam.isServer = true;
+    DeviceKeyId deviceKeyId;
+    (void)memset_s(&deviceKeyId, sizeof(DeviceKeyId), 0, sizeof(DeviceKeyId));
+    EXPECT_EQ(AuthSessionStartAuth(&authParam, nullptr, &deviceKeyId), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthSessionStartAuth(nullptr, &connInfo, &deviceKeyId), SOFTBUS_INVALID_PARAM);
+    AuthFsm *authFsm = (AuthFsm *)SoftBusCalloc(sizeof(AuthFsm));
+    ASSERT_TRUE(authFsm != nullptr);
+    (void)memset_s(authFsm, sizeof(AuthFsm), 0, sizeof(AuthFsm));
+    authFsm->authSeq = AUTH_SEQ;
+    ListNodeInsert(&g_authFsmList, &authFsm->node);
+    EXPECT_EQ(AuthSessionStartAuth(&authParam, &connInfo, &deviceKeyId), SOFTBUS_MEM_ERR);
+    ListDelete(&authFsm->node);
+    SoftBusFree(authFsm);
+}
+
+/*
+ * @tc.name: SYNC_NEGOTIATION_ENTER_TEST_001
+ * @tc.desc: Verify SyncNegotiationEnter handles null fsm, server side and
+ *           client post device id fail
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(AuthSessionFsmTest, SYNC_NEGOTIATION_ENTER_TEST_001, TestSize.Level1)
+{
+    AuthSessionFsmInterfaceMock fsmMock;
+    EXPECT_NO_FATAL_FAILURE(SyncNegotiationEnter(nullptr));
+    AuthFsm authFsm;
+    (void)memset_s(&authFsm, sizeof(AuthFsm), 0, sizeof(AuthFsm));
+    authFsm.authSeq = AUTH_SEQ;
+    authFsm.info.isServer = true;
+    EXPECT_NO_FATAL_FAILURE(SyncNegotiationEnter(&authFsm.fsm));
+    EXPECT_EQ(authFsm.curState, STATE_SYNC_NEGOTIATION);
+    authFsm.info.isServer = false;
+    authFsm.info.connInfo.type = AUTH_LINK_TYPE_WIFI;
+    EXPECT_CALL(fsmMock, PostDeviceIdMessage).WillOnce(Return(SOFTBUS_OK));
+    EXPECT_NO_FATAL_FAILURE(SyncNegotiationEnter(&authFsm.fsm));
+    EXPECT_CALL(fsmMock, PostDeviceIdMessage).WillOnce(Return(SOFTBUS_AUTH_SYNC_DEVID_FAIL));
+    EXPECT_NO_FATAL_FAILURE(SyncNegotiationEnter(&authFsm.fsm));
+    EXPECT_TRUE(authFsm.isDead);
+}
+
+/*
+ * @tc.name: SYNC_DEVID_STATE_ENTER_TEST_001
+ * @tc.desc: Verify SyncDevIdStateEnter handles null fsm, server side, concurrent
+ *           request wait and client post device id fail
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(AuthSessionFsmTest, SYNC_DEVID_STATE_ENTER_TEST_001, TestSize.Level1)
+{
+    AuthSessionFsmInterfaceMock fsmMock;
+    EXPECT_NO_FATAL_FAILURE(SyncDevIdStateEnter(nullptr));
+    AuthFsm authFsm;
+    (void)memset_s(&authFsm, sizeof(AuthFsm), 0, sizeof(AuthFsm));
+    authFsm.authSeq = AUTH_SEQ;
+    authFsm.info.isServer = true;
+    EXPECT_NO_FATAL_FAILURE(SyncDevIdStateEnter(&authFsm.fsm));
+    EXPECT_EQ(authFsm.curState, STATE_SYNC_DEVICE_ID);
+    authFsm.info.isServer = false;
+    authFsm.info.localState = AUTH_STATE_START;
+    (void)strcpy_s(authFsm.info.udidHash, sizeof(authFsm.info.udidHash), UDID_HASH);
+    NormalizeRequest request;
+    (void)memset_s(&request, sizeof(NormalizeRequest), 0, sizeof(NormalizeRequest));
+    request.authSeq = AUTH_SEQ_1;
+    (void)strcpy_s(request.udidHash, sizeof(request.udidHash), UDID_HASH);
+    EXPECT_TRUE(AddNormalizeRequest(&request) >= 1);
+    EXPECT_CALL(fsmMock, PostDeviceIdMessage).Times(0);
+    EXPECT_NO_FATAL_FAILURE(SyncDevIdStateEnter(&authFsm.fsm));
+    DelAuthNormalizeRequest(AUTH_SEQ_1);
+    DelAuthNormalizeRequest(AUTH_SEQ);
+    authFsm.info.localState = AUTH_STATE_ACK;
+    EXPECT_CALL(fsmMock, PostDeviceIdMessage).WillOnce(Return(SOFTBUS_AUTH_SYNC_DEVID_FAIL));
+    EXPECT_NO_FATAL_FAILURE(SyncDevIdStateEnter(&authFsm.fsm));
+}
+
+/*
+ * @tc.name: AUTH_FSM_DEINIT_CALLBACK_TEST_001
+ * @tc.desc: Verify AuthFsmDeinitCallback destroys auth fsm in list
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(AuthSessionFsmTest, AUTH_FSM_DEINIT_CALLBACK_TEST_001, TestSize.Level1)
+{
+    EXPECT_NO_FATAL_FAILURE(AuthFsmDeinitCallback(nullptr));
+    AuthFsm *authFsm = (AuthFsm *)SoftBusCalloc(sizeof(AuthFsm));
+    ASSERT_TRUE(authFsm != nullptr);
+    (void)memset_s(authFsm, sizeof(AuthFsm), 0, sizeof(AuthFsm));
+    authFsm->authSeq = AUTH_SEQ;
+    ListNodeInsert(&g_authFsmList, &authFsm->node);
+    EXPECT_NO_FATAL_FAILURE(AuthFsmDeinitCallback(&authFsm->fsm));
+    EXPECT_TRUE(GetAuthFsmByAuthSeq(AUTH_SEQ) == nullptr);
+}
+
+/*
+ * @tc.name: HANDLE_MSG_AUTH_ERROR_TEST_001
+ * @tc.desc: Verify HandleMsgAuthError completes session and handles device not trusted
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(AuthSessionFsmTest, HANDLE_MSG_AUTH_ERROR_TEST_001, TestSize.Level1)
+{
+    AuthSessionFsmInterfaceMock fsmMock;
+    EXPECT_CALL(fsmMock, GetAuthRequest).WillRepeatedly(Return(SOFTBUS_ERR));
+    AuthFsm authFsm;
+    (void)memset_s(&authFsm, sizeof(AuthFsm), 0, sizeof(AuthFsm));
+    authFsm.authSeq = AUTH_SEQ;
+    authFsm.info.isServer = true;
+    authFsm.info.connInfo.type = AUTH_LINK_TYPE_WIFI;
+    MessagePara para;
+    (void)memset_s(&para, sizeof(MessagePara), 0, sizeof(MessagePara));
+    int32_t reason = SOFTBUS_AUTH_HICHAIN_PROCESS_FAIL;
+    ASSERT_TRUE(memcpy_s(para.data, sizeof(reason), &reason, sizeof(reason)) == EOK);
+    para.len = sizeof(reason);
+    EXPECT_NO_FATAL_FAILURE(HandleMsgAuthError(&authFsm, &para));
+    reason = HICHAIN_RETURN_NOT_TRUSTED;
+    ASSERT_TRUE(memcpy_s(para.data, sizeof(reason), &reason, sizeof(reason)) == EOK);
+    EXPECT_NO_FATAL_FAILURE(HandleMsgAuthError(&authFsm, &para));
+    (void)strcpy_s(authFsm.info.udid, UDID_BUF_LEN, UDID_TEST);
+    EXPECT_NO_FATAL_FAILURE(HandleMsgAuthError(&authFsm, &para));
+}
+
+/*
+ * @tc.name: HANDLE_COMMON_MSG_TEST_002
+ * @tc.desc: Verify HandleCommonMsg handles timeout, stop fsm, device disconnected
+ *           and unknown message
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(AuthSessionFsmTest, HANDLE_COMMON_MSG_TEST_002, TestSize.Level1)
+{
+    AuthSessionFsmInterfaceMock fsmMock;
+    EXPECT_CALL(fsmMock, GetAuthRequest).WillRepeatedly(Return(SOFTBUS_ERR));
+    AuthFsm authFsm;
+    (void)memset_s(&authFsm, sizeof(AuthFsm), 0, sizeof(AuthFsm));
+    authFsm.authSeq = AUTH_SEQ;
+    authFsm.info.isServer = true;
+    authFsm.info.connInfo.type = AUTH_LINK_TYPE_WIFI;
+    EXPECT_NO_FATAL_FAILURE(HandleCommonMsg(&authFsm, FSM_MSG_AUTH_TIMEOUT, nullptr));
+    EXPECT_TRUE(authFsm.isDead);
+    (void)memset_s(&authFsm, sizeof(AuthFsm), 0, sizeof(AuthFsm));
+    authFsm.curState = STATE_DEVICE_AUTH;
+    authFsm.info.normalizedType = NORMALIZED_SUPPORT;
+    EXPECT_NO_FATAL_FAILURE(HandleCommonMsg(&authFsm, FSM_MSG_AUTH_TIMEOUT, nullptr));
+    (void)memset_s(&authFsm, sizeof(AuthFsm), 0, sizeof(AuthFsm));
+    authFsm.curState = STATE_SYNC_DEVICE_INFO;
+    EXPECT_NO_FATAL_FAILURE(HandleCommonMsg(&authFsm, FSM_MSG_AUTH_TIMEOUT, nullptr));
+    (void)memset_s(&authFsm, sizeof(AuthFsm), 0, sizeof(AuthFsm));
+    EXPECT_NO_FATAL_FAILURE(HandleCommonMsg(&authFsm, FSM_MSG_STOP_AUTH_FSM, nullptr));
+    EXPECT_TRUE(authFsm.isDead);
+    (void)memset_s(&authFsm, sizeof(AuthFsm), 0, sizeof(AuthFsm));
+    authFsm.info.isNodeInfoReceived = true;
+    authFsm.info.isCloseAckReceived = true;
+    EXPECT_NO_FATAL_FAILURE(HandleCommonMsg(&authFsm, FSM_MSG_DEVICE_DISCONNECTED, nullptr));
+    EXPECT_TRUE(authFsm.isDead);
+    (void)memset_s(&authFsm, sizeof(AuthFsm), 0, sizeof(AuthFsm));
+    EXPECT_NO_FATAL_FAILURE(HandleCommonMsg(&authFsm, FSM_MSG_DEVICE_DISCONNECTED, nullptr));
+    EXPECT_NO_FATAL_FAILURE(HandleCommonMsg(&authFsm, FSM_MSG_UNKNOWN, nullptr));
+}
+
+/*
+ * @tc.name: POST_MESSAGE_TO_AUTH_FSM_TEST_001
+ * @tc.desc: Verify message post api by authSeq rejects invalid data, missing fsm,
+ *           connId mismatch and fsm without looper
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(AuthSessionFsmTest, POST_MESSAGE_TO_AUTH_FSM_TEST_001, TestSize.Level1)
+{
+    AuthFsm *authFsm = (AuthFsm *)SoftBusCalloc(sizeof(AuthFsm));
+    ASSERT_TRUE(authFsm != nullptr);
+    (void)memset_s(authFsm, sizeof(AuthFsm), 0, sizeof(AuthFsm));
+    authFsm->authSeq = AUTH_SEQ;
+    authFsm->info.connId = CONN_ID;
+    authFsm->info.isServer = true;
+    ListNodeInsert(&g_authFsmList, &authFsm->node);
+    EXPECT_EQ(AuthSessionProcessDevIdData(AUTH_SEQ, nullptr, 0), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthSessionProcessAuthData(AUTH_SEQ, nullptr, 0), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthSessionSaveSessionKey(AUTH_SEQ, nullptr, 0), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthSessionProcessDevInfoData(AUTH_SEQ, nullptr, 0), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthSessionProcessDevInfoDataByAuthSeqAndConnId(CONN_ID, AUTH_SEQ, nullptr, 0),
+        SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthSessionProcessCloseAck(CONN_ID, AUTH_SEQ, nullptr, 0), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthSessionProcessDevIdData(AUTH_SEQ_1, TMP_IN_DATA, TMP_DATA_LEN), SOFTBUS_AUTH_GET_FSM_FAIL);
+    EXPECT_EQ(AuthSessionProcessAuthData(AUTH_SEQ_1, TMP_IN_DATA, TMP_DATA_LEN), SOFTBUS_AUTH_GET_FSM_FAIL);
+    EXPECT_EQ(AuthSessionSaveSessionKey(AUTH_SEQ_1, TMP_IN_DATA, TMP_DATA_LEN), SOFTBUS_AUTH_GET_FSM_FAIL);
+    EXPECT_EQ(AuthSessionHandleAuthFinish(AUTH_SEQ_1, ACL_CAN_WRITE), SOFTBUS_AUTH_GET_FSM_FAIL);
+    EXPECT_EQ(AuthSessionHandleAuthError(AUTH_SEQ_1, 0), SOFTBUS_AUTH_GET_FSM_FAIL);
+    EXPECT_EQ(AuthSessionProcessDevInfoData(AUTH_SEQ_1, TMP_IN_DATA, TMP_DATA_LEN), SOFTBUS_AUTH_GET_FSM_FAIL);
+    EXPECT_EQ(AuthSessionProcessDevInfoDataByAuthSeqAndConnId(CONN_ID, AUTH_SEQ_1, TMP_IN_DATA, TMP_DATA_LEN),
+        SOFTBUS_AUTH_GET_FSM_FAIL);
+    EXPECT_EQ(AuthSessionProcessCloseAck(CONN_ID, AUTH_SEQ_1, TMP_IN_DATA, TMP_DATA_LEN),
+        SOFTBUS_AUTH_GET_FSM_FAIL);
+    EXPECT_EQ(AuthNotifyRequestVerify(AUTH_SEQ_1), SOFTBUS_AUTH_GET_FSM_FAIL);
+    EXPECT_EQ(AuthSessionPostAuthData(AUTH_SEQ_1, TMP_IN_DATA, TMP_DATA_LEN),
+        SOFTBUS_AUTH_GET_SESSION_INFO_FAIL);
+    EXPECT_EQ(AuthSessionProcessDevIdData(AUTH_SEQ, TMP_IN_DATA, TMP_DATA_LEN), SOFTBUS_AUTH_SEND_FAIL);
+    EXPECT_EQ(AuthSessionProcessAuthData(AUTH_SEQ, TMP_IN_DATA, TMP_DATA_LEN), SOFTBUS_AUTH_SEND_FAIL);
+    EXPECT_EQ(AuthSessionSaveSessionKey(AUTH_SEQ, TMP_IN_DATA, TMP_DATA_LEN), SOFTBUS_AUTH_SEND_FAIL);
+    EXPECT_EQ(AuthSessionHandleAuthFinish(AUTH_SEQ, ACL_CAN_WRITE), SOFTBUS_AUTH_SEND_FAIL);
+    EXPECT_EQ(AuthSessionHandleAuthError(AUTH_SEQ, 0), SOFTBUS_AUTH_SEND_FAIL);
+    EXPECT_EQ(AuthSessionProcessDevInfoData(AUTH_SEQ, TMP_IN_DATA, TMP_DATA_LEN), SOFTBUS_AUTH_SEND_FAIL);
+    EXPECT_EQ(AuthSessionProcessDevInfoDataByAuthSeqAndConnId(CONN_ID_1, AUTH_SEQ, TMP_IN_DATA, TMP_DATA_LEN),
+        SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthSessionProcessCloseAck(CONN_ID_1, AUTH_SEQ, TMP_IN_DATA, TMP_DATA_LEN), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthSessionProcessDevInfoDataByAuthSeqAndConnId(CONN_ID, AUTH_SEQ, TMP_IN_DATA, TMP_DATA_LEN),
+        SOFTBUS_AUTH_SEND_FAIL);
+    EXPECT_EQ(AuthSessionProcessCloseAck(CONN_ID, AUTH_SEQ, TMP_IN_DATA, TMP_DATA_LEN), SOFTBUS_AUTH_SEND_FAIL);
+    ListDelete(&authFsm->node);
+    SoftBusFree(authFsm);
+}
+
+/*
+ * @tc.name: POST_MESSAGE_BY_CONN_ID_TEST_001
+ * @tc.desc: Verify message post api by connId rejects invalid data, missing fsm
+ *           and fsm without looper
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(AuthSessionFsmTest, POST_MESSAGE_BY_CONN_ID_TEST_001, TestSize.Level1)
+{
+    AuthFsm *authFsm = (AuthFsm *)SoftBusCalloc(sizeof(AuthFsm));
+    ASSERT_TRUE(authFsm != nullptr);
+    (void)memset_s(authFsm, sizeof(AuthFsm), 0, sizeof(AuthFsm));
+    authFsm->authSeq = AUTH_SEQ;
+    authFsm->info.connId = CONN_ID;
+    authFsm->info.isServer = true;
+    authFsm->info.isConnectServer = true;
+    ListNodeInsert(&g_authFsmList, &authFsm->node);
+    EXPECT_EQ(AuthSessionProcessDevInfoDataByConnId(CONN_ID, true, nullptr, 0), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthSessionProcessCloseAckByConnId(CONN_ID, true, nullptr, 0), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthSessionProcessDevInfoDataByConnId(CONN_ID_1, true, TMP_IN_DATA, TMP_DATA_LEN),
+        SOFTBUS_AUTH_GET_FSM_FAIL);
+    EXPECT_EQ(AuthSessionProcessCloseAckByConnId(CONN_ID_1, true, TMP_IN_DATA, TMP_DATA_LEN),
+        SOFTBUS_AUTH_GET_FSM_FAIL);
+    EXPECT_EQ(AuthSessionProcessCancelAuthByConnId(CONN_ID_1, true, TMP_IN_DATA, TMP_DATA_LEN),
+        SOFTBUS_AUTH_GET_FSM_FAIL);
+    EXPECT_EQ(AuthSessionProcessDevInfoDataByConnId(CONN_ID, true, TMP_IN_DATA, TMP_DATA_LEN),
+        SOFTBUS_AUTH_SEND_FAIL);
+    EXPECT_EQ(AuthSessionProcessCloseAckByConnId(CONN_ID, true, TMP_IN_DATA, TMP_DATA_LEN),
+        SOFTBUS_AUTH_SEND_FAIL);
+    EXPECT_EQ(AuthSessionProcessCancelAuthByConnId(CONN_ID, true, TMP_IN_DATA, TMP_DATA_LEN),
+        SOFTBUS_AUTH_SEND_FAIL);
+    ListDelete(&authFsm->node);
+    SoftBusFree(authFsm);
+}
+
+/*
+ * @tc.name: AUTH_SESSION_GET_UDID_TEST_001
+ * @tc.desc: Verify AuthSessionGetUdid rejects invalid param, missing fsm and
+ *           small buffer, and copies udid on success
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(AuthSessionFsmTest, AUTH_SESSION_GET_UDID_TEST_001, TestSize.Level1)
+{
+    char udid[UDID_BUF_LEN] = { 0 };
+    EXPECT_EQ(AuthSessionGetUdid(AUTH_SEQ, nullptr, UDID_BUF_LEN), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(AuthSessionGetUdid(AUTH_SEQ_1, udid, UDID_BUF_LEN), SOFTBUS_AUTH_GET_SESSION_INFO_FAIL);
+    AuthFsm *authFsm = (AuthFsm *)SoftBusCalloc(sizeof(AuthFsm));
+    ASSERT_TRUE(authFsm != nullptr);
+    (void)memset_s(authFsm, sizeof(AuthFsm), 0, sizeof(AuthFsm));
+    authFsm->authSeq = AUTH_SEQ;
+    ASSERT_TRUE(memcpy_s(authFsm->info.udid, UDID_BUF_LEN, UDID_TEST, strlen(UDID_TEST)) == EOK);
+    ListNodeInsert(&g_authFsmList, &authFsm->node);
+    EXPECT_EQ(AuthSessionGetUdid(AUTH_SEQ, udid, DEVICE_ID_HASH_LEN), SOFTBUS_MEM_ERR);
+    EXPECT_EQ(AuthSessionGetUdid(AUTH_SEQ, udid, UDID_BUF_LEN), SOFTBUS_OK);
+    EXPECT_TRUE(strcmp(udid, UDID_TEST) == EOK);
+    ListDelete(&authFsm->node);
+    SoftBusFree(authFsm);
+}
+
+/*
+ * @tc.name: AUTH_SESSION_GET_SOURCE_USER_ID_TEST_001
+ * @tc.desc: Verify AuthSessionGetSourceUserId returns source user id from cred
+ *           type info and default value in other cases
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(AuthSessionFsmTest, AUTH_SESSION_GET_SOURCE_USER_ID_TEST_001, TestSize.Level1)
+{
+    EXPECT_EQ(AuthSessionGetSourceUserId(AUTH_SEQ_1), DEFAULT_USERID);
+    AuthFsm *authFsm = (AuthFsm *)SoftBusCalloc(sizeof(AuthFsm));
+    ASSERT_TRUE(authFsm != nullptr);
+    (void)memset_s(authFsm, sizeof(AuthFsm), 0, sizeof(AuthFsm));
+    authFsm->authSeq = AUTH_SEQ;
+    authFsm->info.credNegoState = CRED_NEGO_STATE_COMPATIBLE;
+    ListNodeInsert(&g_authFsmList, &authFsm->node);
+    EXPECT_EQ(AuthSessionGetSourceUserId(AUTH_SEQ), DEFAULT_USERID);
+    authFsm->info.credNegoState = CRED_NEGO_STATE_DECIDE;
+    EXPECT_EQ(AuthSessionGetSourceUserId(AUTH_SEQ), DEFAULT_USERID);
+    authFsm->info.credTypeInfo = cJSON_CreateObject();
+    ASSERT_TRUE(authFsm->info.credTypeInfo != nullptr);
+    ASSERT_TRUE(cJSON_AddNumberToObject(authFsm->info.credTypeInfo, SOURCE_USERID, TEST_USER_ID) != nullptr);
+    EXPECT_EQ(AuthSessionGetSourceUserId(AUTH_SEQ), TEST_USER_ID);
+    cJSON_Delete(authFsm->info.credTypeInfo);
+    authFsm->info.credTypeInfo = nullptr;
+    ListDelete(&authFsm->node);
+    SoftBusFree(authFsm);
+}
+
+/*
+ * @tc.name: AUTH_SESSION_SET_RE_SYNC_DEVICE_NAME_TEST_001
+ * @tc.desc: Verify AuthSessionSetReSyncDeviceName marks fsms at or after device auth state
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(AuthSessionFsmTest, AUTH_SESSION_SET_RE_SYNC_DEVICE_NAME_TEST_001, TestSize.Level1)
+{
+    EXPECT_NO_FATAL_FAILURE(AuthSessionSetReSyncDeviceName());
+    AuthFsm authFsm;
+    (void)memset_s(&authFsm, sizeof(AuthFsm), 0, sizeof(AuthFsm));
+    authFsm.authSeq = AUTH_SEQ;
+    authFsm.curState = STATE_SYNC_DEVICE_ID;
+    ListNodeInsert(&g_authFsmList, &authFsm.node);
+    AuthFsm authFsmNext;
+    (void)memset_s(&authFsmNext, sizeof(AuthFsm), 0, sizeof(AuthFsm));
+    authFsmNext.authSeq = AUTH_SEQ_1;
+    authFsmNext.curState = STATE_SYNC_DEVICE_INFO;
+    ListNodeInsert(&g_authFsmList, &authFsmNext.node);
+    EXPECT_NO_FATAL_FAILURE(AuthSessionSetReSyncDeviceName());
+    EXPECT_FALSE(authFsm.info.nodeInfo.isNeedReSyncDeviceName);
+    EXPECT_TRUE(authFsmNext.info.nodeInfo.isNeedReSyncDeviceName);
+    ListDelete(&authFsm.node);
+    ListDelete(&authFsmNext.node);
+}
+
+/*
+ * @tc.name: ON_PTK_SYNC_CALL_BACK_TEST_001
+ * @tc.desc: Verify OnPtkSyncCallBack and OnPtkSyncCallBackLooper handle invalid param
+ *           and pre link node not found
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(AuthSessionFsmTest, ON_PTK_SYNC_CALL_BACK_TEST_001, TestSize.Level1)
+{
+    EXPECT_NO_FATAL_FAILURE(OnPtkSyncCallBack(nullptr, SOFTBUS_OK));
+    char uuid[UUID_BUF_LEN] = { 0 };
+    (void)strcpy_s(uuid, sizeof(uuid), "uuid_test");
+    EXPECT_NO_FATAL_FAILURE(OnPtkSyncCallBack(uuid, SOFTBUS_OK));
+    EXPECT_NO_FATAL_FAILURE(OnPtkSyncCallBackLooper(nullptr));
+    OnPtkSyncCallBackParam *param = (OnPtkSyncCallBackParam *)SoftBusCalloc(sizeof(OnPtkSyncCallBackParam));
+    ASSERT_TRUE(param != nullptr);
+    (void)memset_s(param, sizeof(OnPtkSyncCallBackParam), 0, sizeof(OnPtkSyncCallBackParam));
+    ASSERT_TRUE(memcpy_s(param->uuid, UUID_BUF_LEN, uuid, UUID_BUF_LEN) == EOK);
+    param->result = SOFTBUS_OK;
+    EXPECT_NO_FATAL_FAILURE(OnPtkSyncCallBackLooper(param));
+}
+
+/*
+ * @tc.name: AUTH_DISCONNECT_SOCKET_TEST_001
+ * @tc.desc: Verify AuthDisconnectSocket dispatches by connection type with invalid fd
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(AuthSessionFsmTest, AUTH_DISCONNECT_SOCKET_TEST_001, TestSize.Level1)
+{
+    uint64_t invalidFd = 0xFFFFFFFF;
+    uint64_t wifiConnId = ((uint64_t)AUTH_LINK_TYPE_WIFI << INT32_BIT_NUM) | invalidFd;
+    EXPECT_NO_FATAL_FAILURE(AuthDisconnectSocket(wifiConnId));
+    uint64_t usbConnId = ((uint64_t)AUTH_LINK_TYPE_USB << INT32_BIT_NUM) | invalidFd;
+    EXPECT_NO_FATAL_FAILURE(AuthDisconnectSocket(usbConnId));
+    uint64_t unknownConnId = ((uint64_t)0x99 << INT32_BIT_NUM) | invalidFd;
+    EXPECT_NO_FATAL_FAILURE(AuthDisconnectSocket(unknownConnId));
+}
+
+/*
+ * @tc.name: AUTH_SESSION_HANDLE_DEVICE_DISCONNECTED_TEST_002
+ * @tc.desc: Verify AuthSessionHandleDeviceDisconnected updates fd without disconnect
+ *           and handles no fsm matched
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(AuthSessionFsmTest, AUTH_SESSION_HANDLE_DEVICE_DISCONNECTED_TEST_002, TestSize.Level1)
+{
+    uint64_t wifiConnId = ((uint64_t)AUTH_LINK_TYPE_WIFI << INT32_BIT_NUM) | CONN_ID;
+    AuthFsm authFsm;
+    (void)memset_s(&authFsm, sizeof(AuthFsm), 0, sizeof(AuthFsm));
+    authFsm.authSeq = AUTH_SEQ;
+    authFsm.info.connId = wifiConnId;
+    authFsm.info.isServer = true;
+    ListNodeInsert(&g_authFsmList, &authFsm.node);
+    EXPECT_EQ(AuthSessionHandleDeviceDisconnected(wifiConnId, false), SOFTBUS_OK);
+    EXPECT_EQ(GetFd(authFsm.info.connId), AUTH_INVALID_FD);
+    ListDelete(&authFsm.node);
+    EXPECT_EQ(AuthSessionHandleDeviceDisconnected(wifiConnId, true), SOFTBUS_OK);
+}
+
 } // namespace OHOS
