@@ -430,7 +430,7 @@ void TransMultipathUpdateClosingState(SessionInfo *sessionNode, bool isClosing)
     }
 }
 
-SOFTBUS_VISIBILITY void TransMultipathOnEvent(int32_t channelId, int32_t channelType, uint8_t changeType, int32_t linkType, int32_t reason)
+void TransMultipathOnEvent(int32_t channelId, int32_t channelType, uint8_t changeType, int32_t linkType, int32_t reason)
 {
     if (channelId == INVALID_CHANNEL_ID) {
         TRANS_LOGE(TRANS_SDK, "Invalid param");
@@ -454,7 +454,7 @@ SOFTBUS_VISIBILITY void TransMultipathOnEvent(int32_t channelId, int32_t channel
     TRANS_LOGI(TRANS_SDK, "handle on event success");
 }
 
-SOFTBUS_VISIBILITY bool TransMultipathIsWiredRoute(int32_t routeType)
+bool TransMultipathIsWiredRoute(int32_t routeType)
 {
     return routeType == WIFI_USB;
 }
@@ -564,7 +564,7 @@ int32_t TransMultipathGetOtherCtrlChannelOnNode(
     return SOFTBUS_OK;
 }
 
-SOFTBUS_VISIBILITY int32_t TransMultipathMarkUpOnNode(SessionInfo *node, int32_t routeType)
+int32_t TransMultipathMarkUpOnNode(SessionInfo *node, int32_t routeType)
 {
     if (node == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -681,7 +681,7 @@ bool TransMultipathIsOtherUp(int32_t sessionId, int32_t channelId)
     return otherStatus == CTRL_CH_STATUS_UP;
 }
 
-SOFTBUS_VISIBILITY bool TransMultipathHandleChannelClose(int32_t sessionId, int32_t channelId, int32_t *surviveChannelId,
+bool TransMultipathHandleChannelClose(int32_t sessionId, int32_t channelId, int32_t *surviveChannelId,
     int32_t *surviveChannelType, int32_t *deadRouteType)
 {
     if (surviveChannelId == NULL || surviveChannelType == NULL || deadRouteType == NULL) {
