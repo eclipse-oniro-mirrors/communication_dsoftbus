@@ -15,6 +15,7 @@
 
 #include "softbus_server_proxy_frame.h"
 
+#include <atomic>
 #include <thread>
 #include "bus_center_server_proxy.h"
 #include "br_proxy.h"
@@ -39,14 +40,32 @@ OHOS::sptr<OHOS::IRemoteObject> g_serverProxy = nullptr;
 OHOS::sptr<OHOS::IRemoteObject> g_oldServerProxy = nullptr;
 OHOS::sptr<OHOS::IRemoteObject::DeathRecipient> g_clientDeath = nullptr;
 std::mutex g_mutex;
-constexpr uint32_t WAIT_SERVER_INTERVAL = 50;
+constexpr uint32_t WAIT_SERVER_INTERVAL = 100;
 constexpr uint32_t SOFTBUS_MAX_RETRY_TIMES = 25;
 uint32_t g_getSystemAbilityId = 2;
 uint32_t g_printRequestFailedCount = 0;
 constexpr int32_t RANDOM_RANGE_MAX = 501; // range of random numbers is (0, 500ms)
 constexpr uint32_t PRINT_INTERVAL = 200;
-constexpr int32_t CYCLE_NUMBER_MAX = 100;
+#ifdef DSOFTBUS_CYCLE_NUMBER_MAX
+constexpr uint32_t CYCLE_NUMBER_MAX = DSOFTBUS_CYCLE_NUMBER_MAX;
+#else
+constexpr uint32_t CYCLE_NUMBER_MAX = 150;
+#endif
 const std::u16string SAMANAGER_INTERFACE_TOKEN = u"ohos.samgr.accessToken";
+std::atomic<bool> g_taskScheduled{false};
+std::atomic<bool> g_needRecover{false};
+}
+
+static bool NeedRecoverAndFreeRemaining(char *clientName[], uint32_t startIndex, uint32_t clientNameNum)
+{
+    if (!g_needRecover.load()) {
+        return false;
+    }
+    COMM_LOGI(COMM_SDK, "new death during register, abandon this round");
+    for (uint32_t j = startIndex; j < clientNameNum; j++) {
+        SoftBusFree(clientName[j]);
+    }
+    return true;
 }
 
 static int InnerRegisterService(ListNode *sessionServerInfoList)
@@ -67,7 +86,7 @@ static int InnerRegisterService(ListNode *sessionServerInfoList)
         COMM_LOGE(COMM_SDK, "serverProxyFrame is nullptr!");
         return SOFTBUS_INVALID_PARAM;
     }
-    char *clientName[SOFTBUS_PKGNAME_MAX_NUM] = {0};
+    char *clientName[SOFTBUS_PKGNAME_MAX_NUM] = {nullptr};
     uint32_t clientNameNum = GetSoftBusClientNameList(clientName, SOFTBUS_PKGNAME_MAX_NUM);
     if (clientNameNum == 0) {
         COMM_LOGE(COMM_SDK, "get client name failed");
@@ -75,6 +94,9 @@ static int InnerRegisterService(ListNode *sessionServerInfoList)
     }
     for (uint32_t i = 0; i < clientNameNum; i++) {
         while (serverProxyFrame->SoftbusRegisterService(clientName[i], nullptr, nullptr) != SOFTBUS_OK) {
+            if (NeedRecoverAndFreeRemaining(clientName, i, clientNameNum)) {
+                return SOFTBUS_OK;
+            }
             SoftBusSleepMs(WAIT_SERVER_READY_INTERVAL);
         }
         SoftBusFree(clientName[i]);
@@ -170,7 +192,30 @@ static int32_t DiscRecoveryPolicyPacked(void)
     return pfnClientEnhanceFuncList->discRecoveryPolicy();
 }
 
-void ClientDeathProcTask(void)
+static void FreeSessionServerInfoList(ListNode *sessionServerInfoList)
+{
+    if (sessionServerInfoList == nullptr) {
+        return;
+    }
+    SessionServerInfo *infoNode = nullptr;
+    SessionServerInfo *infoNodeNext  = nullptr;
+    LIST_FOR_EACH_ENTRY_SAFE(infoNode, infoNodeNext, sessionServerInfoList, SessionServerInfo, node) {
+        ListDelete(&infoNode->node);
+        SoftBusFree(infoNode);
+    }
+}
+
+static void DoRecovery(void);
+
+static void ScheduleRecovery(void)
+{
+    if (g_taskScheduled.exchange(true)) {
+        return;
+    }
+    std::thread(DoRecovery).detach();
+}
+
+static void DoCleanUp(void)
 {
     {
         std::lock_guard<std::mutex> lock(g_mutex);
@@ -184,36 +229,59 @@ void ClientDeathProcTask(void)
     BusCenterServerProxyDeInit();
     ConnectionServerProxyDeInit();
     ConnectionDeathNotify();
+}
 
-    ListNode sessionServerInfoList;
-    ListInit(&sessionServerInfoList);
-    ClientCleanAllSessionWhenServerDeath(&sessionServerInfoList);
+static void DoRecovery(void)
+{
+    while (g_needRecover.exchange(false)) {
+        DoCleanUp();
 
-    int32_t cnt = 0;
-    for (cnt = 0; cnt < CYCLE_NUMBER_MAX; cnt++) {
-        if (ServerProxyInit() == SOFTBUS_OK) {
-            break;
+        ListNode sessionServerInfoList;
+        ListInit (&sessionServerInfoList);
+        ClientCleanAllSessionWhenServerDeath(&sessionServerInfoList);
+        
+        int32_t cnt = 0;
+        for (cnt = 0; cnt < CYCLE_NUMBER_MAX; cnt++) {
+            if (ServerProxyInit() == SOFTBUS_OK) {
+                break;
+            }
+            SoftBusSleepMs(WAIT_SERVER_INTERVAL);
         }
-        SoftBusSleepMs(WAIT_SERVER_INTERVAL);
+        BrProxyServiceDeathNotify();
+        if (cnt == CYCLE_NUMBER_MAX) {
+            COMM_LOGE(COMM_SDK, "server proxy init reached the maximum count=%{public}d", cnt);
+            FreeClientPkgName();
+            continue;
+        }
+
+        TransServerProxyInit();
+        BusCenterServerProxyInit();
+        ConnectionServerProxyInit();
+        InnerRegisterService(&sessionServerInfoList);
+        FreeSessionServerInfoList(&sessionServerInfoList);
+        if (g_needRecover.load()) {
+            COMM_LOGI(COMM_SDK, "new death during recovery, retry");
+            continue;
+        }
+        RestartAuthParaNotify();
+        DiscRecoveryPublish();
+        DiscRecoverySubscribe();
+        DiscRecoveryPolicyPacked();
+        PerceptionRecoveryAdv();
+        PerceptionRecoveryScan();
+        RestartRegDataLevelChange();
+        RestartRegisterConversationListener();
     }
-    BrProxyServiceDeathNotify();
-    if (cnt == CYCLE_NUMBER_MAX) {
-        COMM_LOGE(COMM_SDK, "server proxy init reached the maximum count=%{public}d", cnt);
-        FreeClientPkgName();
-        return;
+    g_taskScheduled.store(false);
+    if (g_needRecover.load()) {
+        ScheduleRecovery();
     }
-    TransServerProxyInit();
-    BusCenterServerProxyInit();
-    ConnectionServerProxyInit();
-    InnerRegisterService(&sessionServerInfoList);
-    RestartAuthParaNotify();
-    DiscRecoveryPublish();
-    DiscRecoverySubscribe();
-    DiscRecoveryPolicyPacked();
-    PerceptionRecoveryAdv();
-    PerceptionRecoveryScan();
-    RestartRegDataLevelChange();
-    RestartRegisterConversationListener();
+}
+
+void ClientDeathProcTask(void)
+{
+    g_needRecover.store(true);
+    ScheduleRecovery();
 }
 
 void RestartAuthParaCallbackUnregister(void)
