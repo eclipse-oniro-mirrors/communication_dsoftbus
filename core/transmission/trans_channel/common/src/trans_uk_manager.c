@@ -202,8 +202,7 @@ SOFTBUS_VISIBILITY int32_t GetLocalAccountUidByUserId(char *id, uint32_t idLen, 
         TRANS_LOGE(TRANS_CTRL, "invalid param.");
         return SOFTBUS_INVALID_PARAM;
     }
-    (void)userId;
-    int32_t ret = LnnGetLocalStrInfo(STRING_KEY_ACCOUNT_UID, id, idLen);
+    int32_t ret = GetOsAccountUidByUserId(id, idLen, len, userId);
     if (ret != SOFTBUS_OK) {
         TRANS_LOGE(TRANS_CTRL, "get local account uid failed, ret=%{public}d", ret);
         if (idLen < (strlen(DEFAULT_ACCOUNT_UID) + 1)) {
