@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -795,6 +795,92 @@ HWTEST_F(TransTcpDirectP2pTest, StopP2pListenerByRemoteUuidTest001, TestSize.Lev
     StopP2pListenerByRemoteUuid(g_uuid);
     CheckAndAddPeerDeviceInfo(g_uuid);
     StopP2pListenerByRemoteUuid(g_uuid);
+}
+
+static void ClearTestP2pListenerList(void)
+{
+    if (g_p2pSessionInfo.peerDeviceInfoList == nullptr) {
+        TRANS_LOGE(TRANS_CTRL, "peerDeviceInfoList is null");
+        return;
+    }
+    int32_t ret = SoftBusMutexLock(&g_p2pSessionInfo.peerDeviceInfoList->lock);
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_CTRL, "lock failed, ret=%{public}d", ret);
+        return;
+    }
+    P2pListenerInfo *item = nullptr;
+    P2pListenerInfo *nextItem = nullptr;
+    LIST_FOR_EACH_ENTRY_SAFE(item, nextItem, &g_p2pSessionInfo.peerDeviceInfoList->list, P2pListenerInfo, node) {
+        ListDelete(&item->node);
+        SoftBusFree(item);
+    }
+    g_p2pSessionInfo.peerDeviceInfoList->cnt = 0;
+    (void)SoftBusMutexUnlock(&g_p2pSessionInfo.peerDeviceInfoList->lock);
+}
+
+/*
+ * @tc.name: TransStopP2pListenerHandleTest001
+ * @tc.desc: test TransStopP2pListenerHandle with null info and mismatched event,
+ *           listener list is not changed
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransTcpDirectP2pTest, TransStopP2pListenerHandleTest001, TestSize.Level1)
+{
+    int32_t ret = CreateP2pListenerList();
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    ClearTestP2pListenerList();
+    CheckAndAddPeerDeviceInfo(g_uuid);
+    EXPECT_EQ(1, g_p2pSessionInfo.peerDeviceInfoList->cnt);
+    TransStopP2pListenerHandle(nullptr);
+    LnnEventBasicInfo mismatchedInfo = { };
+    mismatchedInfo.event = LNN_EVENT_NODE_ONLINE_STATE_CHANGED;
+    TransStopP2pListenerHandle(&mismatchedInfo);
+    EXPECT_EQ(1, g_p2pSessionInfo.peerDeviceInfoList->cnt);
+}
+
+/*
+ * @tc.name: TransStopP2pListenerHandleTest002
+ * @tc.desc: test TransStopP2pListenerHandle with empty uuid,
+ *           only the listener registered by metaNodeId is stopped
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransTcpDirectP2pTest, TransStopP2pListenerHandleTest002, TestSize.Level1)
+{
+    int32_t ret = CreateP2pListenerList();
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    ClearTestP2pListenerList();
+    CheckAndAddPeerDeviceInfo(g_uuid);
+    EXPECT_EQ(1, g_p2pSessionInfo.peerDeviceInfoList->cnt);
+    LnnHaLeaveMetaNodeEvent leaveEvent = { };
+    leaveEvent.basic.event = LNN_EVENT_HA_LEAVE_META_NODE;
+    (void)strcpy_s(leaveEvent.metaNodeId, NETWORK_ID_BUF_LEN, g_uuid);
+    TransStopP2pListenerHandle(&leaveEvent.basic);
+    EXPECT_EQ(0, g_p2pSessionInfo.peerDeviceInfoList->cnt);
+}
+
+/*
+ * @tc.name: TransStopP2pListenerHandleTest003
+ * @tc.desc: test TransStopP2pListenerHandle with non-empty uuid,
+ *           listeners registered by both metaNodeId and uuid are stopped
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransTcpDirectP2pTest, TransStopP2pListenerHandleTest003, TestSize.Level1)
+{
+    int32_t ret = CreateP2pListenerList();
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    ClearTestP2pListenerList();
+    CheckAndAddPeerDeviceInfo(g_uuid);
+    CheckAndAddPeerDeviceInfo(g_peerUuid);
+    EXPECT_EQ(2, g_p2pSessionInfo.peerDeviceInfoList->cnt);
+    LnnHaLeaveMetaNodeEvent leaveEvent = { };
+    leaveEvent.basic.event = LNN_EVENT_HA_LEAVE_META_NODE;
+    (void)strcpy_s(leaveEvent.metaNodeId, NETWORK_ID_BUF_LEN, g_uuid);
+    (void)strcpy_s(leaveEvent.uuid, UUID_BUF_LEN, g_peerUuid);
+    TransStopP2pListenerHandle(&leaveEvent.basic);
+    EXPECT_EQ(0, g_p2pSessionInfo.peerDeviceInfoList->cnt);
 }
 
 /*

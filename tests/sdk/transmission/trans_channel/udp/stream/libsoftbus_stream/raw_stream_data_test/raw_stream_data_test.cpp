@@ -32,6 +32,8 @@ using namespace SoftBus;
 
 namespace OHOS {
 #define DEVICE_ID "DEVICE_ID"
+#define TEST_RAW_BUFLEN 4
+#define TEST_RAW_PAYLOAD "DATA"
 
 class RawStreamDataTest : public testing::Test {
 public:
@@ -47,7 +49,7 @@ void RawStreamDataTest::SetUpTestCase(void) { }
 
 void RawStreamDataTest::TearDownTestCase(void) { }
 
-/**
+/*
  * @tc.name: SetTimeStamp001
  * @tc.desc: SetTimeStamp and GetTimeStamp with zero timestamp
  * @tc.type: FUNC
@@ -62,7 +64,7 @@ HWTEST_F(RawStreamDataTest, SetTimeStamp001, TestSize.Level1)
     EXPECT_EQ(0, static_cast<int32_t>(tmp));
 }
 
-/**
+/*
  * @tc.name: GetExtBuffer001
  * @tc.desc: GetExtBuffer, use the wrong parameter.
  * @tc.type: FUNC
@@ -75,7 +77,7 @@ HWTEST_F(RawStreamDataTest, GetExtBuffer001, TestSize.Level1)
     EXPECT_EQ(nullptr, rRawStreamData->GetExtBuffer());
 }
 
-/**
+/*
  * @tc.name: GetExtBufferLen001
  * @tc.desc: GetExtBufferLen001, use the wrong parameter.
  * @tc.type: FUNC
@@ -88,7 +90,7 @@ HWTEST_F(RawStreamDataTest, GetExtBufferLen001, TestSize.Level1)
     EXPECT_EQ(0, rRawStreamData->GetExtBufferLen());
 }
 
-/**
+/*
  * @tc.name: GetSeqNum001
  * @tc.desc: GetSeqNum001, use the wrong parameter.
  * @tc.type: FUNC
@@ -100,7 +102,7 @@ HWTEST_F(RawStreamDataTest, GetSeqNum001, TestSize.Level1)
 
     EXPECT_EQ(0, rRawStreamData->GetSeqNum());
 }
-/**
+/*
  * @tc.name: GetStreamId001
  * @tc.desc: GetStreamId001, use the wrong parameter.
  * @tc.type: FUNC
@@ -112,7 +114,7 @@ HWTEST_F(RawStreamDataTest, GetStreamId001, TestSize.Level1)
     EXPECT_EQ(0, rRawStreamData->GetStreamId());
 }
 
-/**
+/*
  * @tc.name: GetStreamFrameInfo001
  * @tc.desc: GetStreamFrameInfo001, use the wrong parameter.
  * @tc.type: FUNC
@@ -125,7 +127,7 @@ HWTEST_F(RawStreamDataTest, GetStreamFrameInfo001, TestSize.Level1)
     EXPECT_NE(nullptr, rRawStreamData->GetStreamFrameInfo());
 }
 
-/**
+/*
  * @tc.name: MakeRawStream001
  * @tc.desc: MakeRawStream with Communication::SoftBus::StreamData and Communication::SoftBus::StreamFrameInfo returns
  * non-null stream
@@ -147,7 +149,7 @@ HWTEST_F(RawStreamDataTest, MakeRawStream001, TestSize.Level1)
     SoftBusFree(info);
 }
 
-/**
+/*
  * @tc.name: MakeRawStreamTest002
  * @tc.desc: MakeRawStream returns nullptr when scene is UNKNOWN_SCENE
  * @tc.type: FUNC
@@ -167,7 +169,7 @@ HWTEST_F(RawStreamDataTest, MakeRawStreamTest002, TestSize.Level1)
     SoftBusFree(info);
 }
 
-/**
+/*
  * @tc.name: MakeRawStreamTest003
  * @tc.desc: MakeRawStream returns nullptr when bufLen exceeds MAX_STREAM_LEN with COMPATIBLE_SCENE
  * @tc.type: FUNC
@@ -187,7 +189,7 @@ HWTEST_F(RawStreamDataTest, MakeRawStreamTest003, TestSize.Level1)
     SoftBusFree(info);
 }
 
-/**
+/*
  * @tc.name: InitStreamData001
  * @tc.desc: InitStreamData with valid buffers and lengths returns SOFTBUS_OK
  * @tc.type: FUNC
@@ -204,7 +206,7 @@ HWTEST_F(RawStreamDataTest, InitStreamData001, TestSize.Level1)
     EXPECT_EQ(SOFTBUS_OK, ret);
 }
 
-/**
+/*
  * @tc.name: GetBuffer001
  * @tc.desc: GetBuffer001, use the wrong parameter.
  * @tc.type: FUNC
@@ -216,7 +218,7 @@ HWTEST_F(RawStreamDataTest, GetBuffer001, TestSize.Level1)
     EXPECT_EQ(nullptr, rawStreamData->GetBuffer());
 }
 
-/**
+/*
  * @tc.name: GetBufferLen001
  * @tc.desc: GetBufferLen returns zero on uninitialized RawStreamData
  * @tc.type: FUNC
@@ -228,7 +230,7 @@ HWTEST_F(RawStreamDataTest, GetBufferLen001, TestSize.Level1)
     EXPECT_EQ(0, rawStreamData->GetBufferLen());
 }
 
-/**
+/*
  * @tc.name: InsertBufferLength001
  * @tc.desc: InsertBufferLength writes length bytes to output buffer
  * @tc.type: FUNC
@@ -243,5 +245,86 @@ HWTEST_F(RawStreamDataTest, InsertBufferLength001, TestSize.Level1)
     int32_t length = 1;
     RawStreamData::InsertBufferLength(num, length, reinterpret_cast<uint8_t *>(buffer.get()));
     EXPECT_EQ(3, static_cast<int32_t>(buffer[0]));
+}
+
+/*
+ * @tc.name: MakeRawStreamTest004
+ * @tc.desc: MakeRawStream returns nullptr when bufLen is not positive with COMPATIBLE_SCENE
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(RawStreamDataTest, MakeRawStreamTest004, TestSize.Level1)
+{
+    Communication::SoftBus::StreamFrameInfo *info = reinterpret_cast<Communication::SoftBus::StreamFrameInfo *>(
+        SoftBusCalloc(sizeof(Communication::SoftBus::StreamFrameInfo)));
+    ASSERT_TRUE(info != nullptr);
+    char buf[TEST_RAW_BUFLEN] = { 'D', 'A', 'T', 'A' };
+    std::unique_ptr<IStream> tmpIStream = IStream::MakeRawStream(buf, 0, *info, COMPATIBLE_SCENE);
+    EXPECT_TRUE(tmpIStream == nullptr);
+    tmpIStream = IStream::MakeRawStream(buf, -1, *info, COMPATIBLE_SCENE);
+    EXPECT_TRUE(tmpIStream == nullptr);
+    SoftBusFree(info);
+}
+
+/*
+ * @tc.name: MakeRawStreamTest005
+ * @tc.desc: MakeRawStream with COMPATIBLE_SCENE returns a stream
+ *           holding the payload without the frame header
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(RawStreamDataTest, MakeRawStreamTest005, TestSize.Level1)
+{
+    Communication::SoftBus::StreamFrameInfo *info = reinterpret_cast<Communication::SoftBus::StreamFrameInfo *>(
+        SoftBusCalloc(sizeof(Communication::SoftBus::StreamFrameInfo)));
+    ASSERT_TRUE(info != nullptr);
+    char buf[TEST_RAW_BUFLEN] = { 'D', 'A', 'T', 'A' };
+    std::unique_ptr<IStream> tmpIStream = IStream::MakeRawStream(buf, TEST_RAW_BUFLEN, *info, COMPATIBLE_SCENE);
+    ASSERT_TRUE(tmpIStream != nullptr);
+    EXPECT_EQ(TEST_RAW_BUFLEN, tmpIStream->GetBufferLen());
+    std::unique_ptr<char[]> streamBuf = tmpIStream->GetBuffer();
+    ASSERT_TRUE(streamBuf != nullptr);
+    EXPECT_EQ(0, memcmp(streamBuf.get(), TEST_RAW_PAYLOAD, TEST_RAW_BUFLEN));
+    SoftBusFree(info);
+}
+
+/*
+ * @tc.name: MakeRawStreamTest006
+ * @tc.desc: MakeRawStream with SOFTBUS_SCENE returns a stream with the
+ *           frame header carrying the payload length
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(RawStreamDataTest, MakeRawStreamTest006, TestSize.Level1)
+{
+    Communication::SoftBus::StreamFrameInfo *info = reinterpret_cast<Communication::SoftBus::StreamFrameInfo *>(
+        SoftBusCalloc(sizeof(Communication::SoftBus::StreamFrameInfo)));
+    ASSERT_TRUE(info != nullptr);
+    char buf[TEST_RAW_BUFLEN] = { 'D', 'A', 'T', 'A' };
+    std::unique_ptr<IStream> tmpIStream = IStream::MakeRawStream(buf, TEST_RAW_BUFLEN, *info, SOFTBUS_SCENE);
+    ASSERT_TRUE(tmpIStream != nullptr);
+    EXPECT_EQ(TEST_RAW_BUFLEN + RawStreamData::FRAME_HEADER_LEN, tmpIStream->GetBufferLen());
+    std::unique_ptr<char[]> streamBuf = tmpIStream->GetBuffer();
+    ASSERT_TRUE(streamBuf != nullptr);
+    EXPECT_EQ(0, memcmp(streamBuf.get() + RawStreamData::FRAME_HEADER_LEN, TEST_RAW_PAYLOAD, TEST_RAW_BUFLEN));
+    SoftBusFree(info);
+}
+
+/*
+ * @tc.name: InsertBufferLength002
+ * @tc.desc: InsertBufferLength with null output or negative length
+ *           does not write anything
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(RawStreamDataTest, InsertBufferLength002, TestSize.Level1)
+{
+    auto buffer = std::make_unique<char[]>(TEST_RAW_BUFLEN + RawStreamData::FRAME_HEADER_LEN);
+    ASSERT_TRUE(buffer != nullptr);
+    (void)memset_s(buffer.get(), TEST_RAW_BUFLEN + RawStreamData::FRAME_HEADER_LEN, 0,
+        TEST_RAW_BUFLEN + RawStreamData::FRAME_HEADER_LEN);
+    RawStreamData::InsertBufferLength(TEST_RAW_BUFLEN, RawStreamData::FRAME_HEADER_LEN, nullptr);
+    RawStreamData::InsertBufferLength(TEST_RAW_BUFLEN, -1, reinterpret_cast<uint8_t *>(buffer.get()));
+    EXPECT_EQ(0, static_cast<int32_t>(buffer[0]));
 }
 } // namespace OHOS

@@ -66,6 +66,53 @@ ohos_unittest("TransSdkTcpDirectTest") {
   deps += dsoftbus_log_label_deps
 }
 
+ohos_unittest("TransTcpDirectManagerSupTest") {
+  module_out_path = module_output_path
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+  sources = [ "trans_tcp_direct_manager_supplement_test.cpp" ]
+
+  include_dirs = [
+    "$dsoftbus_root_path/core/common/softbus_property/include",
+    "$softbus_adapter_config/spec_config",
+    "$dsoftbus_root_path/adapter/common/include/OS_adapter_define/linux",
+    "$dsoftbus_root_path/core/common/include",
+    "$dsoftbus_root_path/interfaces/kits/connect",
+    "$dsoftbus_root_path/core/connection/interface",
+    "$dsoftbus_root_path/sdk/transmission/session/include",
+    "$dsoftbus_root_path/interfaces/inner_kits/transport",
+    "$dsoftbus_root_path/interfaces/kits/transport",
+    "$dsoftbus_root_path/tests/sdk/common/include",
+    "$dsoftbus_root_path/sdk/transmission/trans_channel/tcp_direct/src",
+    "$dsoftbus_root_path/adapter/common/include",
+    "$dsoftbus_root_path/sdk/transmission/trans_channel/tcp_direct/include",
+    "$dsoftbus_root_path/sdk/transmission/session/include",
+    "$dsoftbus_root_path/core/frame/common/include",
+    "$dsoftbus_root_path/sdk/transmission/trans_channel/udp/common/include",
+    "$dsoftbus_root_path/core/transmission/trans_channel/udp_negotiation/include",
+    "$dsoftbus_root_path/sdk/transmission/trans_channel/udp/file/include",
+    "$dsoftbus_root_path/sdk/transmission/ipc/include",
+    "$dsoftbus_root_path/sdk/bus_center/manager/include",
+  ]
+
+  deps = [
+    "$dsoftbus_root_path/adapter:softbus_adapter",
+    "$dsoftbus_root_path/core/common:softbus_utils",
+    "$dsoftbus_root_path/tests/sdk:softbus_client_static",
+    "$dsoftbus_root_path/tests/sdk/common:softbus_access_token_test",
+  ]
+
+  external_deps = [
+    "bounds_checking_function:libsec_static",
+    "c_utils:utils",
+    "hilog:libhilog",
+  ]
+  deps += dsoftbus_log_label_deps
+}
+
 ohos_unittest("TransSessionTest") {
   module_out_path = module_output_path
   sanitize = {

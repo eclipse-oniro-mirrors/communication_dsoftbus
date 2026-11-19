@@ -943,4 +943,142 @@ HWTEST_F(ClientTransUdpManagerStaticTest, GetChannelTypeByChannelIdTest002, Test
     ClientTransChannelDeinit();
     g_sessionCb = nullptr;
 }
+
+/*
+ * @tc.name: CloseUdpChannelProcTest005
+ * @tc.desc: close udp channel proc with shutdown reason unexpected returns ok
+ *           and skips vtp cleanup through TransDeleteVtpStreamAdaptor
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(ClientTransUdpManagerStaticTest, CloseUdpChannelProcTest005, TestSize.Level1)
+{
+    ClientTransChannelDeinit();
+    g_sessionCb = nullptr;
+    int32_t ret = ClientTransChannelInit();
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    UdpChannel udpChannel = { };
+    udpChannel.businessType = BUSINESS_TYPE_STREAM;
+    ret = CloseUdpChannelProc(&udpChannel, TEST_CLOSEID, SHUTDOWN_REASON_UNEXPECTED);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    ClientTransChannelDeinit();
+    g_sessionCb = nullptr;
+}
+
+/*
+ * @tc.name: OnUdpChannelClosedTest001
+ * @tc.desc: on udp channel closed without session callback returns directly
+ *           and the channel is not deleted
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(ClientTransUdpManagerStaticTest, OnUdpChannelClosedTest001, TestSize.Level1)
+{
+    ClientTransChannelDeinit();
+    g_sessionCb = nullptr;
+    int32_t ret = ClientTransChannelInit();
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    UdpChannel *udpChannel = reinterpret_cast<UdpChannel *>(SoftBusCalloc(sizeof(UdpChannel)));
+    ASSERT_TRUE(udpChannel != nullptr);
+    udpChannel->channelId = TEST_CLOSEID;
+    ret = ClientTransAddUdpChannel(udpChannel);
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    g_sessionCb = nullptr;
+    OnUdpChannelClosed(TEST_CLOSEID, SHUTDOWN_REASON_PEER);
+    UdpChannel channel = { };
+    ret = TransGetUdpChannel(TEST_CLOSEID, &channel);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    (void)TransDeleteUdpChannel(TEST_CLOSEID);
+    ClientTransChannelDeinit();
+    g_sessionCb = nullptr;
+}
+
+/*
+ * @tc.name: OnUdpChannelClosedTest002
+ * @tc.desc: on udp channel closed with session callback deletes the udp channel
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(ClientTransUdpManagerStaticTest, OnUdpChannelClosedTest002, TestSize.Level1)
+{
+    ClientTransChannelDeinit();
+    g_sessionCb = nullptr;
+    int32_t ret = ClientTransChannelInit();
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    UdpChannel *udpChannel = reinterpret_cast<UdpChannel *>(SoftBusCalloc(sizeof(UdpChannel)));
+    ASSERT_TRUE(udpChannel != nullptr);
+    udpChannel->channelId = TEST_CLOSEID;
+    ret = ClientTransAddUdpChannel(udpChannel);
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    OnUdpChannelClosed(TEST_CLOSEID, SHUTDOWN_REASON_PEER);
+    UdpChannel channel = { };
+    ret = TransGetUdpChannel(TEST_CLOSEID, &channel);
+    EXPECT_EQ(SOFTBUS_TRANS_UDP_CHANNEL_NOT_FOUND, ret);
+    ClientTransChannelDeinit();
+    g_sessionCb = nullptr;
+}
+
+/*
+ * @tc.name: TransUdpOnCloseAckReceivedTest001
+ * @tc.desc: trans udp on close ack received before pending list init
+ *           returns pending list not found
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(ClientTransUdpManagerStaticTest, TransUdpOnCloseAckReceivedTest001, TestSize.Level1)
+{
+    ClientTransChannelDeinit();
+    g_sessionCb = nullptr;
+    int32_t ret = TransUdpOnCloseAckReceived(TEST_CLOSEID);
+    EXPECT_EQ(SOFTBUS_TRANS_TDC_PENDINGLIST_NOT_FOUND, ret);
+    ClientTransChannelDeinit();
+    g_sessionCb = nullptr;
+}
+
+/*
+ * @tc.name: TransUdpOnCloseAckReceivedTest002
+ * @tc.desc: trans udp on close ack received with no pending packet
+ *           returns node not found
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(ClientTransUdpManagerStaticTest, TransUdpOnCloseAckReceivedTest002, TestSize.Level1)
+{
+    ClientTransChannelDeinit();
+    g_sessionCb = nullptr;
+    int32_t ret = ClientTransChannelInit();
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    ret = TransUdpOnCloseAckReceived(TEST_CLOSEID);
+    EXPECT_EQ(SOFTBUS_TRANS_NODE_NOT_FOUND, ret);
+    ClientTransChannelDeinit();
+    g_sessionCb = nullptr;
+}
+
+/*
+ * @tc.name: TransUdpDeleteFileListenerTest001
+ * @tc.desc: trans udp delete file listener with null or unregistered session name
+ *           does not affect the udp channel state
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(ClientTransUdpManagerStaticTest, TransUdpDeleteFileListenerTest001, TestSize.Level1)
+{
+    ClientTransChannelDeinit();
+    g_sessionCb = nullptr;
+    int32_t ret = ClientTransChannelInit();
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    UdpChannel *udpChannel = reinterpret_cast<UdpChannel *>(SoftBusCalloc(sizeof(UdpChannel)));
+    ASSERT_TRUE(udpChannel != nullptr);
+    udpChannel->channelId = TEST_CLOSEID;
+    ret = ClientTransAddUdpChannel(udpChannel);
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    TransUdpDeleteFileListener(nullptr);
+    TransUdpDeleteFileListener("session.not.registered");
+    UdpChannel channel = { };
+    ret = TransGetUdpChannel(TEST_CLOSEID, &channel);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    (void)TransDeleteUdpChannel(TEST_CLOSEID);
+    ClientTransChannelDeinit();
+    g_sessionCb = nullptr;
+}
 } // namespace OHOS
