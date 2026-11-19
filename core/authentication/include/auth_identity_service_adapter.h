@@ -63,6 +63,7 @@ char *IdServiceGetCredIdFromCredList(int32_t userId, const char *credList);
 void IdServiceDestroyCredentialList(char **returnData);
 int32_t IdServiceGetCredTypeByCredId(int32_t userId, const char *credId, int32_t *credType);
 int32_t IdServiceGetCredInfoByUdid(const char *udid, SoftBusCredInfo *credInfo);
+bool IsAppLevelSameAccountTrusted(void);
 
 #ifdef __cplusplus
 #if __cplusplus

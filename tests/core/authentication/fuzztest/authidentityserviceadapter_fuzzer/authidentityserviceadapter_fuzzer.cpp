@@ -62,7 +62,7 @@ void ProcessServiceGetCred(FuzzedDataProvider &provider, HiChainAuthParam &hiCha
     IsInvalidCredList(credList.c_str());
     string strCredInfo = provider.ConsumeRandomLengthString(CREATE_LIST_LEN);
     OnCredAdd(hiChainParam.credId, strCredInfo.c_str());
-    IdServiceHandleCredAdd(strCredInfo.c_str());
+    IdServiceHandleCredAdd(hiChainParam.credId, strCredInfo.c_str());
     IsLocalCredInfo(hiChainParam.udid);
     OnCredUpdate(hiChainParam.credId, strCredInfo.c_str());
     GetCredInfoFromJson(strCredInfo.c_str(), &credInfo);

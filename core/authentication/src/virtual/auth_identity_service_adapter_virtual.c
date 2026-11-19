@@ -95,3 +95,8 @@ void IdServiceUnRegCredMgr(void)
     AUTH_LOGI(AUTH_HICHAIN, "id service unreg cred manager not implement");
     return;
 }
+
+bool IsAppLevelSameAccountTrusted(void)
+{
+    return false;
+}
