@@ -67,12 +67,12 @@ void TransMultipathUpdateClosingState(SessionInfo *sessionNode, bool isClosing);
 
 /* ========== Event reporting ========== */
 
-SOFTBUS_VISIBILITY void TransMultipathOnEvent(
+void TransMultipathOnEvent(
     int32_t channelId, int32_t channelType, uint8_t changeType, int32_t linkType, int32_t reason);
 
 /* ========== Control-plane route selection ========== */
 
-SOFTBUS_VISIBILITY bool TransMultipathIsWiredRoute(int32_t routeType);
+bool TransMultipathIsWiredRoute(int32_t routeType);
 
 int32_t TransMultipathSelectCtrlChannel(int32_t sessionId, int32_t *channelId, int32_t *channelType);
 
@@ -85,8 +85,8 @@ int32_t TransMultipathMarkDown(int32_t sessionId, int32_t channelId);
 
 bool TransMultipathIsOtherUp(int32_t sessionId, int32_t channelId);
 
-SOFTBUS_VISIBILITY bool TransMultipathHandleChannelClose(int32_t sessionId, int32_t channelId,
-    int32_t *surviveChannelId, int32_t *surviveChannelType, int32_t *deadRouteType);
+bool TransMultipathHandleChannelClose(int32_t sessionId, int32_t channelId, int32_t *surviveChannelId,
+    int32_t *surviveChannelType, int32_t *deadRouteType);
 
 /* ========== Dead channel close ========== */
 
@@ -102,7 +102,7 @@ int32_t TransMultipathClearChannelSlotOnNode(SessionInfo *node, int32_t channelI
 int32_t TransMultipathGetOtherCtrlChannelOnNode(
     const SessionInfo *node, int32_t failChannelId, int32_t *altChannelId, int32_t *altChannelType);
 
-SOFTBUS_VISIBILITY int32_t TransMultipathMarkUpOnNode(SessionInfo *node, int32_t routeType);
+int32_t TransMultipathMarkUpOnNode(SessionInfo *node, int32_t routeType);
 
 /* ========== DFX ========== */
 

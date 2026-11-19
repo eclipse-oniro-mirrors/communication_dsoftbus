@@ -681,8 +681,8 @@ bool TransMultipathIsOtherUp(int32_t sessionId, int32_t channelId)
     return otherStatus == CTRL_CH_STATUS_UP;
 }
 
-SOFTBUS_VISIBILITY bool TransMultipathHandleChannelClose(int32_t sessionId, int32_t channelId,
-    int32_t *surviveChannelId, int32_t *surviveChannelType, int32_t *deadRouteType)
+SOFTBUS_VISIBILITY bool TransMultipathHandleChannelClose(int32_t sessionId, int32_t channelId, int32_t *surviveChannelId,
+    int32_t *surviveChannelType, int32_t *deadRouteType)
 {
     if (surviveChannelId == NULL || surviveChannelType == NULL || deadRouteType == NULL) {
         return false;
