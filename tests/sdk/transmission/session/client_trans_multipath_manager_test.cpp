@@ -128,7 +128,7 @@ HWTEST_F(TransMultipathManagerTest, TransMultipathSetEnabledInvalidParamTest001,
     int32_t ret = TransMultipathSetEnabled(-1, true);
     EXPECT_EQ(ret, SOFTBUS_TRANS_INVALID_SESSION_ID);
     ret = TransMultipathSetEnabled(0, true);
-    EXPECT_EQ(ret, SOFTBUS_TRANS_INVALID_SESSION_ID);
+    EXPECT_EQ(ret, SOFTBUS_TRANS_SESSION_INFO_NOT_FOUND);
     ret = TransMultipathSetEnabled(-1, false);
     EXPECT_EQ(ret, SOFTBUS_TRANS_INVALID_SESSION_ID);
 }
@@ -147,7 +147,7 @@ HWTEST_F(TransMultipathManagerTest, TransMultipathSetStrategyInvalidParamTest001
     ret = TransMultipathSetStrategy(0, MULTIPATH_STRATEGY_PARALLEL);
     EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
     ret = TransMultipathSetStrategy(1, MULTIPATH_STRATEGY_MAX);
-    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(ret, SOFTBUS_TRANS_SESSION_INFO_NOT_FOUND);
 }
 
 /*
@@ -219,7 +219,7 @@ HWTEST_F(TransMultipathManagerTest, TransMultipathClearReserveChannelInvalidPara
     int32_t ret = TransMultipathClearReserveChannel(-1);
     EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
     ret = TransMultipathClearReserveChannel(0);
-    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(ret, SOFTBUS_TRANS_SESSION_INFO_NOT_FOUND);
     ret = TransMultipathClearReserveChannel(TEST_UNREGISTERED_SESSION_ID);
     EXPECT_NE(ret, SOFTBUS_OK);
 }
