@@ -806,6 +806,37 @@ int32_t TransSetSocketChannelStateBySession(const char *sessionName, int32_t ses
     return SOFTBUS_NOT_FIND;
 }
 
+int32_t TransSetSocketChannelStateExpectCancelBySession(
+    const char *sessionName, int32_t sessionId, CoreSessionState state)
+{
+    int32_t ret = CheckParamIsValid(sessionName, sessionId);
+    if (ret != SOFTBUS_OK) {
+        return ret;
+    }
+    if (g_socketChannelList == NULL) {
+        TRANS_LOGE(TRANS_INIT, "socket info manager hasn't init.");
+        return SOFTBUS_NO_INIT;
+    }
+    if (SoftBusMutexLock(&(g_socketChannelList->lock)) != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_SVC, "lock failed");
+        return SOFTBUS_LOCK_ERR;
+    }
+    SocketWithChannelInfo *socketItem = GetSocketWithChannelInfoBySession(sessionName, sessionId);
+    if (socketItem == NULL) {
+        (void)SoftBusMutexUnlock(&(g_socketChannelList->lock));
+        AnonymizeLogSessionNameWhenNotFound(sessionName, sessionId);
+        return SOFTBUS_NOT_FIND;
+    }
+    if (socketItem->state == CORE_SESSION_STATE_CANCELLING) {
+        (void)SoftBusMutexUnlock(&(g_socketChannelList->lock));
+        TRANS_LOGI(TRANS_SVC, "socket is cancelling, keep state. sessionId=%{public}d", sessionId);
+        return SOFTBUS_TRANS_STOP_BIND_BY_CANCEL;
+    }
+    socketItem->state = state;
+    (void)SoftBusMutexUnlock(&(g_socketChannelList->lock));
+    return SOFTBUS_OK;
+}
+
 int32_t TransSetSocketChannelStateReserveBySession(const char *sessionName, int32_t sessionId, CoreSessionState state)
 {
     int32_t ret = CheckParamIsValid(sessionName, sessionId);

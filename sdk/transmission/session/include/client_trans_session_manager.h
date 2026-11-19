@@ -176,6 +176,10 @@ int32_t DeleteSocketSession(int32_t sessionId, char *pkgName, char *sessionName)
 
 int32_t SetSessionStateBySessionId(int32_t sessionId, SessionState sessionState, int32_t optional);
 
+int32_t SetSessionStateExpectCancelBySessionId(int32_t sessionId, SessionState sessionState, int32_t *errCode);
+
+int32_t CancelSessionStateBySessionId(int32_t sessionId, int32_t cancelReason, SessionState *preState);
+
 int32_t GetSocketLifecycleAndSessionNameBySessionId(
     int32_t sessionId, char *sessionName, SocketLifecycleData *lifecycle);
 

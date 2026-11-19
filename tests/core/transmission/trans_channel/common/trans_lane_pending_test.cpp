@@ -1140,7 +1140,14 @@ HWTEST_F(TransLanePendingTest, TransAsyncOpenChannelProcTest002, TestSize.Level1
     NiceMock<TransLanePendingTestInterfaceMock> mock;
     EXPECT_CALL(mock, TransOpenChannelProc).WillRepeatedly(Return(SOFTBUS_OK));
     EXPECT_CALL(mock, ClientIpcSetChannelInfo).WillOnce(Return(SOFTBUS_INVALID_PARAM));
+    EXPECT_CALL(mock, CreateSoftBusList).WillRepeatedly(Invoke(TestCreateSessionList));
+    int32_t ret = TransSocketLaneMgrInit();
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    ret = TransAddSocketChannelInfo(TEST_SESSION_NAME, TEST_SESSION_ID,
+        TEST_CHANNEL_ID, CHANNEL_TYPE_TCP_DIRECT, CORE_SESSION_STATE_LAN_COMPLETE);
+    ASSERT_EQ(SOFTBUS_OK, ret);
     TransAsyncOpenChannelProc(TEST_LANE_ID, param, &appInfo, &extra, &connInnerInfo);
+    (void)TransDeleteSocketChannelInfoBySession(TEST_SESSION_NAME, TEST_SESSION_ID);
     SoftBusFree(const_cast<SessionAttribute *>(param->attr));
     param->attr = nullptr;
     SoftBusFree(param);
@@ -1166,7 +1173,14 @@ HWTEST_F(TransLanePendingTest, TransAsyncOpenChannelProcTest003, TestSize.Level1
     EXPECT_CALL(mock, TransOpenChannelProc).WillRepeatedly(Return(SOFTBUS_OK));
     EXPECT_CALL(mock, ClientIpcSetChannelInfo).WillRepeatedly(Return(SOFTBUS_OK));
     EXPECT_CALL(mock, TransLaneMgrAddLane).WillOnce(Return(SOFTBUS_INVALID_PARAM));
+    EXPECT_CALL(mock, CreateSoftBusList).WillRepeatedly(Invoke(TestCreateSessionList));
+    int32_t ret = TransSocketLaneMgrInit();
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    ret = TransAddSocketChannelInfo(TEST_SESSION_NAME, TEST_SESSION_ID,
+        TEST_CHANNEL_ID, CHANNEL_TYPE_TCP_DIRECT, CORE_SESSION_STATE_LAN_COMPLETE);
+    ASSERT_EQ(SOFTBUS_OK, ret);
     TransAsyncOpenChannelProc(TEST_LANE_ID, param, &appInfo, &extra, &connInnerInfo);
+    (void)TransDeleteSocketChannelInfoBySession(TEST_SESSION_NAME, TEST_SESSION_ID);
     SoftBusFree(const_cast<SessionAttribute *>(param->attr));
     param->attr = nullptr;
     SoftBusFree(param);
@@ -1192,7 +1206,14 @@ HWTEST_F(TransLanePendingTest, TransAsyncOpenChannelProcTest004, TestSize.Level1
     EXPECT_CALL(mock, TransOpenChannelProc).WillRepeatedly(Return(SOFTBUS_OK));
     EXPECT_CALL(mock, ClientIpcSetChannelInfo).WillRepeatedly(Return(SOFTBUS_OK));
     EXPECT_CALL(mock, TransLaneMgrAddLane).WillRepeatedly(Return(SOFTBUS_OK));
+    EXPECT_CALL(mock, CreateSoftBusList).WillRepeatedly(Invoke(TestCreateSessionList));
+    int32_t ret = TransSocketLaneMgrInit();
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    ret = TransAddSocketChannelInfo(TEST_SESSION_NAME, TEST_SESSION_ID,
+        TEST_CHANNEL_ID, CHANNEL_TYPE_TCP_DIRECT, CORE_SESSION_STATE_LAN_COMPLETE);
+    ASSERT_EQ(SOFTBUS_OK, ret);
     TransAsyncOpenChannelProc(TEST_LANE_ID, param, &appInfo, &extra, &connInnerInfo);
+    (void)TransDeleteSocketChannelInfoBySession(TEST_SESSION_NAME, TEST_SESSION_ID);
     SoftBusFree(const_cast<SessionAttribute *>(param->attr));
     param->attr = nullptr;
     SoftBusFree(param);

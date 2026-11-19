@@ -807,6 +807,7 @@ static void TransAsyncOpenChannelProc(uint32_t laneHandle, SessionParam *param, 
 {
     TransInfo transInfo = { .channelId = INVALID_CHANNEL_ID, .channelType = CHANNEL_TYPE_BUTT };
     ConnectOption connOpt;
+    CoreSessionState curState = CORE_SESSION_STATE_INIT;
     (void)memset_s(&connOpt, sizeof(ConnectOption), 0, sizeof(ConnectOption));
     int32_t ret = TransGetConnectOptByConnInfo(connInnerInfo, &connOpt);
     if (ret != SOFTBUS_OK) {
@@ -824,6 +825,14 @@ static void TransAsyncOpenChannelProc(uint32_t laneHandle, SessionParam *param, 
     if (ret != SOFTBUS_OK) {
         SoftbusReportTransErrorEvt(SOFTBUS_TRANS_CREATE_CHANNEL_ERR);
         RecordFailOpenSessionKpi(appInfo, connInnerInfo, appInfo->timeStart);
+        goto EXIT_ERR;
+    }
+    if (TransGetSocketChannelStateBySession(param->sessionName, param->sessionId, &curState) != SOFTBUS_OK ||
+        curState == CORE_SESSION_STATE_CANCELLING) {
+        TRANS_LOGW(TRANS_SVC, "socket cancelled while opening channel, close it. sessionId=%{public}d",
+            param->sessionId);
+        (void)TransCommonCloseChannel(NULL, transInfo.channelId, transInfo.channelType);
+        ret = SOFTBUS_TRANS_STOP_BIND_BY_CANCEL;
         goto EXIT_ERR;
     }
     TransMultipathUpdateChannel(param->sessionName, param->sessionId, transInfo.channelId, transInfo.channelType);
@@ -888,10 +897,11 @@ static int32_t CreateAppInfoByParam(uint32_t laneHandle, const SessionParam *par
 static int32_t CheckSocketChannelState(uint32_t laneHandle, const SessionParam *param, TransEventExtra *extra,
     LaneTransType transType)
 {
-    CoreSessionState state = CORE_SESSION_STATE_INIT;
-    (void)TransGetSocketChannelStateBySession(param->sessionName, param->sessionId, &state);
-    if (state == CORE_SESSION_STATE_CANCELLING) {
-        TRANS_LOGI(TRANS_SVC, "cancel state laneHandle=%{public}u", laneHandle);
+    int32_t ret = TransSetSocketChannelStateExpectCancelBySession(
+        param->sessionName, param->sessionId, CORE_SESSION_STATE_LAN_COMPLETE);
+    if (ret == SOFTBUS_TRANS_STOP_BIND_BY_CANCEL || ret == SOFTBUS_NOT_FIND) {
+        TRANS_LOGI(TRANS_SVC, "socket cancelled or record deleted. laneHandle=%{public}u, ret=%{public}d",
+            laneHandle, ret);
         TransFreeLane(laneHandle, param->isQosLane, false);
         BuildTransEventExtra(extra, param, laneHandle, transType, SOFTBUS_TRANS_STOP_BIND_BY_CANCEL);
         TRANS_EVENT(EVENT_SCENE_OPEN_CHANNEL, EVENT_STAGE_SELECT_LANE, *extra);
@@ -899,6 +909,7 @@ static int32_t CheckSocketChannelState(uint32_t laneHandle, const SessionParam *
         (void)TransDelLaneReqFromPendingList(laneHandle, true);
         return SOFTBUS_TRANS_STOP_BIND_BY_CANCEL;
     }
+    TRANS_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret, TRANS_SVC, "set socket channel state failed");
     return SOFTBUS_OK;
 }
 
@@ -946,8 +957,6 @@ static void TransOnAsyncLaneSuccess(uint32_t laneHandle, const LaneConnInfo *con
     TRANS_EVENT(EVENT_SCENE_OPEN_CHANNEL, EVENT_STAGE_SELECT_LANE, extra);
     ret = CheckSocketChannelState(laneHandle, &reqLane.param, &extra, transType);
     TRANS_CHECK_AND_RETURN_LOGE(ret == SOFTBUS_OK, TRANS_SVC, "check socketChannel state failed.");
-    TransSetSocketChannelStateBySession(reqLane.param.sessionName,
-        reqLane.param.sessionId, CORE_SESSION_STATE_LAN_COMPLETE);
     AppInfo *appInfo = (AppInfo *)SoftBusCalloc(sizeof(AppInfo));
     if (appInfo == NULL) {
         TRANS_LOGE(TRANS_SVC, "malloc appInfo failed");
@@ -1649,12 +1658,10 @@ SOFTBUS_VISIBILITY int32_t TransGetLaneInfo(const SessionParam *param, LaneConnI
         TRANS_LOGE(TRANS_SVC, "get lane info param error.");
         return SOFTBUS_INVALID_PARAM;
     }
-    CoreSessionState state = CORE_SESSION_STATE_INIT;
-    (void)TransGetSocketChannelStateBySession(param->sessionName, param->sessionId, &state);
-    TRANS_CHECK_AND_RETURN_RET_LOGW(state != CORE_SESSION_STATE_CANCELLING, SOFTBUS_TRANS_STOP_BIND_BY_CANCEL,
-        TRANS_SVC, "cancel state, return cancel code.");
-    TransSetSocketChannelStateBySession(param->sessionName, param->sessionId, CORE_SESSION_STATE_WAIT_LANE);
-    int32_t ret = SOFTBUS_OK;
+    int32_t ret = TransSetSocketChannelStateExpectCancelBySession(
+        param->sessionName, param->sessionId, CORE_SESSION_STATE_WAIT_LANE);
+    TRANS_CHECK_AND_RETURN_RET_LOGW(ret == SOFTBUS_OK, ret, TRANS_SVC,
+        "socket cancelled or record deleted, return cancel code. ret=%{public}d", ret);
     TransEventExtra extra;
     LaneRequestOption requestOption;
     (void)memset_s(&requestOption, sizeof(LaneRequestOption), 0, sizeof(LaneRequestOption));
@@ -1713,14 +1720,17 @@ int32_t TransAsyncGetLaneInfoByQos(
         TRANS_LOGE(TRANS_SVC, "trigger begin");
         DcTriggerVirtualLinkPacked(param->peerDeviceId);
     }
-    CoreSessionState state = CORE_SESSION_STATE_INIT;
-    (void)TransGetSocketChannelStateBySession(param->sessionName, param->sessionId, &state);
-    if (state == CORE_SESSION_STATE_CANCELLING) {
+    ret = TransSetSocketChannelStateExpectCancelBySession(
+        param->sessionName, param->sessionId, CORE_SESSION_STATE_WAIT_LANE);
+    if (ret == SOFTBUS_TRANS_STOP_BIND_BY_CANCEL || ret == SOFTBUS_NOT_FIND) {
+        TRANS_LOGI(TRANS_SVC, "socket cancelled or record deleted. laneHandle=%{public}u, ret=%{public}d",
+            *laneHandle, ret);
         CancelLaneOnWaitLaneState(*laneHandle, param->isQosLane);
         (void)TransDelLaneReqFromPendingList(*laneHandle, true);
         return SOFTBUS_TRANS_STOP_BIND_BY_CANCEL;
     }
-    TransSetSocketChannelStateBySession(param->sessionName, param->sessionId, CORE_SESSION_STATE_WAIT_LANE);
+    TRANS_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret, TRANS_SVC,
+        "set socket channel state failed, ret=%{public}d", ret);
     return SOFTBUS_OK;
 }
 

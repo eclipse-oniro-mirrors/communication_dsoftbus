@@ -15,6 +15,10 @@
 
 #include "gtest/gtest.h"
 #include <securec.h>
+#include <atomic>
+#include <chrono>
+#include <climits>
+#include <thread>
 
 #include "trans_pending_pkt.c"
 
@@ -296,5 +300,246 @@ HWTEST_F(TransPendingPktTest, PendingPacketTestAll001, TestSize.Level1)
     EXPECT_EQ(SOFTBUS_OK, ret);
     ret = DelPendingPacket(channelId, type);
     EXPECT_EQ(SOFTBUS_OK, ret);
+}
+
+/*
+ * @tc.name: DelPendingPacketbyChannelId001
+ * @tc.desc: DelPendingPacketbyChannelId, use the illegal type and uninitialized list
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransPendingPktTest, DelPendingPacketbyChannelId001, TestSize.Level1)
+{
+    int32_t channelId = 1;
+    int32_t seqNum = 0;
+
+    int32_t type = PENDING_TYPE_BUTT + 1;
+    DelPendingPacketbyChannelId(channelId, seqNum, type);
+    type = PENDING_TYPE_PROXY - 1;
+    DelPendingPacketbyChannelId(channelId, seqNum, type);
+
+    type = PENDING_TYPE_PROXY;
+    PendingDeinit(type);
+    DelPendingPacketbyChannelId(channelId, seqNum, type);
+
+    type = PENDING_TYPE_DIRECT;
+    PendingDeinit(type);
+    DelPendingPacketbyChannelId(channelId, seqNum, type);
+}
+
+/*
+ * @tc.name: DelPendingPacketbyChannelId002
+ * @tc.desc: DelPendingPacketbyChannelId, delete items matched by channelId and seqNum
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransPendingPktTest, DelPendingPacketbyChannelId002, TestSize.Level1)
+{
+    int32_t type = PENDING_TYPE_PROXY;
+    PendingDeinit(type);
+    int32_t ret = PendingInit(type);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+
+    ret = AddPendingPacket(1, 100, type);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    ret = AddPendingPacket(2, 100, type);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    ret = AddPendingPacket(1, 200, type);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    EXPECT_EQ(3, g_pendingList[type]->cnt);
+
+    DelPendingPacketbyChannelId(1, 100, type);
+    EXPECT_EQ(2, g_pendingList[type]->cnt);
+    DelPendingPacketbyChannelId(2, 100, type);
+    EXPECT_EQ(1, g_pendingList[type]->cnt);
+    DelPendingPacketbyChannelId(1, 100, type);
+    EXPECT_EQ(1, g_pendingList[type]->cnt);
+    DelPendingPacketbyChannelId(1, 200, type);
+    EXPECT_EQ(0, g_pendingList[type]->cnt);
+    DelPendingPacketbyChannelId(1, 200, type);
+    EXPECT_EQ(0, g_pendingList[type]->cnt);
+
+    PendingDeinit(type);
+}
+
+/*
+ * @tc.name: DelPendingPacketbyChannelId003
+ * @tc.desc: DelPendingPacketbyChannelId, use the boundary channelId and seqNum
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransPendingPktTest, DelPendingPacketbyChannelId003, TestSize.Level1)
+{
+    int32_t type = PENDING_TYPE_PROXY;
+    PendingDeinit(type);
+    int32_t ret = PendingInit(type);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+
+    ret = AddPendingPacket(INT32_MAX, INT32_MAX, type);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    ret = AddPendingPacket(INT32_MIN, INT32_MIN, type);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    EXPECT_EQ(2, g_pendingList[type]->cnt);
+
+    PendingPktInfo *item = GetPendingPacket(INT32_MAX, INT32_MIN, type);
+    EXPECT_EQ(nullptr, item);
+    item = GetPendingPacket(INT32_MAX, INT32_MAX, type);
+    EXPECT_NE(nullptr, item);
+
+    DelPendingPacketbyChannelId(INT32_MAX, INT32_MAX, type);
+    EXPECT_EQ(1, g_pendingList[type]->cnt);
+    DelPendingPacketbyChannelId(INT32_MIN, INT32_MIN, type);
+    EXPECT_EQ(0, g_pendingList[type]->cnt);
+
+    PendingDeinit(type);
+}
+
+/*
+ * @tc.name: AddPendingPacket001
+ * @tc.desc: AddPendingPacket, use the illegal type and uninitialized list
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransPendingPktTest, AddPendingPacket001, TestSize.Level1)
+{
+    int32_t channelId = 1;
+    int32_t seqNum = 0;
+
+    int32_t type = PENDING_TYPE_BUTT + 1;
+    int32_t ret = AddPendingPacket(channelId, seqNum, type);
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
+    type = PENDING_TYPE_PROXY - 1;
+    ret = AddPendingPacket(channelId, seqNum, type);
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
+
+    type = PENDING_TYPE_PROXY;
+    PendingDeinit(type);
+    ret = AddPendingPacket(channelId, seqNum, type);
+    EXPECT_EQ(SOFTBUS_TRANS_TDC_PENDINGLIST_NOT_FOUND, ret);
+}
+
+/*
+ * @tc.name: GetPendingPacket001
+ * @tc.desc: GetPendingPacket, use the uninitialized list and unmatched seqNum
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransPendingPktTest, GetPendingPacket001, TestSize.Level1)
+{
+    int32_t channelId = 1;
+    int32_t seqNum = 0;
+    int32_t type = PENDING_TYPE_PROXY;
+
+    PendingDeinit(type);
+    PendingPktInfo *item = GetPendingPacket(channelId, seqNum, type);
+    EXPECT_EQ(nullptr, item);
+
+    int32_t ret = PendingInit(type);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    ret = AddPendingPacket(channelId, seqNum, type);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    item = GetPendingPacket(channelId, seqNum + 1, type);
+    EXPECT_EQ(nullptr, item);
+    item = GetPendingPacket(channelId + 1, seqNum, type);
+    EXPECT_EQ(nullptr, item);
+    item = GetPendingPacket(channelId, seqNum, type);
+    EXPECT_NE(nullptr, item);
+
+    PendingDeinit(type);
+}
+
+/*
+ * @tc.name: PendingPacketStateTransition001
+ * @tc.desc: Proc returns immediately when the item status is FINISHED or CANCELED
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransPendingPktTest, PendingPacketStateTransition001, TestSize.Level1)
+{
+    int32_t channelId = 30;
+    int32_t type = PENDING_TYPE_UDP;
+    PendingDeinit(type);
+    int32_t ret = PendingInit(type);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+
+    ret = AddPendingPacket(channelId, 700, type);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    ret = SetPendingPacket(channelId, 700, type);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    ret = ProcPendingPacket(channelId, 700, type);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    EXPECT_EQ(0, g_pendingList[type]->cnt);
+
+    ret = AddPendingPacket(channelId, 701, type);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    ret = DelPendingPacket(channelId, type);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    ret = ProcPendingPacket(channelId, 701, type);
+    EXPECT_EQ(SOFTBUS_TIMOUT, ret);
+    EXPECT_EQ(0, g_pendingList[type]->cnt);
+
+    PendingDeinit(type);
+}
+
+/*
+ * @tc.name: PendingPacketWakeUpBySet001
+ * @tc.desc: ProcPendingPacket is woken up by SetPendingPacket in another thread
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransPendingPktTest, PendingPacketWakeUpBySet001, TestSize.Level1)
+{
+    int32_t channelId = 10;
+    int32_t seqNum = 500;
+    int32_t type = PENDING_TYPE_UDP;
+    PendingDeinit(type);
+    int32_t ret = PendingInit(type);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    ret = AddPendingPacket(channelId, seqNum, type);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+
+    std::atomic<int32_t> procRet(SOFTBUS_INVALID_PARAM);
+    std::thread procThread([&procRet, channelId, seqNum, type]() {
+        procRet = ProcPendingPacket(channelId, seqNum, type);
+    });
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    ret = SetPendingPacket(channelId, seqNum, type);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    procThread.join();
+    EXPECT_EQ(SOFTBUS_OK, procRet.load());
+    EXPECT_EQ(0, g_pendingList[type]->cnt);
+
+    PendingDeinit(type);
+}
+
+/*
+ * @tc.name: PendingPacketWakeUpByDel001
+ * @tc.desc: ProcPendingPacket is woken up by DelPendingPacket in another thread
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransPendingPktTest, PendingPacketWakeUpByDel001, TestSize.Level1)
+{
+    int32_t channelId = 20;
+    int32_t seqNum = 600;
+    int32_t type = PENDING_TYPE_UDP;
+    PendingDeinit(type);
+    int32_t ret = PendingInit(type);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    ret = AddPendingPacket(channelId, seqNum, type);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+
+    std::atomic<int32_t> procRet(SOFTBUS_OK);
+    std::thread procThread([&procRet, channelId, seqNum, type]() {
+        procRet = ProcPendingPacket(channelId, seqNum, type);
+    });
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    ret = DelPendingPacket(channelId, type);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    procThread.join();
+    EXPECT_EQ(SOFTBUS_TIMOUT, procRet.load());
+    EXPECT_EQ(0, g_pendingList[type]->cnt);
+
+    PendingDeinit(type);
 }
 } // OHOS

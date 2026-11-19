@@ -1042,4 +1042,96 @@ HWTEST_F(TransLaneCommonTest, SetUdpChannelCapabilityTest001, TestSize.Level1)
     SetUdpChannelCapability(false, &value, 1);
     EXPECT_EQ(value, 0);
 }
+
+/*
+ * @tc.name: TransSetSocketChannelStateExpectCancelBySession001
+ * @tc.desc: test TransSetSocketChannelStateExpectCancelBySession returns SOFTBUS_OK and
+ *           updates the state when the socket record exists and is not cancelled
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransLaneCommonTest, TransSetSocketChannelStateExpectCancelBySession001, TestSize.Level1)
+{
+    NiceMock<TransLaneCommonTestInterfaceMock> transLaneCommonMock;
+    EXPECT_CALL(transLaneCommonMock, TransGetUidAndPid).WillRepeatedly(Return(SOFTBUS_TRANS_BAD_KEY));
+
+    int32_t ret = TransSetSocketChannelStateExpectCancelBySession(nullptr, TEST_SESSION_ID, CORE_SESSION_STATE_INIT);
+    EXPECT_EQ(ret, SOFTBUS_TRANS_INVALID_SESSION_NAME);
+    ret = TransSetSocketChannelStateExpectCancelBySession(
+        TEST_SESSION_NAME, TEST_INVALID_SESSION_ID, CORE_SESSION_STATE_INIT);
+    EXPECT_EQ(ret, SOFTBUS_TRANS_INVALID_SESSION_ID);
+
+    ret = TransSocketLaneMgrInit();
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    ret = TransAddSocketChannelInfo(
+        TEST_SESSION_NAME, TEST_SESSION_ID, TEST_CHANNEL_ID, CHANNEL_TYPE_TCP_DIRECT, CORE_SESSION_STATE_INIT);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+
+    ret = TransSetSocketChannelStateExpectCancelBySession(
+        TEST_SESSION_NAME, TEST_SESSION_ID, CORE_SESSION_STATE_WAIT_LANE);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    CoreSessionState state = CORE_SESSION_STATE_INIT;
+    ret = TransGetSocketChannelStateBySession(TEST_SESSION_NAME, TEST_SESSION_ID, &state);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    EXPECT_EQ(state, CORE_SESSION_STATE_WAIT_LANE);
+
+    ret = TransDeleteSocketChannelInfoBySession(TEST_SESSION_NAME, TEST_SESSION_ID);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+}
+
+/*
+ * @tc.name: TransSetSocketChannelStateExpectCancelBySession002
+ * @tc.desc: test TransSetSocketChannelStateExpectCancelBySession keeps CANCELLING state and
+ *           returns SOFTBUS_TRANS_STOP_BIND_BY_CANCEL when the socket is cancelled concurrently
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransLaneCommonTest, TransSetSocketChannelStateExpectCancelBySession002, TestSize.Level1)
+{
+    NiceMock<TransLaneCommonTestInterfaceMock> transLaneCommonMock;
+    EXPECT_CALL(transLaneCommonMock, TransGetUidAndPid).WillRepeatedly(Return(SOFTBUS_TRANS_BAD_KEY));
+
+    int32_t ret = TransSocketLaneMgrInit();
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    ret = TransAddSocketChannelInfo(
+        TEST_SESSION_NAME, TEST_SESSION_ID, TEST_CHANNEL_ID, CHANNEL_TYPE_TCP_DIRECT, CORE_SESSION_STATE_WAIT_LANE);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+
+    /* Simulate a concurrent Shutdown marking the socket CANCELLING. */
+    ret = TransSetSocketChannelStateBySession(TEST_SESSION_NAME, TEST_SESSION_ID, CORE_SESSION_STATE_CANCELLING);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+
+    /* The open-channel flow must not overwrite CANCELLING with LAN_COMPLETE. */
+    ret = TransSetSocketChannelStateExpectCancelBySession(
+        TEST_SESSION_NAME, TEST_SESSION_ID, CORE_SESSION_STATE_LAN_COMPLETE);
+    EXPECT_EQ(ret, SOFTBUS_TRANS_STOP_BIND_BY_CANCEL);
+    CoreSessionState state = CORE_SESSION_STATE_INIT;
+    ret = TransGetSocketChannelStateBySession(TEST_SESSION_NAME, TEST_SESSION_ID, &state);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    EXPECT_EQ(state, CORE_SESSION_STATE_CANCELLING);
+
+    ret = TransDeleteSocketChannelInfoBySession(TEST_SESSION_NAME, TEST_SESSION_ID);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+}
+
+/*
+ * @tc.name: TransSetSocketChannelStateExpectCancelBySession003
+ * @tc.desc: test TransSetSocketChannelStateExpectCancelBySession returns SOFTBUS_NOT_FIND
+ *           when the socket record has been deleted by a concurrent close
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransLaneCommonTest, TransSetSocketChannelStateExpectCancelBySession003, TestSize.Level1)
+{
+    NiceMock<TransLaneCommonTestInterfaceMock> transLaneCommonMock;
+    EXPECT_CALL(transLaneCommonMock, TransGetUidAndPid).WillRepeatedly(Return(SOFTBUS_TRANS_BAD_KEY));
+
+    int32_t ret = TransSocketLaneMgrInit();
+    EXPECT_EQ(ret, SOFTBUS_OK);
+
+    /* No record added for TEST_NEW_SESSION_ID: the record has been deleted by a concurrent close. */
+    ret = TransSetSocketChannelStateExpectCancelBySession(
+        TEST_SESSION_NAME, TEST_NEW_SESSION_ID, CORE_SESSION_STATE_LAN_COMPLETE);
+    EXPECT_EQ(ret, SOFTBUS_NOT_FIND);
+}
 } // namespace OHOS

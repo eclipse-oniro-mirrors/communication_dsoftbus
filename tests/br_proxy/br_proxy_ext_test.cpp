@@ -272,6 +272,191 @@ HWTEST_F(BrProxyExtTest, OpenBrProxyTest002, TestSize.Level1)
     }
 }
 
+static SoftBusList *CreateTestClientList()
+{
+    SoftBusList *list = (SoftBusList *)SoftBusCalloc(sizeof(SoftBusList));
+    if (list == nullptr) {
+        return nullptr;
+    }
+    SoftBusMutexAttr mutexAttr;
+    mutexAttr.type = SOFTBUS_MUTEX_RECURSIVE;
+    SoftBusMutexInit(&list->lock, &mutexAttr);
+    ListInit(&list->list);
+    return list;
+}
+
+static void DestroyTestClientList(SoftBusList *list)
+{
+    if (list == nullptr) {
+        return;
+    }
+    ClientBrProxyChannelInfo *nodeInfo = nullptr;
+    ClientBrProxyChannelInfo *nodeNext = nullptr;
+    LIST_FOR_EACH_ENTRY_SAFE(nodeInfo, nodeNext, &list->list, ClientBrProxyChannelInfo, node) {
+        ListDelete(&nodeInfo->node);
+        SoftBusFree(nodeInfo);
+    }
+    g_clientList = nullptr;
+    SoftBusFree(list);
+}
+
+static int32_t PrepareTestChannel(BrProxyExtInterfaceMock &mock, int32_t channelId)
+{
+    EXPECT_CALL(mock, ClientStubInit).WillRepeatedly(Return(SOFTBUS_OK));
+    EXPECT_CALL(mock, ClientRegisterBrProxyService).WillRepeatedly(Return(SOFTBUS_OK));
+    EXPECT_CALL(mock, ServerIpcOpenBrProxy).WillRepeatedly(Return(SOFTBUS_OK));
+    int32_t ret = OpenBrProxy(SESSION_ID, &g_channelInfo, &g_listener);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    ret = ClientTransOnBrProxyOpened(channelId, g_channelInfo.peerBRMacAddr, g_channelInfo.peerBRUuid, SOFTBUS_OK);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    return ret;
+}
+
+/**
+ * @tc.name: CloseBrProxyTest001
+ * @tc.desc: CloseBrProxy, cover ipc success, ipc invalid channel id and ipc failed branches
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BrProxyExtTest, CloseBrProxyTest001, TestSize.Level1)
+{
+    SoftBusList *list = CreateTestClientList();
+    ASSERT_TRUE(list != nullptr);
+    g_clientList = list;
+    NiceMock<BrProxyExtInterfaceMock> mock;
+    ASSERT_EQ(SOFTBUS_OK, PrepareTestChannel(mock, CHANNEL_ID));
+
+    EXPECT_CALL(mock, ServerIpcCloseBrProxy).WillOnce(Return(SOFTBUS_OK));
+    int32_t ret = CloseBrProxy(CHANNEL_ID);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    EXPECT_EQ(false, IsChannelValid(CHANNEL_ID));
+
+    ASSERT_EQ(SOFTBUS_OK, PrepareTestChannel(mock, CHANNEL_ID));
+    EXPECT_CALL(mock, ServerIpcCloseBrProxy).WillOnce(Return(SOFTBUS_TRANS_INVALID_CHANNEL_ID));
+    ret = CloseBrProxy(CHANNEL_ID);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    EXPECT_EQ(false, IsChannelValid(CHANNEL_ID));
+
+    ASSERT_EQ(SOFTBUS_OK, PrepareTestChannel(mock, CHANNEL_ID));
+    EXPECT_CALL(mock, ServerIpcCloseBrProxy).WillOnce(Return(SOFTBUS_TRANS_PROXY_INVALID_CHANNEL_ID));
+    ret = CloseBrProxy(CHANNEL_ID);
+    EXPECT_EQ(SOFTBUS_TRANS_PROXY_INVALID_CHANNEL_ID, ret);
+    EXPECT_EQ(true, IsChannelValid(CHANNEL_ID));
+
+    DestroyTestClientList(list);
+}
+
+/**
+ * @tc.name: SendBrProxyDataTest001
+ * @tc.desc: SendBrProxyData, cover data too long, ipc failed and ipc success branches
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BrProxyExtTest, SendBrProxyDataTest001, TestSize.Level1)
+{
+    SoftBusList *list = CreateTestClientList();
+    ASSERT_TRUE(list != nullptr);
+    g_clientList = list;
+    NiceMock<BrProxyExtInterfaceMock> mock;
+    ASSERT_EQ(SOFTBUS_OK, PrepareTestChannel(mock, CHANNEL_ID));
+
+    char data[] = "sendBrProxyData";
+    int32_t ret = SendBrProxyData(CHANNEL_ID, data, BR_PROXY_SEND_MAX_LEN + 1);
+    EXPECT_EQ(SOFTBUS_TRANS_BR_PROXY_DATA_TOO_LONG, ret);
+
+    EXPECT_CALL(mock, ServerIpcSendBrProxyData).WillOnce(Return(SOFTBUS_TRANS_PROXY_SENDMSG_ERR));
+    ret = SendBrProxyData(CHANNEL_ID, data, strlen(data));
+    EXPECT_EQ(SOFTBUS_TRANS_PROXY_SENDMSG_ERR, ret);
+
+    EXPECT_CALL(mock, ServerIpcSendBrProxyData).WillOnce(Return(SOFTBUS_OK));
+    ret = SendBrProxyData(CHANNEL_ID, data, strlen(data));
+    EXPECT_EQ(SOFTBUS_OK, ret);
+
+    DestroyTestClientList(list);
+}
+
+/**
+ * @tc.name: SetListenerStateTest001
+ * @tc.desc: SetListenerState, cover ipc failed and ipc success branches
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BrProxyExtTest, SetListenerStateTest001, TestSize.Level1)
+{
+    SoftBusList *list = CreateTestClientList();
+    ASSERT_TRUE(list != nullptr);
+    g_clientList = list;
+    NiceMock<BrProxyExtInterfaceMock> mock;
+    ASSERT_EQ(SOFTBUS_OK, PrepareTestChannel(mock, CHANNEL_ID));
+
+    EXPECT_CALL(mock, ServerIpcSetListenerState).WillOnce(Return(SOFTBUS_INVALID_PARAM));
+    int32_t ret = SetListenerState(CHANNEL_ID, DATA_RECEIVE, true);
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
+
+    EXPECT_CALL(mock, ServerIpcSetListenerState).WillOnce(Return(SOFTBUS_OK));
+    ret = SetListenerState(CHANNEL_ID, DATA_RECEIVE, true);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+
+    EXPECT_CALL(mock, ServerIpcSetListenerState).WillOnce(Return(SOFTBUS_OK));
+    ret = SetListenerState(CHANNEL_ID, LISTENER_TYPE_MAX, true);
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
+
+    DestroyTestClientList(list);
+}
+
+/**
+ * @tc.name: ClientTransOnBrProxyOpenedExtTest001
+ * @tc.desc: ClientTransOnBrProxyOpened, cover open failed, update failed and null callback branches
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BrProxyExtTest, ClientTransOnBrProxyOpenedExtTest001, TestSize.Level1)
+{
+    SoftBusList *list = CreateTestClientList();
+    ASSERT_TRUE(list != nullptr);
+    g_clientList = list;
+    NiceMock<BrProxyExtInterfaceMock> mock;
+    ASSERT_EQ(SOFTBUS_OK, PrepareTestChannel(mock, CHANNEL_ID));
+
+    int32_t ret = ClientTransOnBrProxyOpened(CHANNEL_ID, "11:22:33:44:55:66", g_channelInfo.peerBRUuid, SOFTBUS_OK);
+    EXPECT_EQ(SOFTBUS_NOT_FIND, ret);
+
+    ret = ClientTransOnBrProxyOpened(CHANNEL_ID, g_channelInfo.peerBRMacAddr, g_channelInfo.peerBRUuid,
+        SOFTBUS_TRANS_INVALID_CHANNEL_ID);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    EXPECT_EQ(false, IsChannelValid(CHANNEL_ID));
+
+    DestroyTestClientList(list);
+}
+
+/**
+ * @tc.name: BrProxyServiceDeathNotifyExtTest001
+ * @tc.desc: BrProxyServiceDeathNotify, cover client list not init branch
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BrProxyExtTest, BrProxyServiceDeathNotifyExtTest001, TestSize.Level1)
+{
+    g_clientList = nullptr;
+    BrProxyServiceDeathNotify();
+}
+
+/**
+ * @tc.name: IsProxyChannelEnabledExtTest001
+ * @tc.desc: IsProxyChannelEnabled, cover ipc success with enabled state branch
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BrProxyExtTest, IsProxyChannelEnabledExtTest001, TestSize.Level1)
+{
+    NiceMock<BrProxyExtInterfaceMock> mock;
+    EXPECT_CALL(mock, ClientStubInit).WillOnce(Return(SOFTBUS_OK));
+    EXPECT_CALL(mock, ClientRegisterService).WillOnce(Return(SOFTBUS_OK));
+    EXPECT_CALL(mock, ServerIpcIsProxyChannelEnabled).WillOnce(DoAll(SetArgPointee<1>(true), Return(SOFTBUS_OK)));
+    bool ret = IsProxyChannelEnabled(0);
+    EXPECT_EQ(true, ret);
+}
+
 /**
  * @tc.name: SoftbusErrConvertChannelStateTest001
  * @tc.desc: SoftbusErrConvertChannelStateTest001, use the wrong parameter.
@@ -380,5 +565,69 @@ HWTEST_F(BrProxyExtTest, ClientTransBrProxyQueryPermissionTest001, TestSize.Leve
     g_pushCb.queryPermission = &QueryPermissionSucc;
     ret = ClientTransBrProxyQueryPermission(bundleName, &isEmpowered);
     EXPECT_EQ(SOFTBUS_OK, ret);
+}
+
+/**
+ * @tc.name: IsMacValidExtTest001
+ * @tc.desc: IsMacValid, cover valid formats and each invalid format branch
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BrProxyExtTest, IsMacValidExtTest001, TestSize.Level1)
+{
+    EXPECT_TRUE(IsMacValid("AABBCCDDEEFF"));
+    EXPECT_TRUE(IsMacValid("AA:BB:CC:DD:EE:FF"));
+    EXPECT_TRUE(IsMacValid("AA-BB-CC-DD-EE-FF"));
+    EXPECT_TRUE(IsMacValid("AA.BB.CC.DD.EE.FF"));
+
+    EXPECT_FALSE(IsMacValid("AA:BB"));
+    EXPECT_FALSE(IsMacValid("AABBCCDD:EEFF"));
+    EXPECT_FALSE(IsMacValid("AA:BB-CC:DD:EE:FF"));
+    EXPECT_FALSE(IsMacValid(":AABBCCDD:EEFF"));
+    EXPECT_FALSE(IsMacValid("AABBCCDD:EEFF:"));
+    EXPECT_FALSE(IsMacValid("AA::BB:CC:DDEEFF"));
+    EXPECT_FALSE(IsMacValid("AA:BB:CC:DD:EE:FG"));
+}
+
+/**
+ * @tc.name: CheckSeparatorConsistencyExtTest001
+ * @tc.desc: CheckSeparatorConsistency, cover mixed separators and consistent separators
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BrProxyExtTest, CheckSeparatorConsistencyExtTest001, TestSize.Level1)
+{
+    EXPECT_FALSE(CheckSeparatorConsistency("AA:BB-CC:DD:EE:FF", 17));
+    EXPECT_TRUE(CheckSeparatorConsistency("AA:BB:CC:DD:EE:FF", 17));
+}
+
+/**
+ * @tc.name: IsUuidValidExtTest001
+ * @tc.desc: IsUuidValid, cover standard, no hyphen and each invalid branch
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BrProxyExtTest, IsUuidValidExtTest001, TestSize.Level1)
+{
+    EXPECT_TRUE(IsUuidValid("0000FEEA-0000-1000-8000-00805F9B34FB"));
+    EXPECT_TRUE(IsUuidValid("0000FEEA00001000800000805F9B34FB"));
+
+    EXPECT_FALSE(IsUuidValid("0000FEEA00001000-800000805F9B34F"));
+    EXPECT_FALSE(IsUuidValid("0000FEEA-0000-1000-0000F9B34FB000000"));
+    EXPECT_FALSE(IsUuidValid("0000FEEA-0000-1000-8000-00805F9B-4FB"));
+    EXPECT_FALSE(IsUuidValid("0000FEEA00001000G800000805F9B34F"));
+}
+
+/**
+ * @tc.name: IsPeerDevAddrValidExtTest001
+ * @tc.desc: IsPeerDevAddrValid, cover sha256 and mac valid branches
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BrProxyExtTest, IsPeerDevAddrValidExtTest001, TestSize.Level1)
+{
+    EXPECT_TRUE(IsPeerDevAddrValid("0123456789abcdef0123456789abcdef"));
+    EXPECT_TRUE(IsPeerDevAddrValid("AA:BB:CC:DD:EE:FF"));
+    EXPECT_FALSE(IsPeerDevAddrValid("AA:BB:CC"));
 }
 }

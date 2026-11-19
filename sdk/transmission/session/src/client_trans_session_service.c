@@ -1200,7 +1200,7 @@ int32_t ClientBind(int32_t socket, const QosTV qos[], uint32_t qosCount, const I
         ret = ClientWaitSyncBind(socket);
         TRANS_CHECK_AND_RETURN_RET_LOGE(
             ret == SOFTBUS_OK, ret, TRANS_SDK, "ClientWaitSyncBind err, ret=%{public}d", ret);
-        (void)SetSessionStateBySessionId(socket, SESSION_STATE_CALLBACK_FINISHED, 0);
+        (void)SetSessionStateExpectCancelBySessionId(socket, SESSION_STATE_CALLBACK_FINISHED, NULL);
     }
     ret = ClientSetSocketState(socket, maxIdleTimeout, SESSION_ROLE_CLIENT);
     TRANS_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret, TRANS_SDK, "set session role failed, ret=%{public}d", ret);
@@ -1260,14 +1260,19 @@ void ClientShutdown(int32_t socket, int32_t cancelReason)
         TRANS_LOGE(TRANS_SDK, "get socket state failed, socket=%{public}d failed, ret=%{public}d", socket, ret);
         return;
     }
-    if (lifecycle.sessionState == SESSION_STATE_CANCELLING) {
+    SessionState preState = SESSION_STATE_INIT;
+    ret = CancelSessionStateBySessionId(socket, cancelReason, &preState);
+    if (ret == SOFTBUS_TRANS_STOP_BIND_BY_CANCEL) {
         TRANS_LOGW(TRANS_SDK, "This socket already in cancelling state. socket=%{public}d", socket);
         return;
     }
-    SetSessionStateBySessionId(socket, SESSION_STATE_CANCELLING, cancelReason);
-    if (lifecycle.sessionState == SESSION_STATE_INIT) {
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_SDK, "cancel socket state failed, socket=%{public}d, ret=%{public}d", socket, ret);
+        return;
+    }
+    if (preState == SESSION_STATE_INIT) {
         TRANS_LOGI(TRANS_SDK, "This socket state is init, socket=%{public}d", socket);
-    } else if (lifecycle.sessionState == SESSION_STATE_OPENING) {
+    } else if (preState == SESSION_STATE_OPENING) {
         TRANS_LOGI(TRANS_SDK, "This socket state is opening, socket=%{public}d", socket);
         int32_t ret = ServerIpcCloseChannel(sessioName, socket, CHANNEL_TYPE_UNDEFINED);
         if (ret != SOFTBUS_OK) {
@@ -1277,9 +1282,9 @@ void ClientShutdown(int32_t socket, int32_t cancelReason)
         if (ret != SOFTBUS_OK) {
             TRANS_LOGE(TRANS_SDK, "sync signal bind failed, ret=%{public}d, socket=%{public}d", ret, socket);
         }
-    } else if (lifecycle.sessionState == SESSION_STATE_OPENED ||
-        lifecycle.sessionState == SESSION_STATE_CALLBACK_FINISHED) {
-        if (lifecycle.sessionState == SESSION_STATE_OPENED) {
+    } else if (preState == SESSION_STATE_OPENED ||
+        preState == SESSION_STATE_CALLBACK_FINISHED) {
+        if (preState == SESSION_STATE_OPENED) {
             TRANS_LOGI(TRANS_SDK, "This socket state is opened, socket=%{public}d", socket);
             CheckSessionIsOpened(socket, true);
         }
@@ -1305,7 +1310,7 @@ void ClientShutdown(int32_t socket, int32_t cancelReason)
             TRANS_LOGE(TRANS_SDK, "close channel err: ret=%{public}d, channelId=%{public}d, channeType=%{public}d", ret,
                 channelId, type);
         }
-        if (lifecycle.sessionState == SESSION_STATE_OPENED) {
+        if (preState == SESSION_STATE_OPENED) {
             (void)ClientSignalSyncBind(socket, cancelReason);
         }
     }
@@ -1377,7 +1382,13 @@ int32_t ClientDfsBind(int32_t socket, const ISocketListener *listener)
     ret = ClientSetChannelBySessionId(socket, &transInfo);
     TRANS_CHECK_AND_RETURN_RET_LOGE(
         ret == SOFTBUS_OK, ret, TRANS_SDK, "set channel by socket=%{public}d failed, ret=%{public}d", socket, ret);
-    ret = SetSessionStateBySessionId(socket, SESSION_STATE_OPENED, 0);
+    int32_t cancelErr = 0;
+    ret = SetSessionStateExpectCancelBySessionId(socket, SESSION_STATE_OPENED, &cancelErr);
+    if (ret == SOFTBUS_TRANS_STOP_BIND_BY_CANCEL) {
+        TRANS_LOGW(TRANS_SDK, "socket cancelled before set opened, socket=%{public}d, err=%{public}d",
+            socket, cancelErr);
+        return cancelErr != 0 ? cancelErr : SOFTBUS_TRANS_STOP_BIND_BY_CANCEL;
+    }
     TRANS_CHECK_AND_RETURN_RET_LOGE(
         ret == SOFTBUS_OK, ret, TRANS_SDK, "set session state failed socket=%{public}d, ret=%{public}d", socket, ret);
     ret = ClientWaitSyncBind(socket);

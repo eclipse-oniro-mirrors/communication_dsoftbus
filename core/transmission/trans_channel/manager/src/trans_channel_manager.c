@@ -455,7 +455,7 @@ SOFTBUS_VISIBILITY int32_t TransOpenChannel(const SessionParam *param, TransInfo
         AnonymizeWrapper(tmpName), param->sessionId, param->actionId, param->isQosLane, param->isAsync);
     AnonymizeFree(tmpName);
     uint32_t laneHandle = INVALID_LANE_REQ_ID;
-    CoreSessionState state = CORE_SESSION_STATE_INIT;
+    CoreSessionState curState = CORE_SESSION_STATE_INIT;
     AppInfo *appInfo = (AppInfo *)SoftBusCalloc(sizeof(AppInfo));
     if (appInfo == NULL) {
         TRANS_LOGE(TRANS_CTRL, "calloc appInfo failed.");
@@ -531,11 +531,13 @@ SOFTBUS_VISIBILITY int32_t TransOpenChannel(const SessionParam *param, TransInfo
     FillAppInfo(appInfo, param, transInfo, &connInfo);
     TransOpenChannelSetModule(transInfo->channelType, &connOpt);
     TRANS_LOGI(TRANS_CTRL, "laneHandle=%{public}u, channelType=%{public}u", laneHandle, transInfo->channelType);
-    (void)TransGetSocketChannelStateBySession(param->sessionName, param->sessionId, &state);
-    if (state == CORE_SESSION_STATE_CANCELLING) {
+    ret = TransSetSocketChannelStateExpectCancelBySession(
+        param->sessionName, param->sessionId, CORE_SESSION_STATE_LAN_COMPLETE);
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGI(TRANS_CTRL, "socket cancelled or deleted before open channel, socket=%{public}d, ret=%{public}d",
+            param->sessionId, ret);
         goto EXIT_CANCEL;
     }
-    TransSetSocketChannelStateBySession(param->sessionName, param->sessionId, CORE_SESSION_STATE_LAN_COMPLETE);
     ret = TransOpenChannelProc((ChannelType)transInfo->channelType, appInfo, &connOpt, &(transInfo->channelId));
     (void)memset_s(appInfo->sessionKey, sizeof(appInfo->sessionKey), 0, sizeof(appInfo->sessionKey));
     (void)memset_s(appInfo->sinkSessionKey, sizeof(appInfo->sinkSessionKey), 0, sizeof(appInfo->sinkSessionKey));
@@ -543,6 +545,14 @@ SOFTBUS_VISIBILITY int32_t TransOpenChannel(const SessionParam *param, TransInfo
         SoftbusReportTransErrorEvt(SOFTBUS_TRANS_CREATE_CHANNEL_ERR);
         SoftbusRecordOpenSessionKpi(appInfo->myData.pkgName,
             appInfo->linkType, SOFTBUS_EVT_OPEN_SESSION_FAIL, GetSoftbusRecordTimeMillis() - appInfo->timeStart);
+        goto EXIT_ERR;
+    }
+    if (TransGetSocketChannelStateBySession(param->sessionName, param->sessionId, &curState) != SOFTBUS_OK ||
+        curState == CORE_SESSION_STATE_CANCELLING) {
+        TRANS_LOGW(TRANS_CTRL, "socket cancelled while opening channel, close it. socket=%{public}d",
+            param->sessionId);
+        (void)TransCloseChannel(NULL, transInfo->channelId, transInfo->channelType);
+        ret = SOFTBUS_TRANS_STOP_BIND_BY_CANCEL;
         goto EXIT_ERR;
     }
     if (TransMultipathUpdateChannel(

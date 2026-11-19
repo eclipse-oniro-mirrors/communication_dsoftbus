@@ -1864,4 +1864,415 @@ HWTEST_F(BrProxyServerManagerTest, TransBrProxyRemoveObjectTest001, TestSize.Lev
     EXPECT_NO_FATAL_FAILURE(TransBrProxyRemoveObject(-1));
     EXPECT_NO_FATAL_FAILURE(TransBrProxyRemoveObject(9999));
 }
+
+static int32_t DummySendChannel(struct ProxyChannel *channel, const uint8_t *data, uint32_t dataLen)
+{
+    (void)channel;
+    (void)data;
+    (void)dataLen;
+    return SOFTBUS_OK;
+}
+
+static int32_t DummySendChannelFail(struct ProxyChannel *channel, const uint8_t *data, uint32_t dataLen)
+{
+    (void)channel;
+    (void)data;
+    (void)dataLen;
+    return SOFTBUS_CONN_BR_UNDERLAY_WRITE_FAIL;
+}
+
+static BrProxyInfo *InjectProxyNode(const char *brMac, const char *uuid, uint32_t requestId)
+{
+    BrProxyInfo *node = reinterpret_cast<BrProxyInfo *>(SoftBusCalloc(sizeof(BrProxyInfo)));
+    if (node == nullptr) {
+        return nullptr;
+    }
+    (void)strcpy_s(node->proxyInfo.brMac, sizeof(node->proxyInfo.brMac), brMac);
+    (void)strcpy_s(node->proxyInfo.uuid, sizeof(node->proxyInfo.uuid), uuid);
+    node->requestId = requestId;
+    ListInit(&node->node);
+    ListAdd(&g_proxyList->list, &node->node);
+    g_proxyList->cnt++;
+    return node;
+}
+
+static ServerBrProxyChannelInfo *InjectServerChannelNode(const char *brMac, const char *uuid, int32_t channelId,
+    uint32_t requestId)
+{
+    ServerBrProxyChannelInfo *node =
+        reinterpret_cast<ServerBrProxyChannelInfo *>(SoftBusCalloc(sizeof(ServerBrProxyChannelInfo)));
+    if (node == nullptr) {
+        return nullptr;
+    }
+    (void)strcpy_s(node->proxyInfo.brMac, sizeof(node->proxyInfo.brMac), brMac);
+    (void)strcpy_s(node->proxyInfo.uuid, sizeof(node->proxyInfo.uuid), uuid);
+    node->channelId = channelId;
+    node->requestId = requestId;
+    node->callingPid = PID_TEST;
+    node->callingUid = UID_TEST;
+    node->callingTokenId = TOKENID_TEST;
+    ListInit(&node->node);
+    ListAdd(&g_serverList->list, &node->node);
+    g_serverList->cnt++;
+    return node;
+}
+
+static void RemoveServerChannelNode(ServerBrProxyChannelInfo *node)
+{
+    if (node == nullptr) {
+        return;
+    }
+    ListDelete(&node->node);
+    SoftBusFree(node);
+    g_serverList->cnt--;
+}
+
+/**
+ * @tc.name: GetBrProxyHitTest001
+ * @tc.desc: GetBrProxy, matched proxy node returns SOFTBUS_OK
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BrProxyServerManagerTest, GetBrProxyHitTest001, TestSize.Level1)
+{
+    g_proxyList = NULL;
+    ASSERT_EQ(BrProxyServerInit(), SOFTBUS_OK);
+    ASSERT_NE(InjectProxyNode(VALID_BR_MAC, TEST_UUID, REQUEST_ID), nullptr);
+    BrProxyInfo info;
+    (void)memset_s(&info, sizeof(BrProxyInfo), 0, sizeof(BrProxyInfo));
+    int32_t ret = GetBrProxy(VALID_BR_MAC, TEST_UUID, REQUEST_ID, &info);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    ret = GetBrProxy(INVALID_BR_MAC, TEST_UUID, REQUEST_ID, &info);
+    EXPECT_EQ(ret, SOFTBUS_NOT_FIND);
+    ret = GetBrProxy(VALID_BR_MAC, TEST_UUID, REQUEST_ID + 1, &info);
+    EXPECT_EQ(ret, SOFTBUS_NOT_FIND);
+    CloseAllBrProxy();
+}
+
+/**
+ * @tc.name: GetBrProxyByPidTest001
+ * @tc.desc: GetBrProxyByPid, matched proxy node returns SOFTBUS_OK
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BrProxyServerManagerTest, GetBrProxyByPidTest001, TestSize.Level1)
+{
+    g_proxyList = NULL;
+    ASSERT_EQ(BrProxyServerInit(), SOFTBUS_OK);
+    BrProxyInfo *node = InjectProxyNode(VALID_BR_MAC, TEST_UUID, REQUEST_ID);
+    ASSERT_NE(node, nullptr);
+    node->pid = PID_TEST;
+    BrProxyInfo info;
+    (void)memset_s(&info, sizeof(BrProxyInfo), 0, sizeof(BrProxyInfo));
+    int32_t ret = GetBrProxyByPid(VALID_BR_MAC, TEST_UUID, PID_TEST, &info);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    ret = GetBrProxyByPid(VALID_BR_MAC, TEST_UUID, PID_TEST + 1, &info);
+    EXPECT_EQ(ret, SOFTBUS_NOT_FIND);
+    CloseAllBrProxy();
+}
+
+/**
+ * @tc.name: ServerAddChannelToListReopenTest001
+ * @tc.desc: ServerAddChannelToList, session already exist and reopens without adding a new node
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BrProxyServerManagerTest, ServerAddChannelToListReopenTest001, TestSize.Level1)
+{
+    g_serverList = NULL;
+    ASSERT_EQ(BrProxyServerInit(), SOFTBUS_OK);
+    NiceMock<BrProxyServerManagerInterfaceMock> mock;
+    EXPECT_CALL(mock, GetCallerPid).WillRepeatedly(Return(PID_TEST));
+    EXPECT_CALL(mock, GetCallerUid).WillRepeatedly(Return(UID_TEST));
+    EXPECT_CALL(mock, GetCallerTokenId).WillRepeatedly(Return(TOKENID_TEST));
+    int32_t ret = ServerAddChannelToList(VALID_BR_MAC, TEST_UUID, CHANNEL_ID, REQUEST_ID, APP_INDEX_TEST);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    EXPECT_EQ(g_serverList->cnt, 1);
+    ret = ServerAddChannelToList(VALID_BR_MAC, TEST_UUID, CHANNEL_ID + 1, REQUEST_ID + 1, APP_INDEX_TEST);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    EXPECT_EQ(g_serverList->cnt, 1);
+    EXPECT_EQ(ServerDeleteChannelFromList(CHANNEL_ID + 1), SOFTBUS_NOT_FIND);
+    EXPECT_EQ(ServerDeleteChannelFromList(CHANNEL_ID), SOFTBUS_OK);
+}
+
+/**
+ * @tc.name: ServerAddChannelToListUserIdFailTest001
+ * @tc.desc: ServerAddChannelToList, get userId from uid fails and node is not added
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BrProxyServerManagerTest, ServerAddChannelToListUserIdFailTest001, TestSize.Level1)
+{
+    g_serverList = NULL;
+    ASSERT_EQ(BrProxyServerInit(), SOFTBUS_OK);
+    NiceMock<BrProxyServerManagerInterfaceMock> mock;
+    EXPECT_CALL(mock, GetCallerPid).WillRepeatedly(Return(PID_TEST));
+    EXPECT_CALL(mock, GetCallerUid).WillRepeatedly(Return(static_cast<pid_t>(-1)));
+    int32_t ret = ServerAddChannelToList(VALID_BR_MAC, TEST_UUID, CHANNEL_ID, REQUEST_ID, APP_INDEX_TEST);
+    EXPECT_NE(ret, SOFTBUS_OK);
+    EXPECT_EQ(g_serverList->cnt, 0);
+}
+
+/**
+ * @tc.name: OnOpenFailTest001
+ * @tc.desc: OnOpenFail, channel info not found returns directly
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BrProxyServerManagerTest, OnOpenFailTest001, TestSize.Level1)
+{
+    g_serverList = NULL;
+    ASSERT_EQ(BrProxyServerInit(), SOFTBUS_OK);
+    EXPECT_NO_FATAL_FAILURE(OnOpenFail(REQUEST_ID + 100, 0, nullptr));
+}
+
+/**
+ * @tc.name: OnOpenFailTest004
+ * @tc.desc: OnOpenFail, recovery proxy returns before channel is deleted
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BrProxyServerManagerTest, OnOpenFailTest004, TestSize.Level1)
+{
+    g_serverList = NULL;
+    g_proxyList = NULL;
+    ASSERT_EQ(BrProxyServerInit(), SOFTBUS_OK);
+    CloseAllBrProxy();
+    ServerBrProxyChannelInfo *channelNode = InjectServerChannelNode(VALID_BR_MAC, TEST_UUID, CHANNEL_ID, REQUEST_ID);
+    ASSERT_NE(channelNode, nullptr);
+    BrProxyInfo *proxyNode = InjectProxyNode(VALID_BR_MAC, TEST_UUID, REQUEST_ID);
+    ASSERT_NE(proxyNode, nullptr);
+    proxyNode->isRecovery = true;
+
+    EXPECT_NO_FATAL_FAILURE(OnOpenFail(REQUEST_ID, SOFTBUS_CONN_BR_UNPAIRED, nullptr));
+    EXPECT_EQ(g_serverList->cnt, 1);
+    CloseAllBrProxy();
+    RemoveServerChannelNode(channelNode);
+}
+
+/**
+ * @tc.name: UpdateBrProxyRequestIdTest001
+ * @tc.desc: UpdateBrProxyRequestId, matched node updates requestId and reports old one
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BrProxyServerManagerTest, UpdateBrProxyRequestIdTest001, TestSize.Level1)
+{
+    g_proxyList = NULL;
+    ASSERT_EQ(BrProxyServerInit(), SOFTBUS_OK);
+    CloseAllBrProxy();
+    BrProxyInfo *proxyNode = InjectProxyNode(VALID_BR_MAC, TEST_UUID, REQUEST_ID);
+    ASSERT_NE(proxyNode, nullptr);
+    proxyNode->appIndex = APP_INDEX_TEST;
+    proxyNode->userId = JudgeDeviceTypeAndGetOsAccountIds();
+    uint32_t oldRequestId = 0;
+    int32_t ret = UpdateBrProxyRequestId(VALID_BR_MAC, TEST_UUID, APP_INDEX_TEST, REQUEST_ID + 1, &oldRequestId);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    EXPECT_EQ(oldRequestId, static_cast<uint32_t>(REQUEST_ID));
+    CloseAllBrProxy();
+}
+
+/**
+ * @tc.name: TransCloseBrProxyTest001
+ * @tc.desc: TransCloseBrProxy, token id mismatch returns SOFTBUS_TRANS_BR_PROXY_TOKENID_ERR
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BrProxyServerManagerTest, TransCloseBrProxyTest001, TestSize.Level1)
+{
+    g_serverList = NULL;
+    g_proxyList = NULL;
+    ASSERT_EQ(BrProxyServerInit(), SOFTBUS_OK);
+    CloseAllBrProxy();
+    ServerBrProxyChannelInfo *channelNode = InjectServerChannelNode(VALID_BR_MAC, TEST_UUID, CHANNEL_ID, REQUEST_ID);
+    ASSERT_NE(channelNode, nullptr);
+    NiceMock<BrProxyServerManagerInterfaceMock> mock;
+    EXPECT_CALL(mock, GetCallerTokenId).WillRepeatedly(Return(TOKENID_TEST + 1));
+    int32_t ret = TransCloseBrProxy(CHANNEL_ID, false);
+    EXPECT_EQ(ret, SOFTBUS_TRANS_BR_PROXY_TOKENID_ERR);
+    RemoveServerChannelNode(channelNode);
+}
+
+/**
+ * @tc.name: TransCloseBrProxyTest002
+ * @tc.desc: TransCloseBrProxy, inner call closes channel, disables proxy and deletes server node
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BrProxyServerManagerTest, TransCloseBrProxyTest002, TestSize.Level1)
+{
+    g_serverList = NULL;
+    g_proxyList = NULL;
+    ASSERT_EQ(BrProxyServerInit(), SOFTBUS_OK);
+    CloseAllBrProxy();
+    ServerBrProxyChannelInfo *channelNode = InjectServerChannelNode(VALID_BR_MAC, TEST_UUID, CHANNEL_ID, REQUEST_ID);
+    ASSERT_NE(channelNode, nullptr);
+    channelNode->channel.close = DummyCloseChannel;
+    BrProxyInfo *proxyNode = InjectProxyNode(VALID_BR_MAC, TEST_UUID, REQUEST_ID);
+    ASSERT_NE(proxyNode, nullptr);
+    proxyNode->isEnable = true;
+    proxyNode->isConnected = IS_CONNECTED;
+
+    int32_t ret = TransCloseBrProxy(CHANNEL_ID, true);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    EXPECT_EQ(g_serverList->cnt, 0);
+    EXPECT_EQ(proxyNode->isEnable, false);
+    EXPECT_EQ(proxyNode->isConnected, IS_DISCONNECTED);
+    CloseAllBrProxy();
+}
+
+/**
+ * @tc.name: TransSendBrProxyDataTest001
+ * @tc.desc: TransSendBrProxyData, cover token mismatch, null send, send failed and send success branches
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BrProxyServerManagerTest, TransSendBrProxyDataTest001, TestSize.Level1)
+{
+    g_serverList = NULL;
+    g_proxyList = NULL;
+    ASSERT_EQ(BrProxyServerInit(), SOFTBUS_OK);
+    CloseAllBrProxy();
+    ServerBrProxyChannelInfo *channelNode = InjectServerChannelNode(VALID_BR_MAC, TEST_UUID, CHANNEL_ID, REQUEST_ID);
+    ASSERT_NE(channelNode, nullptr);
+    NiceMock<BrProxyServerManagerInterfaceMock> mock;
+    EXPECT_CALL(mock, GetCallerTokenId).WillRepeatedly(Return(TOKENID_TEST));
+    char data[] = "sendBrProxyData";
+
+    int32_t ret = TransSendBrProxyData(CHANNEL_ID, data, strlen(data));
+    EXPECT_EQ(ret, SOFTBUS_CONN_BR_UNDERLAY_WRITE_FAIL);
+
+    channelNode->channel.send = DummySendChannelFail;
+    ret = TransSendBrProxyData(CHANNEL_ID, data, strlen(data));
+    EXPECT_EQ(ret, SOFTBUS_CONN_BR_UNDERLAY_WRITE_FAIL);
+
+    channelNode->channel.send = DummySendChannel;
+    ret = TransSendBrProxyData(CHANNEL_ID, data, strlen(data));
+    EXPECT_EQ(ret, SOFTBUS_OK);
+
+    EXPECT_CALL(mock, GetCallerTokenId).WillRepeatedly(Return(TOKENID_TEST + 1));
+    ret = TransSendBrProxyData(CHANNEL_ID, data, strlen(data));
+    EXPECT_EQ(ret, SOFTBUS_TRANS_BR_PROXY_TOKENID_ERR);
+    RemoveServerChannelNode(channelNode);
+}
+
+/**
+ * @tc.name: TransSetListenerStateTest001
+ * @tc.desc: TransSetListenerState, cover token mismatch, invalid type and enable branches
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BrProxyServerManagerTest, TransSetListenerStateTest001, TestSize.Level1)
+{
+    g_serverList = NULL;
+    g_proxyList = NULL;
+    ASSERT_EQ(BrProxyServerInit(), SOFTBUS_OK);
+    CloseAllBrProxy();
+    ServerBrProxyChannelInfo *channelNode = InjectServerChannelNode(VALID_BR_MAC, TEST_UUID, CHANNEL_ID, REQUEST_ID);
+    ASSERT_NE(channelNode, nullptr);
+    NiceMock<BrProxyServerManagerInterfaceMock> mock;
+    EXPECT_CALL(mock, GetCallerTokenId).WillRepeatedly(Return(TOKENID_TEST));
+    EXPECT_CALL(mock, GetCallerPid).WillRepeatedly(Return(PID_TEST));
+
+    int32_t ret = TransSetListenerState(CHANNEL_ID, LISTENER_TYPE_MAX, true);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+    ret = TransSetListenerState(CHANNEL_ID, DATA_RECEIVE, true);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    ret = TransSetListenerState(CHANNEL_ID, DATA_RECEIVE, false);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    ret = TransSetListenerState(CHANNEL_ID, CHANNEL_STATE, true);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+
+    EXPECT_CALL(mock, GetCallerTokenId).WillRepeatedly(Return(TOKENID_TEST + 1));
+    ret = TransSetListenerState(CHANNEL_ID, CHANNEL_STATE, true);
+    EXPECT_EQ(ret, SOFTBUS_TRANS_BR_PROXY_TOKENID_ERR);
+    RemoveServerChannelNode(channelNode);
+}
+
+/**
+ * @tc.name: UninstallHandlerTest001
+ * @tc.desc: UninstallHandler, server list and proxy list not init return directly
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BrProxyServerManagerTest, UninstallHandlerTest001, TestSize.Level1)
+{
+    g_serverList = NULL;
+    g_proxyList = NULL;
+    EXPECT_NO_FATAL_FAILURE(UninstallHandler("bundle", APP_INDEX_TEST, UID_TEST));
+}
+
+/**
+ * @tc.name: UninstallHandlerTest002
+ * @tc.desc: UninstallHandler, matching nodes are closed, disabled and deleted
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BrProxyServerManagerTest, UninstallHandlerTest002, TestSize.Level1)
+{
+    g_serverList = NULL;
+    g_proxyList = NULL;
+    ASSERT_EQ(BrProxyServerInit(), SOFTBUS_OK);
+    CloseAllBrProxy();
+    ServerBrProxyChannelInfo *channelNode = InjectServerChannelNode(VALID_BR_MAC, TEST_UUID, CHANNEL_ID, REQUEST_ID);
+    ASSERT_NE(channelNode, nullptr);
+    channelNode->appIndex = APP_INDEX_TEST;
+    channelNode->userId = UID_TEST;
+    BrProxyInfo *proxyNode = InjectProxyNode(VALID_BR_MAC, TEST_UUID, REQUEST_ID);
+    ASSERT_NE(proxyNode, nullptr);
+    proxyNode->appIndex = APP_INDEX_TEST;
+    proxyNode->userId = UID_TEST;
+    proxyNode->isEnable = true;
+    proxyNode->isConnected = IS_CONNECTED;
+    proxyNode->channel.close = DummyCloseChannel;
+    BrProxyInfo *noCloseNode = InjectProxyNode(INVALID_BR_MAC, TEST_UUID, REQUEST_ID + 1);
+    ASSERT_NE(noCloseNode, nullptr);
+    noCloseNode->appIndex = APP_INDEX_TEST;
+    noCloseNode->userId = UID_TEST;
+    noCloseNode->isEnable = true;
+
+    EXPECT_NO_FATAL_FAILURE(UninstallHandler("bundle", APP_INDEX_TEST, UID_TEST));
+    EXPECT_EQ(g_serverList->cnt, 0);
+    EXPECT_EQ(proxyNode->isEnable, false);
+    EXPECT_EQ(proxyNode->isConnected, IS_DISCONNECTED);
+    EXPECT_EQ(proxyNode->isLastConnect, false);
+    EXPECT_EQ(noCloseNode->isEnable, false);
+    CloseAllBrProxy();
+}
+
+/**
+ * @tc.name: ApplyForUnrestrictedTest001
+ * @tc.desc: ApplyForUnrestricted, channel not found or proxy not found returns error
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BrProxyServerManagerTest, ApplyForUnrestrictedTest001, TestSize.Level1)
+{
+    g_serverList = NULL;
+    g_proxyList = NULL;
+    ASSERT_EQ(BrProxyServerInit(), SOFTBUS_OK);
+    CloseAllBrProxy();
+    int32_t ret = ApplyForUnrestricted(CHANNEL_ID);
+    EXPECT_EQ(ret, SOFTBUS_TRANS_INVALID_CHANNEL_ID);
+
+    ServerBrProxyChannelInfo *channelNode = InjectServerChannelNode(VALID_BR_MAC, TEST_UUID, CHANNEL_ID, REQUEST_ID);
+    ASSERT_NE(channelNode, nullptr);
+    ret = ApplyForUnrestricted(CHANNEL_ID);
+    EXPECT_EQ(ret, SOFTBUS_NOT_FIND);
+    RemoveServerChannelNode(channelNode);
+}
+
+/**
+ * @tc.name: PostStopAppEventTest001
+ * @tc.desc: PostStopAppEvent, bundle name too long returns SOFTBUS_STRCPY_ERR
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BrProxyServerManagerTest, PostStopAppEventTest001, TestSize.Level1)
+{
+    std::string longBundleName(HAP_NAME_MAX_LEN + 8, 'x');
+    int32_t ret = PostStopAppEvent(longBundleName.c_str(), PID_TEST, UID_TEST);
+    EXPECT_EQ(ret, SOFTBUS_STRCPY_ERR);
+}
+
 } // namespace OHOS

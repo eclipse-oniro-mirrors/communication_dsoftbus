@@ -621,4 +621,63 @@ HWTEST_F(SoftbusServerTest, SoftbusServerTest024, TestSize.Level1)
     qos.qos = QOS_TYPE_BUTT;
     EXPECT_NO_FATAL_FAILURE(ConvertQosInfo(&qos, qosCount, &qosInfo));
 }
+
+/**
+ * @tc.name: SoftbusServerTest025
+ * @tc.desc: Dump api test with args.
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(SoftbusServerTest, SoftbusServerTest025, TestSize.Level1)
+{
+    sptr<OHOS::SoftBusServer> softBusServer = new OHOS::SoftBusServer(SOFTBUS_SERVER_SA_ID, true);
+    EXPECT_NE(softBusServer, nullptr);
+    int32_t fd = 0;
+    std::vector<std::u16string> args;
+    args.emplace_back(u"testArg");
+    EXPECT_NO_FATAL_FAILURE(softBusServer->Dump(fd, args));
+}
+
+/**
+ * @tc.name: SoftbusServerTest026
+ * @tc.desc: SoftbusRegisterService api test with duplicate pkgName.
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(SoftbusServerTest, SoftbusServerTest026, TestSize.Level1)
+{
+    sptr<OHOS::SoftBusServer> softBusServer = new OHOS::SoftBusServer(SOFTBUS_SERVER_SA_ID, true);
+    EXPECT_NE(softBusServer, nullptr);
+    sptr<IRemoteObject> obj = GenerateRemoteObject();
+    ASSERT_NE(obj, nullptr);
+
+    int32_t ret = softBusServer->SoftbusRegisterService("test026", obj, OHOS_PERMISSION_DISTRIBUTED_DATASYNC);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+    ret = softBusServer->SoftbusRegisterService("test026", obj, OHOS_PERMISSION_DISTRIBUTED_DATASYNC);
+    EXPECT_EQ(ret, SOFTBUS_OK);
+}
+
+/**
+ * @tc.name: SoftbusServerTest027
+ * @tc.desc: OpenAuthSession api test with ncm addr type.
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(SoftbusServerTest, SoftbusServerTest027, TestSize.Level1)
+{
+    sptr<OHOS::SoftBusServer> softBusServer = new OHOS::SoftBusServer(SOFTBUS_SERVER_SA_ID, true);
+    EXPECT_NE(softBusServer, nullptr);
+
+    ConnectionAddr addr;
+    (void)memset_s(&addr, sizeof(ConnectionAddr), 0, sizeof(ConnectionAddr));
+    addr.type = CONNECTION_ADDR_NCM;
+    int32_t ret = softBusServer->OpenAuthSession("test", &addr);
+    EXPECT_EQ(ret, -1);
+
+    ret = ConvertConnectType(CONNECTION_ADDR_MAX);
+    EXPECT_EQ(ret, CONNECT_TYPE_MAX);
+}
 }

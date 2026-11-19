@@ -380,6 +380,53 @@ HWTEST_F(BrProxyTest, BrProxyTest0018, TestSize.Level1)
 }
 
 /**
+ * @tc.name: BrProxyTest0019
+ * @tc.desc: cover data receive and channel change callback branches with listener enabled
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BrProxyTest, BrProxyTest0019, TestSize.Level1)
+{
+    int32_t ret = ClientAddChannelToList(SESSION_ID, &g_channelInfo, &g_listener);
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    ret = ClientUpdateList(g_channelInfo.peerBRMacAddr, g_channelInfo.peerBRUuid, CHANNEL_ID);
+    ASSERT_EQ(SOFTBUS_OK, ret);
+
+    ret = ClientRecordListenerState(CHANNEL_ID, DATA_RECEIVE, true);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    const char *data = "brProxyTestData";
+    ret = ClientTransBrProxyDataReceived(CHANNEL_ID, (const uint8_t *)data, strlen(data));
+    EXPECT_EQ(SOFTBUS_OK, ret);
+
+    ret = ClientRecordListenerState(CHANNEL_ID, CHANNEL_STATE, true);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    ret = ClientTransBrProxyChannelChange(CHANNEL_ID, SOFTBUS_CONN_BR_UNPAIRED);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+}
+
+/**
+ * @tc.name: BrProxyTest0020
+ * @tc.desc: cover BrProxyServiceDeathNotify with initialized and uninitialized client list
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(BrProxyTest, BrProxyTest0020, TestSize.Level1)
+{
+    int32_t ret = ClientAddChannelToList(SESSION_ID, &g_channelInfo, &g_listener);
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    ret = ClientUpdateList(g_channelInfo.peerBRMacAddr, g_channelInfo.peerBRUuid, CHANNEL_ID);
+    ASSERT_EQ(SOFTBUS_OK, ret);
+    ret = ClientRecordListenerState(CHANNEL_ID, CHANNEL_STATE, true);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    BrProxyServiceDeathNotify();
+
+    SoftBusList *savedList = g_clientList;
+    g_clientList = nullptr;
+    BrProxyServiceDeathNotify();
+    g_clientList = savedList;
+}
+
+/**
  * @tc.name: IsValidSha256Test001
  * @tc.desc: IsValidSha256Test001, when given invalid param should return false
  * @tc.desc: IsValidSha256Test001, when given strlen(param) not euqal to 32 should return false

@@ -65,6 +65,9 @@ int32_t TransDeleteSocketChannelInfoByPid(int32_t pid);
 
 int32_t TransSetSocketChannelStateBySession(const char *sessionName, int32_t sessionId, CoreSessionState state);
 
+int32_t TransSetSocketChannelStateExpectCancelBySession(
+    const char *sessionName, int32_t sessionId, CoreSessionState state);
+
 int32_t TransSetSocketChannelStateByChannel(int32_t channelId, int32_t channelType, CoreSessionState state);
 
 int32_t TransGetSocketChannelStateBySession(const char *sessionName, int32_t sessionId, CoreSessionState *state);
