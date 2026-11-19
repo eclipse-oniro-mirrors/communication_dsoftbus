@@ -85,7 +85,8 @@
       "car_distributed_engine",
       "wear_link_service",
       "device_manager",
-      "fusion_communication_framework"
+      "fusion_communication_framework",
+      "dmsdp_adapter"
     ]
   },
   {
@@ -96,7 +97,8 @@
       "car_distributed_engine",
       "wear_link_service",
       "device_manager",
-      "fusion_communication_framework"
+      "fusion_communication_framework",
+      "dmsdp_adapter"
     ]
   },
   {
