@@ -211,5 +211,10 @@ bool IdServiceIsPotentialTrustedDevice(const char *udidHash, const char *account
 {
     return HeartBeatStrategyInterface()->IdServiceIsPotentialTrustedDevice(udidHash, accountIdHash, isSameAccount);
 }
+
+bool IsAppLevelSameAccountTrusted(void)
+{
+    return HeartBeatStrategyInterface()->IsAppLevelSameAccountTrusted();
+}
 }
 } // namespace OHOS

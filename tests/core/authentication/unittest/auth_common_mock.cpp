@@ -159,6 +159,11 @@ bool IdServiceIsPotentialTrustedDevice(const char *udidHash, const char *account
     return GetCommonInterface()->IdServiceIsPotentialTrustedDevice(udidHash, accountIdHash, isSameAccount);
 }
 
+bool IsAppLevelSameAccountTrusted(void)
+{
+    return GetCommonInterface()->IsAppLevelSameAccountTrusted();
+}
+
 int32_t ConnGetConnectionInfo(uint32_t connectionId, ConnectionInfo *info)
 {
     return GetCommonInterface()->ConnGetConnectionInfo(connectionId, info);

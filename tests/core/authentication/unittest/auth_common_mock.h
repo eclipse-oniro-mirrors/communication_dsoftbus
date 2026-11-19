@@ -70,6 +70,7 @@ public:
     virtual int32_t SoftBusGenerateStrHash(const unsigned char *str, uint32_t len, unsigned char *hash) = 0;
     virtual bool IdServiceIsPotentialTrustedDevice(
         const char *udidHash, const char *accountIdHash, bool isSameAccount) = 0;
+    virtual bool IsAppLevelSameAccountTrusted(void) = 0;
     virtual int32_t ConnGetConnectionInfo(uint32_t connectionId, ConnectionInfo *info) = 0;
     virtual int32_t ConnSetConnectCallback(ConnModule moduleId, const ConnectCallback *callback) = 0;
     virtual void ConnUnSetConnectCallback(ConnModule moduleId) = 0;
@@ -113,6 +114,7 @@ public:
     MOCK_METHOD1(LnnDeleteLinkFinderInfo, void(const char *));
     MOCK_METHOD3(SoftBusGenerateStrHash, int32_t(const unsigned char *, uint32_t, unsigned char *));
     MOCK_METHOD3(IdServiceIsPotentialTrustedDevice, bool(const char *, const char *, bool));
+    MOCK_METHOD0(IsAppLevelSameAccountTrusted, bool(void));
     MOCK_METHOD2(ConnGetConnectionInfo, int32_t(uint32_t, ConnectionInfo *));
     MOCK_METHOD2(ConnSetConnectCallback, int32_t(ConnModule, const ConnectCallback *));
     MOCK_METHOD1(ConnUnSetConnectCallback, void(ConnModule));

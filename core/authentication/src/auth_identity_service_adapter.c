@@ -19,11 +19,13 @@
 #include "auth_identity_service_adapter.h"
 #include "auth_log.h"
 #include "auth_session_fsm.h"
+#include "auth_session_json.h"
 #include "bus_center_manager.h"
 #include "device_auth.h"
 #include "device_auth_defines.h"
 #include "lnn_decision_db.h"
 #include "lnn_heartbeat_ctrl.h"
+#include "lnn_network_manager.h"
 #include "lnn_ohos_account_adapter.h"
 #include "softbus_adapter_json.h"
 #include "softbus_adapter_mem.h"
@@ -331,6 +333,55 @@ int32_t IdServiceGetCredTypeByCredId(int32_t userId, const char *credId, int32_t
     return SOFTBUS_OK;
 }
 
+static bool IsMideaCredId(int32_t userId, const char *credId)
+{
+    const CredManager *credManger = IdServiceGetCredMgrInstance();
+    AUTH_CHECK_AND_RETURN_RET_LOGE(credManger != NULL, SOFTBUS_AUTH_GET_CRED_INSTANCE_FAIL,
+        AUTH_HICHAIN, "hichain identity service not initialized");
+    char *credInfo = NULL;
+    int32_t ret = credManger->queryCredInfoByCredId(userId, credId, &credInfo);
+    if (ret != HC_SUCCESS) {
+        uint32_t authErrCode = 0;
+        (void)GetSoftbusHichainAuthErrorCode((uint32_t)ret, &authErrCode);
+        AUTH_LOGE(AUTH_HICHAIN,
+            "hichain identity service quere credential info fail, err=%{public}d, authErrCode=%{public}d",
+            ret, authErrCode);
+        return false;
+    }
+    cJSON *credInfoJson = CreateJsonObjectFromString(credInfo);
+    IdServiceDestroyCredentialList(&credInfo);
+    if (credInfoJson == NULL) {
+        AUTH_LOGE(AUTH_HICHAIN, "create json fail");
+        return false;
+    }
+    int32_t issuer = -1;
+    if (!GetJsonObjectInt32Item(credInfoJson, FIELD_ISSUER, &issuer)) {
+        AUTH_LOGE(AUTH_HICHAIN, "issuer not found");
+        cJSON_Delete(credInfoJson);
+        return false;
+    }
+    int32_t credType = -1;
+    if (!GetJsonObjectInt32Item(credInfoJson, FIELD_CRED_TYPE, &credType)) {
+        AUTH_LOGE(AUTH_HICHAIN, "cred type not found");
+        cJSON_Delete(credInfoJson);
+        return false;
+    }
+    int32_t proofType = -1;
+    if (!GetJsonObjectInt32Item(credInfoJson, FIELD_PROOF_TYPE, &proofType)) {
+        AUTH_LOGE(AUTH_HICHAIN, "proof type not found");
+        cJSON_Delete(credInfoJson);
+        return false;
+    }
+    cJSON_Delete(credInfoJson);
+    AUTH_LOGI(AUTH_HICHAIN, "issuer:%{public}d, credType:%{public}d, proofType:%{public}d",
+        issuer, credType, proofType);
+    if (issuer == HC_ISSUER_APP_ACCOUNT &&
+        credType == HC_CRED_TYPE_RELATED_ACCOUNT && proofType == HC_PROOF_TYPE_PSK) {
+        return true;
+    }
+    return false;
+}
+
 char *IdServiceGetCredIdFromCredList(int32_t userId, const char *credList)
 {
     if (credList == NULL) {
@@ -555,13 +606,19 @@ static bool IsLocalCredInfo(const char *udid)
     return strcmp(udid, localUdid) == 0;
 }
 
-static void IdServiceHandleCredAdd(const char *credInfo)
+static void IdServiceHandleCredAdd(const char *credId, const char *credInfo)
 {
     SoftBusCredInfo info;
     (void)memset_s(&info, sizeof(SoftBusCredInfo), 0, sizeof(SoftBusCredInfo));
     int32_t localDevTypeId = 0;
     if (GetCredInfoFromJson(credInfo, &info) != SOFTBUS_OK) {
         AUTH_LOGE(AUTH_HICHAIN, "get credential info from json fail");
+        return;
+    }
+    int32_t userId = JudgeDeviceTypeAndGetOsAccountIds();
+    if (IsMideaCredId(userId, credId)) {
+        AUTH_LOGI(AUTH_HICHAIN, "midea cred add");
+        RestartCoapDiscovery();
         return;
     }
     if (IsLocalCredInfo(info.udid)) {
@@ -621,7 +678,7 @@ static void OnCredAdd(const char *credId, const char *credInfo)
         AUTH_LOGE(AUTH_HICHAIN, "id service invalid param");
         return;
     }
-    IdServiceHandleCredAdd(credInfo);
+    IdServiceHandleCredAdd(credId, credInfo);
 }
 
 static void OnCredDelete(const char *credId, const char *credInfo)
@@ -638,7 +695,7 @@ static void OnCredUpdate(const char *credId, const char *credInfo)
         AUTH_LOGE(AUTH_HICHAIN, "id service invalid param");
         return;
     }
-    IdServiceHandleCredAdd(credInfo);
+    IdServiceHandleCredAdd(credId, credInfo);
 }
 
 static CredChangeListener g_regCredChangeListener = {
@@ -722,4 +779,43 @@ void IdServiceUnRegCredMgr(void)
         credManager->unregisterChangeListener(AUTH_APPID) != SOFTBUS_OK) {
         AUTH_LOGE(AUTH_HICHAIN, "id service reg cred change fail");
     }
+}
+
+bool IsAppLevelSameAccountTrusted(void)
+{
+    const CredManager *credManger = IdServiceGetCredMgrInstance();
+    if (credManger == NULL) {
+        AUTH_LOGE(AUTH_HICHAIN, "hichain identity service not initialized");
+        return false;
+    }
+    int32_t userId = JudgeDeviceTypeAndGetOsAccountIds();
+    char localUdidHash[SHA_256_HEX_HASH_LEN] = { 0 };
+    if (GetLocalUdidShortHash(localUdidHash) != SOFTBUS_OK) {
+        AUTH_LOGE(AUTH_FSM, "get local udid short hash fail");
+        return false;
+    }
+    char *authParams = IdServiceGenerateQueryParamByCredType(userId, localUdidHash, ACCOUNT_RELATED_APP);
+    if (authParams == NULL) {
+        AUTH_LOGE(AUTH_HICHAIN, "hichain identity service generate query parameter fail");
+        return false;
+    }
+    char **credList = NULL;
+    int32_t ret = credManger->queryCredentialByParams(userId, authParams, credList);
+    cJSON_free(authParams);
+    if (ret != HC_SUCCESS) {
+        IdServiceDestroyCredentialList(credList);
+        uint32_t authErrCode = 0;
+        (void)GetSoftbusHichainAuthErrorCode((uint32_t)ret, &authErrCode);
+        AUTH_LOGE(AUTH_HICHAIN,
+            "hichain identity service query credential list fail err=%{public}d, authErrCode=%{public}d",
+            ret, authErrCode);
+        return false;
+    }
+    if (IsInvalidCredList(*credList)) {
+        IdServiceDestroyCredentialList(credList);
+        AUTH_LOGE(AUTH_HICHAIN, "not found midea cred");
+        return false;
+    }
+    IdServiceDestroyCredentialList(credList);
+    return true;
 }

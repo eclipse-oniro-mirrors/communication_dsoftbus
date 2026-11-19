@@ -722,7 +722,8 @@ bool AuthIsPotentialTrusted(const DeviceInfo *device, bool isOnlyPointToPoint)
             device->accountHash[0], device->accountHash[1]);
         return true;
     }
-    if (IdServiceIsPotentialTrustedDevice(device->devId, device->accountHash, false) ||
+    if (IsAppLevelSameAccountTrusted()||
+        IdServiceIsPotentialTrustedDevice(device->devId, device->accountHash, false) ||
         IsPotentialTrustedDevice(ID_TYPE_DEVID, device->devId, false, isOnlyPointToPoint) ||
         IsPotentialTrustedDeviceDp(device->devId, isOnlyPointToPoint)) {
         AUTH_LOGI(AUTH_HICHAIN, "device is potential trusted, continue verify progress");

@@ -123,6 +123,8 @@ void LnnUpdateHeartbeatInfo(LnnHeartbeatUpdateInfoType type)
     return GetAuthHichainIdServiceInterfaceMock()->LnnUpdateHeartbeatInfo(type);
 }
 
+void RestartCoapDiscovery(void) { }
+
 const CredManager *IdServiceGetCredMgrInstance()
 {
     return GetAuthHichainIdServiceInterfaceMock()->IdServiceGetCredMgrInstance();
