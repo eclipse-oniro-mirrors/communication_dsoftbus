@@ -250,6 +250,7 @@ static void DoRecovery(void)
         BrProxyServiceDeathNotify();
         if (cnt == CYCLE_NUMBER_MAX) {
             COMM_LOGE(COMM_SDK, "server proxy init reached the maximum count=%{public}d", cnt);
+            FreeSessionServerInfoList(&sessionServerInfoList);
             FreeClientPkgName();
             continue;
         }
