@@ -1189,33 +1189,6 @@ HWTEST_F(SoftBusServerProxyFrameTest, ClientDeathProcTaskCasPendingTest, TestSiz
 }
 
 /**
- * @tc.name: DoRecoveryBreakTest
- * @tc.desc: DoRecovery with g_needRecover true, runs one cycle and resets g_taskScheduled
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(SoftBusServerProxyFrameTest, DoRecoveryBreakTest, TestSize.Level1)
-{
-    g_taskScheduled.store(true);
-    g_needRecover.store(true);
-    {
-        std::lock_guard<std::mutex> lock(g_mutex);
-        g_oldServerProxy = GetSystemAbility();
-        g_serverProxy = nullptr;
-    }
-    DoRecovery();
-    EXPECT_FALSE(g_taskScheduled.load());
-    EXPECT_FALSE(g_needRecover.load());
-    g_taskScheduled.store(false);
-    g_needRecover.store(false);
-    {
-        std::lock_guard<std::mutex> lock(g_mutex);
-        g_oldServerProxy = nullptr;
-        g_serverProxy = nullptr;
-    }
-}
-
-/**
  * @tc.name: OnConnectionStateChangeInner
  * @tc.desc: OnConnectionStateChangeInner, MessageParcel failed return SOFTBUS_IPC_ERR
  * @tc.desc: OnConnectionStateChangeInner, success return SOFTBUS_OK
@@ -2231,7 +2204,8 @@ HWTEST_F(SoftBusServerProxyFrameTest, NeedRecoverAndFreeRemainingTest002, TestSi
     ASSERT_NE(nullptr, clientName[2]);
     g_needRecover.store(true);
     EXPECT_TRUE(NeedRecoverAndFreeRemaining(clientName, 1, 3));
-    EXPECT_FALSE(g_needRecover.load());
+    // Keep g_needRecover true so DoRecovery can retry after a death during register.
+    EXPECT_TRUE(g_needRecover.load());
     SoftBusFree(clientName[0]);
     g_needRecover.store(false);
 }
@@ -2287,6 +2261,33 @@ HWTEST_F(SoftBusServerProxyFrameTest, DoRecoveryServerProxyInitFailTest, TestSiz
         std::lock_guard<std::mutex> lock(g_mutex);
         g_oldServerProxy = nullptr;
         g_serverProxy = nullptr;
+    }
+}
+
+/**
+ * @tc.name: DoRecoveryBreakTest
+ * @tc.desc: DoRecovery with g_needRecover true, runs one cycle and resets g_taskScheduled
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftBusServerProxyFrameTest, DoRecoveryBreakTest, TestSize.Level1)
+{
+    g_taskScheduled.store(true);
+    g_needRecover.store(true);
+    {
+        std::lock_guard<std::mutex> lock(g_mutex);
+        g_oldServerProxy = GetSystemAbility();
+        g_serverProxy = nullptr;
+    }
+    DoRecovery();
+    EXPECT_FALSE(g_taskScheduled.load());
+    EXPECT_FALSE(g_needRecover.load());
+    g_taskScheduled.store(false);
+    g_needRecover.store(false);
+    {
+        std::lock_guard<std::mutex> lock(g_mutex);
+        g_oldServerProxy = nullptr;
+        // g_serverProxy is re-initialized by DoRecovery; keep it for later test cases.
     }
 }
 } // namespace OHOS
