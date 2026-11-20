@@ -58,12 +58,12 @@ const char *g_soName[SOFTBUS_HANDLE_BUTT] = {
     SOFTBUS_FAR_FIELD_PATH_NAME,
 };
 
-bool SoftbusServerPluginLoadedFlagGet(void)
+SOFTBUS_DEFAULT_USED_EXPORT bool SoftbusServerPluginLoadedFlagGet(void)
 {
     return (g_soHandle[SOFTBUS_HANDLE_SERVER_PLUGIN] != NULL);
 }
 
-int32_t SoftBusDlopen(SoftBusHandleType type, void **dllHandle)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t SoftBusDlopen(SoftBusHandleType type, void **dllHandle)
 {
     if (type >= SOFTBUS_HANDLE_BUTT || dllHandle == NULL) {
         return SOFTBUS_INVALID_PARAM;
@@ -85,7 +85,7 @@ int32_t SoftBusDlopen(SoftBusHandleType type, void **dllHandle)
     return SOFTBUS_OK;
 }
 
-int32_t SoftBusDlsym(const void *DllHandle, const char *funcName, void **funcHandle)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t SoftBusDlsym(const void *DllHandle, const char *funcName, void **funcHandle)
 {
     if (DllHandle == NULL || funcName == NULL || funcHandle == NULL) {
         return SOFTBUS_NETWORK_DLSYM_FAILED;
@@ -100,7 +100,7 @@ int32_t SoftBusDlsym(const void *DllHandle, const char *funcName, void **funcHan
     return SOFTBUS_OK;
 }
 
-int32_t LnnCheckFuncPointer(void *func)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t LnnCheckFuncPointer(void *func)
 {
     if (func == NULL) {
         COMM_LOGE(COMM_TEST, "func not register.");
@@ -109,7 +109,7 @@ int32_t LnnCheckFuncPointer(void *func)
     return SOFTBUS_OK;
 }
 
-int32_t ConnCheckFuncPointer(void *func)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t ConnCheckFuncPointer(void *func)
 {
     if (func == NULL) {
         COMM_LOGE(COMM_TEST, "func not register.");
@@ -118,7 +118,7 @@ int32_t ConnCheckFuncPointer(void *func)
     return SOFTBUS_OK;
 }
 
-int32_t DiscCheckFuncPointer(void *func)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t DiscCheckFuncPointer(void *func)
 {
     if (func == NULL) {
         COMM_LOGE(COMM_TEST, "func not register.");
@@ -127,7 +127,7 @@ int32_t DiscCheckFuncPointer(void *func)
     return SOFTBUS_OK;
 }
 
-int32_t TransCheckFuncPointer(void *func)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t TransCheckFuncPointer(void *func)
 {
     if (func == NULL) {
         COMM_LOGE(COMM_TEST, "func not register.");
@@ -136,7 +136,7 @@ int32_t TransCheckFuncPointer(void *func)
     return SOFTBUS_OK;
 }
 
-int32_t AuthCheckFuncPointer(void *func)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t AuthCheckFuncPointer(void *func)
 {
     if (func == NULL) {
         COMM_LOGE(COMM_TEST, "func not register.");
@@ -145,7 +145,7 @@ int32_t AuthCheckFuncPointer(void *func)
     return SOFTBUS_OK;
 }
 
-int32_t AdapterCheckFuncPointer(void *func)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t AdapterCheckFuncPointer(void *func)
 {
     if (func == NULL) {
         COMM_LOGE(COMM_TEST, "func not register.");

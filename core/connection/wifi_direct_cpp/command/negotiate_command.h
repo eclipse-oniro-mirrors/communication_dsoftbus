@@ -19,9 +19,10 @@
 #include "wifi_direct_command.h"
 #include "data/negotiate_message.h"
 #include "channel/negotiate_channel.h"
+#include "softbus_def.h"
 
 namespace OHOS::SoftBus {
-class NegotiateCommand : public WifiDirectCommand {
+class SOFTBUS_DEFAULT_EXPORT NegotiateCommand : public WifiDirectCommand {
 public:
     NegotiateCommand(const NegotiateMessage &msg, const std::shared_ptr<NegotiateChannel> &channel);
 

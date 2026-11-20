@@ -18,14 +18,14 @@
 #include "softbus_error_code.h"
 
 namespace OHOS::SoftBus {
-P2pBroadcast *P2pBroadcast::GetInstance()
+SOFTBUS_DEFAULT_USED_EXPORT P2pBroadcast *P2pBroadcast::GetInstance()
 {
     static P2pBroadcast instance;
     return &instance;
 }
 
-int P2pBroadcast::RegisterBroadcastListener(const BroadcastReceiverAction *actions, size_t size,
-    const std::string &name, ListenerPriority priority, BroadcastListener listener)
+SOFTBUS_DEFAULT_USED_EXPORT int P2pBroadcast::RegisterBroadcastListener(const BroadcastReceiverAction *actions,
+    size_t size, const std::string &name, ListenerPriority priority, BroadcastListener listener)
 {
     CONN_CHECK_AND_RETURN_RET_LOGE(actions, SOFTBUS_INVALID_PARAM, CONN_WIFI_DIRECT, "action is null");
     CONN_CHECK_AND_RETURN_RET_LOGE(listener, SOFTBUS_INVALID_PARAM, CONN_WIFI_DIRECT, "listener is null");
@@ -41,6 +41,7 @@ int P2pBroadcast::RegisterBroadcastListener(const BroadcastReceiverAction *actio
     return SOFTBUS_OK;
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 void P2pBroadcast::DispatchWorkHandler(BroadcastReceiverAction action, const BroadcastParam &param)
 {
     auto it = listenerMap_.find(action);

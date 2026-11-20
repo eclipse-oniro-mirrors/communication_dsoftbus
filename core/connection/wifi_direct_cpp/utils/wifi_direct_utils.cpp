@@ -73,12 +73,12 @@ std::vector<std::string> WifiDirectUtils::SplitString(const std::string &input, 
     return tokens;
 }
 
-uint32_t WifiDirectUtils::BytesToInt(const std::vector<uint8_t> &data)
+SOFTBUS_DEFAULT_USED_EXPORT uint32_t WifiDirectUtils::BytesToInt(const std::vector<uint8_t> &data)
 {
     return BytesToInt(data.data(), data.size());
 }
 
-uint32_t WifiDirectUtils::BytesToInt(const uint8_t *data, uint32_t size)
+SOFTBUS_DEFAULT_USED_EXPORT uint32_t WifiDirectUtils::BytesToInt(const uint8_t *data, uint32_t size)
 {
     CONN_CHECK_AND_RETURN_RET_LOGW(size <= sizeof(uint32_t), 0, CONN_WIFI_DIRECT, "data len invalid");
     uint32_t result = 0;
@@ -87,7 +87,7 @@ uint32_t WifiDirectUtils::BytesToInt(const uint8_t *data, uint32_t size)
     return le32toh(result);
 }
 
-void WifiDirectUtils::IntToBytes(uint32_t data, uint32_t len, std::vector<uint8_t> &out)
+SOFTBUS_DEFAULT_USED_EXPORT void WifiDirectUtils::IntToBytes(uint32_t data, uint32_t len, std::vector<uint8_t> &out)
 {
     CONN_CHECK_AND_RETURN_LOGW(len <= sizeof(data), CONN_WIFI_DIRECT, "len=%{public}u invalid", len);
     data = htole32(data);
@@ -99,7 +99,7 @@ void WifiDirectUtils::IntToBytes(uint32_t data, uint32_t len, std::vector<uint8_
 }
 
 static constexpr int BYTE_HEX_BUF_LEN = 4;
-std::string WifiDirectUtils::ToString(const std::vector<uint8_t> &input)
+SOFTBUS_DEFAULT_USED_EXPORT std::string WifiDirectUtils::ToString(const std::vector<uint8_t> &input)
 {
     char buf[BYTE_HEX_BUF_LEN] {};
     std::string result;
@@ -111,7 +111,7 @@ std::string WifiDirectUtils::ToString(const std::vector<uint8_t> &input)
 }
 
 static constexpr int BYTE_HEX_SIZE = 2;
-std::vector<uint8_t> WifiDirectUtils::ToBinary(const std::string &input)
+SOFTBUS_DEFAULT_USED_EXPORT std::vector<uint8_t> WifiDirectUtils::ToBinary(const std::string &input)
 {
     std::vector<uint8_t> result;
     for (size_t pos = 0; pos < input.length(); pos += BYTE_HEX_SIZE) {
@@ -123,17 +123,17 @@ std::vector<uint8_t> WifiDirectUtils::ToBinary(const std::string &input)
     return result;
 }
 
-bool WifiDirectUtils::Is2GBand(int freq)
+SOFTBUS_DEFAULT_USED_EXPORT bool WifiDirectUtils::Is2GBand(int freq)
 {
     return freq >= FREQUENCY_2G_FIRST && freq <= FREQUENCY_2G_LAST;
 }
 
-bool WifiDirectUtils::Is5GBand(int freq)
+SOFTBUS_DEFAULT_USED_EXPORT bool WifiDirectUtils::Is5GBand(int freq)
 {
     return freq >= FREQUENCY_5G_FIRST && freq <= FREQUENCY_5G_LAST;
 }
 
-int WifiDirectUtils::ChannelToFrequency(int channel)
+SOFTBUS_DEFAULT_USED_EXPORT int WifiDirectUtils::ChannelToFrequency(int channel)
 {
     if (channel >= CHANNEL_2G_FIRST && channel <= CHANNEL_2G_LAST) {
         return (channel - CHANNEL_2G_FIRST) * FREQUENCY_STEP + FREQUENCY_2G_FIRST;
@@ -144,7 +144,7 @@ int WifiDirectUtils::ChannelToFrequency(int channel)
     }
 }
 
-int WifiDirectUtils::FrequencyToChannel(int freq)
+SOFTBUS_DEFAULT_USED_EXPORT int WifiDirectUtils::FrequencyToChannel(int freq)
 {
     if (Is2GBand(freq)) {
         return (freq - FREQUENCY_2G_FIRST) / FREQUENCY_STEP + CHANNEL_2G_FIRST;
@@ -180,7 +180,7 @@ int WifiDirectUtils::GetRecommendChannelFromLnn(const std::string &networkId)
     return channelIdLnn;
 }
 
-std::string WifiDirectUtils::NetworkIdToUuid(const std::string &networkId)
+SOFTBUS_DEFAULT_USED_EXPORT std::string WifiDirectUtils::NetworkIdToUuid(const std::string &networkId)
 {
     char uuid[UUID_BUF_LEN] {};
     int ret = DBinderSoftbusServer::GetInstance().LnnGetRemoteStrInfo(networkId.c_str(), STRING_KEY_UUID, uuid,
@@ -189,7 +189,7 @@ std::string WifiDirectUtils::NetworkIdToUuid(const std::string &networkId)
     return uuid;
 }
 
-std::string WifiDirectUtils::UuidToNetworkId(const std::string &uuid)
+SOFTBUS_DEFAULT_USED_EXPORT std::string WifiDirectUtils::UuidToNetworkId(const std::string &uuid)
 {
     char networkId[NETWORK_ID_BUF_LEN] {};
     auto ret = DBinderSoftbusServer::GetInstance().LnnGetNetworkIdByUuid(uuid.c_str(), networkId, sizeof(networkId));
@@ -197,7 +197,7 @@ std::string WifiDirectUtils::UuidToNetworkId(const std::string &uuid)
     return networkId;
 }
 
-std::string WifiDirectUtils::GetLocalNetworkId()
+SOFTBUS_DEFAULT_USED_EXPORT std::string WifiDirectUtils::GetLocalNetworkId()
 {
     char networkId[NETWORK_ID_BUF_LEN] {};
     auto ret = DBinderSoftbusServer::GetInstance().LnnGetLocalStrInfo(STRING_KEY_NETWORKID, networkId,
@@ -206,7 +206,7 @@ std::string WifiDirectUtils::GetLocalNetworkId()
     return networkId;
 }
 
-std::string WifiDirectUtils::GetLocalUuid()
+SOFTBUS_DEFAULT_USED_EXPORT std::string WifiDirectUtils::GetLocalUuid()
 {
     char uuid[UUID_BUF_LEN] {};
     auto ret = DBinderSoftbusServer::GetInstance().LnnGetLocalStrInfo(STRING_KEY_UUID, uuid, UUID_BUF_LEN);
@@ -214,7 +214,7 @@ std::string WifiDirectUtils::GetLocalUuid()
     return uuid;
 }
 
-int32_t WifiDirectUtils::GetLocalConnSubFeature(uint64_t &feature)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t WifiDirectUtils::GetLocalConnSubFeature(uint64_t &feature)
 {
     uint64_t connSubFeature = 0;
     auto ret = DBinderSoftbusServer::GetInstance().LnnGetLocalNumU64Info(NUM_KEY_CONN_SUB_FEATURE_CAPA,
@@ -249,7 +249,7 @@ static int32_t LnnGetLocalDefaultPtkByUuidPacked(const char *uuid, char *localPt
 }
 
 static constexpr int PTK_128BIT_LEN = 16;
-std::vector<uint8_t> WifiDirectUtils::GetLocalPtk(const std::string &remoteNetworkId)
+SOFTBUS_DEFAULT_USED_EXPORT std::vector<uint8_t> WifiDirectUtils::GetLocalPtk(const std::string &remoteNetworkId)
 {
     auto remoteUuid = NetworkIdToUuid(remoteNetworkId);
     std::vector<uint8_t> result;
@@ -277,7 +277,7 @@ static int32_t LnnGetRemoteDefaultPtkByUuidPacked(const char *uuid, char *remote
     return pfnLnnEnhanceFuncList->lnnGetRemoteDefaultPtkByUuid(uuid, remotePtk, len);
 }
 
-std::vector<uint8_t> WifiDirectUtils::GetRemotePtk(const std::string &remoteNetworkId)
+SOFTBUS_DEFAULT_USED_EXPORT std::vector<uint8_t> WifiDirectUtils::GetRemotePtk(const std::string &remoteNetworkId)
 {
     std::vector<uint8_t> result;
     uint8_t ptkBytes[PTK_DEFAULT_LEN] {};
@@ -295,7 +295,7 @@ std::vector<uint8_t> WifiDirectUtils::GetRemotePtk(const std::string &remoteNetw
     return result;
 }
 
-bool WifiDirectUtils::IsRemoteSupportTlv(const std::string &remoteDeviceId)
+SOFTBUS_DEFAULT_USED_EXPORT bool WifiDirectUtils::IsRemoteSupportTlv(const std::string &remoteDeviceId)
 {
     bool result = false;
     auto networkId = UuidToNetworkId(remoteDeviceId);
@@ -305,24 +305,24 @@ bool WifiDirectUtils::IsRemoteSupportTlv(const std::string &remoteDeviceId)
     return result;
 }
 
-bool WifiDirectUtils::IsLocalSupportTlv()
+SOFTBUS_DEFAULT_USED_EXPORT bool WifiDirectUtils::IsLocalSupportTlv()
 {
     uint64_t capability = DBinderSoftbusServer::GetInstance().LnnGetFeatureCapabilty();
     return DBinderSoftbusServer::GetInstance().IsFeatureSupport(capability, BIT_WIFI_DIRECT_TLV_NEGOTIATION);
 }
 
-void WifiDirectUtils::SetLocalWifiDirectMac(const std::string &mac)
+SOFTBUS_DEFAULT_USED_EXPORT void WifiDirectUtils::SetLocalWifiDirectMac(const std::string &mac)
 {
     DBinderSoftbusServer::GetInstance().LnnSetLocalStrInfo(STRING_KEY_WIFIDIRECT_ADDR, mac.c_str());
 }
 
-bool WifiDirectUtils::IsDeviceOnline(const std::string &remoteNetworkId)
+SOFTBUS_DEFAULT_USED_EXPORT bool WifiDirectUtils::IsDeviceOnline(const std::string &remoteNetworkId)
 {
     return DBinderSoftbusServer::GetInstance().LnnGetOnlineStateById(remoteNetworkId.c_str(), CATEGORY_NETWORK_ID);
 }
 
 static constexpr int MAC_BYTE_HEX_SIZE = 4;
-std::string WifiDirectUtils::MacArrayToString(const std::vector<uint8_t> &macArray)
+SOFTBUS_DEFAULT_USED_EXPORT std::string WifiDirectUtils::MacArrayToString(const std::vector<uint8_t> &macArray)
 {
     CONN_CHECK_AND_RETURN_RET_LOGE(!macArray.empty(), "", CONN_WIFI_DIRECT, "mac is empty");
     std::string macString;
@@ -337,14 +337,14 @@ std::string WifiDirectUtils::MacArrayToString(const std::vector<uint8_t> &macArr
     return macString;
 }
 
-std::string WifiDirectUtils::MacArrayToString(const uint8_t *mac, int size)
+SOFTBUS_DEFAULT_USED_EXPORT std::string WifiDirectUtils::MacArrayToString(const uint8_t *mac, int size)
 {
     std::vector<uint8_t> macArray(mac, mac + size);
     return MacArrayToString(macArray);
 }
 
 static constexpr int BASE_HEX = 16;
-std::vector<uint8_t> WifiDirectUtils::MacStringToArray(const std::string &macString)
+SOFTBUS_DEFAULT_USED_EXPORT std::vector<uint8_t> WifiDirectUtils::MacStringToArray(const std::string &macString)
 {
     std::vector<uint8_t> array;
     CONN_CHECK_AND_RETURN_RET_LOGE(!macString.empty(), array, CONN_WIFI_DIRECT, "mac is empty");
@@ -366,7 +366,7 @@ std::vector<uint8_t> WifiDirectUtils::MacStringToArray(const std::string &macStr
     return array;
 }
 
-std::vector<uint8_t> WifiDirectUtils::GetInterfaceMacAddr(const std::string &interface)
+SOFTBUS_DEFAULT_USED_EXPORT std::vector<uint8_t> WifiDirectUtils::GetInterfaceMacAddr(const std::string &interface)
 {
     struct ifreq ifr { };
     std::vector<uint8_t> macArray;
@@ -385,7 +385,7 @@ std::vector<uint8_t> WifiDirectUtils::GetInterfaceMacAddr(const std::string &int
     return macArray;
 }
 
-std::vector<Ipv4Info> WifiDirectUtils::GetLocalIpv4Infos()
+SOFTBUS_DEFAULT_USED_EXPORT std::vector<Ipv4Info> WifiDirectUtils::GetLocalIpv4Infos()
 {
     std::vector<Ipv4Info> ipv4Infos;
     struct ifaddrs *ifAddr = nullptr;
@@ -412,7 +412,7 @@ std::vector<Ipv4Info> WifiDirectUtils::GetLocalIpv4Infos()
     return ipv4Infos;
 }
 
-int WifiDirectUtils::CompareIgnoreCase(const std::string &left, const std::string &right)
+SOFTBUS_DEFAULT_USED_EXPORT int WifiDirectUtils::CompareIgnoreCase(const std::string &left, const std::string &right)
 {
     std::string leftLower = left;
     std::transform(left.begin(), left.end(), leftLower.begin(), ::tolower);
@@ -421,7 +421,7 @@ int WifiDirectUtils::CompareIgnoreCase(const std::string &left, const std::strin
     return leftLower.compare(rightLower);
 }
 
-bool WifiDirectUtils::SupportHml()
+SOFTBUS_DEFAULT_USED_EXPORT bool WifiDirectUtils::SupportHml()
 {
     bool support = OHOS::system::GetBoolParameter("persist.sys.softbus.connect.hml", true);
     CONN_LOGI(CONN_WIFI_DIRECT, "persist.sys.softbus.connect.hml=%{public}d", support);
@@ -435,7 +435,7 @@ bool WifiDirectUtils::SupportHmlTwo()
     return support;
 }
 
-int32_t WifiDirectUtils::GetInterfaceIpString(const std::string &interface, std::string &ip)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t WifiDirectUtils::GetInterfaceIpString(const std::string &interface, std::string &ip)
 {
     CONN_LOGI(CONN_WIFI_DIRECT, "interfaceName=%{public}s", interface.c_str());
 
@@ -548,6 +548,7 @@ WifiDirectRole WifiDirectUtils::ToWifiDirectRole(LinkInfo::LinkMode mode)
     }
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 void WifiDirectUtils::ShowLinkInfoList(const std::string &banana, const std::vector<LinkInfo> &inkList)
 {
     int count = 0;
@@ -558,7 +559,7 @@ void WifiDirectUtils::ShowLinkInfoList(const std::string &banana, const std::vec
     }
 }
 
-enum WifiDirectBandWidth WifiDirectUtils::BandWidthNumberToEnum(int bandWidth)
+SOFTBUS_DEFAULT_USED_EXPORT enum WifiDirectBandWidth WifiDirectUtils::BandWidthNumberToEnum(int bandWidth)
 {
     return bandWidth >= BAND_WIDTH_160M_NUMBER ? BAND_WIDTH_160M : BAND_WIDTH_80M;
 }
@@ -573,7 +574,7 @@ int WifiDirectUtils::BandWidthEnumToNumber(WifiDirectBandWidth bandWidth)
     }
 }
 
-void WifiDirectUtils::SerialFlowEnter()
+SOFTBUS_DEFAULT_USED_EXPORT void WifiDirectUtils::SerialFlowEnter()
 {
     std::unique_lock lock(serialParallelLock_);
     CONN_LOGI(CONN_WIFI_DIRECT, "serialCount=%{public}d, parallelCount=%{public}d", serialCount_, parallelCount_);
@@ -582,7 +583,7 @@ void WifiDirectUtils::SerialFlowEnter()
     CONN_LOGI(CONN_WIFI_DIRECT, "serialCount=%{public}d, parallelCount=%{public}d", serialCount_, parallelCount_);
 }
 
-void WifiDirectUtils::SerialFlowExit()
+SOFTBUS_DEFAULT_USED_EXPORT void WifiDirectUtils::SerialFlowExit()
 {
     std::unique_lock lock(serialParallelLock_);
     serialCount_--;
@@ -590,7 +591,7 @@ void WifiDirectUtils::SerialFlowExit()
     serialParallelCv_.notify_all();
 }
 
-void WifiDirectUtils::ParallelFlowEnter()
+SOFTBUS_DEFAULT_USED_EXPORT void WifiDirectUtils::ParallelFlowEnter()
 {
     std::unique_lock lock(serialParallelLock_);
     CONN_LOGI(CONN_WIFI_DIRECT, "serialCount=%{public}d, parallelCount=%{public}d", serialCount_, parallelCount_);
@@ -599,7 +600,7 @@ void WifiDirectUtils::ParallelFlowEnter()
     CONN_LOGI(CONN_WIFI_DIRECT, "serialCount=%{public}d, parallelCount=%{public}d", serialCount_, parallelCount_);
 }
 
-void WifiDirectUtils::ParallelFlowExit()
+SOFTBUS_DEFAULT_USED_EXPORT void WifiDirectUtils::ParallelFlowExit()
 {
     std::unique_lock lock(serialParallelLock_);
     parallelCount_--;
@@ -651,6 +652,7 @@ bool WifiDirectUtils::IsDfsChannel(const int &frequency)
     return false;
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 bool WifiDirectUtils::CheckLinkAtDfsChannelConflict(const std::string &remoteDeviceId, InnerLink::LinkType type)
 {
     bool dfsLinkIsExist = false;
@@ -671,7 +673,7 @@ bool WifiDirectUtils::CheckLinkAtDfsChannelConflict(const std::string &remoteDev
     return dfsLinkIsExist;
 }
 
-int32_t WifiDirectUtils::GetOsType(const char *networkId)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t WifiDirectUtils::GetOsType(const char *networkId)
 {
     int32_t osType = OH_OS_TYPE;
     auto ret = DBinderSoftbusServer::GetInstance().LnnGetOsTypeByNetworkId(networkId, &osType);
@@ -680,7 +682,7 @@ int32_t WifiDirectUtils::GetOsType(const char *networkId)
     return osType;
 }
 
-int32_t WifiDirectUtils::GetDeviceType(const char *networkId)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t WifiDirectUtils::GetDeviceType(const char *networkId)
 {
     int32_t deviceTypeId = 0;
     auto ret = DBinderSoftbusServer::GetInstance().LnnGetRemoteNumInfo(networkId, NUM_KEY_DEV_TYPE_ID, &deviceTypeId);
@@ -689,7 +691,7 @@ int32_t WifiDirectUtils::GetDeviceType(const char *networkId)
     return deviceTypeId;
 }
 
-int32_t WifiDirectUtils::GetDeviceType()
+SOFTBUS_DEFAULT_USED_EXPORT int32_t WifiDirectUtils::GetDeviceType()
 {
     int32_t deviceTypeId = 0;
     auto ret = DBinderSoftbusServer::GetInstance().LnnGetLocalNumInfo(NUM_KEY_DEV_TYPE_ID, &deviceTypeId);
@@ -708,6 +710,7 @@ int32_t WifiDirectUtils::GetMetaType(const char *networkId)
     return metaType;
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 int32_t WifiDirectUtils::GetRemoteConnSubFeature(const std::string &remoteNetworkId, uint64_t &feature)
 {
     uint64_t connSubFeature = 0;
@@ -755,7 +758,7 @@ int32_t WifiDirectUtils::GetRemoteScreenStatus(const char *remoteNetworkId)
     return screenStatus;
 }
 
-int WifiDirectUtils::GetChload()
+SOFTBUS_DEFAULT_USED_EXPORT int WifiDirectUtils::GetChload()
 {
     auto wifiLinkedInfo = std::make_shared<Wifi::WifiLinkedInfo>();
     auto wifiDevicePtr = Wifi::WifiDevice::GetInstance(WIFI_DEVICE_ABILITY_ID);
@@ -770,12 +773,12 @@ int WifiDirectUtils::GetChload()
     return chload;
 }
 
-bool WifiDirectUtils::IsDeviceId(const std::string &remoteId)
+SOFTBUS_DEFAULT_USED_EXPORT bool WifiDirectUtils::IsDeviceId(const std::string &remoteId)
 {
     return remoteId.length() == UUID_BUF_LEN - 1;
 }
 
-std::string WifiDirectUtils::RemoteDeviceIdToMac(const std::string &remoteDeviceId)
+SOFTBUS_DEFAULT_USED_EXPORT std::string WifiDirectUtils::RemoteDeviceIdToMac(const std::string &remoteDeviceId)
 {
     auto remoteNetworkId = UuidToNetworkId(remoteDeviceId);
     char remoteMac[MAC_ADDR_STR_LEN] {};
@@ -788,7 +791,7 @@ std::string WifiDirectUtils::RemoteDeviceIdToMac(const std::string &remoteDevice
     return remoteMac;
 }
 
-std::string WifiDirectUtils::RemoteMacToDeviceId(const std::string &remoteMac)
+SOFTBUS_DEFAULT_USED_EXPORT std::string WifiDirectUtils::RemoteMacToDeviceId(const std::string &remoteMac)
 {
     int32_t num = 0;
     NodeBasicInfo *basicInfo = nullptr;
@@ -816,7 +819,7 @@ std::string WifiDirectUtils::RemoteMacToDeviceId(const std::string &remoteMac)
     return "";
 }
 
-int WifiDirectUtils::GetLocalScreenStatus()
+SOFTBUS_DEFAULT_USED_EXPORT int WifiDirectUtils::GetLocalScreenStatus()
 {
     bool result = false;
     auto ret = DBinderSoftbusServer::GetInstance().LnnGetLocalBoolInfo(
@@ -826,7 +829,7 @@ int WifiDirectUtils::GetLocalScreenStatus()
     return result ? WIFI_DIRECT_SCREEN_ON : WIFI_DIRECT_SCREEN_OFF;
 }
 
-int32_t WifiDirectUtils::ConvertPassiveErrorCode(int32_t code)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t WifiDirectUtils::ConvertPassiveErrorCode(int32_t code)
 {
     if (code > SOFTBUS_CONN_SHORT_RANGE_BASE && code <= SOFTBUS_CONN_PASSIVE_TYPE_STA_P2P_HML_CHIP_CONFLICT) {
         // active code convert passive errorcode offset is 1

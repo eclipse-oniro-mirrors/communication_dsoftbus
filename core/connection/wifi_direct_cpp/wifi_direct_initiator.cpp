@@ -12,10 +12,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "softbus_def.h"
 #include "wifi_direct_initiator.h"
 
 namespace OHOS::SoftBus {
-WifiDirectInitiator& WifiDirectInitiator::GetInstance()
+SOFTBUS_DEFAULT_USED_EXPORT WifiDirectInitiator& WifiDirectInitiator::GetInstance()
 {
     static WifiDirectInitiator instance;
     return instance;
@@ -28,7 +29,7 @@ void WifiDirectInitiator::Init() const
     }
 }
 
-void WifiDirectInitiator::Add(const InitFuncion &function)
+SOFTBUS_DEFAULT_USED_EXPORT void WifiDirectInitiator::Add(const InitFuncion &function)
 {
     functions_.push_back(function);
 }

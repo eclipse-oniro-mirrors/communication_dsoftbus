@@ -75,22 +75,22 @@ InnerLink::~InnerLink()
     }
 }
 
-InnerLink::LinkType InnerLink::GetLinkType() const
+SOFTBUS_DEFAULT_USED_EXPORT InnerLink::LinkType InnerLink::GetLinkType() const
 {
     return Get(InnerLinKey::LINK_TYPE, LinkType::INVALID_TYPE);
 }
 
-void InnerLink::SetLinkType(InnerLink::LinkType type)
+SOFTBUS_DEFAULT_USED_EXPORT void InnerLink::SetLinkType(InnerLink::LinkType type)
 {
     Set(InnerLinKey::LINK_TYPE, type);
 }
 
-InnerLink::LinkState InnerLink::GetState() const
+SOFTBUS_DEFAULT_USED_EXPORT InnerLink::LinkState InnerLink::GetState() const
 {
     return Get(InnerLinKey::STATE, LinkState::INVALID_STATE);
 }
 
-void InnerLink::SetState(LinkState newState)
+SOFTBUS_DEFAULT_USED_EXPORT void InnerLink::SetState(LinkState newState)
 {
     LinkState oldState = GetState();
     if (oldState != newState) {
@@ -100,127 +100,127 @@ void InnerLink::SetState(LinkState newState)
     }
 }
 
-std::string InnerLink::GetLocalInterface() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string InnerLink::GetLocalInterface() const
 {
     return Get(InnerLinKey::LOCAL_INTERFACE, std::string(""));
 }
 
-void InnerLink::SetLocalInterface(const std::string &interface)
+SOFTBUS_DEFAULT_USED_EXPORT void InnerLink::SetLocalInterface(const std::string &interface)
 {
     Set(InnerLinKey::LOCAL_INTERFACE, interface);
 }
 
-std::string InnerLink::GetLocalBaseMac() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string InnerLink::GetLocalBaseMac() const
 {
     return Get(InnerLinKey::LOCAL_BASE_MAC, std::string(""));
 }
 
-void InnerLink::SetLocalBaseMac(const std::string &mac)
+SOFTBUS_DEFAULT_USED_EXPORT void InnerLink::SetLocalBaseMac(const std::string &mac)
 {
     Set(InnerLinKey::LOCAL_BASE_MAC, mac);
 }
 
-std::string InnerLink::GetLocalDynamicMac() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string InnerLink::GetLocalDynamicMac() const
 {
     return Get(InnerLinKey::LOCAL_DYNAMIC_MAC, std::string(""));
 }
 
-void InnerLink::SetLocalDynamicMac(const std::string &mac)
+SOFTBUS_DEFAULT_USED_EXPORT void InnerLink::SetLocalDynamicMac(const std::string &mac)
 {
     Set(InnerLinKey::LOCAL_DYNAMIC_MAC, mac);
 }
 
-std::string InnerLink::GetLocalIpv4() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string InnerLink::GetLocalIpv4() const
 {
     return Get(InnerLinKey::LOCAL_IPV4, std::string(""));
 }
 
-void InnerLink::SetLocalIpv4(const std::string &ip)
+SOFTBUS_DEFAULT_USED_EXPORT void InnerLink::SetLocalIpv4(const std::string &ip)
 {
     Set(InnerLinKey::LOCAL_IPV4, ip);
 }
 
-std::string InnerLink::GetRemoteInterface() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string InnerLink::GetRemoteInterface() const
 {
     return Get(InnerLinKey::REMOTE_INTERFACE, std::string(""));
 }
 
-void InnerLink::SetRemoteInterface(const std::string &interface)
+SOFTBUS_DEFAULT_USED_EXPORT void InnerLink::SetRemoteInterface(const std::string &interface)
 {
     Set(InnerLinKey::REMOTE_INTERFACE, interface);
 }
 
-std::string InnerLink::GetRemoteBaseMac() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string InnerLink::GetRemoteBaseMac() const
 {
     return Get(InnerLinKey::REMOTE_BASE_MAC, std::string(""));
 }
 
-void InnerLink::SetRemoteBaseMac(const std::string &mac)
+SOFTBUS_DEFAULT_USED_EXPORT void InnerLink::SetRemoteBaseMac(const std::string &mac)
 {
     Set(InnerLinKey::REMOTE_BASE_MAC, mac);
 }
 
-std::string InnerLink::GetRemoteDynamicMac() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string InnerLink::GetRemoteDynamicMac() const
 {
     return Get(InnerLinKey::REMOTE_DYNAMIC_MAC, std::string(""));
 }
 
-void InnerLink::SetRemoteDynamicMac(const std::string &mac)
+SOFTBUS_DEFAULT_USED_EXPORT void InnerLink::SetRemoteDynamicMac(const std::string &mac)
 {
     Set(InnerLinKey::REMOTE_DYNAMIC_MAC, mac);
 }
 
-std::string InnerLink::GetRemoteIpv4() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string InnerLink::GetRemoteIpv4() const
 {
     return Get(InnerLinKey::REMOTE_IPV4, std::string(""));
 }
 
-void InnerLink::SetRemoteIpv4(const std::string &ip)
+SOFTBUS_DEFAULT_USED_EXPORT void InnerLink::SetRemoteIpv4(const std::string &ip)
 {
     Set(InnerLinKey::REMOTE_IPV4, ip);
 }
 
-bool InnerLink::IsBeingUsedByLocal() const
+SOFTBUS_DEFAULT_USED_EXPORT bool InnerLink::IsBeingUsedByLocal() const
 {
     return !linkIds_.empty();
 }
 
-bool InnerLink::IsBeingUsedByRemote() const
+SOFTBUS_DEFAULT_USED_EXPORT bool InnerLink::IsBeingUsedByRemote() const
 {
     return Get(InnerLinKey::IS_BEING_USED_BY_REMOTE, false);
 }
 
-void InnerLink::SetBeingUsedByRemote(bool value)
+SOFTBUS_DEFAULT_USED_EXPORT void InnerLink::SetBeingUsedByRemote(bool value)
 {
     Set(InnerLinKey::IS_BEING_USED_BY_REMOTE, value);
 }
 
-int InnerLink::GetFrequency() const
+SOFTBUS_DEFAULT_USED_EXPORT int InnerLink::GetFrequency() const
 {
     return Get(InnerLinKey::FREQUENCY, -1);
 }
 
-void InnerLink::SetFrequency(int frequency)
+SOFTBUS_DEFAULT_USED_EXPORT void InnerLink::SetFrequency(int frequency)
 {
     Set(InnerLinKey::FREQUENCY, frequency);
 }
 
-std::string InnerLink::GetRemoteDeviceId() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string InnerLink::GetRemoteDeviceId() const
 {
     return Get(InnerLinKey::REMOTE_DEVICE_ID, std::string(""));
 }
 
-void InnerLink::SetRemoteDeviceId(const std::string &deviceId)
+SOFTBUS_DEFAULT_USED_EXPORT void InnerLink::SetRemoteDeviceId(const std::string &deviceId)
 {
     Set(InnerLinKey::REMOTE_DEVICE_ID, deviceId);
 }
 
-std::shared_ptr<NegotiateChannel> InnerLink::GetNegotiateChannel() const
+SOFTBUS_DEFAULT_USED_EXPORT std::shared_ptr<NegotiateChannel> InnerLink::GetNegotiateChannel() const
 {
     return channel_;
 }
 
-void InnerLink::SetNegotiateChannel(const std::shared_ptr<NegotiateChannel> &channel)
+SOFTBUS_DEFAULT_USED_EXPORT void InnerLink::SetNegotiateChannel(const std::shared_ptr<NegotiateChannel> &channel)
 {
     channel_ = channel;
 }
@@ -230,17 +230,17 @@ int InnerLink::GetLocalPort() const
     return Get(InnerLinKey::LOCAL_PORT, -1);
 }
 
-void InnerLink::SetLocalPort(int port)
+SOFTBUS_DEFAULT_USED_EXPORT void InnerLink::SetLocalPort(int port)
 {
     Set(InnerLinKey::LOCAL_PORT, port);
 }
 
-int InnerLink::GetRemotePort() const
+SOFTBUS_DEFAULT_USED_EXPORT int InnerLink::GetRemotePort() const
 {
     return Get(InnerLinKey::REMOTE_PORT, 0);
 }
 
-void InnerLink::SetRemotePort(int port)
+SOFTBUS_DEFAULT_USED_EXPORT void InnerLink::SetRemotePort(int port)
 {
     Set(InnerLinKey::REMOTE_PORT, port);
 }
@@ -255,42 +255,42 @@ void InnerLink::SetGroupName(const std::string &groupName)
     Set(InnerLinKey::GROUP_NAME, groupName);
 }
 
-ListenerModule InnerLink::GetListenerModule() const
+SOFTBUS_DEFAULT_USED_EXPORT ListenerModule InnerLink::GetListenerModule() const
 {
     return Get(InnerLinKey::LISTENER_MODULE_ID, static_cast<ListenerModule>(UNUSE_BUTT));
 }
 
-void InnerLink::SetListenerModule(ListenerModule module)
+SOFTBUS_DEFAULT_USED_EXPORT void InnerLink::SetListenerModule(ListenerModule module)
 {
     Set(InnerLinKey::LISTENER_MODULE_ID, module);
 }
 
-std::string InnerLink::GetLocalIpv6() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string InnerLink::GetLocalIpv6() const
 {
     return Get(InnerLinKey::LOCAL_IPV6, std::string());
 }
 
-void InnerLink::SetLocalIpv6(const std::string &value)
+SOFTBUS_DEFAULT_USED_EXPORT void InnerLink::SetLocalIpv6(const std::string &value)
 {
     Set(InnerLinKey::LOCAL_IPV6, value);
 }
 
-std::string InnerLink::GetRemoteIpv6() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string InnerLink::GetRemoteIpv6() const
 {
     return Get(InnerLinKey::REMOTE_IPV6, std::string());
 }
 
-void InnerLink::SetRemoteIpv6(const std::string &value)
+SOFTBUS_DEFAULT_USED_EXPORT void InnerLink::SetRemoteIpv6(const std::string &value)
 {
     Set(InnerLinKey::REMOTE_IPV6, value);
 }
 
-bool InnerLink::HasPtk() const
+SOFTBUS_DEFAULT_USED_EXPORT bool InnerLink::HasPtk() const
 {
     return Get(InnerLinKey::HAS_PTK, false);
 }
 
-void InnerLink::SetPtk(bool value)
+SOFTBUS_DEFAULT_USED_EXPORT void InnerLink::SetPtk(bool value)
 {
     Set(InnerLinKey::HAS_PTK, value);
 }
@@ -300,7 +300,7 @@ int32_t InnerLink::GetLocalCustomPort() const
     return Get(InnerLinKey::LOCAL_CUSTOM_PORT, 0);
 }
 
-void InnerLink::SetLocalCustomPort(int32_t value)
+SOFTBUS_DEFAULT_USED_EXPORT void InnerLink::SetLocalCustomPort(int32_t value)
 {
     Set(InnerLinKey::LOCAL_CUSTOM_PORT, value);
 }
@@ -336,32 +336,33 @@ void InnerLink::StopCustomListen()
     }
 }
 
-void InnerLink::SetRemoteCustomPort(int32_t value)
+SOFTBUS_DEFAULT_USED_EXPORT void InnerLink::SetRemoteCustomPort(int32_t value)
 {
     Set(InnerLinKey::REMOTE_CUSTOM_PORT, value);
 }
 
-bool InnerLink::GetNewPtkFrame() const
+SOFTBUS_DEFAULT_USED_EXPORT bool InnerLink::GetNewPtkFrame() const
 {
     return Get(InnerLinKey::NEW_PTK_FRAME, false);
 }
 
-void InnerLink::SetNewPtkFrame(bool value)
+SOFTBUS_DEFAULT_USED_EXPORT void InnerLink::SetNewPtkFrame(bool value)
 {
     Set(InnerLinKey::NEW_PTK_FRAME, value);
 }
 
-bool InnerLink::GetLegacyReused() const
+SOFTBUS_DEFAULT_USED_EXPORT bool InnerLink::GetLegacyReused() const
 {
     return Get(InnerLinKey::IS_LEGACY_REUSED, false);
 }
 
-void InnerLink::SetLegacyReused(bool value)
+SOFTBUS_DEFAULT_USED_EXPORT void InnerLink::SetLegacyReused(bool value)
 {
     CONN_LOGI(CONN_WIFI_DIRECT, "set legacy reused=%{public}d", value);
     Set(InnerLinKey::IS_LEGACY_REUSED, value);
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 void InnerLink::GenerateLink(uint32_t requestId, int pid, WifiDirectLink &link, bool ipv4, bool isVirtualLink)
 {
     link.linkId = LinkManager::GetInstance().AllocateLinkId();
@@ -418,7 +419,7 @@ void InnerLink::AddId(int linkId, uint32_t requestId, int pid, bool isVirtualLin
     linkIds_[linkId] = item;
 }
 
-void InnerLink::RemoveId(int linkId)
+SOFTBUS_DEFAULT_USED_EXPORT void InnerLink::RemoveId(int linkId)
 {
     if (linkIds_.find(linkId) == linkIds_.end()) {
         return;
@@ -452,12 +453,12 @@ bool InnerLink::IsProtected() const
     return false;
 }
 
-void InnerLink::SetLinkPowerMode(int powerMode)
+SOFTBUS_DEFAULT_USED_EXPORT void InnerLink::SetLinkPowerMode(int powerMode)
 {
     Set(InnerLinKey::VIRTUAL_FLAG, powerMode);
 }
 
-int InnerLink::GetLinkPowerMode() const
+SOFTBUS_DEFAULT_USED_EXPORT int InnerLink::GetLinkPowerMode() const
 {
     return Get(InnerLinKey::VIRTUAL_FLAG, static_cast<int>(INVALID_POWER));
 }
@@ -474,7 +475,7 @@ int InnerLink::SetKeepaliveState(bool isKeepalive)
     return DBinderSoftbusServer::GetInstance().ConnSetKeepaliveByConnectionId(connectionId, isKeepalive);
 }
 
-bool InnerLink::CheckOnlyVirtualLinks() const
+SOFTBUS_DEFAULT_USED_EXPORT bool InnerLink::CheckOnlyVirtualLinks() const
 {
     for (const auto& pair : linkIds_) {
         if (!pair.second->isVirtualLink) {
@@ -484,7 +485,7 @@ bool InnerLink::CheckOnlyVirtualLinks() const
     return true;
 }
 
-void InnerLink::Dump() const
+SOFTBUS_DEFAULT_USED_EXPORT void InnerLink::Dump() const
 {
     nlohmann::json object;
     object["LINK_TYPE"] = GetLinkType();

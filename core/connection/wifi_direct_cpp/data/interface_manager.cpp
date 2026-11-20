@@ -22,18 +22,20 @@
 #include "wifi_direct_manager.h"
 
 namespace OHOS::SoftBus {
-InterfaceManager& InterfaceManager::GetInstance()
+SOFTBUS_DEFAULT_USED_EXPORT InterfaceManager& InterfaceManager::GetInstance()
 {
     static InterfaceManager instance;
     return instance;
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 int InterfaceManager::UpdateInterface(InterfaceInfo::InterfaceType type, const Updater &updater)
 {
     std::unique_lock lock(lock_);
     return updater(interfaces_[static_cast<int>(type)]);
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 int InterfaceManager::ReadInterface(InterfaceInfo::InterfaceType type, const Reader &reader)
 {
     std::shared_lock lock(lock_);
@@ -52,6 +54,7 @@ void InterfaceManager::RefreshAddress(InterfaceInfo::InterfaceType type)
     }
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 bool InterfaceManager::IsInterfaceAvailable(InterfaceInfo::InterfaceType type, bool forShare) const
 {
     std::shared_lock lock(lock_);
@@ -70,6 +73,7 @@ bool InterfaceManager::IsInterfaceAvailable(InterfaceInfo::InterfaceType type, b
     return true;
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 void InterfaceManager::LockInterface(InterfaceInfo::InterfaceType type, const std::string &owner)
 {
     // ATTENTION: MUST NOT access interface lock under interface manager lock, otherwise deadlock will happen
@@ -81,7 +85,7 @@ void InterfaceManager::LockInterface(InterfaceInfo::InterfaceType type, const st
         WifiDirectAnonymizeDeviceId(exclusives_[static_cast<int>(type)].owner_).c_str());
 }
 
-void InterfaceManager::UnlockInterface(InterfaceInfo::InterfaceType type)
+SOFTBUS_DEFAULT_USED_EXPORT void InterfaceManager::UnlockInterface(InterfaceInfo::InterfaceType type)
 {
     CONN_LOGI(CONN_WIFI_DIRECT, "current owner=%{public}s",
         WifiDirectAnonymizeDeviceId(exclusives_[static_cast<int>(type)].owner_).c_str());
@@ -90,7 +94,7 @@ void InterfaceManager::UnlockInterface(InterfaceInfo::InterfaceType type)
     exclusives_[static_cast<int>(type)].owner_ = "";
 }
 
-void InterfaceManager::InitInterface(InterfaceInfo::InterfaceType type)
+SOFTBUS_DEFAULT_USED_EXPORT void InterfaceManager::InitInterface(InterfaceInfo::InterfaceType type)
 {
     std::string name;
     int32_t capability = 0;
@@ -113,7 +117,7 @@ void InterfaceManager::InitInterface(InterfaceInfo::InterfaceType type)
     interfaces_[type].SetCapability(capability);
 }
 
-void InterfaceManager::Init()
+SOFTBUS_DEFAULT_USED_EXPORT void InterfaceManager::Init()
 {
     GetInstance().InitInterface(InterfaceInfo::InterfaceType::P2P);
     GetInstance().InitInterface(InterfaceInfo::InterfaceType::HML);

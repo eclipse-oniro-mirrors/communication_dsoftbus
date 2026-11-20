@@ -31,10 +31,11 @@
 #include "wifi_direct_executor_factory.h"
 #include "wifi_direct_types.h"
 #include "wifi_direct_executor_manager.h"
+#include "softbus_def.h"
 
 namespace OHOS::SoftBus {
 class WifiDirectSchedulerFactory;
-class WifiDirectScheduler {
+class SOFTBUS_DEFAULT_EXPORT WifiDirectScheduler {
 public:
     virtual ~WifiDirectScheduler() = default;
 

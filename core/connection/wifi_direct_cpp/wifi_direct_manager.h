@@ -16,6 +16,7 @@
 #define WIFI_DIRECT_MANAGER_H
 
 #include "common_list.h"
+#include "softbus_def.h"
 #include "wifi_direct_types.h"
 #include "wifi_direct_manager_struct.h"
 
@@ -24,7 +25,7 @@ extern "C" {
 #endif
 
 /* singleton */
-struct WifiDirectManager* GetWifiDirectManager(void);
+SOFTBUS_DEFAULT_USED_EXPORT struct WifiDirectManager* GetWifiDirectManager(void);
 
 #ifdef __cplusplus
 }

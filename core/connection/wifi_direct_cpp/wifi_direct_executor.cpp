@@ -26,6 +26,7 @@
 #include "command/negotiate_command.h"
 
 namespace OHOS::SoftBus {
+SOFTBUS_DEFAULT_USED_EXPORT
 WifiDirectExecutor::WifiDirectExecutor(const std::string &remoteDeviceId, WifiDirectScheduler &scheduler,
                                        std::shared_ptr<WifiDirectProcessor> &processor, bool active)
     : remoteDeviceId_(remoteDeviceId), scheduler_(scheduler), processor_(processor), active_(active), started_(false)
@@ -34,7 +35,7 @@ WifiDirectExecutor::WifiDirectExecutor(const std::string &remoteDeviceId, WifiDi
               WifiDirectAnonymizeDeviceId(remoteDeviceId_).c_str(), active_);
 }
 
-WifiDirectExecutor::~WifiDirectExecutor()
+SOFTBUS_DEFAULT_USED_EXPORT WifiDirectExecutor::~WifiDirectExecutor()
 {
     CONN_LOGI(CONN_WIFI_DIRECT, "remoteDeviceId=%{public}s", WifiDirectAnonymizeDeviceId(remoteDeviceId_).c_str());
 }
@@ -87,12 +88,12 @@ void WifiDirectExecutor::Run(std::shared_ptr<WifiDirectProcessor> processor)
     CONN_LOGI(CONN_WIFI_DIRECT, "executor terminate");
 }
 
-std::string WifiDirectExecutor::GetRemoteDeviceId()
+SOFTBUS_DEFAULT_USED_EXPORT std::string WifiDirectExecutor::GetRemoteDeviceId()
 {
     return remoteDeviceId_;
 }
 
-void WifiDirectExecutor::SetRemoteDeviceId(const std::string &remoteDeviceId)
+SOFTBUS_DEFAULT_USED_EXPORT void WifiDirectExecutor::SetRemoteDeviceId(const std::string &remoteDeviceId)
 {
     remoteDeviceId_ = remoteDeviceId;
 }
@@ -102,12 +103,12 @@ bool WifiDirectExecutor::IsActive() const
     return active_;
 }
 
-void WifiDirectExecutor::SetActive(bool active)
+SOFTBUS_DEFAULT_USED_EXPORT void WifiDirectExecutor::SetActive(bool active)
 {
     active_ = active;
 }
 
-bool WifiDirectExecutor::CanAcceptNegotiateData(WifiDirectCommand &command)
+SOFTBUS_DEFAULT_USED_EXPORT bool WifiDirectExecutor::CanAcceptNegotiateData(WifiDirectCommand &command)
 {
     std::lock_guard lock(processorLock_);
     if (processor_ == nullptr) {
@@ -137,12 +138,12 @@ bool WifiDirectExecutor::HasAnyConnectCommand(WifiDirectLinkType linkType)
     return processor_ != nullptr && processor_->HasActiveConnectCommand(linkType);
 }
 
-WifiDirectEventDispatcher WifiDirectExecutor::WaitEvent()
+SOFTBUS_DEFAULT_USED_EXPORT WifiDirectEventDispatcher WifiDirectExecutor::WaitEvent()
 {
     return receiver_.Wait();
 }
 
-void WifiDirectExecutor::ProcessUnHandleCommand()
+SOFTBUS_DEFAULT_USED_EXPORT void WifiDirectExecutor::ProcessUnHandleCommand()
 {
     CONN_LOGI(CONN_WIFI_DIRECT, "enter");
     WifiDirectSchedulerFactory::GetInstance().GetScheduler().RejectNegotiateData(*processor_);

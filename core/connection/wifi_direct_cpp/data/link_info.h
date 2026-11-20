@@ -21,6 +21,7 @@
 #include "serializable.h"
 #include "info_container.h"
 #include "wifi_direct_types.h"
+#include "softbus_def.h"
 
 namespace OHOS::SoftBus {
 class NegotiateMessage;
@@ -56,7 +57,7 @@ enum class LinkInfoKey {
     IS_DBAC = 28,
 };
 
-class LinkInfo : public Serializable, public InfoContainer<LinkInfoKey> {
+class SOFTBUS_DEFAULT_EXPORT LinkInfo : public Serializable, public InfoContainer<LinkInfoKey> {
 public:
     enum class LinkMode {
         INVALID = -1,

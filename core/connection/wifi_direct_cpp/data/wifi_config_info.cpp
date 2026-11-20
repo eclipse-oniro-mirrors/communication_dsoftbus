@@ -24,7 +24,7 @@ InfoContainer<WifiConfigInfoKey>::KeyTypeTable InfoContainer<WifiConfigInfoKey>:
     { WifiConfigInfoKey::DEVICE_ID,           Serializable::ValueType::STRING              },
 };
 
-WifiConfigInfo::WifiConfigInfo(std::vector<uint8_t> &config)
+SOFTBUS_DEFAULT_USED_EXPORT WifiConfigInfo::WifiConfigInfo(std::vector<uint8_t> &config)
 {
     CONN_CHECK_AND_RETURN_LOGE(config.size() >= HEADER_LEN, CONN_WIFI_DIRECT,
         "invalid param, config size is %{public}zu", config.size());
@@ -73,6 +73,7 @@ void WifiConfigInfo::MarshallingInterfaceArray(WifiDirectProtocol &protocol) con
     }
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 int WifiConfigInfo::Marshalling(WifiDirectProtocol &protocol, std::vector<uint8_t> &output) const
 {
     for (const auto &[key, value] : values_) {
@@ -104,17 +105,17 @@ void WifiConfigInfo::UnmarshallingInterfaceArray(WifiDirectProtocol &protocol, u
     SetInterfaceInfoArray(interfaceArray);
 }
 
-void WifiConfigInfo::SetInterfaceInfoArray(const std::vector<InterfaceInfo> &value)
+SOFTBUS_DEFAULT_USED_EXPORT void WifiConfigInfo::SetInterfaceInfoArray(const std::vector<InterfaceInfo> &value)
 {
     Set(WifiConfigInfoKey::INTERFACE_INFO_ARRAY, value);
 }
 
-std::vector<InterfaceInfo> WifiConfigInfo::GetInterfaceInfoArray() const
+SOFTBUS_DEFAULT_USED_EXPORT std::vector<InterfaceInfo> WifiConfigInfo::GetInterfaceInfoArray() const
 {
     return Get(WifiConfigInfoKey::INTERFACE_INFO_ARRAY, std::vector<InterfaceInfo>());
 }
 
-InterfaceInfo WifiConfigInfo::GetInterfaceInfo(const std::string &name) const
+SOFTBUS_DEFAULT_USED_EXPORT InterfaceInfo WifiConfigInfo::GetInterfaceInfo(const std::string &name) const
 {
     auto interfaces = GetInterfaceInfoArray();
     for (const auto &interface : interfaces) {
@@ -130,7 +131,7 @@ void WifiConfigInfo::SetDeviceId(const std::string &value)
     Set(WifiConfigInfoKey::DEVICE_ID, value);
 }
 
-std::string WifiConfigInfo::GetDeviceId() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string WifiConfigInfo::GetDeviceId() const
 {
     return Get(WifiConfigInfoKey::DEVICE_ID, std::string(""));
 }

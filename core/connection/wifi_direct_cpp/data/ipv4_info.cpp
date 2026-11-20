@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include "softbus_def.h"
 #include "ipv4_info.h"
 #include "conn_log.h"
 #include "softbus_common.h"
@@ -20,7 +21,7 @@
 #include <arpa/inet.h>
 
 namespace OHOS::SoftBus {
-Ipv4Info::Ipv4Info(const std::string &ip)
+SOFTBUS_DEFAULT_USED_EXPORT Ipv4Info::Ipv4Info(const std::string &ip)
 {
     FromIpString(ip);
 }
@@ -33,7 +34,7 @@ bool Ipv4Info::operator==(const Ipv4Info &other) const
     return false;
 }
 
-int Ipv4Info::Marshalling(std::vector<uint8_t> &output) const
+SOFTBUS_DEFAULT_USED_EXPORT int Ipv4Info::Marshalling(std::vector<uint8_t> &output) const
 {
     auto ip = ntohl(ip_);
     auto p = reinterpret_cast<uint8_t *>(&ip);
@@ -42,7 +43,7 @@ int Ipv4Info::Marshalling(std::vector<uint8_t> &output) const
     return SOFTBUS_OK;
 }
 
-int Ipv4Info::Unmarshalling(const uint8_t *input, size_t size)
+SOFTBUS_DEFAULT_USED_EXPORT int Ipv4Info::Unmarshalling(const uint8_t *input, size_t size)
 {
     if (size < Ipv4InfoSize()) {
         return SOFTBUS_INVALID_PARAM;
@@ -69,7 +70,7 @@ int Ipv4Info::FromIpString(const std::string &ipString)
     return SOFTBUS_OK;
 }
 
-std::string Ipv4Info::ToIpString() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string Ipv4Info::ToIpString() const
 {
     if (ip_ == 0) {
         return "";

@@ -18,6 +18,7 @@
 #include <map>
 #include <set>
 #include "interface_info.h"
+#include "softbus_def.h"
 
 namespace OHOS::SoftBus {
 enum class LegacyCommandType {
@@ -136,7 +137,7 @@ enum class NegotiateMessageKey {
     INTERFACE_NAME = 220,
 };
 
-class NegotiateMessage : public Serializable, public InfoContainer<NegotiateMessageKey> {
+class SOFTBUS_DEFAULT_EXPORT NegotiateMessage : public Serializable, public InfoContainer<NegotiateMessageKey> {
 public:
     NegotiateMessage();
     explicit NegotiateMessage(NegotiateMessageType type);

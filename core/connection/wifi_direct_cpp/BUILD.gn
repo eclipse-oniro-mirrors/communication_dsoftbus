@@ -362,6 +362,12 @@ if (!softbus_config_enhance && defined(ohos_lite)) {
         }
         branch_protector_ret = "pac_ret"
       }
+      cflags = ["-fvisibility=hidden"]
+      ldflags = [
+        "-Wl,--exclude-libs,ALL",
+        "-Wl,-s",
+      ]
+      version_script = "libwifi_direct_map"
       defines += [ "__STDC_FORMAT_MACROS" ]
       if (is_asan) {
         defines += [ "ASAN_BUILD" ]

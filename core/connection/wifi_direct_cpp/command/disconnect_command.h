@@ -19,6 +19,7 @@
 #include "wifi_direct_types.h"
 #include "command/wifi_direct_command.h"
 #include "channel/negotiate_channel.h"
+#include "softbus_def.h"
 
 namespace OHOS::SoftBus {
 struct DisconnectInfo {
@@ -26,7 +27,7 @@ struct DisconnectInfo {
     std::shared_ptr<NegotiateChannel> channel_;
 };
 
-class DisconnectCommand : public WifiDirectCommand {
+class SOFTBUS_DEFAULT_EXPORT DisconnectCommand : public WifiDirectCommand {
 public:
     DisconnectCommand(const WifiDirectDisconnectInfo &info, const WifiDirectDisconnectCallback &callback);
 

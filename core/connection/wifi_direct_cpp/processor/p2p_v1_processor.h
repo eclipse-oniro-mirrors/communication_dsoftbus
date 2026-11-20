@@ -28,7 +28,7 @@
 #include "wifi_direct_executor.h"
 
 namespace OHOS::SoftBus {
-class P2pV1Processor : public WifiDirectProcessor {
+class SOFTBUS_DEFAULT_EXPORT P2pV1Processor : public WifiDirectProcessor {
 public:
     explicit P2pV1Processor(const std::string &remoteDeviceId);
     ~P2pV1Processor() override;

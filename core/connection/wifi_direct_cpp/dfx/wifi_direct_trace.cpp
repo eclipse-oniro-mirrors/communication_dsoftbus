@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include "softbus_def.h"
 #include "wifi_direct_trace.h"
 #include "hitrace/trace.h"
 
@@ -51,7 +52,7 @@ void WifiDirectTrace::StopTrace()
     OHOS::HiviewDFX::HiTraceChain::End(traceId);
 }
 
-void WifiDirectTrace::SetRequestId(uint64_t requestId)
+SOFTBUS_DEFAULT_USED_EXPORT void WifiDirectTrace::SetRequestId(uint64_t requestId)
 {
     auto traceId = OHOS::HiviewDFX::HiTraceChain::GetId();
     traceId.SetSpanId(requestId);

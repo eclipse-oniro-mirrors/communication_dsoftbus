@@ -19,6 +19,7 @@
 #include "utils/wifi_direct_utils.h"
 
 namespace OHOS::SoftBus {
+SOFTBUS_DEFAULT_USED_EXPORT
 std::shared_ptr<WifiDirectExecutor> WifiDirectExecutorManager::Find(const std::string &remoteId)
 {
     CONN_CHECK_AND_RETURN_RET_LOGE(!remoteId.empty(), nullptr, CONN_WIFI_DIRECT, "remote id is empty");
@@ -48,6 +49,7 @@ std::shared_ptr<WifiDirectExecutor> WifiDirectExecutorManager::Find(const std::s
     return nullptr;
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 void WifiDirectExecutorManager::Insert(const std::string &remoteId, const std::shared_ptr<WifiDirectExecutor> &executor)
 {
     CONN_CHECK_AND_RETURN_LOGE(!remoteId.empty(), CONN_WIFI_DIRECT, "remote id is empty");
@@ -68,7 +70,7 @@ void WifiDirectExecutorManager::Insert(const std::string &remoteId, const std::s
     executors_.push_back({remoteDeviceId, remoteMac, executor});
 }
 
-void WifiDirectExecutorManager::Erase(const std::string &remoteId)
+SOFTBUS_DEFAULT_USED_EXPORT void WifiDirectExecutorManager::Erase(const std::string &remoteId)
 {
     CONN_CHECK_AND_RETURN_LOGE(!remoteId.empty(), CONN_WIFI_DIRECT, "remote id is empty");
     for (auto it = executors_.begin(); it != executors_.end();) {
@@ -84,7 +86,7 @@ void WifiDirectExecutorManager::Erase(const std::string &remoteId)
     }
 }
 
-size_t WifiDirectExecutorManager::Size()
+SOFTBUS_DEFAULT_USED_EXPORT size_t WifiDirectExecutorManager::Size()
 {
     return executors_.size();
 }

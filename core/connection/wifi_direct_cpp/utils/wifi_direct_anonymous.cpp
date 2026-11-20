@@ -19,42 +19,42 @@
 #include "wifi_direct_utils.h"
 
 namespace OHOS::SoftBus {
-std::string WifiDirectAnonymizeMac(const std::string &mac)
+SOFTBUS_DEFAULT_USED_EXPORT std::string WifiDirectAnonymizeMac(const std::string &mac)
 {
     return WifiDirectAnonymize(mac);
 }
 
-std::string WifiDirectAnonymizeMac(const std::vector<uint8_t> &mac)
+SOFTBUS_DEFAULT_USED_EXPORT std::string WifiDirectAnonymizeMac(const std::vector<uint8_t> &mac)
 {
     return WifiDirectAnonymizeMac(WifiDirectUtils::MacArrayToString(mac));
 }
 
-std::string WifiDirectAnonymizeIp(const std::string &ip)
+SOFTBUS_DEFAULT_USED_EXPORT std::string WifiDirectAnonymizeIp(const std::string &ip)
 {
     return WifiDirectAnonymize(ip);
 }
 
-std::string WifiDirectAnonymizeDeviceId(const std::string &deviceId)
+SOFTBUS_DEFAULT_USED_EXPORT std::string WifiDirectAnonymizeDeviceId(const std::string &deviceId)
 {
     return WifiDirectAnonymize(deviceId);
 }
 
-std::string WifiDirectAnonymizeSsid(const std::string &ssid)
+SOFTBUS_DEFAULT_USED_EXPORT std::string WifiDirectAnonymizeSsid(const std::string &ssid)
 {
     return WifiDirectAnonymize(ssid);
 }
 
-std::string WifiDirectAnonymizePsk(const std::string &psk)
+SOFTBUS_DEFAULT_USED_EXPORT std::string WifiDirectAnonymizePsk(const std::string &psk)
 {
     return WifiDirectAnonymize(psk);
 }
 
-std::string WifiDirectAnonymizePtk(const std::string &ptk)
+SOFTBUS_DEFAULT_USED_EXPORT std::string WifiDirectAnonymizePtk(const std::string &ptk)
 {
     return WifiDirectAnonymize(ptk);
 }
 
-std::string WifiDirectAnonymizeData(const std::string &data)
+SOFTBUS_DEFAULT_USED_EXPORT std::string WifiDirectAnonymizeData(const std::string &data)
 {
     return WifiDirectAnonymize(data);
 }
@@ -71,7 +71,7 @@ std::string WifiDirectAnonymize(const std::string &data)
     return result;
 }
 
-std::string WifiDirectHashAnonymize(const std::vector<uint8_t> &input)
+SOFTBUS_DEFAULT_USED_EXPORT std::string WifiDirectHashAnonymize(const std::vector<uint8_t> &input)
 {
     uint8_t hashData[SHA_256_HASH_LEN] = { 0 };
     int32_t ret = SoftBusGenerateStrHash(input.data(), input.size(), hashData);
@@ -83,7 +83,7 @@ std::string WifiDirectHashAnonymize(const std::vector<uint8_t> &input)
     return WifiDirectAnonymize(std::string(hashStr).substr(SHA_256_HASH_LEN, SHA_256_HASH_LEN));
 }
 
-std::string WifiDirectHashAnonymize(const std::vector<char> &input)
+SOFTBUS_DEFAULT_USED_EXPORT std::string WifiDirectHashAnonymize(const std::vector<char> &input)
 {
     uint8_t hashData[SHA_256_HASH_LEN] = { 0 };
     int32_t ret = SoftBusGenerateStrHash(reinterpret_cast<const unsigned char *>(input.data()), input.size(), hashData);

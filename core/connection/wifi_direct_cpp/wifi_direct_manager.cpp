@@ -932,7 +932,7 @@ static struct WifiDirectManager g_manager = {
     .setEdcaParam = SetEdcaParam,
 };
 
-struct WifiDirectManager *GetWifiDirectManager(void)
+SOFTBUS_DEFAULT_USED_EXPORT struct WifiDirectManager *GetWifiDirectManager(void)
 {
     return &g_manager;
 }

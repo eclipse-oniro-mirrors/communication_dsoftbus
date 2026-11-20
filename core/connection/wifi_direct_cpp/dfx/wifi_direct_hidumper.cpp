@@ -34,7 +34,7 @@ static constexpr const char *WIFI_DIRECT_HIDUMPER_INFO = "WifiDirectHidumper";
 static constexpr int P2P_GROUP_EXIST = 1;
 static constexpr int P2P_GROUP_NOT_EXIST = 0;
 
-WifiDirectHidumper& WifiDirectHidumper::GetInstance()
+SOFTBUS_DEFAULT_USED_EXPORT WifiDirectHidumper& WifiDirectHidumper::GetInstance()
 {
     static WifiDirectHidumper instance;
     return instance;
@@ -49,7 +49,7 @@ void WifiDirectHidumper::HidumperInit()
     hiDumper_();
 }
 
-void WifiDirectHidumper::Register(const HiDumper &hidumper)
+SOFTBUS_DEFAULT_USED_EXPORT void WifiDirectHidumper::Register(const HiDumper &hidumper)
 {
     hiDumper_ = hidumper;
 }
@@ -59,7 +59,7 @@ void WifiDirectHidumper::HidumperRegister()
     SoftBusRegConnVarDump(WIFI_DIRECT_HIDUMPER_INFO, &Dump);
 }
 
-void WifiDirectHidumper::DumpInfoHandler(nlohmann::json &json)
+SOFTBUS_DEFAULT_USED_EXPORT void WifiDirectHidumper::DumpInfoHandler(nlohmann::json &json)
 {
     nlohmann::json currentTime;
     currentTime["loadTime"] = SoftBusFormatTimestamp(SoftBusGetSysTimeMs());

@@ -21,7 +21,7 @@
 namespace OHOS::SoftBus {
 using InterfaceType = InterfaceInfo::InterfaceType;
 
-P2pEntity& P2pEntity::GetInstance()
+SOFTBUS_DEFAULT_USED_EXPORT P2pEntity& P2pEntity::GetInstance()
 {
     static P2pEntity instance;
     return instance;
@@ -63,7 +63,7 @@ void P2pEntity::Listener(BroadcastReceiverAction action, const struct BroadcastP
 }
 
 static bool g_p2pEntityInit = false;
-void P2pEntity::Init()
+SOFTBUS_DEFAULT_USED_EXPORT void P2pEntity::Init()
 {
     if (g_p2pEntityInit) {
         return;
@@ -113,7 +113,7 @@ void P2pEntity::DisconnectLink(const std::string &remoteMac)
 
 void P2pEntity::DestroyGroupIfNeeded() { };
 
-P2pOperationResult P2pEntity::CreateGroup(const P2pCreateGroupParam &param)
+SOFTBUS_DEFAULT_USED_EXPORT P2pOperationResult P2pEntity::CreateGroup(const P2pCreateGroupParam &param)
 {
     std::shared_ptr<P2pOperationWrapper<P2pCreateGroupParam>> operation;
     P2pOperationResult result;
@@ -135,7 +135,7 @@ P2pOperationResult P2pEntity::CreateGroup(const P2pCreateGroupParam &param)
     return res;
 }
 
-P2pOperationResult P2pEntity::Connect(const P2pConnectParam &param)
+SOFTBUS_DEFAULT_USED_EXPORT P2pOperationResult P2pEntity::Connect(const P2pConnectParam &param)
 {
     std::shared_ptr<P2pOperationWrapper<P2pConnectParam>> operation;
     P2pOperationResult result;
@@ -153,7 +153,7 @@ P2pOperationResult P2pEntity::Connect(const P2pConnectParam &param)
     return operation->promise_.get_future().get();
 }
 
-int32_t P2pEntity::ReuseLink()
+SOFTBUS_DEFAULT_USED_EXPORT int32_t P2pEntity::ReuseLink()
 {
     (void)P2pAdapter::SetP2pGroupLiveType(P2pAdapter::P2P_GROUP_KEEP_ALIVE);
     return P2pAdapter::P2pShareLinkReuse();
@@ -166,7 +166,7 @@ static void SendClientJoinEvent(const std::string &remoteMac, const std::string 
     WifiDirectSchedulerFactory::GetInstance().GetScheduler().ProcessEvent(remoteDeviceId, event);
 }
 
-void P2pEntity::NotifyNewClientJoining(const std::string &remoteMac, int waitTime)
+SOFTBUS_DEFAULT_USED_EXPORT void P2pEntity::NotifyNewClientJoining(const std::string &remoteMac, int waitTime)
 {
     CONN_LOGI(CONN_WIFI_DIRECT, "enter");
     CONN_CHECK_AND_RETURN_LOGW(!remoteMac.empty(), CONN_WIFI_DIRECT, "remote mac is empty, skip");
@@ -197,7 +197,7 @@ void P2pEntity::NotifyNewClientJoining(const std::string &remoteMac, int waitTim
         WifiDirectAnonymizeMac(remoteMac).c_str(), joiningClients_.size());
 }
 
-void P2pEntity::CancelNewClientJoining(const std::string &remoteMac)
+SOFTBUS_DEFAULT_USED_EXPORT void P2pEntity::CancelNewClientJoining(const std::string &remoteMac)
 {
     CONN_LOGI(CONN_WIFI_DIRECT, "enter");
     CONN_CHECK_AND_RETURN_LOGW(!remoteMac.empty(), CONN_WIFI_DIRECT, "remote mac is empty, skip");
@@ -257,7 +257,7 @@ size_t P2pEntity::GetJoiningClientCount()
     return joiningClients_.size();
 }
 
-P2pOperationResult P2pEntity::Disconnect(const P2pDestroyGroupParam &param)
+SOFTBUS_DEFAULT_USED_EXPORT P2pOperationResult P2pEntity::Disconnect(const P2pDestroyGroupParam &param)
 {
     CONN_LOGI(CONN_WIFI_DIRECT, "enter");
     std::shared_ptr<P2pOperationWrapper<P2pDestroyGroupParam>> operation = nullptr;
@@ -292,7 +292,7 @@ P2pOperationResult P2pEntity::Disconnect(const P2pDestroyGroupParam &param)
     return operation->promise_.get_future().get();
 }
 
-P2pOperationResult P2pEntity::DestroyGroup(const P2pDestroyGroupParam &param)
+SOFTBUS_DEFAULT_USED_EXPORT P2pOperationResult P2pEntity::DestroyGroup(const P2pDestroyGroupParam &param)
 {
     std::shared_ptr<P2pOperationWrapper<P2pDestroyGroupParam>> operation;
     P2pOperationResult result;

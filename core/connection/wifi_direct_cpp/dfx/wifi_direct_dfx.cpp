@@ -22,7 +22,7 @@
 #include "wifi_direct_types.h"
 
 namespace OHOS::SoftBus {
-WifiDirectDfx& WifiDirectDfx::GetInstance()
+SOFTBUS_DEFAULT_USED_EXPORT WifiDirectDfx& WifiDirectDfx::GetInstance()
 {
     static WifiDirectDfx instance;
     return instance;
@@ -54,7 +54,7 @@ void WifiDirectDfx::DfxRecord(bool success, int32_t reason, const WifiDirectConn
     }
 }
 
-void WifiDirectDfx::Record(uint32_t requestId, uint16_t challengeCode)
+SOFTBUS_DEFAULT_USED_EXPORT void WifiDirectDfx::Record(uint32_t requestId, uint16_t challengeCode)
 {
     std::lock_guard lock(mutex_);
     challengeCodeMap_.insert(std::make_pair(requestId, challengeCode));
@@ -137,7 +137,7 @@ void WifiDirectDfx::SetReportExtraLinkType(ConnEventExtra &extra, const WifiDire
     CONN_LOGI(CONN_WIFI_DIRECT, "report extra link type %{public}d", extra.linkType);
 }
 
-void WifiDirectDfx::SetReuseFlag(uint32_t requestId)
+SOFTBUS_DEFAULT_USED_EXPORT void WifiDirectDfx::SetReuseFlag(uint32_t requestId)
 {
     std::lock_guard lock(mutex_);
     reuseFlagMap_.insert(std::make_pair(requestId, true));
@@ -160,6 +160,7 @@ std::string WifiDirectDfx::GetChallengeCode(uint32_t requestId)
     return "";
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 void WifiDirectDfx::ReportReceiveAuthLinkMsg(const NegotiateMessage &msg, const std::string &remoteDeviceId)
 {
     if (msg.GetMessageType() == NegotiateMessageType::CMD_TRIGGER_REQ ||
@@ -224,6 +225,7 @@ void WifiDirectDfx::SetBootLinkTypeByAuthHandle(ConnEventExtra &extra, const Wif
     }
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 void WifiDirectDfx::SetVirtualLinkType(uint32_t requestId, StatisticVirtualLinkType virtualLinkType)
 {
     std::lock_guard lock(mutex_);

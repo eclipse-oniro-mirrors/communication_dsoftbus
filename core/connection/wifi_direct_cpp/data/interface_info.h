@@ -20,6 +20,7 @@
 #include "ipv4_info.h"
 #include "link_info.h"
 #include "wifi_direct_defines.h"
+#include "softbus_def.h"
 
 namespace OHOS::SoftBus {
 
@@ -59,7 +60,7 @@ enum class InterfaceInfoKey {
     NEED_KEEP_P2P_GROUP = 32,
 };
 
-class InterfaceInfo : public Serializable, public InfoContainer<InterfaceInfoKey> {
+class SOFTBUS_DEFAULT_EXPORT InterfaceInfo : public Serializable, public InfoContainer<InterfaceInfoKey> {
 public:
     enum InterfaceType {
         P2P,

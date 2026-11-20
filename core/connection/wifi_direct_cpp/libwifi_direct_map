@@ -1,0 +1,621 @@
+/*
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+{
+    global:
+        AdapterCheckFuncPointer;
+        AuthCheckFuncPointer;
+        ConnCheckFuncPointer;
+        DiscCheckFuncPointer;
+        LnnCheckFuncPointer;
+        TransCheckFuncPointer;
+        GetWifiDirectManager;
+        SoftBusDlopen;
+        SoftBusDlsym;
+        SoftbusServerPluginLoadedFlagGet;
+
+        extern "C++" {
+            /* AuthNegotiateChannel */
+            "OHOS::SoftBus::AuthNegotiateChannel::AuthNegotiateChannel(AuthHandle const&)";
+            "OHOS::SoftBus::AuthNegotiateChannel::Init()";
+            "OHOS::SoftBus::AuthNegotiateChannel::IsIpv6() const";
+            "OHOS::SoftBus::AuthNegotiateChannel::IsMeta() const";
+            "OHOS::SoftBus::AuthNegotiateChannel::OpenConnection(OHOS::SoftBus::AuthNegotiateChannel::OpenParam const&, std::__h::shared_ptr<OHOS::SoftBus::AuthNegotiateChannel> const&, unsigned int&, std::__h::shared_ptr<std::__h::promise<OHOS::SoftBus::AuthOpenEvent>>)";
+            "OHOS::SoftBus::AuthNegotiateChannel::RefreshAuthConnection(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>>, bool)";
+            "OHOS::SoftBus::AuthNegotiateChannel::Register(std::__h::function<void (std::__h::vector<unsigned char, std::__h::allocator<unsigned char>> const&)> const&)";
+            "OHOS::SoftBus::AuthNegotiateChannel::RemovePendingAuthReq(unsigned int)";
+            "OHOS::SoftBus::AuthNegotiateChannel::SendMessageAndWaitResponse(OHOS::SoftBus::NegotiateMessage const&)";
+            "OHOS::SoftBus::AuthNegotiateChannel::SetClose()";
+            "OHOS::SoftBus::AuthNegotiateChannel::SetIpv6(bool)";
+            "OHOS::SoftBus::AuthNegotiateChannel::StartListening(AuthLinkType, std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, int)";
+            "OHOS::SoftBus::AuthNegotiateChannel::StopCustomListening()";
+            "OHOS::SoftBus::AuthNegotiateChannel::StopListening(AuthLinkType, ListenerModule)";
+            "OHOS::SoftBus::AuthNegotiateChannel::operator==(AuthHandle const&) const";
+
+            /* CommandFactory */
+            "OHOS::SoftBus::CommandFactory::GetInstance()";
+            "OHOS::SoftBus::CommandFactory::Register(std::__h::function<std::__h::shared_ptr<OHOS::SoftBus::ConnectCommand> (WifiDirectConnectInfo const&, WifiDirectConnectCallback const&)> const&)";
+            "OHOS::SoftBus::CommandFactory::Register(std::__h::function<std::__h::shared_ptr<OHOS::SoftBus::DisconnectCommand> (WifiDirectDisconnectInfo const&, WifiDirectDisconnectCallback const&)> const&)";
+
+            /* ConnectCommand */
+            "OHOS::SoftBus::ConnectCommand::ConnectCommand(WifiDirectConnectInfo const&, WifiDirectConnectCallback const&)";
+            "OHOS::SoftBus::ConnectCommand::GetConnectInfo()";
+            "OHOS::SoftBus::ConnectCommand::GetLinkType() const";
+            "OHOS::SoftBus::ConnectCommand::GetProcessor()";
+            "OHOS::SoftBus::ConnectCommand::GetRemoteDeviceId() const";
+            "OHOS::SoftBus::ConnectCommand::OnFailure(int) const";
+            "OHOS::SoftBus::ConnectCommand::OnSuccess(WifiDirectLink const&) const";
+            "OHOS::SoftBus::ConnectCommand::PreferNegotiateChannel()";
+            "OHOS::SoftBus::ConnectCommand::ResetConnectType(WifiDirectConnectType)";
+            "OHOS::SoftBus::ConnectCommand::SetFailureCallback(std::__h::function<void (int)> const&)";
+            "OHOS::SoftBus::ConnectCommand::SetSuccessCallback(std::__h::function<void (WifiDirectLink const&)> const&)";
+            "OHOS::SoftBus::ConnectCommand::~ConnectCommand()";
+
+            /* DisconnectCommand */
+            "OHOS::SoftBus::DisconnectCommand::DisconnectCommand(WifiDirectDisconnectInfo const&, WifiDirectDisconnectCallback const&)";
+            "OHOS::SoftBus::DisconnectCommand::GetDisconnectInfo() const";
+            "OHOS::SoftBus::DisconnectCommand::GetNegotiateChannel() const";
+            "OHOS::SoftBus::DisconnectCommand::GetProcessor()";
+            "OHOS::SoftBus::DisconnectCommand::GetRemoteDeviceId() const";
+            "OHOS::SoftBus::DisconnectCommand::OnFailure(int) const";
+            "OHOS::SoftBus::DisconnectCommand::OnSuccess() const";
+
+            /* DurationStatistic */
+            "OHOS::SoftBus::DurationStatistic::GetInstance()";
+            "OHOS::SoftBus::DurationStatistic::ReNegotiateFlag(unsigned int)";
+            "OHOS::SoftBus::DurationStatistic::Record(unsigned int, std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::DurationStatistic::RecordReNegotiate(unsigned int, bool)";
+
+            /* DurationStatisticCalculatorFactory */
+            "OHOS::SoftBus::DurationStatisticCalculatorFactory::GetInstance()";
+            "OHOS::SoftBus::DurationStatisticCalculatorFactory::Register(std::__h::function<std::__h::shared_ptr<OHOS::SoftBus::DurationStatisticCalculator> (WifiDirectConnectType)> const&)";
+
+            /* EntityFactory */
+            "OHOS::SoftBus::EntityFactory::GetInstance()";
+            "OHOS::SoftBus::EntityFactory::Register(std::__h::function<OHOS::SoftBus::WifiDirectEntity& (OHOS::SoftBus::InnerLink::LinkType)> const&)";
+
+            /* ForceDisconnectCommand */
+            "OHOS::SoftBus::ForceDisconnectCommand::GetDisconnectInfo() const";
+            "OHOS::SoftBus::ForceDisconnectCommand::GetNegotiateChannel() const";
+            "OHOS::SoftBus::ForceDisconnectCommand::OnSuccess() const";
+
+            /* InnerLink */
+            "OHOS::SoftBus::InnerLink::CheckOnlyVirtualLinks() const";
+            "OHOS::SoftBus::InnerLink::Dump() const";
+            "OHOS::SoftBus::InnerLink::GenerateLink(unsigned int, int, WifiDirectLink&, bool, bool)";
+            "OHOS::SoftBus::InnerLink::GetFrequency() const";
+            "OHOS::SoftBus::InnerLink::GetLinkPowerMode() const";
+            "OHOS::SoftBus::InnerLink::GetLinkType() const";
+            "OHOS::SoftBus::InnerLink::GetListenerModule() const";
+            "OHOS::SoftBus::InnerLink::GetLocalBaseMac() const";
+            "OHOS::SoftBus::InnerLink::GetLocalInterface() const";
+            "OHOS::SoftBus::InnerLink::GetLocalIpv4() const";
+            "OHOS::SoftBus::InnerLink::GetLocalIpv6() const";
+            "OHOS::SoftBus::InnerLink::GetNegotiateChannel() const";
+            "OHOS::SoftBus::InnerLink::GetNewPtkFrame() const";
+            "OHOS::SoftBus::InnerLink::GetRemoteBaseMac() const";
+            "OHOS::SoftBus::InnerLink::GetRemoteDeviceId() const";
+            "OHOS::SoftBus::InnerLink::GetRemoteInterface() const";
+            "OHOS::SoftBus::InnerLink::GetRemoteIpv4() const";
+            "OHOS::SoftBus::InnerLink::GetRemoteIpv6() const";
+            "OHOS::SoftBus::InnerLink::GetState() const";
+            "OHOS::SoftBus::InnerLink::IsBeingUsedByLocal() const";
+            "OHOS::SoftBus::InnerLink::IsBeingUsedByRemote() const";
+            "OHOS::SoftBus::InnerLink::RemoveId(int)";
+            "OHOS::SoftBus::InnerLink::SetBeingUsedByRemote(bool)";
+            "OHOS::SoftBus::InnerLink::SetFrequency(int)";
+            "OHOS::SoftBus::InnerLink::SetLegacyReused(bool)";
+            "OHOS::SoftBus::InnerLink::SetLinkPowerMode(int)";
+            "OHOS::SoftBus::InnerLink::SetLinkType(OHOS::SoftBus::InnerLink::LinkType)";
+            "OHOS::SoftBus::InnerLink::SetListenerModule(ListenerModule)";
+            "OHOS::SoftBus::InnerLink::SetLocalBaseMac(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::InnerLink::SetLocalCustomPort(int)";
+            "OHOS::SoftBus::InnerLink::SetLocalDynamicMac(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::InnerLink::SetLocalInterface(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::InnerLink::SetLocalIpv4(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::InnerLink::SetLocalIpv6(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::InnerLink::SetLocalPort(int)";
+            "OHOS::SoftBus::InnerLink::SetNegotiateChannel(std::__h::shared_ptr<OHOS::SoftBus::NegotiateChannel> const&)";
+            "OHOS::SoftBus::InnerLink::SetNewPtkFrame(bool)";
+            "OHOS::SoftBus::InnerLink::SetPtk(bool)";
+            "OHOS::SoftBus::InnerLink::SetRemoteBaseMac(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::InnerLink::SetRemoteCustomPort(int)";
+            "OHOS::SoftBus::InnerLink::SetRemoteDeviceId(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::InnerLink::SetRemoteDynamicMac(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::InnerLink::SetRemoteInterface(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::InnerLink::SetRemoteIpv4(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::InnerLink::SetRemoteIpv6(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::InnerLink::SetRemotePort(int)";
+            "OHOS::SoftBus::InnerLink::SetState(OHOS::SoftBus::InnerLink::LinkState)";
+
+            /* InterfaceInfo */
+            "OHOS::SoftBus::InterfaceInfo::GetBandWidth() const";
+            "OHOS::SoftBus::InterfaceInfo::GetBaseMac() const";
+            "OHOS::SoftBus::InterfaceInfo::GetCapability() const";
+            "OHOS::SoftBus::InterfaceInfo::GetCenter20M() const";
+            "OHOS::SoftBus::InterfaceInfo::GetChannelAndBandWidth() const";
+            "OHOS::SoftBus::InterfaceInfo::GetConnectedDeviceCount() const";
+            "OHOS::SoftBus::InterfaceInfo::GetDynamicMac() const";
+            "OHOS::SoftBus::InterfaceInfo::GetIpString() const";
+            "OHOS::SoftBus::InterfaceInfo::GetLocalCustomPort() const";
+            "OHOS::SoftBus::InterfaceInfo::GetName() const";
+            "OHOS::SoftBus::InterfaceInfo::GetP2pListenModule() const";
+            "OHOS::SoftBus::InterfaceInfo::GetP2pListenPort() const";
+            "OHOS::SoftBus::InterfaceInfo::GetPhysicalRate() const";
+            "OHOS::SoftBus::InterfaceInfo::GetPsk() const";
+            "OHOS::SoftBus::InterfaceInfo::GetReuseCount() const";
+            "OHOS::SoftBus::InterfaceInfo::GetRole() const";
+            "OHOS::SoftBus::InterfaceInfo::GetSsid() const";
+            "OHOS::SoftBus::InterfaceInfo::IsAvailable() const";
+            "OHOS::SoftBus::InterfaceInfo::IsEnable() const";
+            "OHOS::SoftBus::InterfaceInfo::RefreshIsAvailable()";
+            "OHOS::SoftBus::InterfaceInfo::SetBandWidth(int)";
+            "OHOS::SoftBus::InterfaceInfo::SetBaseMac(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::InterfaceInfo::SetCenter20M(int)";
+            "OHOS::SoftBus::InterfaceInfo::SetConnectedDeviceCount(int)";
+            "OHOS::SoftBus::InterfaceInfo::SetDynamicMac(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::InterfaceInfo::SetIpString(OHOS::SoftBus::Ipv4Info const&)";
+            "OHOS::SoftBus::InterfaceInfo::SetIsAvailable(bool)";
+            "OHOS::SoftBus::InterfaceInfo::SetIsCreateGo(bool)";
+            "OHOS::SoftBus::InterfaceInfo::SetIsEnable(bool)";
+            "OHOS::SoftBus::InterfaceInfo::SetLocalCustomPort(int)";
+            "OHOS::SoftBus::InterfaceInfo::SetName(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::InterfaceInfo::SetP2pListenModule(int const&)";
+            "OHOS::SoftBus::InterfaceInfo::SetP2pListenPort(int const&)";
+            "OHOS::SoftBus::InterfaceInfo::SetPsk(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::InterfaceInfo::SetReuseCount(int)";
+            "OHOS::SoftBus::InterfaceInfo::SetRole(OHOS::SoftBus::LinkInfo::LinkMode)";
+            "OHOS::SoftBus::InterfaceInfo::SetSsid(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+
+            /* InterfaceManager */
+            "OHOS::SoftBus::InterfaceManager::GetInstance()";
+            "OHOS::SoftBus::InterfaceManager::Init()";
+            "OHOS::SoftBus::InterfaceManager::InitInterface(OHOS::SoftBus::InterfaceInfo::InterfaceType)";
+            "OHOS::SoftBus::InterfaceManager::IsInterfaceAvailable(OHOS::SoftBus::InterfaceInfo::InterfaceType, bool) const";
+            "OHOS::SoftBus::InterfaceManager::LockInterface(OHOS::SoftBus::InterfaceInfo::InterfaceType, std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::InterfaceManager::ReadInterface(OHOS::SoftBus::InterfaceInfo::InterfaceType, std::__h::function<int (OHOS::SoftBus::InterfaceInfo const&)> const&)";
+            "OHOS::SoftBus::InterfaceManager::UnlockInterface(OHOS::SoftBus::InterfaceInfo::InterfaceType)";
+            "OHOS::SoftBus::InterfaceManager::UpdateInterface(OHOS::SoftBus::InterfaceInfo::InterfaceType, std::__h::function<int (OHOS::SoftBus::InterfaceInfo&)> const&)";
+
+            /* LinkInfo */
+            "OHOS::SoftBus::LinkInfo::GetAuthPort() const";
+            "OHOS::SoftBus::LinkInfo::GetBandWidth() const";
+            "OHOS::SoftBus::LinkInfo::GetBssid() const";
+            "OHOS::SoftBus::LinkInfo::GetCenter20M() const";
+            "OHOS::SoftBus::LinkInfo::GetCenterFrequency1() const";
+            "OHOS::SoftBus::LinkInfo::GetCenterFrequency2() const";
+            "OHOS::SoftBus::LinkInfo::GetCustomPort()";
+            "OHOS::SoftBus::LinkInfo::GetIpAddrType()";
+            "OHOS::SoftBus::LinkInfo::GetIsBeingUsedByRemote() const";
+            "OHOS::SoftBus::LinkInfo::GetIsDbac() const";
+            "OHOS::SoftBus::LinkInfo::GetLinkPowerMode() const";
+            "OHOS::SoftBus::LinkInfo::GetLocalBaseMac() const";
+            "OHOS::SoftBus::LinkInfo::GetLocalInterface() const";
+            "OHOS::SoftBus::LinkInfo::GetLocalIpv4Info() const";
+            "OHOS::SoftBus::LinkInfo::GetLocalIpv6() const";
+            "OHOS::SoftBus::LinkInfo::GetLocalLinkMode() const";
+            "OHOS::SoftBus::LinkInfo::GetMaxPhysicalRate() const";
+            "OHOS::SoftBus::LinkInfo::GetPsk() const";
+            "OHOS::SoftBus::LinkInfo::GetRemoteBaseMac() const";
+            "OHOS::SoftBus::LinkInfo::GetRemoteInterface() const";
+            "OHOS::SoftBus::LinkInfo::GetRemoteIpv4Info() const";
+            "OHOS::SoftBus::LinkInfo::GetRemoteLinkMode() const";
+            "OHOS::SoftBus::LinkInfo::GetSsid() const";
+            "OHOS::SoftBus::LinkInfo::IsRatePreference() const";
+            "OHOS::SoftBus::LinkInfo::LinkInfo(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, OHOS::SoftBus::LinkInfo::LinkMode, OHOS::SoftBus::LinkInfo::LinkMode)";
+            "OHOS::SoftBus::LinkInfo::Marshalling(OHOS::SoftBus::WifiDirectProtocol&, std::__h::vector<unsigned char, std::__h::allocator<unsigned char>>&) const";
+            "OHOS::SoftBus::LinkInfo::SetAuthPort(int)";
+            "OHOS::SoftBus::LinkInfo::SetBandWidth(int)";
+            "OHOS::SoftBus::LinkInfo::SetBssid(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::LinkInfo::SetCenter20M(int)";
+            "OHOS::SoftBus::LinkInfo::SetCenterFrequency1(int)";
+            "OHOS::SoftBus::LinkInfo::SetCenterFrequency2(int)";
+            "OHOS::SoftBus::LinkInfo::SetCustomPort(int)";
+            "OHOS::SoftBus::LinkInfo::SetIpAddrType(IpAddrType)";
+            "OHOS::SoftBus::LinkInfo::SetIsBeingUsedByRemote(bool)";
+            "OHOS::SoftBus::LinkInfo::SetIsClient(bool)";
+            "OHOS::SoftBus::LinkInfo::SetIsDbac(bool)";
+            "OHOS::SoftBus::LinkInfo::SetLinkPowerMode(int)";
+            "OHOS::SoftBus::LinkInfo::SetLocalBaseMac(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::LinkInfo::SetLocalInterface(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::LinkInfo::SetLocalIpv4Info(OHOS::SoftBus::Ipv4Info const&)";
+            "OHOS::SoftBus::LinkInfo::SetLocalIpv6(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::LinkInfo::SetLocalLinkMode(OHOS::SoftBus::LinkInfo::LinkMode)";
+            "OHOS::SoftBus::LinkInfo::SetMaxPhysicalRate(int)";
+            "OHOS::SoftBus::LinkInfo::SetPsk(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::LinkInfo::SetRatePreference(bool)";
+            "OHOS::SoftBus::LinkInfo::SetRemoteBaseMac(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::LinkInfo::SetRemoteDevice(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::LinkInfo::SetRemoteInterface(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::LinkInfo::SetRemoteIpv4Info(OHOS::SoftBus::Ipv4Info const&)";
+            "OHOS::SoftBus::LinkInfo::SetRemoteLinkMode(OHOS::SoftBus::LinkInfo::LinkMode)";
+            "OHOS::SoftBus::LinkInfo::SetSsid(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::LinkInfo::Unmarshalling(OHOS::SoftBus::WifiDirectProtocol&, std::__h::vector<unsigned char, std::__h::allocator<unsigned char>> const&)";
+
+            /* LinkManager */
+            "OHOS::SoftBus::LinkManager::CheckOnlyVirtualLink()";
+            "OHOS::SoftBus::LinkManager::Dump() const";
+            "OHOS::SoftBus::LinkManager::ForEach(std::__h::function<bool (OHOS::SoftBus::InnerLink&)> const&)";
+            "OHOS::SoftBus::LinkManager::GetAllLinksBasicInfo(std::__h::vector<OHOS::SoftBus::InnerLinkBasicInfo, std::__h::allocator<OHOS::SoftBus::InnerLinkBasicInfo>>&)";
+            "OHOS::SoftBus::LinkManager::GetInstance()";
+            "OHOS::SoftBus::LinkManager::GetLinkById(int)";
+            "OHOS::SoftBus::LinkManager::GetReuseLink(WifiDirectConnectType, std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::LinkManager::GetReuseLink(WifiDirectLinkType, std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::LinkManager::GetReuseLink(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::LinkManager::ProcessIfAbsent(OHOS::SoftBus::InnerLink::LinkType, std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, std::__h::function<void (OHOS::SoftBus::InnerLink&)> const&)";
+            "OHOS::SoftBus::LinkManager::ProcessIfAbsent(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, std::__h::function<void (OHOS::SoftBus::InnerLink&)> const&)";
+            "OHOS::SoftBus::LinkManager::ProcessIfPresent(OHOS::SoftBus::InnerLink::LinkType, std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, std::__h::function<void (OHOS::SoftBus::InnerLink&)> const&)";
+            "OHOS::SoftBus::LinkManager::ProcessIfPresent(int, std::__h::function<void (OHOS::SoftBus::InnerLink&)> const&)";
+            "OHOS::SoftBus::LinkManager::ProcessIfPresent(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, std::__h::function<void (OHOS::SoftBus::InnerLink&)> const&)";
+            "OHOS::SoftBus::LinkManager::RefreshRelationShip(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::LinkManager::RemoveLink(OHOS::SoftBus::InnerLink::LinkType, std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::LinkManager::RemoveLink(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::LinkManager::RemoveLinks(OHOS::SoftBus::InnerLink::LinkType, bool)";
+
+            /* NegotiateCommand */
+            "OHOS::SoftBus::NegotiateCommand::GetNegotiateChannel()";
+            "OHOS::SoftBus::NegotiateCommand::GetNegotiateMessage()";
+            "OHOS::SoftBus::NegotiateCommand::NegotiateCommand(OHOS::SoftBus::NegotiateMessage const&, std::__h::shared_ptr<OHOS::SoftBus::NegotiateChannel> const&)";
+
+            /* NegotiateMessage */
+            "OHOS::SoftBus::NegotiateMessage::GetChallengeCode() const";
+            "OHOS::SoftBus::NegotiateMessage::GetExtraData() const";
+            "OHOS::SoftBus::NegotiateMessage::GetInterfaceInfoArray() const";
+            "OHOS::SoftBus::NegotiateMessage::GetIpv4InfoArray() const";
+            "OHOS::SoftBus::NegotiateMessage::GetIsModeStrict() const";
+            "OHOS::SoftBus::NegotiateMessage::GetIsProxyEnable() const";
+            "OHOS::SoftBus::NegotiateMessage::GetLegacyP2pCommandType() const";
+            "OHOS::SoftBus::NegotiateMessage::GetLegacyP2pGoPort() const";
+            "OHOS::SoftBus::NegotiateMessage::GetLinkInfo() const";
+            "OHOS::SoftBus::NegotiateMessage::GetMessageType() const";
+            "OHOS::SoftBus::NegotiateMessage::GetNewPtkFrame() const";
+            "OHOS::SoftBus::NegotiateMessage::GetPreferLinkBandWidth() const";
+            "OHOS::SoftBus::NegotiateMessage::GetPreferLinkMode() const";
+            "OHOS::SoftBus::NegotiateMessage::GetRemoteDeviceId() const";
+            "OHOS::SoftBus::NegotiateMessage::GetRemoteNetworkId() const";
+            "OHOS::SoftBus::NegotiateMessage::GetResultCode() const";
+            "OHOS::SoftBus::NegotiateMessage::GetSessionId() const";
+            "OHOS::SoftBus::NegotiateMessage::GetWifiConfigInfo() const";
+            "OHOS::SoftBus::NegotiateMessage::MessageTypeToString() const";
+            "OHOS::SoftBus::NegotiateMessage::NegotiateMessage()";
+            "OHOS::SoftBus::NegotiateMessage::NegotiateMessage(OHOS::SoftBus::NegotiateMessageType)";
+            "OHOS::SoftBus::NegotiateMessage::SetChallengeCode(unsigned int)";
+            "OHOS::SoftBus::NegotiateMessage::SetExtraData(std::__h::vector<unsigned char, std::__h::allocator<unsigned char>> const&)";
+            "OHOS::SoftBus::NegotiateMessage::SetInterfaceInfoArray(std::__h::vector<OHOS::SoftBus::InterfaceInfo, std::__h::allocator<OHOS::SoftBus::InterfaceInfo>> const&)";
+            "OHOS::SoftBus::NegotiateMessage::SetIpv4InfoArray(std::__h::vector<OHOS::SoftBus::Ipv4Info, std::__h::allocator<OHOS::SoftBus::Ipv4Info>> const&)";
+            "OHOS::SoftBus::NegotiateMessage::SetIsModeStrict(bool)";
+            "OHOS::SoftBus::NegotiateMessage::SetIsProxyEnable(bool)";
+            "OHOS::SoftBus::NegotiateMessage::SetLegacyP2pCommandType(OHOS::SoftBus::LegacyCommandType)";
+            "OHOS::SoftBus::NegotiateMessage::SetLegacyP2pGoPort(int)";
+            "OHOS::SoftBus::NegotiateMessage::SetLegacyP2pIp(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::NegotiateMessage::SetLegacyP2pMac(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::NegotiateMessage::SetLinkInfo(OHOS::SoftBus::LinkInfo const&)";
+            "OHOS::SoftBus::NegotiateMessage::SetMessageType(OHOS::SoftBus::NegotiateMessageType)";
+            "OHOS::SoftBus::NegotiateMessage::SetNewPtkFrame(bool)";
+            "OHOS::SoftBus::NegotiateMessage::SetPreferLinkBandWidth(int)";
+            "OHOS::SoftBus::NegotiateMessage::SetPreferLinkMode(OHOS::SoftBus::LinkInfo::LinkMode)";
+            "OHOS::SoftBus::NegotiateMessage::SetRemoteDeviceId(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::NegotiateMessage::SetRemoteNetworkId(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::NegotiateMessage::SetResultCode(int)";
+            "OHOS::SoftBus::NegotiateMessage::SetSessionId(unsigned int)";
+            "OHOS::SoftBus::NegotiateMessage::SetWifiConfigInfo(std::__h::vector<unsigned char, std::__h::allocator<unsigned char>> const&)";
+            "OHOS::SoftBus::NegotiateMessage::Unmarshalling(OHOS::SoftBus::WifiDirectProtocol&, std::__h::vector<unsigned char, std::__h::allocator<unsigned char>> const&)";
+            "OHOS::SoftBus::NegotiateMessage::~NegotiateMessage()";
+
+            /* NullProcessor */
+            "OHOS::SoftBus::NullProcessor::NullProcessor(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, int)";
+            "vtable for OHOS::SoftBus::NullProcessor";
+            "typeinfo for OHOS::SoftBus::NullProcessor";
+            "typeinfo name for OHOS::SoftBus::NullProcessor";
+
+            /* ProcessorSelectorFactory */
+            "OHOS::SoftBus::ProcessorSelectorFactory::GetInstance()";
+            "OHOS::SoftBus::ProcessorSelectorFactory::Register(std::__h::shared_ptr<OHOS::SoftBus::ProcessorSelector> const&)";
+
+            /* WifiConfigInfo */
+            "OHOS::SoftBus::WifiConfigInfo::GetDeviceId() const";
+            "OHOS::SoftBus::WifiConfigInfo::GetInterfaceInfo(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&) const";
+            "OHOS::SoftBus::WifiConfigInfo::GetInterfaceInfoArray() const";
+            "OHOS::SoftBus::WifiConfigInfo::Marshalling(OHOS::SoftBus::WifiDirectProtocol&, std::__h::vector<unsigned char, std::__h::allocator<unsigned char>>&) const";
+            "OHOS::SoftBus::WifiConfigInfo::SetInterfaceInfoArray(std::__h::vector<OHOS::SoftBus::InterfaceInfo, std::__h::allocator<OHOS::SoftBus::InterfaceInfo>> const&)";
+            "OHOS::SoftBus::WifiConfigInfo::WifiConfigInfo(std::__h::vector<unsigned char, std::__h::allocator<unsigned char>>&)";
+
+            /* WifiDirectDfx */
+            "OHOS::SoftBus::WifiDirectDfx::GetInstance()";
+            "OHOS::SoftBus::WifiDirectDfx::Record(unsigned int, unsigned short)";
+            "OHOS::SoftBus::WifiDirectDfx::SetReuseFlag(unsigned int)";
+            "OHOS::SoftBus::WifiDirectDfx::SetVirtualLinkType(unsigned int, StatisticVirtualLinkType)";
+
+            /* WifiDirectEventDispatcher */
+            "OHOS::SoftBus::WifiDirectEventDispatcher::Dispatch(std::__h::shared_ptr<OHOS::SoftBus::WifiDirectEventBase> const&)";
+            "OHOS::SoftBus::WifiDirectEventDispatcher::~WifiDirectEventDispatcher()";
+
+            /* WifiDirectExecutor */
+            "OHOS::SoftBus::WifiDirectExecutor::CanAcceptNegotiateData(OHOS::SoftBus::WifiDirectCommand&)";
+            "OHOS::SoftBus::WifiDirectExecutor::GetRemoteDeviceId()";
+            "OHOS::SoftBus::WifiDirectExecutor::SetActive(bool)";
+            "OHOS::SoftBus::WifiDirectExecutor::SetRemoteDeviceId(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::WifiDirectExecutor::WaitEvent()";
+            "OHOS::SoftBus::WifiDirectExecutor::WifiDirectExecutor(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, OHOS::SoftBus::WifiDirectScheduler&, std::__h::shared_ptr<OHOS::SoftBus::WifiDirectProcessor>&, bool)";
+            "OHOS::SoftBus::WifiDirectExecutor::~WifiDirectExecutor()";
+
+            /* WifiDirectExecutorFactory */
+            "OHOS::SoftBus::WifiDirectExecutorFactory::GetInstance()";
+            "OHOS::SoftBus::WifiDirectExecutorFactory::NewExecutor(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, OHOS::SoftBus::WifiDirectScheduler&, std::__h::shared_ptr<OHOS::SoftBus::WifiDirectProcessor>&, bool)";
+            "OHOS::SoftBus::WifiDirectExecutorFactory::Register(std::__h::function<std::__h::shared_ptr<OHOS::SoftBus::WifiDirectExecutor> (std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, OHOS::SoftBus::WifiDirectScheduler&, std::__h::shared_ptr<OHOS::SoftBus::WifiDirectProcessor>&, bool)>)";
+
+            /* WifiDirectExecutorManager */
+            "OHOS::SoftBus::WifiDirectExecutorManager::Erase(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::WifiDirectExecutorManager::Find(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::WifiDirectExecutorManager::Insert(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, std::__h::shared_ptr<OHOS::SoftBus::WifiDirectExecutor> const&)";
+            "OHOS::SoftBus::WifiDirectExecutorManager::Size()";
+
+            /* WifiDirectHidumper */
+            "OHOS::SoftBus::WifiDirectHidumper::DumpInfoHandler(nlohmann::json_abi_v3_12_0::basic_json<std::__h::map, std::__h::vector, std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>>, bool, long, unsigned long, double, std::__h::allocator, nlohmann::json_abi_v3_12_0::adl_serializer, std::__h::vector<unsigned char, std::__h::allocator<unsigned char>>, void>&)";
+            "OHOS::SoftBus::WifiDirectHidumper::GetInstance()";
+            "OHOS::SoftBus::WifiDirectHidumper::Register(std::__h::function<int ()> const&)";
+
+            /* WifiDirectInitiator */
+            "OHOS::SoftBus::WifiDirectInitiator::Add(std::__h::function<void ()> const&)";
+            "OHOS::SoftBus::WifiDirectInitiator::GetInstance()";
+
+            /* WifiDirectIpManager */
+            "OHOS::SoftBus::WifiDirectIpManager::ApplyIpv4(std::__h::vector<OHOS::SoftBus::Ipv4Info, std::__h::allocator<OHOS::SoftBus::Ipv4Info>> const&, std::__h::vector<OHOS::SoftBus::Ipv4Info, std::__h::allocator<OHOS::SoftBus::Ipv4Info>> const&, OHOS::SoftBus::Ipv4Info&, OHOS::SoftBus::Ipv4Info&)";
+            "OHOS::SoftBus::WifiDirectIpManager::ApplyIpv6(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::WifiDirectIpManager::ConfigIpv4(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, OHOS::SoftBus::Ipv4Info const&, OHOS::SoftBus::Ipv4Info const&, std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::WifiDirectIpManager::ConfigStaticIpv6(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::WifiDirectIpManager::GetInstance()";
+            "OHOS::SoftBus::WifiDirectIpManager::Init()";
+            "OHOS::SoftBus::WifiDirectIpManager::ReleaseIpv4(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, OHOS::SoftBus::Ipv4Info const&, OHOS::SoftBus::Ipv4Info const&, std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::WifiDirectIpManager::ReleaseStaticIpv6(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+
+            /* WifiDirectScheduler */
+            "OHOS::SoftBus::WifiDirectScheduler::ConnectDevice(std::__h::shared_ptr<OHOS::SoftBus::ConnectCommand> const&, bool)";
+
+            /* WifiDirectSchedulerFactory */
+            "OHOS::SoftBus::WifiDirectSchedulerFactory::GetInstance()";
+            "OHOS::SoftBus::WifiDirectSchedulerFactory::GetScheduler()";
+            "OHOS::SoftBus::WifiDirectSchedulerFactory::Register(std::__h::shared_ptr<OHOS::SoftBus::WifiDirectScheduler> const&)";
+
+            /* WifiDirectTrace */
+            "OHOS::SoftBus::WifiDirectTrace::SetRequestId(unsigned long)";
+            "OHOS::SoftBus::WifiDirectTrace::SetRequestId(unsigned long long)";
+
+            /* WifiDirectUtils */
+            "OHOS::SoftBus::WifiDirectUtils::BandWidthNumberToEnum(int)";
+            "OHOS::SoftBus::WifiDirectUtils::BytesToInt(std::__h::vector<unsigned char, std::__h::allocator<unsigned char>> const&)";
+            "OHOS::SoftBus::WifiDirectUtils::BytesToInt(unsigned char const*, unsigned int)";
+            "OHOS::SoftBus::WifiDirectUtils::ChannelToFrequency(int)";
+            "OHOS::SoftBus::WifiDirectUtils::CheckLinkAtDfsChannelConflict(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, OHOS::SoftBus::InnerLink::LinkType)";
+            "OHOS::SoftBus::WifiDirectUtils::CompareIgnoreCase(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::WifiDirectUtils::ConvertPassiveErrorCode(int)";
+            "OHOS::SoftBus::WifiDirectUtils::FrequencyToChannel(int)";
+            "OHOS::SoftBus::WifiDirectUtils::GetChload()";
+            "OHOS::SoftBus::WifiDirectUtils::GetDeviceType()";
+            "OHOS::SoftBus::WifiDirectUtils::GetDeviceType(char const*)";
+            "OHOS::SoftBus::WifiDirectUtils::GetInterfaceIpString(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>>&)";
+            "OHOS::SoftBus::WifiDirectUtils::GetInterfaceMacAddr(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::WifiDirectUtils::GetLocalConnSubFeature(unsigned long&)";
+            "OHOS::SoftBus::WifiDirectUtils::GetLocalConnSubFeature(unsigned long long&)";
+            "OHOS::SoftBus::WifiDirectUtils::GetLocalIpv4Infos()";
+            "OHOS::SoftBus::WifiDirectUtils::GetLocalNetworkId()";
+            "OHOS::SoftBus::WifiDirectUtils::GetLocalPtk(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::WifiDirectUtils::GetLocalScreenStatus()";
+            "OHOS::SoftBus::WifiDirectUtils::GetLocalUuid()";
+            "OHOS::SoftBus::WifiDirectUtils::GetOsType(char const*)";
+            "OHOS::SoftBus::WifiDirectUtils::GetRemoteConnSubFeature(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, unsigned long&)";
+            "OHOS::SoftBus::WifiDirectUtils::GetRemoteConnSubFeature(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, unsigned long long&)";
+            "OHOS::SoftBus::WifiDirectUtils::GetRemotePtk(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::WifiDirectUtils::IntToBytes(unsigned int, unsigned int, std::__h::vector<unsigned char, std::__h::allocator<unsigned char>>&)";
+            "OHOS::SoftBus::WifiDirectUtils::Is2GBand(int)";
+            "OHOS::SoftBus::WifiDirectUtils::Is5GBand(int)";
+            "OHOS::SoftBus::WifiDirectUtils::IsDeviceId(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::WifiDirectUtils::IsDeviceOnline(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::WifiDirectUtils::IsLocalSupportTlv()";
+            "OHOS::SoftBus::WifiDirectUtils::IsRemoteSupportTlv(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::WifiDirectUtils::MacArrayToString(std::__h::vector<unsigned char, std::__h::allocator<unsigned char>> const&)";
+            "OHOS::SoftBus::WifiDirectUtils::MacArrayToString(unsigned char const*, int)";
+            "OHOS::SoftBus::WifiDirectUtils::MacStringToArray(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::WifiDirectUtils::NetworkIdToUuid(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::WifiDirectUtils::ParallelFlowEnter()";
+            "OHOS::SoftBus::WifiDirectUtils::ParallelFlowExit()";
+            "OHOS::SoftBus::WifiDirectUtils::RemoteDeviceIdToMac(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::WifiDirectUtils::RemoteMacToDeviceId(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::WifiDirectUtils::SerialFlowEnter()";
+            "OHOS::SoftBus::WifiDirectUtils::SerialFlowExit()";
+            "OHOS::SoftBus::WifiDirectUtils::SetLocalWifiDirectMac(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::WifiDirectUtils::ShowLinkInfoList(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, std::__h::vector<OHOS::SoftBus::LinkInfo, std::__h::allocator<OHOS::SoftBus::LinkInfo>> const&)";
+            "OHOS::SoftBus::WifiDirectUtils::SupportHml()";
+            "OHOS::SoftBus::WifiDirectUtils::ToBinary(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::WifiDirectUtils::ToString(std::__h::vector<unsigned char, std::__h::allocator<unsigned char>> const&)";
+            "OHOS::SoftBus::WifiDirectUtils::UuidToNetworkId(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+
+            /* [RTTI] AuthNegotiateChannel */
+            "vtable for OHOS::SoftBus::AuthNegotiateChannel";
+
+            /* [RTTI] ConnectCommand */
+            "typeinfo for OHOS::SoftBus::ConnectCommand";
+            "vtable for OHOS::SoftBus::ConnectCommand";
+
+            /* [RTTI] DisconnectCommand */
+            "typeinfo for OHOS::SoftBus::DisconnectCommand";
+            "vtable for OHOS::SoftBus::DisconnectCommand";
+
+            /* [RTTI] DummyNegotiateChannel */
+            "vtable for OHOS::SoftBus::DummyNegotiateChannel";
+
+            /* [RTTI] InterfaceInfo */
+            "vtable for OHOS::SoftBus::InterfaceInfo";
+
+            /* [RTTI] LinkInfo */
+            "vtable for OHOS::SoftBus::LinkInfo";
+
+            /* [RTTI] NegotiateCommand */
+            "vtable for OHOS::SoftBus::NegotiateCommand";
+
+            /* [RTTI] NegotiateMessage */
+            "vtable for OHOS::SoftBus::NegotiateMessage";
+
+            /* [RTTI] TlvProtocol */
+            "vtable for OHOS::SoftBus::TlvProtocol";
+
+            /* [RTTI] WifiConfigInfo */
+            "vtable for OHOS::SoftBus::WifiConfigInfo";
+
+            /* [RTTI] WifiDirectExecutor */
+            "typeinfo for OHOS::SoftBus::WifiDirectExecutor";
+
+            /* [RTTI] WifiDirectScheduler */
+            "typeinfo for OHOS::SoftBus::WifiDirectScheduler";
+            "vtable for OHOS::SoftBus::WifiDirectScheduler";
+
+            /* [other] */
+            "OHOS::SoftBus::Ipv4Info::Ipv4Info(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::Ipv4Info::Marshalling(std::__h::vector<unsigned char, std::__h::allocator<unsigned char>>&) const";
+            "OHOS::SoftBus::Ipv4Info::ToIpString() const";
+            "OHOS::SoftBus::Ipv4Info::Unmarshalling(unsigned char const*, unsigned long)";
+            "OHOS::SoftBus::Ipv4Info::Unmarshalling(unsigned char const*, unsigned int)";
+            "OHOS::SoftBus::P2pAdapter::DestroyGroup(OHOS::SoftBus::P2pAdapter::DestroyGroupParam const&)";
+            "OHOS::SoftBus::P2pAdapter::GetApChannel()";
+            "OHOS::SoftBus::P2pAdapter::GetChannel5GListIntArray(std::__h::vector<int, std::__h::allocator<int>>&)";
+            "OHOS::SoftBus::P2pAdapter::GetGroupConfig(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>>&)";
+            "OHOS::SoftBus::P2pAdapter::GetGroupInfo(OHOS::SoftBus::P2pAdapter::WifiDirectP2pGroupInfo&)";
+            "OHOS::SoftBus::P2pAdapter::GetIpAddress(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>>&)";
+            "OHOS::SoftBus::P2pAdapter::GetMacAddress()";
+            "OHOS::SoftBus::P2pAdapter::GetP2pGroupFrequency()";
+            "OHOS::SoftBus::P2pAdapter::GetStationFrequency()";
+            "OHOS::SoftBus::P2pAdapter::IsWideBandSupported()";
+            "OHOS::SoftBus::P2pAdapter::IsWifiConnected()";
+            "OHOS::SoftBus::P2pAdapter::IsWifiEnable()";
+            "OHOS::SoftBus::P2pAdapter::IsWifiP2pEnabled()";
+            "OHOS::SoftBus::P2pAdapter::P2pConfigGcIp(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::P2pAdapter::P2pConnectGroup(OHOS::SoftBus::P2pAdapter::ConnectParam const&)";
+            "OHOS::SoftBus::P2pAdapter::P2pCreateGroup(OHOS::SoftBus::P2pAdapter::CreateGroupParam const&)";
+            "OHOS::SoftBus::P2pAdapter::P2pShareLinkRemoveGroup(OHOS::SoftBus::P2pAdapter::DestroyGroupParam const&)";
+            "OHOS::SoftBus::P2pAdapter::P2pShareLinkReuse()";
+            "OHOS::SoftBus::P2pAdapter::Register(std::__h::function<int (char const*, int)> const&)";
+            "OHOS::SoftBus::P2pAdapter::RegisterFastWakeUp(std::__h::function<int (std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, int)> const&)";
+            "OHOS::SoftBus::P2pAdapter::RequestGcIp(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>>&)";
+            "OHOS::SoftBus::P2pBroadcast::GetInstance()";
+            "OHOS::SoftBus::P2pBroadcast::RegisterBroadcastListener(OHOS::SoftBus::BroadcastReceiverAction const*, unsigned long, std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, OHOS::SoftBus::ListenerPriority, void (*)(OHOS::SoftBus::BroadcastReceiverAction, OHOS::SoftBus::BroadcastParam const&))";
+            "OHOS::SoftBus::P2pBroadcast::RegisterBroadcastListener(OHOS::SoftBus::BroadcastReceiverAction const*, unsigned int, std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, OHOS::SoftBus::ListenerPriority, void (*)(OHOS::SoftBus::BroadcastReceiverAction, OHOS::SoftBus::BroadcastParam const&))";
+            "OHOS::SoftBus::P2pEntity::CancelNewClientJoining(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::P2pEntity::Connect(OHOS::SoftBus::P2pAdapter::ConnectParam const&)";
+            "OHOS::SoftBus::P2pEntity::CreateGroup(OHOS::SoftBus::P2pAdapter::CreateGroupParam const&)";
+            "OHOS::SoftBus::P2pEntity::DestroyGroup(OHOS::SoftBus::P2pAdapter::DestroyGroupParam const&)";
+            "OHOS::SoftBus::P2pEntity::Disconnect(OHOS::SoftBus::P2pAdapter::DestroyGroupParam const&)";
+            "OHOS::SoftBus::P2pEntity::GetInstance()";
+            "OHOS::SoftBus::P2pEntity::Init()";
+            "OHOS::SoftBus::P2pEntity::NotifyNewClientJoining(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, int)";
+            "OHOS::SoftBus::P2pEntity::ReuseLink()";
+            "OHOS::SoftBus::P2pV1Processor::P2pV1Processor(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "vtable for OHOS::SoftBus::P2pV1Processor";
+            "typeinfo for OHOS::SoftBus::P2pV1Processor";
+            "typeinfo name for OHOS::SoftBus::P2pV1Processor";
+            "OHOS::SoftBus::WifiDirectAnonymizeData(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::WifiDirectAnonymizeDeviceId(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::WifiDirectAnonymizeIp(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::WifiDirectAnonymizeMac(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::WifiDirectAnonymizeMac(std::__h::vector<unsigned char, std::__h::allocator<unsigned char>> const&)";
+            "OHOS::SoftBus::WifiDirectAnonymizePsk(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::WifiDirectAnonymizePtk(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::WifiDirectAnonymizeSsid(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::WifiDirectHashAnonymize(std::__h::vector<char, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::WifiDirectHashAnonymize(std::__h::vector<unsigned char, std::__h::allocator<unsigned char>> const&)";
+
+            /* test-needed symbols */
+            /* CoCProxyNegotiateChannel */
+            "OHOS::SoftBus::CoCProxyNegotiateChannel::CoCProxyNegotiateChannel(int)";
+            "OHOS::SoftBus::CoCProxyNegotiateChannel::Init()";
+
+            /* DurationStatistic */
+            "OHOS::SoftBus::DurationStatistic::Start(unsigned int, std::__h::shared_ptr<OHOS::SoftBus::DurationStatisticCalculator> const&)";
+
+            /* DurationStatisticCalculatorFactory */
+            "OHOS::SoftBus::DurationStatisticCalculatorFactory::NewInstance(WifiDirectConnectType)";
+
+            /* EntityFactory */
+            "OHOS::SoftBus::EntityFactory::GetEntity(OHOS::SoftBus::InnerLink::LinkType)";
+
+            /* InnerLink */
+            "OHOS::SoftBus::InnerLink::GetLegacyReused() const";
+            "OHOS::SoftBus::InnerLink::GetLocalDynamicMac() const";
+            "OHOS::SoftBus::InnerLink::GetRemoteDynamicMac() const";
+            "OHOS::SoftBus::InnerLink::GetRemotePort() const";
+            "OHOS::SoftBus::InnerLink::HasPtk() const";
+
+            /* InterfaceInfo */
+            "OHOS::SoftBus::InterfaceInfo::SetCapability(int)";
+            "OHOS::SoftBus::InterfaceInfo::SetPhysicalRate(int)";
+
+            /* LinkManager */
+            "OHOS::SoftBus::LinkManager::ProcessIfPresentByName(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, std::__h::function<void (OHOS::SoftBus::InnerLink&)> const&)";
+            "OHOS::SoftBus::LinkManager::RefreshAuthHandle(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>>, std::__h::shared_ptr<OHOS::SoftBus::NegotiateChannel> const&)";
+
+            /* NegotiateMessage */
+            "OHOS::SoftBus::NegotiateMessage::Marshalling(OHOS::SoftBus::WifiDirectProtocol&, std::__h::vector<unsigned char, std::__h::allocator<unsigned char>>&) const";
+            "OHOS::SoftBus::NegotiateMessage::NegotiateMessage(OHOS::SoftBus::LegacyCommandType)";
+            "OHOS::SoftBus::NegotiateMessage::SetLegacyP2pGroupConfig(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+            "OHOS::SoftBus::NegotiateMessage::keyStringTable_";
+
+            /* ProcessorSelectorFactory */
+            "OHOS::SoftBus::ProcessorSelectorFactory::NewSelector()";
+
+            /* WifiDirectDfx */
+            "OHOS::SoftBus::WifiDirectDfx::ReportReceiveAuthLinkMsg(OHOS::SoftBus::NegotiateMessage const&, std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&)";
+
+            /* WifiDirectEventDispatcher */
+            "OHOS::SoftBus::WifiDirectEventDispatcher::WifiDirectEventDispatcher(OHOS::SoftBus::WifiDirectEventQueue*)";
+
+            /* WifiDirectExecutor */
+            "OHOS::SoftBus::WifiDirectExecutor::ProcessUnHandleCommand()";
+
+            /* WifiDirectRoleOption */
+            "OHOS::SoftBus::WifiDirectRoleOption::GetExpectedRole(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, WifiDirectConnectType, unsigned int&, bool&)";
+            "OHOS::SoftBus::WifiDirectRoleOption::GetInstance()";
+
+            /* WifiDirectScheduler */
+            "OHOS::SoftBus::WifiDirectScheduler::CancelConnectDevice(WifiDirectConnectInfo const&)";
+            "OHOS::SoftBus::WifiDirectScheduler::ConnectDevice(WifiDirectConnectInfo const&, WifiDirectConnectCallback const&, bool)";
+            "OHOS::SoftBus::WifiDirectScheduler::DisconnectDevice(WifiDirectDisconnectInfo&, WifiDirectDisconnectCallback&)";
+            "OHOS::SoftBus::WifiDirectScheduler::ForceDisconnectDevice(WifiDirectForceDisconnectInfo&, WifiDirectDisconnectCallback&)";
+            "OHOS::SoftBus::WifiDirectScheduler::IsAnyConnectCommandExist(WifiDirectLinkType)";
+
+            /* [RTTI] JsonProtocol */
+            "vtable for OHOS::SoftBus::JsonProtocol";
+
+            /* [other] */
+            "OHOS::SoftBus::P2pAvailableState::Instance()";
+            "OHOS::SoftBus::P2pBroadcast::DispatchWorkHandler(OHOS::SoftBus::BroadcastReceiverAction, OHOS::SoftBus::BroadcastParam const&)";
+            "OHOS::SoftBus::WifiDirectP2pAdapter::ConnCreateGoOwner(char const*, GroupOwnerConfig const*, GroupOwnerResult*, void (*)(int))";
+            "OHOS::SoftBus::WifiDirectP2pAdapter::ConnDestroyGoOwner(char const*)";
+            "OHOS::SoftBus::WifiDirectP2pAdapter::GetInstance()";
+            "OHOS::SoftBus::WifiDirectP2pAdapter::Init()";
+
+            /* DBinderSoftbusServer (needed for UT mock symbol interposition) */
+            "OHOS::DBinderSoftbusServer::GetInstance()";
+            "OHOS::DBinderSoftbusServer::LnnGetRemoteBoolInfoIgnoreOnline(char const*, InfoKey, bool*)";
+            "OHOS::DBinderSoftbusServer::IsFeatureSupport(unsigned long, FeatureCapability)";
+            "OHOS::DBinderSoftbusServer::LnnGetNetworkIdByUuid(char const*, char*, unsigned int)";
+            "OHOS::DBinderSoftbusServer::LnnGetFeatureCapabilty()";
+            "OHOS::DBinderSoftbusServer::LnnGetLocalStrInfo(InfoKey, char*, unsigned int)";
+            "OHOS::DBinderSoftbusServer::LnnGetRemoteStrInfo(char const*, InfoKey, char*, unsigned int)";
+            "OHOS::DBinderSoftbusServer::LnnGetRemoteNumU64Info(char const*, InfoKey, unsigned long*)";
+            "OHOS::DBinderSoftbusServer::LnnGetRemoteByteInfo(char const*, InfoKey, unsigned char*, unsigned int)";
+            "OHOS::DBinderSoftbusServer::LnnGetLocalNumU64Info(InfoKey, unsigned long*)";
+
+        };
+    local:
+        *;
+};

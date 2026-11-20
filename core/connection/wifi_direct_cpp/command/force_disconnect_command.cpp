@@ -63,17 +63,17 @@ std::shared_ptr<WifiDirectProcessor> ForceDisconnectCommand::GetProcessor()
     return (*selector)(info_.info_);
 }
 
-ForceDisconnectInfo ForceDisconnectCommand::GetDisconnectInfo() const
+SOFTBUS_DEFAULT_USED_EXPORT ForceDisconnectInfo ForceDisconnectCommand::GetDisconnectInfo() const
 {
     return info_;
 }
 
-std::shared_ptr<NegotiateChannel> ForceDisconnectCommand::GetNegotiateChannel() const
+SOFTBUS_DEFAULT_USED_EXPORT std::shared_ptr<NegotiateChannel> ForceDisconnectCommand::GetNegotiateChannel() const
 {
     return info_.channel_;
 }
 
-void ForceDisconnectCommand::OnSuccess() const
+SOFTBUS_DEFAULT_USED_EXPORT void ForceDisconnectCommand::OnSuccess() const
 {
     CONN_LOGI(CONN_WIFI_DIRECT, "reqId=%{public}u", info_.info_.requestId);
     callback_.onDisconnectSuccess(info_.info_.requestId);

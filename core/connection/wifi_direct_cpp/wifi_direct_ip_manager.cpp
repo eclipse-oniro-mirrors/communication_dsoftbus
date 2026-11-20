@@ -34,9 +34,9 @@ static constexpr char HML_IP_PREFIX[] = "172.30.";
 static constexpr char HML_IP_SOURCE_SUFFIX[] = ".2";
 static constexpr char HML_IP_SINK_SUFFIX[] = ".1";
 
-void WifiDirectIpManager::Init() {}
+SOFTBUS_DEFAULT_USED_EXPORT void WifiDirectIpManager::Init() {}
 
-WifiDirectIpManager& WifiDirectIpManager::GetInstance()
+SOFTBUS_DEFAULT_USED_EXPORT WifiDirectIpManager& WifiDirectIpManager::GetInstance()
 {
     static WifiDirectIpManager instance;
     {
@@ -49,7 +49,7 @@ WifiDirectIpManager& WifiDirectIpManager::GetInstance()
     return instance;
 }
 
-std::string WifiDirectIpManager::ApplyIpv6(const std::string &mac)
+SOFTBUS_DEFAULT_USED_EXPORT std::string WifiDirectIpManager::ApplyIpv6(const std::string &mac)
 {
     CONN_CHECK_AND_RETURN_RET_LOGE(!mac.empty(), "", CONN_WIFI_DIRECT, "mac is null");
     auto array = WifiDirectUtils::MacStringToArray(mac);
@@ -82,7 +82,7 @@ std::string WifiDirectIpManager::ApplyIpv6(const std::string &mac)
     return finalResult;
 }
 
-int32_t WifiDirectIpManager::ApplyIpv4(
+SOFTBUS_DEFAULT_USED_EXPORT int32_t WifiDirectIpManager::ApplyIpv4(
     const std::vector<Ipv4Info> &localArray, const std::vector<Ipv4Info> &remoteArray, Ipv4Info &source, Ipv4Info &sink)
 {
     std::string subNet = ApplySubNet(localArray, remoteArray);
@@ -130,7 +130,7 @@ int32_t WifiDirectIpManager::ConfigIpv6(const std::string &interface, const std:
     return SOFTBUS_OK;
 }
 
-int32_t WifiDirectIpManager::ConfigIpv4(
+SOFTBUS_DEFAULT_USED_EXPORT int32_t WifiDirectIpManager::ConfigIpv4(
     const std::string &interface, const Ipv4Info &local, const Ipv4Info &remote, const std::string &remoteMac)
 {
     std::string localIpStr = local.ToIpString();
@@ -151,7 +151,7 @@ int32_t WifiDirectIpManager::ConfigIpv4(
     return SOFTBUS_OK;
 }
 
-void WifiDirectIpManager::ReleaseIpv4(
+SOFTBUS_DEFAULT_USED_EXPORT void WifiDirectIpManager::ReleaseIpv4(
     const std::string &interface, const Ipv4Info &local, const Ipv4Info &remote, const std::string &remoteMac)
 {
     std::string localIpStr = local.ToIpString();
@@ -257,7 +257,7 @@ int32_t WifiDirectIpManager::GetNetworkDestination(const std::string &ipString, 
     return SOFTBUS_OK;
 }
 
-void WifiDirectIpManager::ConfigStaticIpv6(
+SOFTBUS_DEFAULT_USED_EXPORT void WifiDirectIpManager::ConfigStaticIpv6(
     const std::string &interface, const std::string &ipv6Addr, const std::string &macAddr)
 {
     auto ret = OHOS::NetManagerStandard::NetConnClient::GetInstance().AddStaticIpv6Addr(
@@ -266,7 +266,7 @@ void WifiDirectIpManager::ConfigStaticIpv6(
         WifiDirectAnonymizeIp(ipv6Addr).c_str(), WifiDirectAnonymizeMac(macAddr).c_str(), ret);
 }
 
-void WifiDirectIpManager::ReleaseStaticIpv6(
+SOFTBUS_DEFAULT_USED_EXPORT void WifiDirectIpManager::ReleaseStaticIpv6(
     const std::string &interface, const std::string &ipv6Addr, const std::string &macAddr)
 {
     auto ret = OHOS::NetManagerStandard::NetConnClient::GetInstance().DelStaticIpv6Addr(

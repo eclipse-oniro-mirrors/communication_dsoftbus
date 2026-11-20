@@ -17,12 +17,13 @@
 
 #include "conn_log.h"
 namespace OHOS::SoftBus {
-WifiDirectExecutorFactory& WifiDirectExecutorFactory::GetInstance()
+SOFTBUS_DEFAULT_USED_EXPORT WifiDirectExecutorFactory& WifiDirectExecutorFactory::GetInstance()
 {
     static WifiDirectExecutorFactory instance;
     return instance;
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 std::shared_ptr<WifiDirectExecutor> WifiDirectExecutorFactory::NewExecutor(const std::string &remoteDeviceId,
     WifiDirectScheduler &scheduler, std::shared_ptr<WifiDirectProcessor> &processor, bool active)
 {
@@ -33,7 +34,7 @@ std::shared_ptr<WifiDirectExecutor> WifiDirectExecutorFactory::NewExecutor(const
     return executor;
 }
 
-void WifiDirectExecutorFactory::Register(ExecutorGenerator generator)
+SOFTBUS_DEFAULT_USED_EXPORT void WifiDirectExecutorFactory::Register(ExecutorGenerator generator)
 {
     executorGenerator_ = std::move(generator);
 }

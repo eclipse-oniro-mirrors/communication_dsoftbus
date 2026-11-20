@@ -24,6 +24,7 @@
 #include "wifi_direct_scheduler_factory.h"
 
 namespace OHOS::SoftBus {
+SOFTBUS_DEFAULT_USED_EXPORT
 ConnectCommand::ConnectCommand(const WifiDirectConnectInfo &info, const WifiDirectConnectCallback &callback)
     : callback_(callback)
 {
@@ -38,12 +39,12 @@ ConnectCommand::ConnectCommand(const WifiDirectConnectInfo &info, const WifiDire
     CONN_LOGE(CONN_WIFI_DIRECT, "remoteNetworkId empty!!");
 }
 
-ConnectCommand::~ConnectCommand()
+SOFTBUS_DEFAULT_USED_EXPORT ConnectCommand::~ConnectCommand()
 {
     GetWifiDirectManager()->operationHmlConnectingCount(false, connectType_);
 }
 
-std::string ConnectCommand::GetRemoteDeviceId() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string ConnectCommand::GetRemoteDeviceId() const
 {
     if (!remoteDeviceId_.empty()) {
         return remoteDeviceId_;
@@ -52,7 +53,7 @@ std::string ConnectCommand::GetRemoteDeviceId() const
     return remoteDeviceId_;
 }
 
-std::shared_ptr<WifiDirectProcessor> ConnectCommand::GetProcessor()
+SOFTBUS_DEFAULT_USED_EXPORT std::shared_ptr<WifiDirectProcessor> ConnectCommand::GetProcessor()
 {
     CONN_LOGI(CONN_WIFI_DIRECT, "enter");
     auto selector = ProcessorSelectorFactory::GetInstance().NewSelector();
@@ -63,7 +64,7 @@ std::shared_ptr<WifiDirectProcessor> ConnectCommand::GetProcessor()
     return (*selector)(info_.info_);
 }
 
-ConnectInfo &ConnectCommand::GetConnectInfo()
+SOFTBUS_DEFAULT_USED_EXPORT ConnectInfo &ConnectCommand::GetConnectInfo()
 {
     return info_;
 }
@@ -73,17 +74,17 @@ WifiDirectConnectCallback ConnectCommand::GetConnectCallback() const
     return callback_;
 }
 
-void ConnectCommand::SetSuccessCallback(const SuccessCallback &callback)
+SOFTBUS_DEFAULT_USED_EXPORT void ConnectCommand::SetSuccessCallback(const SuccessCallback &callback)
 {
     successCallback_ = callback;
 }
 
-void ConnectCommand::SetFailureCallback(const FailureCallback &callback)
+SOFTBUS_DEFAULT_USED_EXPORT void ConnectCommand::SetFailureCallback(const FailureCallback &callback)
 {
     failureCallback_ = callback;
 }
 
-void ConnectCommand::OnSuccess(const WifiDirectLink &link) const
+SOFTBUS_DEFAULT_USED_EXPORT void ConnectCommand::OnSuccess(const WifiDirectLink &link) const
 {
     CONN_LOGI(CONN_WIFI_DIRECT,
         "reqId=%{public}u, linkId=%{public}d, localIp=%{public}s, remoteIp=%{public}s, remotePort=%{public}d, "
@@ -102,7 +103,7 @@ void ConnectCommand::OnSuccess(const WifiDirectLink &link) const
     }
 }
 
-void ConnectCommand::OnFailure(int32_t reason) const
+SOFTBUS_DEFAULT_USED_EXPORT void ConnectCommand::OnFailure(int32_t reason) const
 {
     CONN_LOGI(CONN_WIFI_DIRECT, "reqId=%{public}u, reason=%{public}d, remoteDeviceId=%{public}s",
         info_.info_.requestId, reason, WifiDirectAnonymizeDeviceId(remoteDeviceId_).c_str());
@@ -122,7 +123,7 @@ void ConnectCommand::OnFailure(int32_t reason) const
     }
 }
 
-void ConnectCommand::PreferNegotiateChannel()
+SOFTBUS_DEFAULT_USED_EXPORT void ConnectCommand::PreferNegotiateChannel()
 {
     auto innerLink = LinkManager::GetInstance().GetReuseLink(info_.info_.connectType, remoteDeviceId_);
     if (remoteDeviceId_.length() != (UUID_BUF_LEN - 1) && innerLink == nullptr) {
@@ -159,7 +160,7 @@ bool ConnectCommand::IsSameCommand(const WifiDirectConnectInfo &info) const
     return (info.requestId == info_.info_.requestId) && (info.pid == info_.info_.pid);
 }
 
-WifiDirectLinkType ConnectCommand::GetLinkType() const
+SOFTBUS_DEFAULT_USED_EXPORT WifiDirectLinkType ConnectCommand::GetLinkType() const
 {
     switch (info_.info_.connectType) {
         case WIFI_DIRECT_CONNECT_TYPE_AUTH_NEGO_HML:
@@ -173,7 +174,7 @@ WifiDirectLinkType ConnectCommand::GetLinkType() const
     }
 }
 
-void ConnectCommand::ResetConnectType(WifiDirectConnectType connectType)
+SOFTBUS_DEFAULT_USED_EXPORT void ConnectCommand::ResetConnectType(WifiDirectConnectType connectType)
 {
     auto oldConnectType = info_.info_.connectType;
     CONN_LOGI(

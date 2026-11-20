@@ -49,6 +49,7 @@ template<> InfoContainer<LinkInfoKey>::KeyTypeTable InfoContainer<LinkInfoKey>::
     { LinkInfoKey::IS_DBAC, Serializable::ValueType::BOOL },
 };
 
+SOFTBUS_DEFAULT_USED_EXPORT
 LinkInfo::LinkInfo(const std::string &localInterface, const std::string &remoteInterface, LinkMode localMode,
                    LinkMode remoteMode)
 {
@@ -58,7 +59,7 @@ LinkInfo::LinkInfo(const std::string &localInterface, const std::string &remoteI
     SetRemoteLinkMode(remoteMode);
 }
 
-int LinkInfo::Marshalling(WifiDirectProtocol &protocol, std::vector<uint8_t> &output) const
+SOFTBUS_DEFAULT_USED_EXPORT int LinkInfo::Marshalling(WifiDirectProtocol &protocol, std::vector<uint8_t> &output) const
 {
     for (const auto &[key, value] : values_) {
         auto type = keyTypeTable_[key];
@@ -95,7 +96,7 @@ int LinkInfo::Marshalling(WifiDirectProtocol &protocol, std::vector<uint8_t> &ou
     return SOFTBUS_OK;
 }
 
-int LinkInfo::Unmarshalling(WifiDirectProtocol &protocol, const std::vector<uint8_t> &input)
+SOFTBUS_DEFAULT_USED_EXPORT int LinkInfo::Unmarshalling(WifiDirectProtocol &protocol, const std::vector<uint8_t> &input)
 {
     int key = 0;
     uint8_t *data = nullptr;
@@ -136,114 +137,114 @@ int LinkInfo::Unmarshalling(WifiDirectProtocol &protocol, const std::vector<uint
     return SOFTBUS_OK;
 }
 
-void LinkInfo::SetLocalInterface(const std::string &interface)
+SOFTBUS_DEFAULT_USED_EXPORT void LinkInfo::SetLocalInterface(const std::string &interface)
 {
     Set(LinkInfoKey::LOCAL_INTERFACE, interface);
 }
 
-std::string LinkInfo::GetLocalInterface() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string LinkInfo::GetLocalInterface() const
 {
     return Get(LinkInfoKey::LOCAL_INTERFACE, std::string(""));
 }
 
-void LinkInfo::SetRemoteInterface(const std::string &interface)
+SOFTBUS_DEFAULT_USED_EXPORT void LinkInfo::SetRemoteInterface(const std::string &interface)
 {
     Set(LinkInfoKey::REMOTE_INTERFACE, interface);
 }
 
-std::string LinkInfo::GetRemoteInterface() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string LinkInfo::GetRemoteInterface() const
 {
     return Get(LinkInfoKey::REMOTE_INTERFACE, std::string(""));
 }
 
-void LinkInfo::SetLocalLinkMode(LinkMode mode)
+SOFTBUS_DEFAULT_USED_EXPORT void LinkInfo::SetLocalLinkMode(LinkMode mode)
 {
     Set(LinkInfoKey::LOCAL_LINK_MODE, static_cast<int>(mode));
 }
 
-LinkInfo::LinkMode LinkInfo::GetLocalLinkMode() const
+SOFTBUS_DEFAULT_USED_EXPORT LinkInfo::LinkMode LinkInfo::GetLocalLinkMode() const
 {
     auto value = Get(LinkInfoKey::LOCAL_LINK_MODE, static_cast<int>(LinkMode::INVALID));
     return static_cast<LinkInfo::LinkMode>(value);
 }
 
-void LinkInfo::SetRemoteLinkMode(LinkMode mode)
+SOFTBUS_DEFAULT_USED_EXPORT void LinkInfo::SetRemoteLinkMode(LinkMode mode)
 {
     Set(LinkInfoKey::REMOTE_LINK_MODE, static_cast<int>(mode));
 }
 
-LinkInfo::LinkMode LinkInfo::GetRemoteLinkMode() const
+SOFTBUS_DEFAULT_USED_EXPORT LinkInfo::LinkMode LinkInfo::GetRemoteLinkMode() const
 {
     auto value = Get(LinkInfoKey::REMOTE_LINK_MODE, static_cast<int>(LinkMode::INVALID));
     return static_cast<LinkInfo::LinkMode>(value);
 }
 
-void LinkInfo::SetCenter20M(int freq)
+SOFTBUS_DEFAULT_USED_EXPORT void LinkInfo::SetCenter20M(int freq)
 {
     Set(LinkInfoKey::CENTER_20M, freq);
 }
 
-int LinkInfo::GetCenter20M() const
+SOFTBUS_DEFAULT_USED_EXPORT int LinkInfo::GetCenter20M() const
 {
     return Get(LinkInfoKey::CENTER_20M, 0);
 }
 
-void LinkInfo::SetCenterFrequency1(int freq)
+SOFTBUS_DEFAULT_USED_EXPORT void LinkInfo::SetCenterFrequency1(int freq)
 {
     Set(LinkInfoKey::CENTER_FREQUENCY1, freq);
 }
 
-int LinkInfo::GetCenterFrequency1() const
+SOFTBUS_DEFAULT_USED_EXPORT int LinkInfo::GetCenterFrequency1() const
 {
     return Get(LinkInfoKey::CENTER_FREQUENCY1, 0);
 }
 
-void LinkInfo::SetCenterFrequency2(int freq)
+SOFTBUS_DEFAULT_USED_EXPORT void LinkInfo::SetCenterFrequency2(int freq)
 {
     Set(LinkInfoKey::CENTER_FREQUENCY2, freq);
 }
 
-int LinkInfo::GetCenterFrequency2() const
+SOFTBUS_DEFAULT_USED_EXPORT int LinkInfo::GetCenterFrequency2() const
 {
     return Get(LinkInfoKey::CENTER_FREQUENCY2, 0);
 }
 
-void LinkInfo::SetBandWidth(int bandWidth)
+SOFTBUS_DEFAULT_USED_EXPORT void LinkInfo::SetBandWidth(int bandWidth)
 {
     Set(LinkInfoKey::BANDWIDTH, bandWidth);
 }
 
-int LinkInfo::GetBandWidth() const
+SOFTBUS_DEFAULT_USED_EXPORT int LinkInfo::GetBandWidth() const
 {
     return Get(LinkInfoKey::BANDWIDTH, 0);
 }
 
-void LinkInfo::SetSsid(const std::string &ssid)
+SOFTBUS_DEFAULT_USED_EXPORT void LinkInfo::SetSsid(const std::string &ssid)
 {
     Set(LinkInfoKey::SSID, ssid);
 }
 
-std::string LinkInfo::GetSsid() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string LinkInfo::GetSsid() const
 {
     return Get(LinkInfoKey::SSID, std::string(""));
 }
 
-void LinkInfo::SetBssid(const std::string &bssid)
+SOFTBUS_DEFAULT_USED_EXPORT void LinkInfo::SetBssid(const std::string &bssid)
 {
     Set(LinkInfoKey::BSSID, bssid);
 }
 
-std::string LinkInfo::GetBssid() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string LinkInfo::GetBssid() const
 {
     return Get(LinkInfoKey::BSSID, std::string(""));
 }
 
-void LinkInfo::SetPsk(const std::string &psk)
+SOFTBUS_DEFAULT_USED_EXPORT void LinkInfo::SetPsk(const std::string &psk)
 {
     Set(LinkInfoKey::PSK, psk);
 }
 
-std::string LinkInfo::GetPsk() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string LinkInfo::GetPsk() const
 {
     return Get(LinkInfoKey::PSK, std::string(""));
 }
@@ -258,47 +259,47 @@ bool LinkInfo::GetIsDhcp() const
     return Get(LinkInfoKey::IS_DHCP, false);
 }
 
-void LinkInfo::SetLocalIpv4Info(const Ipv4Info &ipv4Info)
+SOFTBUS_DEFAULT_USED_EXPORT void LinkInfo::SetLocalIpv4Info(const Ipv4Info &ipv4Info)
 {
     Set(LinkInfoKey::LOCAL_IPV4, (const std::any &)ipv4Info);
 }
 
-Ipv4Info LinkInfo::GetLocalIpv4Info() const
+SOFTBUS_DEFAULT_USED_EXPORT Ipv4Info LinkInfo::GetLocalIpv4Info() const
 {
     return Get(LinkInfoKey::LOCAL_IPV4, Ipv4Info());
 }
 
-void LinkInfo::SetRemoteIpv4Info(const Ipv4Info &ipv4Info)
+SOFTBUS_DEFAULT_USED_EXPORT void LinkInfo::SetRemoteIpv4Info(const Ipv4Info &ipv4Info)
 {
     Set(LinkInfoKey::REMOTE_IPV4, (const std::any &)ipv4Info);
 }
 
-Ipv4Info LinkInfo::GetRemoteIpv4Info() const
+SOFTBUS_DEFAULT_USED_EXPORT Ipv4Info LinkInfo::GetRemoteIpv4Info() const
 {
     return Get(LinkInfoKey::REMOTE_IPV4, Ipv4Info());
 }
 
-void LinkInfo::SetAuthPort(int port)
+SOFTBUS_DEFAULT_USED_EXPORT void LinkInfo::SetAuthPort(int port)
 {
     Set(LinkInfoKey::AUTH_PORT, port);
 }
 
-int LinkInfo::GetAuthPort() const
+SOFTBUS_DEFAULT_USED_EXPORT int LinkInfo::GetAuthPort() const
 {
     return Get(LinkInfoKey::AUTH_PORT, 0);
 }
 
-void LinkInfo::SetMaxPhysicalRate(int rate)
+SOFTBUS_DEFAULT_USED_EXPORT void LinkInfo::SetMaxPhysicalRate(int rate)
 {
     Set(LinkInfoKey::MAX_PHYSICAL_RATE, rate);
 }
 
-int LinkInfo::GetMaxPhysicalRate() const
+SOFTBUS_DEFAULT_USED_EXPORT int LinkInfo::GetMaxPhysicalRate() const
 {
     return Get(LinkInfoKey::MAX_PHYSICAL_RATE, 0);
 }
 
-void LinkInfo::SetRemoteDevice(const std::string &device)
+SOFTBUS_DEFAULT_USED_EXPORT void LinkInfo::SetRemoteDevice(const std::string &device)
 {
     Set(LinkInfoKey::REMOTE_DEVICE, device);
 }
@@ -318,27 +319,27 @@ int LinkInfo::GetStatus() const
     return Get(LinkInfoKey::STATUS, 0);
 }
 
-void LinkInfo::SetLocalBaseMac(const std::string &mac)
+SOFTBUS_DEFAULT_USED_EXPORT void LinkInfo::SetLocalBaseMac(const std::string &mac)
 {
     Set(LinkInfoKey::LOCAL_BASE_MAC, mac);
 }
 
-std::string LinkInfo::GetLocalBaseMac() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string LinkInfo::GetLocalBaseMac() const
 {
     return Get(LinkInfoKey::LOCAL_BASE_MAC, std::string());
 }
 
-void LinkInfo::SetRemoteBaseMac(const std::string &mac)
+SOFTBUS_DEFAULT_USED_EXPORT void LinkInfo::SetRemoteBaseMac(const std::string &mac)
 {
     Set(LinkInfoKey::REMOTE_BASE_MAC, mac);
 }
 
-std::string LinkInfo::GetRemoteBaseMac() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string LinkInfo::GetRemoteBaseMac() const
 {
     return Get(LinkInfoKey::REMOTE_BASE_MAC, std::string());
 }
 
-void LinkInfo::SetIsClient(bool client)
+SOFTBUS_DEFAULT_USED_EXPORT void LinkInfo::SetIsClient(bool client)
 {
     Set(LinkInfoKey::IS_CLIENT, client);
 }
@@ -348,12 +349,12 @@ bool LinkInfo::GetIsClient() const
     return Get(LinkInfoKey::IS_CLIENT, false);
 }
 
-void LinkInfo::SetLocalIpv6(const std::string &value)
+SOFTBUS_DEFAULT_USED_EXPORT void LinkInfo::SetLocalIpv6(const std::string &value)
 {
     Set(LinkInfoKey::LOCAL_IPV6, value);
 }
 
-std::string LinkInfo::GetLocalIpv6() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string LinkInfo::GetLocalIpv6() const
 {
     return Get(LinkInfoKey::LOCAL_IPV6, std::string());
 }
@@ -368,63 +369,63 @@ std::string LinkInfo::GetRemoteIpv6() const
     return Get(LinkInfoKey::REMOTE_IPV6, std::string());
 }
 
-void LinkInfo::SetCustomPort(int value)
+SOFTBUS_DEFAULT_USED_EXPORT void LinkInfo::SetCustomPort(int value)
 {
     Set(LinkInfoKey::CUSTOM_PORT, value);
 }
 
-int LinkInfo::GetCustomPort()
+SOFTBUS_DEFAULT_USED_EXPORT int LinkInfo::GetCustomPort()
 {
     return Get(LinkInfoKey::CUSTOM_PORT, 0);
 }
 
-void LinkInfo::SetIpAddrType(enum IpAddrType value)
+SOFTBUS_DEFAULT_USED_EXPORT void LinkInfo::SetIpAddrType(enum IpAddrType value)
 {
     Set(LinkInfoKey::IPADDR_TYPE, static_cast<int>(value));
 }
 
-enum IpAddrType LinkInfo::GetIpAddrType()
+SOFTBUS_DEFAULT_USED_EXPORT enum IpAddrType LinkInfo::GetIpAddrType()
 {
     auto ret = Get(LinkInfoKey::IPADDR_TYPE, 0);
     return static_cast<enum IpAddrType>(ret);
 }
 
-void LinkInfo::SetRatePreference(bool ratePreference)
+SOFTBUS_DEFAULT_USED_EXPORT void LinkInfo::SetRatePreference(bool ratePreference)
 {
     Set(LinkInfoKey::RATE_PREFERENCE, ratePreference);
 }
 
-bool LinkInfo::IsRatePreference() const
+SOFTBUS_DEFAULT_USED_EXPORT bool LinkInfo::IsRatePreference() const
 {
     return Get(LinkInfoKey::RATE_PREFERENCE, false);
 }
 
-void LinkInfo::SetLinkPowerMode(int mode)
+SOFTBUS_DEFAULT_USED_EXPORT void LinkInfo::SetLinkPowerMode(int mode)
 {
     Set(LinkInfoKey::ENABLE_POWER_MODE, mode);
 }
 
-int LinkInfo::GetLinkPowerMode() const
+SOFTBUS_DEFAULT_USED_EXPORT int LinkInfo::GetLinkPowerMode() const
 {
     return Get(LinkInfoKey::ENABLE_POWER_MODE, static_cast<int>(INVALID_POWER));
 }
 
-void LinkInfo::SetIsBeingUsedByRemote(bool isUsed)
+SOFTBUS_DEFAULT_USED_EXPORT void LinkInfo::SetIsBeingUsedByRemote(bool isUsed)
 {
     Set(LinkInfoKey::IS_BEING_USED_BY_REMOTE, isUsed);
 }
 
-bool LinkInfo::GetIsBeingUsedByRemote() const
+SOFTBUS_DEFAULT_USED_EXPORT bool LinkInfo::GetIsBeingUsedByRemote() const
 {
     return Get(LinkInfoKey::IS_BEING_USED_BY_REMOTE, false);
 }
 
-void LinkInfo::SetIsDbac(bool isDbac)
+SOFTBUS_DEFAULT_USED_EXPORT void LinkInfo::SetIsDbac(bool isDbac)
 {
     Set(LinkInfoKey::IS_DBAC, isDbac);
 }
 
-bool LinkInfo::GetIsDbac() const
+SOFTBUS_DEFAULT_USED_EXPORT bool LinkInfo::GetIsDbac() const
 {
     return Get(LinkInfoKey::IS_DBAC, false);
 }

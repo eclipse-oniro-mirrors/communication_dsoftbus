@@ -17,9 +17,10 @@
 
 #include "protocol/wifi_direct_protocol.h"
 #include "nlohmann/json.hpp"
+#include "softbus_def.h"
 
 namespace OHOS::SoftBus {
-class JsonProtocol : public WifiDirectProtocol {
+class SOFTBUS_DEFAULT_EXPORT JsonProtocol : public WifiDirectProtocol {
 public:
     ProtocolType GetType() override { return ProtocolType::JSON; };
     void SetFormat(const ProtocolFormat &format) override;

@@ -16,9 +16,10 @@
 #define DUMMY_NEGOTIATE_CHANNEL_H
 
 #include "channel/negotiate_channel.h"
+#include "softbus_def.h"
 
 namespace OHOS::SoftBus {
-class DummyNegotiateChannel : public NegotiateChannel {
+class SOFTBUS_DEFAULT_EXPORT DummyNegotiateChannel : public NegotiateChannel {
 public:
     ~DummyNegotiateChannel() override;
     int SendMessage(const NegotiateMessage &msg) const override;
