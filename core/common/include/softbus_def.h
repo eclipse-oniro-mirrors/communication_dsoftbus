@@ -124,6 +124,19 @@ extern "C" {
 
 #define MULTIPATH_EVENT_TAG 99
 
+#ifdef DSOFTBUS_TEST_BUILD
+#define SOFTBUS_DEFAULT_USED_EXPORT
+#define SOFTBUS_DEFAULT_EXPORT
+#else
+#ifndef SOFTBUS_DEFAULT_USED_EXPORT
+#define SOFTBUS_DEFAULT_USED_EXPORT __attribute__((visibility("default"))) __attribute__((used))
+#endif
+
+#ifndef SOFTBUS_DEFAULT_EXPORT
+#define SOFTBUS_DEFAULT_EXPORT __attribute__((visibility("default")))
+#endif
+#endif
+
 typedef struct {
     SoftBusMutex lock;
     unsigned int cnt;

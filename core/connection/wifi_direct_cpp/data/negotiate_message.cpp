@@ -145,20 +145,21 @@ static std::map<LegacyCommandType, std::string> g_legacyMessageNameMap = {
     { LegacyCommandType::CMD_FORCE_DISCONNECT_V1_REQ,    "CMD_FORCE_DISCONNECT_V1_REQ"    },
 };
 
-NegotiateMessage::NegotiateMessage() { }
+SOFTBUS_DEFAULT_USED_EXPORT NegotiateMessage::NegotiateMessage() { }
 
-NegotiateMessage::NegotiateMessage(NegotiateMessageType type)
+SOFTBUS_DEFAULT_USED_EXPORT NegotiateMessage::NegotiateMessage(NegotiateMessageType type)
 {
     SetMessageType(type);
 }
 
-NegotiateMessage::NegotiateMessage(LegacyCommandType type)
+SOFTBUS_DEFAULT_USED_EXPORT NegotiateMessage::NegotiateMessage(LegacyCommandType type)
 {
     SetMessageType(type);
 }
 
-NegotiateMessage::~NegotiateMessage() { }
+SOFTBUS_DEFAULT_USED_EXPORT NegotiateMessage::~NegotiateMessage() { }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 int NegotiateMessage::Marshalling(WifiDirectProtocol &protocol, std::vector<uint8_t> &output) const
 {
     for (const auto &[key, value] : values_) {
@@ -255,6 +256,7 @@ void NegotiateMessage::MarshallingLinkInfo(WifiDirectProtocol &protocol) const
         output.size());
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 int NegotiateMessage::Unmarshalling(WifiDirectProtocol &protocol, const std::vector<uint8_t> &input)
 {
     int key = 0;
@@ -364,13 +366,13 @@ void NegotiateMessage::SetMessageType(LegacyCommandType value)
     Set(NegotiateMessageKey::MSG_TYPE, static_cast<int>(value));
 }
 
-NegotiateMessageType NegotiateMessage::GetMessageType() const
+SOFTBUS_DEFAULT_USED_EXPORT NegotiateMessageType NegotiateMessage::GetMessageType() const
 {
     auto value = Get(NegotiateMessageKey::MSG_TYPE, static_cast<int>(NegotiateMessageType::CMD_INVALID));
     return static_cast<NegotiateMessageType>(value);
 }
 
-std::string NegotiateMessage::MessageTypeToString() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string NegotiateMessage::MessageTypeToString() const
 {
     auto legacyCmdType = GetLegacyP2pCommandType();
     if (legacyCmdType != LegacyCommandType::CMD_INVALID) {
@@ -390,63 +392,63 @@ std::string NegotiateMessage::MessageTypeToString() const
     return it->second;
 }
 
-void NegotiateMessage::SetSessionId(uint32_t value)
+SOFTBUS_DEFAULT_USED_EXPORT void NegotiateMessage::SetSessionId(uint32_t value)
 {
     Set(NegotiateMessageKey::SESSION_ID, value);
 }
 
-uint32_t NegotiateMessage::GetSessionId() const
+SOFTBUS_DEFAULT_USED_EXPORT uint32_t NegotiateMessage::GetSessionId() const
 {
     return Get(NegotiateMessageKey::SESSION_ID, static_cast<uint32_t>(SESSION_ID_INVALID));
 }
 
-void NegotiateMessage::SetWifiConfigInfo(const std::vector<uint8_t> &value)
+SOFTBUS_DEFAULT_USED_EXPORT void NegotiateMessage::SetWifiConfigInfo(const std::vector<uint8_t> &value)
 {
     Set(NegotiateMessageKey::WIFI_CFG_INFO, value);
 }
 
-std::vector<uint8_t> NegotiateMessage::GetWifiConfigInfo() const
+SOFTBUS_DEFAULT_USED_EXPORT std::vector<uint8_t> NegotiateMessage::GetWifiConfigInfo() const
 {
     return Get(NegotiateMessageKey::WIFI_CFG_INFO, std::vector<uint8_t>());
 }
 
-void NegotiateMessage::SetIpv4InfoArray(const std::vector<Ipv4Info> &value)
+SOFTBUS_DEFAULT_USED_EXPORT void NegotiateMessage::SetIpv4InfoArray(const std::vector<Ipv4Info> &value)
 {
     Set(NegotiateMessageKey::IPV4_INFO_ARRAY, value);
 }
 
-std::vector<Ipv4Info> NegotiateMessage::GetIpv4InfoArray() const
+SOFTBUS_DEFAULT_USED_EXPORT std::vector<Ipv4Info> NegotiateMessage::GetIpv4InfoArray() const
 {
     return Get(NegotiateMessageKey::IPV4_INFO_ARRAY, std::vector<Ipv4Info>());
 }
 
-void NegotiateMessage::SetPreferLinkMode(LinkInfo::LinkMode value)
+SOFTBUS_DEFAULT_USED_EXPORT void NegotiateMessage::SetPreferLinkMode(LinkInfo::LinkMode value)
 {
     Set(NegotiateMessageKey::PREFER_LINK_MODE, static_cast<int>(value));
 }
 
-LinkInfo::LinkMode NegotiateMessage::GetPreferLinkMode() const
+SOFTBUS_DEFAULT_USED_EXPORT LinkInfo::LinkMode NegotiateMessage::GetPreferLinkMode() const
 {
     auto value = Get(NegotiateMessageKey::PREFER_LINK_MODE, static_cast<int>(LinkInfo::LinkMode::INVALID));
     return static_cast<LinkInfo::LinkMode>(value);
 }
 
-void NegotiateMessage::SetIsModeStrict(bool value)
+SOFTBUS_DEFAULT_USED_EXPORT void NegotiateMessage::SetIsModeStrict(bool value)
 {
     Set(NegotiateMessageKey::IS_MODE_STRICT, value);
 }
 
-bool NegotiateMessage::GetIsModeStrict() const
+SOFTBUS_DEFAULT_USED_EXPORT bool NegotiateMessage::GetIsModeStrict() const
 {
     return Get(NegotiateMessageKey::IS_MODE_STRICT, false);
 }
 
-void NegotiateMessage::SetPreferLinkBandWidth(int value)
+SOFTBUS_DEFAULT_USED_EXPORT void NegotiateMessage::SetPreferLinkBandWidth(int value)
 {
     Set(NegotiateMessageKey::PREFER_LINK_BANDWIDTH, value);
 }
 
-int NegotiateMessage::GetPreferLinkBandWidth() const
+SOFTBUS_DEFAULT_USED_EXPORT int NegotiateMessage::GetPreferLinkBandWidth() const
 {
     return Get(NegotiateMessageKey::PREFER_LINK_BANDWIDTH, 0);
 }
@@ -461,72 +463,72 @@ bool NegotiateMessage::GetIsBridgeSupported() const
     return Get(NegotiateMessageKey::IS_BRIDGE_SUPPORTED, false);
 }
 
-void NegotiateMessage::SetLinkInfo(const LinkInfo &value)
+SOFTBUS_DEFAULT_USED_EXPORT void NegotiateMessage::SetLinkInfo(const LinkInfo &value)
 {
     Set(NegotiateMessageKey::LINK_INFO, value);
 }
 
-LinkInfo NegotiateMessage::GetLinkInfo() const
+SOFTBUS_DEFAULT_USED_EXPORT LinkInfo NegotiateMessage::GetLinkInfo() const
 {
     return Get(NegotiateMessageKey::LINK_INFO, LinkInfo());
 }
 
-void NegotiateMessage::SetResultCode(int value)
+SOFTBUS_DEFAULT_USED_EXPORT void NegotiateMessage::SetResultCode(int value)
 {
     Set(NegotiateMessageKey::RESULT_CODE, value);
 }
 
-int NegotiateMessage::GetResultCode() const
+SOFTBUS_DEFAULT_USED_EXPORT int NegotiateMessage::GetResultCode() const
 {
     return Get(NegotiateMessageKey::RESULT_CODE, RESULT_CODE_INVALID);
 }
 
-void NegotiateMessage::SetInterfaceInfoArray(const std::vector<InterfaceInfo> &value)
+SOFTBUS_DEFAULT_USED_EXPORT void NegotiateMessage::SetInterfaceInfoArray(const std::vector<InterfaceInfo> &value)
 {
     Set(NegotiateMessageKey::INTERFACE_INFO_ARRAY, value);
 }
 
-std::vector<InterfaceInfo> NegotiateMessage::GetInterfaceInfoArray() const
+SOFTBUS_DEFAULT_USED_EXPORT std::vector<InterfaceInfo> NegotiateMessage::GetInterfaceInfoArray() const
 {
     return Get(NegotiateMessageKey::INTERFACE_INFO_ARRAY, std::vector<InterfaceInfo>());
 }
 
-void NegotiateMessage::SetRemoteDeviceId(const std::string &value)
+SOFTBUS_DEFAULT_USED_EXPORT void NegotiateMessage::SetRemoteDeviceId(const std::string &value)
 {
     Set(NegotiateMessageKey::REMOTE_DEVICE_ID, value);
 }
 
-std::string NegotiateMessage::GetRemoteDeviceId() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string NegotiateMessage::GetRemoteDeviceId() const
 {
     return Get(NegotiateMessageKey::REMOTE_DEVICE_ID, std::string());
 }
 
-void NegotiateMessage::SetRemoteNetworkId(const std::string &value)
+SOFTBUS_DEFAULT_USED_EXPORT void NegotiateMessage::SetRemoteNetworkId(const std::string &value)
 {
     Set(NegotiateMessageKey::REMOTE_NETWORK_ID, value);
 }
 
-std::string NegotiateMessage::GetRemoteNetworkId() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string NegotiateMessage::GetRemoteNetworkId() const
 {
     return Get(NegotiateMessageKey::REMOTE_NETWORK_ID, std::string());
 }
 
-void NegotiateMessage::SetExtraData(const std::vector<uint8_t> &value)
+SOFTBUS_DEFAULT_USED_EXPORT void NegotiateMessage::SetExtraData(const std::vector<uint8_t> &value)
 {
     Set(NegotiateMessageKey::EXTRA_DATA_ARRAY, value);
 }
 
-std::vector<uint8_t> NegotiateMessage::GetExtraData() const
+SOFTBUS_DEFAULT_USED_EXPORT std::vector<uint8_t> NegotiateMessage::GetExtraData() const
 {
     return Get(NegotiateMessageKey::EXTRA_DATA_ARRAY, std::vector<uint8_t>());
 }
 
-void NegotiateMessage::SetIsProxyEnable(bool value)
+SOFTBUS_DEFAULT_USED_EXPORT void NegotiateMessage::SetIsProxyEnable(bool value)
 {
     Set(NegotiateMessageKey::IS_PROXY_ENABLE, value);
 }
 
-bool NegotiateMessage::GetIsProxyEnable() const
+SOFTBUS_DEFAULT_USED_EXPORT bool NegotiateMessage::GetIsProxyEnable() const
 {
     return Get(NegotiateMessageKey::IS_PROXY_ENABLE, false);
 }
@@ -551,22 +553,22 @@ std::string NegotiateMessage::Get5GChannelScore() const
     return Get(NegotiateMessageKey::CHANNEL_5G_SCORE, std::string());
 }
 
-void NegotiateMessage::SetChallengeCode(uint32_t value)
+SOFTBUS_DEFAULT_USED_EXPORT void NegotiateMessage::SetChallengeCode(uint32_t value)
 {
     Set(NegotiateMessageKey::CHALLENGE_CODE, value);
 }
 
-uint32_t NegotiateMessage::GetChallengeCode() const
+SOFTBUS_DEFAULT_USED_EXPORT uint32_t NegotiateMessage::GetChallengeCode() const
 {
     return Get(NegotiateMessageKey::CHALLENGE_CODE, static_cast<uint32_t>(0));
 }
 
-void NegotiateMessage::SetNewPtkFrame(bool value)
+SOFTBUS_DEFAULT_USED_EXPORT void NegotiateMessage::SetNewPtkFrame(bool value)
 {
     Set(NegotiateMessageKey::NEW_PTK_FRAME, value);
 }
 
-bool NegotiateMessage::GetNewPtkFrame() const
+SOFTBUS_DEFAULT_USED_EXPORT bool NegotiateMessage::GetNewPtkFrame() const
 {
     return Get(NegotiateMessageKey::NEW_PTK_FRAME, false);
 }
@@ -643,7 +645,7 @@ bool NegotiateMessage::GetLegacyP2pWideBandSupported() const
     return Get(NegotiateMessageKey::WIDE_BAND_SUPPORTED, false);
 }
 
-void NegotiateMessage::SetLegacyP2pGroupConfig(const std::string &value)
+SOFTBUS_DEFAULT_USED_EXPORT void NegotiateMessage::SetLegacyP2pGroupConfig(const std::string &value)
 {
     Set(NegotiateMessageKey::GROUP_CONFIG, value);
 }
@@ -653,7 +655,7 @@ std::string NegotiateMessage::GetLegacyP2pGroupConfig() const
     return Get(NegotiateMessageKey::GROUP_CONFIG, std::string());
 }
 
-void NegotiateMessage::SetLegacyP2pMac(const std::string &value)
+SOFTBUS_DEFAULT_USED_EXPORT void NegotiateMessage::SetLegacyP2pMac(const std::string &value)
 {
     Set(NegotiateMessageKey::MAC, value);
 }
@@ -693,17 +695,17 @@ std::string NegotiateMessage::GetLegacyP2pGoMac() const
     return Get(NegotiateMessageKey::GO_MAC, std::string());
 }
 
-void NegotiateMessage::SetLegacyP2pGoPort(int value)
+SOFTBUS_DEFAULT_USED_EXPORT void NegotiateMessage::SetLegacyP2pGoPort(int value)
 {
     Set(NegotiateMessageKey::GO_PORT, value);
 }
 
-int NegotiateMessage::GetLegacyP2pGoPort() const
+SOFTBUS_DEFAULT_USED_EXPORT int NegotiateMessage::GetLegacyP2pGoPort() const
 {
     return Get(NegotiateMessageKey::GO_PORT, 0);
 }
 
-void NegotiateMessage::SetLegacyP2pIp(const std::string &value)
+SOFTBUS_DEFAULT_USED_EXPORT void NegotiateMessage::SetLegacyP2pIp(const std::string &value)
 {
     Set(NegotiateMessageKey::IP, value);
 }
@@ -755,12 +757,12 @@ std::string NegotiateMessage::GetLegacyP2pWifiConfigInfo() const
     return Get(NegotiateMessageKey::SELF_WIFI_CONFIG, std::string());
 }
 
-void NegotiateMessage::SetLegacyP2pCommandType(LegacyCommandType value)
+SOFTBUS_DEFAULT_USED_EXPORT void NegotiateMessage::SetLegacyP2pCommandType(LegacyCommandType value)
 {
     Set(NegotiateMessageKey::COMMAND_TYPE, static_cast<int>(value));
 }
 
-LegacyCommandType NegotiateMessage::GetLegacyP2pCommandType() const
+SOFTBUS_DEFAULT_USED_EXPORT LegacyCommandType NegotiateMessage::GetLegacyP2pCommandType() const
 {
     auto value = Get(NegotiateMessageKey::COMMAND_TYPE, static_cast<int>(LegacyCommandType::CMD_INVALID));
     return static_cast<LegacyCommandType>(value);

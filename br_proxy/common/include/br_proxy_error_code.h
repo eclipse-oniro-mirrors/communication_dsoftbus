@@ -16,6 +16,7 @@
 #ifndef BR_PROXY_TAIHE_ERROR_CODE_H
 #define BR_PROXY_TAIHE_ERROR_CODE_H
 #include <stdint.h>
+#include "softbus_def.h"
 #include "softbus_error_code.h"
 
 #ifdef __cplusplus
@@ -40,8 +41,8 @@ typedef enum {
     NAPI_SOFTBUS_UNKNOWN_ERR = 30200000,
 } SoftbusJsErrCode;
 
-const char *GetErrMsgByErrCode(int32_t errCode);
-int32_t NapiTransConvertErr(int32_t err);
+SOFTBUS_DEFAULT_USED_EXPORT const char *GetErrMsgByErrCode(int32_t errCode);
+SOFTBUS_DEFAULT_USED_EXPORT int32_t NapiTransConvertErr(int32_t err);
 
 #ifdef __cplusplus
 }

@@ -24,6 +24,7 @@ WifiDirectScheduler& WifiDirectScheduler::GetInstance()
     return instance;
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 int WifiDirectScheduler::ConnectDevice(const WifiDirectConnectInfo &info, const WifiDirectConnectCallback &callback,
                                        bool markRetried)
 {
@@ -49,7 +50,7 @@ int WifiDirectScheduler::ConnectDevice(const WifiDirectConnectInfo &info, const 
     return ret;
 }
 
-int WifiDirectScheduler::CancelConnectDevice(const WifiDirectConnectInfo &info)
+SOFTBUS_DEFAULT_USED_EXPORT int WifiDirectScheduler::CancelConnectDevice(const WifiDirectConnectInfo &info)
 {
     CONN_LOGI(CONN_WIFI_DIRECT, "reqId=%{public}d, pid=%{public}d", info.requestId, info.pid);
 
@@ -66,12 +67,13 @@ int WifiDirectScheduler::CancelConnectDevice(const WifiDirectConnectInfo &info)
     return SOFTBUS_NOT_FIND;
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 int WifiDirectScheduler::ConnectDevice(const std::shared_ptr<ConnectCommand> &command, bool markRetried)
 {
     return ConnectDevice(command->GetConnectInfo().info_, command->GetConnectCallback(), markRetried);
 }
 
-bool WifiDirectScheduler::IsAnyConnectCommandExist(WifiDirectLinkType linkType)
+SOFTBUS_DEFAULT_USED_EXPORT bool WifiDirectScheduler::IsAnyConnectCommandExist(WifiDirectLinkType linkType)
 {
     std::lock_guard executorLock(executorLock_);
     if (executorManager_.HasAnyConnectCommand(linkType)) {
@@ -89,6 +91,7 @@ bool WifiDirectScheduler::IsAnyConnectCommandExist(WifiDirectLinkType linkType)
     return false;
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 int WifiDirectScheduler::DisconnectDevice(WifiDirectDisconnectInfo &info, WifiDirectDisconnectCallback &callback)
 {
     auto innerLink = LinkManager::GetInstance().GetLinkById(info.linkId);
@@ -115,7 +118,7 @@ int WifiDirectScheduler::DisconnectDevice(WifiDirectDisconnectInfo &info, WifiDi
     return ret;
 }
 
-int WifiDirectScheduler::ForceDisconnectDevice(
+SOFTBUS_DEFAULT_USED_EXPORT int WifiDirectScheduler::ForceDisconnectDevice(
     WifiDirectForceDisconnectInfo &info, WifiDirectDisconnectCallback &callback)
 {
     auto command = CommandFactory::GetInstance().CreateForceDisconnectCommand(info, callback);

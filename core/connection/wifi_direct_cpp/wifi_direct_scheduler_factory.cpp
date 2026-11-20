@@ -17,13 +17,13 @@
 #include "conn_log.h"
 
 namespace OHOS::SoftBus {
-WifiDirectSchedulerFactory& WifiDirectSchedulerFactory::GetInstance()
+SOFTBUS_DEFAULT_USED_EXPORT WifiDirectSchedulerFactory& WifiDirectSchedulerFactory::GetInstance()
 {
     static WifiDirectSchedulerFactory instance;
     return instance;
 }
 
-WifiDirectScheduler& WifiDirectSchedulerFactory::GetScheduler()
+SOFTBUS_DEFAULT_USED_EXPORT WifiDirectScheduler& WifiDirectSchedulerFactory::GetScheduler()
 {
     if (scheduler_ == nullptr) {
         return WifiDirectScheduler::GetInstance();
@@ -31,6 +31,7 @@ WifiDirectScheduler& WifiDirectSchedulerFactory::GetScheduler()
     return *scheduler_;
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 void WifiDirectSchedulerFactory::Register(const std::shared_ptr<WifiDirectScheduler> &scheduler)
 {
     scheduler_ = scheduler;

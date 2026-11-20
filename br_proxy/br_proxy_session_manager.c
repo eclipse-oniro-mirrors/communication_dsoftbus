@@ -26,7 +26,7 @@
 static SoftBusMutex g_sessionIdLock;
 static SoftBusList *g_sessionList = NULL;
 
-int32_t GetSessionId(void)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t GetSessionId(void)
 {
     static int32_t sessionId = 0;
     int32_t id = 0;
@@ -43,7 +43,7 @@ int32_t GetSessionId(void)
     return id;
 }
 
-int32_t SessionInit(void)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t SessionInit(void)
 {
     static bool initSuccess = false;
     if (initSuccess) {
@@ -67,7 +67,7 @@ int32_t SessionInit(void)
     return SOFTBUS_OK;
 }
 
-int32_t AddSessionToList(int32_t sessionId)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t AddSessionToList(int32_t sessionId)
 {
     if (g_sessionList == NULL) {
         TRANS_LOGE(TRANS_SDK, "[br_proxy] not init");
@@ -100,7 +100,7 @@ EXIT_ERR:
     return ret;
 }
 
-int32_t UpdateListBySessionId(int32_t sessionId, int32_t channelId, int32_t openResult)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t UpdateListBySessionId(int32_t sessionId, int32_t channelId, int32_t openResult)
 {
     if (g_sessionList == NULL) {
         TRANS_LOGE(TRANS_SDK, "[br_proxy] not init");
@@ -125,7 +125,7 @@ int32_t UpdateListBySessionId(int32_t sessionId, int32_t channelId, int32_t open
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t GetSessionInfoBySessionId(int32_t sessionId, SessionInfo *info)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t GetSessionInfoBySessionId(int32_t sessionId, SessionInfo *info)
 {
     if (g_sessionList == NULL || info == NULL) {
         TRANS_LOGE(TRANS_SDK, "[br_proxy] invalid param");
@@ -152,7 +152,7 @@ int32_t GetSessionInfoBySessionId(int32_t sessionId, SessionInfo *info)
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t DeleteSessionById(int32_t sessionId)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t DeleteSessionById(int32_t sessionId)
 {
     if (g_sessionList == NULL) {
         TRANS_LOGE(TRANS_SDK, "[br_proxy] not init");
@@ -181,7 +181,7 @@ int32_t DeleteSessionById(int32_t sessionId)
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t BrProxyWaitCond(int32_t sessionId)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t BrProxyWaitCond(int32_t sessionId)
 {
 #define BR_PROXY_MAX_WAIT_COND_TIME 10 // 10s
     if (g_sessionList == NULL) {
@@ -230,7 +230,7 @@ int32_t BrProxyWaitCond(int32_t sessionId)
     return SOFTBUS_NOT_FIND;
 }
 
-int32_t BrProxyPostCond(int32_t sessionId)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t BrProxyPostCond(int32_t sessionId)
 {
     if (g_sessionList == NULL) {
         TRANS_LOGE(TRANS_SDK, "[br_proxy] invalid param");

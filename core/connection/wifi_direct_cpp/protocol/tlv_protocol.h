@@ -16,9 +16,10 @@
 #define WIFI_DIRECT_TLV_PROTOCOL_H
 
 #include "wifi_direct_protocol.h"
+#include "softbus_def.h"
 
 namespace OHOS::SoftBus {
-class TlvProtocol : public WifiDirectProtocol {
+class SOFTBUS_DEFAULT_EXPORT TlvProtocol : public WifiDirectProtocol {
 public:
     ProtocolType GetType() override { return ProtocolType::TLV; };
     void SetFormat(const ProtocolFormat &format) override;

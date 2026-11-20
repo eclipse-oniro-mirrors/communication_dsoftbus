@@ -19,13 +19,13 @@
 #include "wifi_direct_init.h"
 
 namespace OHOS::SoftBus {
-WifiDirectRoleOption& WifiDirectRoleOption::GetInstance()
+SOFTBUS_DEFAULT_USED_EXPORT WifiDirectRoleOption& WifiDirectRoleOption::GetInstance()
 {
     static WifiDirectRoleOption instance;
     return instance;
 }
 
-int WifiDirectRoleOption::GetExpectedRole(
+SOFTBUS_DEFAULT_USED_EXPORT int WifiDirectRoleOption::GetExpectedRole(
     const std::string &networkId, enum WifiDirectConnectType type, uint32_t &expectedRole, bool &isStrict)
 {
     if (type == WIFI_DIRECT_CONNECT_TYPE_AUTH_NEGO_P2P) {

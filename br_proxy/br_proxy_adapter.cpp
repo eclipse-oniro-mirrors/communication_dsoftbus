@@ -25,6 +25,7 @@
 #include "iservice_registry.h"
 #include "res_sched_client.h"
 #include "res_type.h"
+#include "softbus_def.h"
 #include "softbus_error_code.h"
 #ifdef DSOFTBUS_FEATURE_DEVICE_STANDBY
 #include "standby_service_client.h"
@@ -58,7 +59,7 @@ public:
     }
 };
 
-extern "C" int32_t StartAbility(const char *bundleName, const char *abilityName,
+extern "C" SOFTBUS_DEFAULT_USED_EXPORT int32_t StartAbility(const char *bundleName, const char *abilityName,
     int32_t appIndex, int32_t userId)
 {
     TRANS_LOGI(TRANS_SVC, "[br_proxy] appIndex:%{public}d, userId:%{public}d", appIndex, userId);
@@ -101,7 +102,8 @@ sptr<AppExecFwk::IAppMgr> GetAppManagerInstance()
     return iface_cast<AppExecFwk::IAppMgr>(appObject);
 }
 
-extern "C" bool GetRunningProcessInformation(const std::string bundleName, int32_t userId, pid_t uid, pid_t *pid)
+extern "C" SOFTBUS_DEFAULT_USED_EXPORT
+bool GetRunningProcessInformation(const std::string bundleName, int32_t userId, pid_t uid, pid_t *pid)
 {
     if (pid == nullptr) {
         TRANS_LOGE(TRANS_SVC, "[br_proxy] invalid param");
@@ -132,7 +134,8 @@ extern "C" bool GetRunningProcessInformation(const std::string bundleName, int32
     return false;
 }
 
-extern "C" int32_t ProxyChannelMgrGetAbilityName(char *abilityName, int32_t userId, uint32_t abilityNameLen,
+extern "C" SOFTBUS_DEFAULT_USED_EXPORT
+int32_t ProxyChannelMgrGetAbilityName(char *abilityName, int32_t userId, uint32_t abilityNameLen,
     std::string bundleName, int32_t *appIndex)
 {
     if (abilityName == nullptr || appIndex == nullptr || bundleName.empty()) {
@@ -166,7 +169,7 @@ extern "C" int32_t ProxyChannelMgrGetAbilityName(char *abilityName, int32_t user
     return SOFTBUS_OK;
 }
 
-extern "C" int32_t Unrestricted(const char *bundleName, pid_t pid, pid_t uid, bool isThaw)
+extern "C" SOFTBUS_DEFAULT_USED_EXPORT int32_t Unrestricted(const char *bundleName, pid_t pid, pid_t uid, bool isThaw)
 {
     if (bundleName == nullptr) {
         TRANS_LOGE(TRANS_SVC, "[br_proxy] bundleName is null");

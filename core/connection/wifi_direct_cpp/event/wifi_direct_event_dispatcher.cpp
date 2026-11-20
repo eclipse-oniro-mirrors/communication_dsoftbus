@@ -16,12 +16,12 @@
 #include "conn_log.h"
 
 namespace OHOS::SoftBus {
-WifiDirectEventDispatcher::WifiDirectEventDispatcher(WifiDirectEventQueue *queue)
+SOFTBUS_DEFAULT_USED_EXPORT WifiDirectEventDispatcher::WifiDirectEventDispatcher(WifiDirectEventQueue *queue)
     : queue_(queue), chained_(true)
 {
 }
 
-WifiDirectEventDispatcher::~WifiDirectEventDispatcher() noexcept(false)
+SOFTBUS_DEFAULT_USED_EXPORT WifiDirectEventDispatcher::~WifiDirectEventDispatcher() noexcept(false)
 {
     if (!chained_) {
         WaitAndDispatch();
@@ -33,7 +33,7 @@ void WifiDirectEventDispatcher::WaitAndDispatch()
     Dispatch(queue_->WaitAndPop());
 }
 
-bool WifiDirectEventDispatcher::Dispatch(const std::shared_ptr<WifiDirectEventBase> &event)
+SOFTBUS_DEFAULT_USED_EXPORT bool WifiDirectEventDispatcher::Dispatch(const std::shared_ptr<WifiDirectEventBase> &event)
 {
     CONN_LOGI(CONN_WIFI_DIRECT, "ignore unhandled event");
     return false;

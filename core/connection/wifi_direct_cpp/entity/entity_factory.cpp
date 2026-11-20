@@ -15,18 +15,18 @@
 #include "entity_factory.h"
 
 namespace OHOS::SoftBus {
-EntityFactory& EntityFactory::GetInstance()
+SOFTBUS_DEFAULT_USED_EXPORT EntityFactory& EntityFactory::GetInstance()
 {
     static EntityFactory instance;
     return instance;
 }
 
-void EntityFactory::Register(const Creator &creator)
+SOFTBUS_DEFAULT_USED_EXPORT void EntityFactory::Register(const Creator &creator)
 {
     creator_ = creator;
 }
 
-WifiDirectEntity& EntityFactory::GetEntity(InnerLink::LinkType type)
+SOFTBUS_DEFAULT_USED_EXPORT WifiDirectEntity& EntityFactory::GetEntity(InnerLink::LinkType type)
 {
     if (creator_ == nullptr) {
         return P2pEntity::GetInstance();

@@ -37,7 +37,7 @@ static constexpr int WAIT_DETECT_RESPONSE_TIMEOUT_MS = 1000;
 static constexpr int MAX_AUTH_DATA_LEN = 131072;
 Utils::Timer AuthNegotiateChannel::timer_("DetectLink", TIMER_TIMEOUT);
 
-AuthNegotiateChannel::AuthNegotiateChannel(const AuthHandle &handle)
+SOFTBUS_DEFAULT_USED_EXPORT AuthNegotiateChannel::AuthNegotiateChannel(const AuthHandle &handle)
     : handle_(handle), timerId_(Utils::TIMER_ERR_INVALID_VALUE), close_(false)
 {
     char remoteUuid[UUID_BUF_LEN] {};
@@ -60,12 +60,12 @@ bool AuthNegotiateChannel::operator==(const AuthNegotiateChannel &other) const
     return handle_.authId == other.handle_.authId && handle_.type == other.handle_.type;
 }
 
-bool AuthNegotiateChannel::operator==(const AuthHandle &otherHandle) const
+SOFTBUS_DEFAULT_USED_EXPORT bool AuthNegotiateChannel::operator==(const AuthHandle &otherHandle) const
 {
     return handle_.authId == otherHandle.authId && handle_.type == otherHandle.type;
 }
 
-bool AuthNegotiateChannel::IsMeta() const
+SOFTBUS_DEFAULT_USED_EXPORT bool AuthNegotiateChannel::IsMeta() const
 {
     bool isMeta = false;
     int32_t ret = DBinderSoftbusServer::GetInstance().AuthGetMetaType(handle_.authId, &isMeta);
@@ -73,7 +73,7 @@ bool AuthNegotiateChannel::IsMeta() const
     return isMeta;
 }
 
-void AuthNegotiateChannel::SetClose()
+SOFTBUS_DEFAULT_USED_EXPORT void AuthNegotiateChannel::SetClose()
 {
     close_ = true;
 }
@@ -142,6 +142,7 @@ void AuthNegotiateChannel::OnWaitDetectResponseTimeout()
     promise_->set_value(response);
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 NegotiateMessage AuthNegotiateChannel::SendMessageAndWaitResponse(const NegotiateMessage &msg)
 {
     auto ret = SendMessage(msg);
@@ -554,12 +555,12 @@ void AuthNegotiateChannel::SyncDBACData(const std::vector<uint8_t> &data)
     syncDBACDataHook_(data);
 }
 
-void AuthNegotiateChannel::SetIpv6(bool isIpv6)
+SOFTBUS_DEFAULT_USED_EXPORT void AuthNegotiateChannel::SetIpv6(bool isIpv6)
 {
     isIpv6_ = isIpv6;
 }
 
-bool AuthNegotiateChannel::IsIpv6() const
+SOFTBUS_DEFAULT_USED_EXPORT bool AuthNegotiateChannel::IsIpv6() const
 {
     return isIpv6_;
 }

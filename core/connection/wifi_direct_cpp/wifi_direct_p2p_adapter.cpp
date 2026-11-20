@@ -27,7 +27,7 @@
 #include "utils/wifi_direct_utils.h"
 
 namespace OHOS::SoftBus {
-WifiDirectP2pAdapter *WifiDirectP2pAdapter::GetInstance()
+SOFTBUS_DEFAULT_USED_EXPORT WifiDirectP2pAdapter *WifiDirectP2pAdapter::GetInstance()
 {
     static WifiDirectP2pAdapter instance;
     return &instance;
@@ -51,7 +51,7 @@ void WifiDirectP2pAdapter::Listener(BroadcastReceiverAction action, const struct
 }
 
 static bool g_wifiDirectP2pAdapterInit = false;
-void WifiDirectP2pAdapter::Init()
+SOFTBUS_DEFAULT_USED_EXPORT void WifiDirectP2pAdapter::Init()
 {
     if (g_wifiDirectP2pAdapterInit) {
         return;
@@ -271,6 +271,7 @@ int WifiDirectP2pAdapter::CheckRoleAndProcess(
     }
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 int32_t WifiDirectP2pAdapter::ConnCreateGoOwner(const char *pkgName, const struct GroupOwnerConfig *config,
     struct GroupOwnerResult *result, GroupOwnerDestroyListener listener)
 {
@@ -310,7 +311,7 @@ int32_t WifiDirectP2pAdapter::ConnCreateGoOwner(const char *pkgName, const struc
     return SOFTBUS_OK;
 }
 
-void WifiDirectP2pAdapter::ConnDestroyGoOwner(const char *pkgName)
+SOFTBUS_DEFAULT_USED_EXPORT void WifiDirectP2pAdapter::ConnDestroyGoOwner(const char *pkgName)
 {
     CONN_CHECK_AND_RETURN_LOGE(pkgName != nullptr, CONN_WIFI_DIRECT, "pkgName is null");
     {

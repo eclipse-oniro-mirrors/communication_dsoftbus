@@ -21,6 +21,7 @@
 #include "channel/negotiate_channel.h"
 #include "data/wifi_config_info.h"
 #include "conn_event.h"
+#include "softbus_def.h"
 
 namespace OHOS::SoftBus {
 
@@ -37,7 +38,7 @@ struct ConnectInfo {
     std::shared_ptr<WifiConfigInfo> wifiConfigInfo_;
 };
 
-class ConnectCommand : public WifiDirectCommand {
+class SOFTBUS_DEFAULT_EXPORT ConnectCommand : public WifiDirectCommand {
 public:
     using SuccessCallback = std::function<void(const WifiDirectLink &link)>;
     using FailureCallback = std::function<void(int32_t reason)>;

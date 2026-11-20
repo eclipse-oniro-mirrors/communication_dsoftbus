@@ -18,6 +18,7 @@
 #include "processor_selector_factory.h"
 
 namespace OHOS::SoftBus {
+SOFTBUS_DEFAULT_USED_EXPORT
 NegotiateCommand::NegotiateCommand(const NegotiateMessage &msg, const std::shared_ptr<NegotiateChannel> &channel)
     : msg_(msg), channel_(channel)
 {
@@ -34,12 +35,12 @@ std::shared_ptr<WifiDirectProcessor> NegotiateCommand::GetProcessor()
     return (*selector)(msg_);
 }
 
-NegotiateMessage NegotiateCommand::GetNegotiateMessage()
+SOFTBUS_DEFAULT_USED_EXPORT NegotiateMessage NegotiateCommand::GetNegotiateMessage()
 {
     return msg_;
 }
 
-std::shared_ptr<NegotiateChannel> NegotiateCommand::GetNegotiateChannel()
+SOFTBUS_DEFAULT_USED_EXPORT std::shared_ptr<NegotiateChannel> NegotiateCommand::GetNegotiateChannel()
 {
     return channel_;
 }

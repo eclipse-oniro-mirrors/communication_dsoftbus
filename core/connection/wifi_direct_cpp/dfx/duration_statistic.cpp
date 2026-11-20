@@ -18,13 +18,13 @@
 #include "conn_log.h"
 
 namespace OHOS::SoftBus {
-DurationStatisticCalculatorFactory& DurationStatisticCalculatorFactory::GetInstance()
+SOFTBUS_DEFAULT_USED_EXPORT DurationStatisticCalculatorFactory& DurationStatisticCalculatorFactory::GetInstance()
 {
     static DurationStatisticCalculatorFactory instance;
     return instance;
 }
 
-DurationStatistic& DurationStatistic::GetInstance()
+SOFTBUS_DEFAULT_USED_EXPORT DurationStatistic& DurationStatistic::GetInstance()
 {
     static DurationStatistic instance;
     return instance;
@@ -44,13 +44,14 @@ uint64_t DurationStatistic::GetTime()
     return static_cast<uint64_t>(value.count());
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 void DurationStatistic::Start(uint32_t requestId, const std::shared_ptr<DurationStatisticCalculator> &calculator)
 {
     std::lock_guard lock(mutex_);
     calculators_.insert(std::make_pair(requestId, calculator));
 }
 
-void DurationStatistic::Record(uint32_t requestId, const std::string &event)
+SOFTBUS_DEFAULT_USED_EXPORT void DurationStatistic::Record(uint32_t requestId, const std::string &event)
 {
     std::lock_guard lock(mutex_);
     if (stateTimeMap_[requestId].find(event) != stateTimeMap_[requestId].end()) {
@@ -59,7 +60,7 @@ void DurationStatistic::Record(uint32_t requestId, const std::string &event)
     stateTimeMap_[requestId].insert(std::make_pair(event, GetTime()));
 }
 
-void DurationStatistic::RecordReNegotiate(uint32_t requestId, bool flag)
+SOFTBUS_DEFAULT_USED_EXPORT void DurationStatistic::RecordReNegotiate(uint32_t requestId, bool flag)
 {
     std::lock_guard lock(mutex_);
     reNegotiateFlagMap_.insert(std::make_pair(requestId, flag));
@@ -86,12 +87,13 @@ void P2pCalculator::CalculateAllEvent(uint32_t requestId, std::map<std::string, 
     CONN_LOGI(CONN_WIFI_DIRECT, "p2p calculateEvent");
 }
 
-void DurationStatisticCalculatorFactory::Register(
+SOFTBUS_DEFAULT_USED_EXPORT void DurationStatisticCalculatorFactory::Register(
     const OHOS::SoftBus::DurationStatisticCalculatorFactory::Creator &creator)
 {
     creator_ = creator;
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 std::shared_ptr<DurationStatisticCalculator> DurationStatisticCalculatorFactory::NewInstance(
     enum WifiDirectConnectType type)
 {
@@ -108,7 +110,7 @@ std::map<std::string, uint64_t> DurationStatistic::GetStateTimeMapElement(uint32
     return stateTimeMap_[requestId];
 }
 
-bool DurationStatistic::ReNegotiateFlag(uint32_t requestId)
+SOFTBUS_DEFAULT_USED_EXPORT bool DurationStatistic::ReNegotiateFlag(uint32_t requestId)
 {
     std::lock_guard lock(mutex_);
     if (reNegotiateFlagMap_.find(requestId) != reNegotiateFlagMap_.end()) {

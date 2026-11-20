@@ -28,6 +28,7 @@
 
 #include "wifi_direct_initiator.h"
 #include "channel/negotiate_channel.h"
+#include "softbus_def.h"
 
 namespace OHOS::SoftBus {
 struct AuthOpenEvent {
@@ -40,7 +41,8 @@ struct AuthExceptionEvent {
     AuthHandle handle_;
 };
 
-class AuthNegotiateChannel : public NegotiateChannel, public std::enable_shared_from_this<AuthNegotiateChannel> {
+class SOFTBUS_DEFAULT_EXPORT AuthNegotiateChannel
+    : public NegotiateChannel, public std::enable_shared_from_this<AuthNegotiateChannel> {
 public:
     struct OpenParam {
         AuthLinkType type;

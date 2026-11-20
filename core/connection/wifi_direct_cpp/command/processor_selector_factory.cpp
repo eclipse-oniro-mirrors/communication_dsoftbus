@@ -18,18 +18,18 @@
 #include "simple_processor_selector.h"
 
 namespace OHOS::SoftBus {
-ProcessorSelectorFactory& ProcessorSelectorFactory::GetInstance()
+SOFTBUS_DEFAULT_USED_EXPORT ProcessorSelectorFactory& ProcessorSelectorFactory::GetInstance()
 {
     static ProcessorSelectorFactory instance;
     return instance;
 }
 
-void ProcessorSelectorFactory::Register(const std::shared_ptr<ProcessorSelector> &selector)
+SOFTBUS_DEFAULT_USED_EXPORT void ProcessorSelectorFactory::Register(const std::shared_ptr<ProcessorSelector> &selector)
 {
     selector_ = selector;
 }
 
-std::shared_ptr<ProcessorSelector> ProcessorSelectorFactory::NewSelector()
+SOFTBUS_DEFAULT_USED_EXPORT std::shared_ptr<ProcessorSelector> ProcessorSelectorFactory::NewSelector()
 {
     if (!selector_) {
         CONN_LOGI(CONN_WIFI_DIRECT, "simple processor selector");

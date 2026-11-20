@@ -19,6 +19,7 @@
 #include "processor_selector_factory.h"
 
 namespace OHOS::SoftBus {
+SOFTBUS_DEFAULT_USED_EXPORT
 DisconnectCommand::DisconnectCommand(const WifiDirectDisconnectInfo &info, const WifiDirectDisconnectCallback &callback)
     : callback_(callback)
 {
@@ -48,7 +49,7 @@ DisconnectCommand::DisconnectCommand(const WifiDirectDisconnectInfo &info, const
     info_.channel_ = innerLink->GetNegotiateChannel();
 }
 
-std::string DisconnectCommand::GetRemoteDeviceId() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string DisconnectCommand::GetRemoteDeviceId() const
 {
     if (!remoteDeviceId_.empty()) {
         return remoteDeviceId_;
@@ -63,7 +64,7 @@ std::string DisconnectCommand::GetRemoteDeviceId() const
     return remoteDeviceId_;
 }
 
-std::shared_ptr<WifiDirectProcessor> DisconnectCommand::GetProcessor()
+SOFTBUS_DEFAULT_USED_EXPORT std::shared_ptr<WifiDirectProcessor> DisconnectCommand::GetProcessor()
 {
     auto selector = ProcessorSelectorFactory::GetInstance().NewSelector();
     if (selector == nullptr) {
@@ -73,17 +74,17 @@ std::shared_ptr<WifiDirectProcessor> DisconnectCommand::GetProcessor()
     return (*selector)(info_.info_);
 }
 
-DisconnectInfo DisconnectCommand::GetDisconnectInfo() const
+SOFTBUS_DEFAULT_USED_EXPORT DisconnectInfo DisconnectCommand::GetDisconnectInfo() const
 {
     return info_;
 }
 
-std::shared_ptr<NegotiateChannel> DisconnectCommand::GetNegotiateChannel() const
+SOFTBUS_DEFAULT_USED_EXPORT std::shared_ptr<NegotiateChannel> DisconnectCommand::GetNegotiateChannel() const
 {
     return info_.channel_;
 }
 
-void DisconnectCommand::OnSuccess() const
+SOFTBUS_DEFAULT_USED_EXPORT void DisconnectCommand::OnSuccess() const
 {
     CONN_LOGI(CONN_WIFI_DIRECT, "reqId=%{public}u", info_.info_.requestId);
     if (callback_.onDisconnectSuccess != nullptr) {
@@ -91,7 +92,7 @@ void DisconnectCommand::OnSuccess() const
     }
 }
 
-void DisconnectCommand::OnFailure(int32_t reason) const
+SOFTBUS_DEFAULT_USED_EXPORT void DisconnectCommand::OnFailure(int32_t reason) const
 {
     CONN_LOGI(CONN_WIFI_DIRECT, "reqId=%{public}u, reason=%{public}d", info_.info_.requestId, reason);
     if (callback_.onDisconnectFailure != nullptr) {

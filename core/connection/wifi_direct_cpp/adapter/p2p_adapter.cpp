@@ -48,7 +48,7 @@ P2pAdapter& P2pAdapter::GetInstance()
     return instance;
 }
 
-int32_t P2pAdapter::GetChannel5GListIntArray(std::vector<int> &channels)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t P2pAdapter::GetChannel5GListIntArray(std::vector<int> &channels)
 {
     int array[CHANNEL_ARRAY_NUM_MAX] {};
     auto ret = Hid2dGetChannelListFor5G(array, CHANNEL_ARRAY_NUM_MAX);
@@ -64,12 +64,12 @@ int32_t P2pAdapter::GetChannel5GListIntArray(std::vector<int> &channels)
     return SOFTBUS_OK;
 }
 
-bool P2pAdapter::IsWifiEnable()
+SOFTBUS_DEFAULT_USED_EXPORT bool P2pAdapter::IsWifiEnable()
 {
     return IsWifiActive() == WIFI_STA_ACTIVE;
 }
 
-bool P2pAdapter::IsWifiConnected()
+SOFTBUS_DEFAULT_USED_EXPORT bool P2pAdapter::IsWifiConnected()
 {
     WifiLinkedInfo linkedInfo;
     int32_t ret = GetLinkedInfo(&linkedInfo);
@@ -82,7 +82,7 @@ bool P2pAdapter::IsWifiConnected()
     return false;
 }
 
-bool P2pAdapter::IsWifiP2pEnabled()
+SOFTBUS_DEFAULT_USED_EXPORT bool P2pAdapter::IsWifiP2pEnabled()
 {
     enum P2pState state;
     auto ret = GetP2pEnableStatus(&state);
@@ -96,7 +96,7 @@ std::string P2pAdapter::GetInterfaceCoexistCap()
     return "";
 }
 
-int32_t P2pAdapter::GetStationFrequency()
+SOFTBUS_DEFAULT_USED_EXPORT int32_t P2pAdapter::GetStationFrequency()
 {
     WifiLinkedInfo linkedInfo;
     int32_t ret = GetLinkedInfo(&linkedInfo);
@@ -107,7 +107,7 @@ int32_t P2pAdapter::GetStationFrequency()
     return linkedInfo.frequency;
 }
 
-int32_t P2pAdapter::P2pCreateGroup(const CreateGroupParam &param)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t P2pAdapter::P2pCreateGroup(const CreateGroupParam &param)
 {
     FreqType type = param.isWideBandSupported ? FREQUENCY_160M : FREQUENCY_DEFAULT;
     type = param.freqType == SOFTBUS_FREQUENCY_DEFAULT_11AX ? FREQUENCY_80M_11AX : type;
@@ -120,7 +120,7 @@ int32_t P2pAdapter::P2pCreateGroup(const CreateGroupParam &param)
     return SOFTBUS_OK;
 }
 
-int32_t P2pAdapter::P2pConnectGroup(const ConnectParam &param)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t P2pAdapter::P2pConnectGroup(const ConnectParam &param)
 {
     std::vector<std::string> configs = WifiDirectUtils::SplitString(param.groupConfig, "\n");
     CONN_CHECK_AND_RETURN_RET_LOGW(configs.size() >= P2P_GROUP_CONFIG_INDEX_MODE, SOFTBUS_CONN_REMOTE_CONFIG_NULL,
@@ -164,7 +164,7 @@ int32_t P2pAdapter::P2pConnectGroup(const ConnectParam &param)
     return SOFTBUS_OK;
 }
 
-int32_t P2pAdapter::P2pShareLinkReuse()
+SOFTBUS_DEFAULT_USED_EXPORT int32_t P2pAdapter::P2pShareLinkReuse()
 {
     WifiErrorCode ret = Hid2dSharedlinkIncrease();
     CONN_CHECK_AND_RETURN_RET_LOGW(ret == WIFI_SUCCESS, ToSoftBusErrorCode(static_cast<int32_t>(ret)),
@@ -172,7 +172,7 @@ int32_t P2pAdapter::P2pShareLinkReuse()
     return SOFTBUS_OK;
 }
 
-int32_t P2pAdapter::P2pShareLinkRemoveGroup(const DestroyGroupParam &param)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t P2pAdapter::P2pShareLinkRemoveGroup(const DestroyGroupParam &param)
 {
     WifiErrorCode ret = Hid2dSharedlinkDecrease();
     CONN_CHECK_AND_RETURN_RET_LOGW(ret == WIFI_SUCCESS, ToSoftBusErrorCode(static_cast<int32_t>(ret)),
@@ -180,7 +180,7 @@ int32_t P2pAdapter::P2pShareLinkRemoveGroup(const DestroyGroupParam &param)
     return SOFTBUS_OK;
 }
 
-int32_t P2pAdapter::DestroyGroup(const DestroyGroupParam &param)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t P2pAdapter::DestroyGroup(const DestroyGroupParam &param)
 {
     LinkInfo::LinkMode role;
     InterfaceManager::GetInstance().ReadInterface(
@@ -313,12 +313,12 @@ int32_t P2pAdapter::SetPeerWifiConfigInfoV2(const uint8_t *cfg, size_t size)
     return SOFTBUS_CONN_SET_PEER_WIFI_CONFIG_FAIL;
 }
 
-bool P2pAdapter::IsWideBandSupported()
+SOFTBUS_DEFAULT_USED_EXPORT bool P2pAdapter::IsWideBandSupported()
 {
     return Hid2dIsWideBandwidthSupported();
 }
 
-int32_t P2pAdapter::GetGroupInfo(WifiDirectP2pGroupInfo &groupInfoOut)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t P2pAdapter::GetGroupInfo(WifiDirectP2pGroupInfo &groupInfoOut)
 {
     auto groupInfo = std::make_shared<WifiP2pGroupInfo>();
     auto ret = GetCurrentGroup(groupInfo.get());
@@ -352,7 +352,7 @@ int32_t P2pAdapter::GetGroupInfo(WifiDirectP2pGroupInfo &groupInfoOut)
     return SOFTBUS_OK;
 }
 
-int32_t P2pAdapter::GetGroupConfig(std::string &groupConfigString)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t P2pAdapter::GetGroupConfig(std::string &groupConfigString)
 {
     auto groupInfo = std::make_shared<WifiP2pGroupInfo>();
     auto ret = GetCurrentGroup(groupInfo.get());
@@ -380,7 +380,7 @@ int32_t P2pAdapter::GetGroupConfig(std::string &groupConfigString)
     return SOFTBUS_OK;
 }
 
-int32_t P2pAdapter::GetIpAddress(std::string &ipString)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t P2pAdapter::GetIpAddress(std::string &ipString)
 {
     auto groupInfo = std::make_shared<WifiP2pGroupInfo>();
     int32_t ret = GetCurrentGroup(groupInfo.get());
@@ -397,7 +397,7 @@ int32_t P2pAdapter::GetIpAddress(std::string &ipString)
     return SOFTBUS_OK;
 }
 
-std::string P2pAdapter::GetMacAddress()
+SOFTBUS_DEFAULT_USED_EXPORT std::string P2pAdapter::GetMacAddress()
 {
     std::vector<uint8_t> macArray = WifiDirectUtils::GetInterfaceMacAddr(IF_NAME_P2P);
     std::string macString = WifiDirectUtils::MacArrayToString(macArray);
@@ -431,7 +431,7 @@ int32_t P2pAdapter::GetDynamicMacAddress(std::string &macString)
     return SOFTBUS_OK;
 }
 
-int32_t P2pAdapter::RequestGcIp(const std::string &macString, std::string &ipString)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t P2pAdapter::RequestGcIp(const std::string &macString, std::string &ipString)
 {
     CONN_CHECK_AND_RETURN_RET_LOGW(macString.size() > 0, SOFTBUS_INVALID_PARAM, CONN_WIFI_DIRECT, "mac is empty");
     std::vector<uint8_t> macArray = WifiDirectUtils::MacStringToArray(macString);
@@ -454,7 +454,7 @@ int32_t P2pAdapter::RequestGcIp(const std::string &macString, std::string &ipStr
     return SOFTBUS_OK;
 }
 
-int32_t P2pAdapter::P2pConfigGcIp(const std::string &interface, const std::string &ip)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t P2pAdapter::P2pConfigGcIp(const std::string &interface, const std::string &ip)
 {
     IpAddrInfo addrInfo;
 
@@ -475,7 +475,7 @@ int32_t P2pAdapter::P2pConfigGcIp(const std::string &interface, const std::strin
     return SOFTBUS_OK;
 }
 
-void P2pAdapter::Register(const GetCoexConflictCodeHook &coexConflictor)
+SOFTBUS_DEFAULT_USED_EXPORT void P2pAdapter::Register(const GetCoexConflictCodeHook &coexConflictor)
 {
     getCoexConflictCodeHook_ = coexConflictor;
 }
@@ -488,7 +488,7 @@ int P2pAdapter::GetCoexConflictCode(const char *ifName, int32_t channelId)
     return getCoexConflictCodeHook_(ifName, channelId);
 }
 
-void P2pAdapter::RegisterFastWakeUp(const FastWakeUpHook &fastWakeUp)
+SOFTBUS_DEFAULT_USED_EXPORT void P2pAdapter::RegisterFastWakeUp(const FastWakeUpHook &fastWakeUp)
 {
     fastWakeUpHook_ = fastWakeUp;
 }
@@ -500,7 +500,7 @@ int32_t P2pAdapter::FastWakeUp(const std::string &remoteMac, int32_t level)
     return fastWakeUpHook_(remoteMac, level);
 }
 
-int P2pAdapter::GetApChannel()
+SOFTBUS_DEFAULT_USED_EXPORT int P2pAdapter::GetApChannel()
 {
     auto hotSpotActive = IsHotspotActive();
     CONN_CHECK_AND_RETURN_RET_LOGE(
@@ -511,7 +511,7 @@ int P2pAdapter::GetApChannel()
     return hotspotConfig.channelNum;
 }
 
-int32_t P2pAdapter::GetP2pGroupFrequency()
+SOFTBUS_DEFAULT_USED_EXPORT int32_t P2pAdapter::GetP2pGroupFrequency()
 {
     WifiP2pGroupInfo p2pGroupInfo{};
     int32_t ret = GetCurrentGroup(&p2pGroupInfo);

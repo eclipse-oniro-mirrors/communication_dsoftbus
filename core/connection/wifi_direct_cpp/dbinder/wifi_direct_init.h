@@ -25,6 +25,7 @@
 #include "g_enhance_lnn_func.h"
 #include "lnn_distributed_net_ledger_struct.h"
 #include "lnn_feature_capability_struct.h"
+#include "softbus_def.h"
 #include "softbus_proxychannel_pipeline_struct.h"
 
 namespace OHOS {
@@ -35,7 +36,7 @@ enum {
     SOFTBUS_WIFI_DIRECT_INSTANCE_EXIT,
 };
 
-class DBinderSoftbusServer {
+class SOFTBUS_DEFAULT_EXPORT DBinderSoftbusServer {
 public:
     static DBinderSoftbusServer& GetInstance();
     DBinderSoftbusServer();

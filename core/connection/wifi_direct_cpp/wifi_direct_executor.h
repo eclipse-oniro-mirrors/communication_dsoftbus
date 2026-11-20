@@ -25,10 +25,11 @@
 #include "event/wifi_direct_event_receiver.h"
 #include "event/wifi_direct_event_sender.h"
 #include "processor/wifi_direct_processor.h"
+#include "softbus_def.h"
 
 namespace OHOS::SoftBus {
 class WifiDirectScheduler;
-class WifiDirectExecutor {
+class SOFTBUS_DEFAULT_EXPORT WifiDirectExecutor {
 public:
     explicit WifiDirectExecutor(const std::string &remoteDeviceId, WifiDirectScheduler &scheduler,
                                 std::shared_ptr<WifiDirectProcessor> &processor, bool active);

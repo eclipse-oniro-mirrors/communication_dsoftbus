@@ -183,68 +183,68 @@ int InterfaceInfo::Unmarshalling(WifiDirectProtocol &protocol, const std::vector
     return SOFTBUS_OK;
 }
 
-void InterfaceInfo::SetName(const std::string &value)
+SOFTBUS_DEFAULT_USED_EXPORT void InterfaceInfo::SetName(const std::string &value)
 {
     Set(InterfaceInfoKey::INTERFACE_NAME, value);
 }
 
-std::string InterfaceInfo::GetName() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string InterfaceInfo::GetName() const
 {
     return Get(InterfaceInfoKey::INTERFACE_NAME, std::string(""));
 }
 
-std::vector<uint8_t> InterfaceInfo::GetChannelAndBandWidth() const
+SOFTBUS_DEFAULT_USED_EXPORT std::vector<uint8_t> InterfaceInfo::GetChannelAndBandWidth() const
 {
     return Get(InterfaceInfoKey::CHANNEL_AND_BANDWIDTH, std::vector<uint8_t>());
 }
 
-void InterfaceInfo::SetIpString(const Ipv4Info &ipv4Info)
+SOFTBUS_DEFAULT_USED_EXPORT void InterfaceInfo::SetIpString(const Ipv4Info &ipv4Info)
 {
     Set(InterfaceInfoKey::IPV4, ipv4Info);
 }
 
-Ipv4Info InterfaceInfo::GetIpString() const
+SOFTBUS_DEFAULT_USED_EXPORT Ipv4Info InterfaceInfo::GetIpString() const
 {
     return Get(InterfaceInfoKey::IPV4, Ipv4Info());
 }
 
-void InterfaceInfo::SetRole(LinkInfo::LinkMode value)
+SOFTBUS_DEFAULT_USED_EXPORT void InterfaceInfo::SetRole(LinkInfo::LinkMode value)
 {
     Set(InterfaceInfoKey::WIFI_DIRECT_ROLE, static_cast<int>(value));
 }
 
-LinkInfo::LinkMode InterfaceInfo::GetRole() const
+SOFTBUS_DEFAULT_USED_EXPORT LinkInfo::LinkMode InterfaceInfo::GetRole() const
 {
     auto ret = Get(InterfaceInfoKey::WIFI_DIRECT_ROLE, 0);
     return static_cast<LinkInfo::LinkMode>(ret);
 }
 
-void InterfaceInfo::SetSsid(const std::string &value)
+SOFTBUS_DEFAULT_USED_EXPORT void InterfaceInfo::SetSsid(const std::string &value)
 {
     Set(InterfaceInfoKey::SSID, value);
 }
 
-std::string InterfaceInfo::GetSsid() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string InterfaceInfo::GetSsid() const
 {
     return Get(InterfaceInfoKey::SSID, std::string(""));
 }
 
-void InterfaceInfo::SetP2pListenPort(const int &value)
+SOFTBUS_DEFAULT_USED_EXPORT void InterfaceInfo::SetP2pListenPort(const int &value)
 {
     Set(InterfaceInfoKey::PORT, value);
 }
 
-int InterfaceInfo::GetP2pListenPort() const
+SOFTBUS_DEFAULT_USED_EXPORT int InterfaceInfo::GetP2pListenPort() const
 {
     return Get(InterfaceInfoKey::PORT, 0);
 }
 
-void InterfaceInfo::SetP2pListenModule(const int &value)
+SOFTBUS_DEFAULT_USED_EXPORT void InterfaceInfo::SetP2pListenModule(const int &value)
 {
     Set(InterfaceInfoKey::LISTEN_MODULE, value);
 }
 
-int InterfaceInfo::GetP2pListenModule() const
+SOFTBUS_DEFAULT_USED_EXPORT int InterfaceInfo::GetP2pListenModule() const
 {
     return Get(InterfaceInfoKey::LISTEN_MODULE, -1);
 }
@@ -269,92 +269,92 @@ std::string InterfaceInfo::GetP2pGroupConfig() const
     return Get(InterfaceInfoKey::WIFI_CFG_INFO, std::string(""));
 }
 
-void InterfaceInfo::SetDynamicMac(const std::string &value)
+SOFTBUS_DEFAULT_USED_EXPORT void InterfaceInfo::SetDynamicMac(const std::string &value)
 {
     Set(InterfaceInfoKey::DYNAMIC_MAC, value);
 }
 
-std::string InterfaceInfo::GetDynamicMac() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string InterfaceInfo::GetDynamicMac() const
 {
     return Get(InterfaceInfoKey::DYNAMIC_MAC, std::string(""));
 }
 
-void InterfaceInfo::SetPsk(const std::string &value)
+SOFTBUS_DEFAULT_USED_EXPORT void InterfaceInfo::SetPsk(const std::string &value)
 {
     Set(InterfaceInfoKey::PSK, value);
 }
 
-std::string InterfaceInfo::GetPsk() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string InterfaceInfo::GetPsk() const
 {
     return Get(InterfaceInfoKey::PSK, std::string(""));
 }
 
-void InterfaceInfo::SetCenter20M(int value)
+SOFTBUS_DEFAULT_USED_EXPORT void InterfaceInfo::SetCenter20M(int value)
 {
     Set(InterfaceInfoKey::CENTER_20M, value);
 }
 
-int InterfaceInfo::GetCenter20M() const
+SOFTBUS_DEFAULT_USED_EXPORT int InterfaceInfo::GetCenter20M() const
 {
     return Get(InterfaceInfoKey::CENTER_20M, 0);
 }
 
-void InterfaceInfo::SetBandWidth(int value)
+SOFTBUS_DEFAULT_USED_EXPORT void InterfaceInfo::SetBandWidth(int value)
 {
     Set(InterfaceInfoKey::BANDWIDTH, value);
 }
 
-int InterfaceInfo::GetBandWidth() const
+SOFTBUS_DEFAULT_USED_EXPORT int InterfaceInfo::GetBandWidth() const
 {
     return Get(InterfaceInfoKey::BANDWIDTH, 0);
 }
 
-void InterfaceInfo::SetIsEnable(bool value)
+SOFTBUS_DEFAULT_USED_EXPORT void InterfaceInfo::SetIsEnable(bool value)
 {
     Set(InterfaceInfoKey::IS_ENABLE, value);
 }
 
-bool InterfaceInfo::IsEnable() const
+SOFTBUS_DEFAULT_USED_EXPORT bool InterfaceInfo::IsEnable() const
 {
     return Get(InterfaceInfoKey::IS_ENABLE, false);
 }
 
-void InterfaceInfo::SetConnectedDeviceCount(int32_t value)
+SOFTBUS_DEFAULT_USED_EXPORT void InterfaceInfo::SetConnectedDeviceCount(int32_t value)
 {
     Set(InterfaceInfoKey::CONNECTED_DEVICE_COUNT, value);
 }
 
-int32_t InterfaceInfo::GetConnectedDeviceCount() const
+SOFTBUS_DEFAULT_USED_EXPORT int32_t InterfaceInfo::GetConnectedDeviceCount() const
 {
     return Get(InterfaceInfoKey::CONNECTED_DEVICE_COUNT, 0);
 }
 
-void InterfaceInfo::SetBaseMac(const std::string &value)
+SOFTBUS_DEFAULT_USED_EXPORT void InterfaceInfo::SetBaseMac(const std::string &value)
 {
     Set(InterfaceInfoKey::BASE_MAC, value);
 }
 
-std::string InterfaceInfo::GetBaseMac() const
+SOFTBUS_DEFAULT_USED_EXPORT std::string InterfaceInfo::GetBaseMac() const
 {
     return Get(InterfaceInfoKey::BASE_MAC, std::string(""));
 }
 
-void InterfaceInfo::SetCapability(int32_t value)
+SOFTBUS_DEFAULT_USED_EXPORT void InterfaceInfo::SetCapability(int32_t value)
 {
     Set(InterfaceInfoKey::CAPABILITY, value);
 }
 
-int32_t InterfaceInfo::GetCapability() const
+SOFTBUS_DEFAULT_USED_EXPORT int32_t InterfaceInfo::GetCapability() const
 {
     return Get(InterfaceInfoKey::CAPABILITY, 0);
 }
 
-void InterfaceInfo::SetReuseCount(int value)
+SOFTBUS_DEFAULT_USED_EXPORT void InterfaceInfo::SetReuseCount(int value)
 {
     Set(InterfaceInfoKey::REUSE_COUNT, value);
 }
 
-int InterfaceInfo::GetReuseCount() const
+SOFTBUS_DEFAULT_USED_EXPORT int InterfaceInfo::GetReuseCount() const
 {
     return Get(InterfaceInfoKey::REUSE_COUNT, 0);
 }
@@ -370,17 +370,17 @@ std::vector<int> InterfaceInfo::GetChannel5GList() const
     return Get(InterfaceInfoKey::CHANNEL_5G_LIST, result);
 }
 
-void InterfaceInfo::SetIsAvailable(bool value)
+SOFTBUS_DEFAULT_USED_EXPORT void InterfaceInfo::SetIsAvailable(bool value)
 {
     Set(InterfaceInfoKey::IS_AVAILABLE, value);
 }
 
-bool InterfaceInfo::IsAvailable() const
+SOFTBUS_DEFAULT_USED_EXPORT bool InterfaceInfo::IsAvailable() const
 {
     return Get(InterfaceInfoKey::IS_AVAILABLE, true);
 }
 
-void InterfaceInfo::RefreshIsAvailable()
+SOFTBUS_DEFAULT_USED_EXPORT void InterfaceInfo::RefreshIsAvailable()
 {
     if (!IsEnable()) {
         CONN_LOGW(CONN_WIFI_DIRECT, "isEnable=0, interface name=%{public}s", GetName().c_str());
@@ -396,27 +396,27 @@ void InterfaceInfo::RefreshIsAvailable()
     SetIsAvailable(true);
 }
 
-void InterfaceInfo::SetPhysicalRate(int value)
+SOFTBUS_DEFAULT_USED_EXPORT void InterfaceInfo::SetPhysicalRate(int value)
 {
     Set(InterfaceInfoKey::PHYSICAL_RATE, value);
 }
 
-int InterfaceInfo::GetPhysicalRate() const
+SOFTBUS_DEFAULT_USED_EXPORT int InterfaceInfo::GetPhysicalRate() const
 {
     return Get(InterfaceInfoKey::PHYSICAL_RATE, 0);
 }
 
-void InterfaceInfo::SetLocalCustomPort(int32_t value)
+SOFTBUS_DEFAULT_USED_EXPORT void InterfaceInfo::SetLocalCustomPort(int32_t value)
 {
     Set(InterfaceInfoKey::LOCAL_CUSTOM_PORT, value);
 }
 
-int32_t InterfaceInfo::GetLocalCustomPort() const
+SOFTBUS_DEFAULT_USED_EXPORT int32_t InterfaceInfo::GetLocalCustomPort() const
 {
     return Get(InterfaceInfoKey::LOCAL_CUSTOM_PORT, 0);
 }
 
-void InterfaceInfo::SetIsCreateGo(bool value)
+SOFTBUS_DEFAULT_USED_EXPORT void InterfaceInfo::SetIsCreateGo(bool value)
 {
     Set(InterfaceInfoKey::IS_CREATE_GO, value);
 }

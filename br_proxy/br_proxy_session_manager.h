@@ -17,6 +17,7 @@
 #define BR_PROXY_SESSION_MANAGER_H
 
 #include "softbus_adapter_mem.h"
+#include "softbus_def.h"
 #include "softbus_utils.h"
 
 #ifdef __cplusplus
@@ -31,14 +32,14 @@ typedef struct {
     ListNode node;
 } SessionInfo;
 
-int32_t GetSessionId(void);
-int32_t SessionInit(void);
-int32_t AddSessionToList(int32_t sessionId);
-int32_t UpdateListBySessionId(int32_t sessionId, int32_t channelId, int32_t openResult);
-int32_t GetSessionInfoBySessionId(int32_t sessionId, SessionInfo *info);
-int32_t DeleteSessionById(int32_t sessionId);
-int32_t BrProxyWaitCond(int32_t sessionId);
-int32_t BrProxyPostCond(int32_t sessionId);
+SOFTBUS_DEFAULT_USED_EXPORT int32_t GetSessionId(void);
+SOFTBUS_DEFAULT_USED_EXPORT int32_t SessionInit(void);
+SOFTBUS_DEFAULT_USED_EXPORT int32_t AddSessionToList(int32_t sessionId);
+SOFTBUS_DEFAULT_USED_EXPORT int32_t UpdateListBySessionId(int32_t sessionId, int32_t channelId, int32_t openResult);
+SOFTBUS_DEFAULT_USED_EXPORT int32_t GetSessionInfoBySessionId(int32_t sessionId, SessionInfo *info);
+SOFTBUS_DEFAULT_USED_EXPORT int32_t DeleteSessionById(int32_t sessionId);
+SOFTBUS_DEFAULT_USED_EXPORT int32_t BrProxyWaitCond(int32_t sessionId);
+SOFTBUS_DEFAULT_USED_EXPORT int32_t BrProxyPostCond(int32_t sessionId);
 
 #ifdef __cplusplus
 }

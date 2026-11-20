@@ -259,7 +259,7 @@ P2PDeviceInfo BuildTestDevice()
 
 extern "C" {
 // intercept the so loading entry of the adapter under test
-__attribute__((visibility("hidden"))) int32_t SoftBusDlopen(SoftBusHandleType type, void **dllHandle)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t SoftBusDlopen(SoftBusHandleType type, void **dllHandle)
 {
     (void)type;
     if (dllHandle == nullptr) {

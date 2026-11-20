@@ -27,7 +27,7 @@
 #include "p2p_unavailable_state.h"
 
 namespace OHOS::SoftBus {
-P2pAvailableState *P2pAvailableState::Instance()
+SOFTBUS_DEFAULT_USED_EXPORT P2pAvailableState *P2pAvailableState::Instance()
 {
     static P2pAvailableState instance;
     return &instance;

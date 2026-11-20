@@ -48,6 +48,13 @@ ohos_shared_library("proxychannelmanager") {
   }
   branch_protector_ret = "pac_ret"
 
+  cflags = ["-fvisibility=hidden"]
+  ldflags = [
+    "-Wl,--exclude-libs,ALL",
+    "-Wl,-s",
+  ]
+  version_script = "libproxychannelmanager_map"
+
   relative_install_dir = "module/distributedsched"
 
   subsystem_name = "communication"
@@ -88,7 +95,18 @@ ohos_shared_library("br_proxy_adapter") {
     sources += [ "br_proxy_adapter_virtual.cpp" ]
   }
 
-  include_dirs = [ "$dsoftbus_root_path/interfaces/kits/common" ]
+  cflags = ["-fvisibility=hidden"]
+  ldflags = [
+    "-Wl,--exclude-libs,ALL",
+    "-Wl,-s",
+  ]
+  version_script = "libbr_proxy_adapter_map"
+
+  include_dirs = [
+    "$dsoftbus_root_path/adapter/common/include",
+    "$dsoftbus_root_path/core/common/include",
+    "$dsoftbus_root_path/interfaces/kits/common",
+  ]
   subsystem_name = "communication"
   part_name = "dsoftbus"
 }
@@ -114,6 +132,13 @@ ohos_shared_library("br_proxy_utils") {
     "c_utils:utils",
     "hilog:libhilog",
   ]
+
+  cflags = ["-fvisibility=hidden"]
+  ldflags = [
+    "-Wl,--exclude-libs,ALL",
+    "-Wl,-s",
+  ]
+  version_script = "libbr_proxy_utils_map"
 
   include_dirs = [ "common/include" ]
   subsystem_name = "communication"

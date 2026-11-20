@@ -52,6 +52,7 @@ config("wifi_direct_include_dirs") {
     "$wifi_direct_cpp_path",
     "$wifi_direct_cpp_unit_path",
   ]
+  defines += [ "DSOFTBUS_TEST_BUILD" ]
 }
 
 ohos_unittest("LinkInfoTest") {

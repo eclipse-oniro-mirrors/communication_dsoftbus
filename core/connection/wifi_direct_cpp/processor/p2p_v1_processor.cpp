@@ -83,7 +83,7 @@ int P2pV1Processor::ErrorCodeFromV1ProtocolCode(int reason)
     return reason;
 }
 
-P2pV1Processor::P2pV1Processor(const std::string &remoteDeviceId)
+SOFTBUS_DEFAULT_USED_EXPORT P2pV1Processor::P2pV1Processor(const std::string &remoteDeviceId)
     : WifiDirectProcessor(remoteDeviceId), state_(&P2pV1Processor::AvailableState), timer_("P2pProcessor", TIMER_TIME),
     timerId_(Utils::TIMER_ERR_INVALID_VALUE)
 {

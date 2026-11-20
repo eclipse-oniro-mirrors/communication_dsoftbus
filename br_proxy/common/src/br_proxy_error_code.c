@@ -28,7 +28,7 @@ typedef struct {
     int32_t jsErrCode;
 } NapiSoftbusErrCMapJs;
 
-const NapiSoftbusErrCMapJs ERRCODE_C_JS_MAP[] = {
+SOFTBUS_DEFAULT_USED_EXPORT const NapiSoftbusErrCMapJs ERRCODE_C_JS_MAP[] = {
     { SOFTBUS_ACCESS_TOKEN_DENIED,              COMMON_ACCESS_TOKEN_DENIED                      },
     { SOFTBUS_CONN_BR_DISABLE_ERR,              NAPI_SOFTBUS_LINK_DISABLED                      },
     { SOFTBUS_INVALID_PARAM,                    COMMON_INVALID_PARAM                            },
@@ -46,7 +46,7 @@ const NapiSoftbusErrCMapJs ERRCODE_C_JS_MAP[] = {
     { SOFTBUS_CONN_PROXY_BR_ACL_NOT_EXIST,      NAPI_SOFTBUS_OPEN_OPERATION_FAILED              },
 };
 
-const NapiSoftbusErrEntry ERRCODE_MSG_MAP[] = {
+SOFTBUS_DEFAULT_USED_EXPORT const NapiSoftbusErrEntry ERRCODE_MSG_MAP[] = {
     { COMMON_ACCESS_TOKEN_DENIED,
         "BusinessError 201:Permission denied. need permission: ohos.permission.ACCESS_BLUETOOTH."                   },
     { COMMON_INVALID_PARAM,                         "BusinessError 401:Parameter error."                            },
@@ -65,7 +65,7 @@ const NapiSoftbusErrEntry ERRCODE_MSG_MAP[] = {
     { NAPI_SOFTBUS_UNKNOWN_ERR,                     "BusinessError 30200000: unknown error"                         },
 };
 
-const char *GetErrMsgByErrCode(int32_t errCode)
+SOFTBUS_DEFAULT_USED_EXPORT const char *GetErrMsgByErrCode(int32_t errCode)
 {
     size_t mapSize = sizeof(ERRCODE_MSG_MAP) / sizeof(ERRCODE_MSG_MAP[0]);
     for (size_t i = 0; i < mapSize; ++i) {
@@ -76,7 +76,7 @@ const char *GetErrMsgByErrCode(int32_t errCode)
     return NULL;
 }
 
-int32_t NapiTransConvertErr(int32_t err)
+SOFTBUS_DEFAULT_USED_EXPORT int32_t NapiTransConvertErr(int32_t err)
 {
     size_t mapSize = sizeof(ERRCODE_C_JS_MAP) / sizeof(ERRCODE_C_JS_MAP[0]);
     for (size_t i = 0; i < mapSize; ++i) {

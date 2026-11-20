@@ -15,7 +15,7 @@
 #include "command_factory.h"
 
 namespace OHOS::SoftBus {
-CommandFactory& CommandFactory::GetInstance()
+SOFTBUS_DEFAULT_USED_EXPORT CommandFactory& CommandFactory::GetInstance()
 {
     static CommandFactory instance;
     return instance;
@@ -45,12 +45,12 @@ std::shared_ptr<ForceDisconnectCommand> CommandFactory::CreateForceDisconnectCom
     return std::make_shared<ForceDisconnectCommand>(info, callback);
 }
 
-void CommandFactory::Register(const ConnectCreator &creator)
+SOFTBUS_DEFAULT_USED_EXPORT void CommandFactory::Register(const ConnectCreator &creator)
 {
     connectCreator_ = creator;
 }
 
-void CommandFactory::Register(const DisconnectCreator &creator)
+SOFTBUS_DEFAULT_USED_EXPORT void CommandFactory::Register(const DisconnectCreator &creator)
 {
     disconnectCreator_ = creator;
 }

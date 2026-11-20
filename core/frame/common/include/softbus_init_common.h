@@ -19,6 +19,7 @@
 #include <dlfcn.h>
 #include "stdint.h"
 #include "stdbool.h"
+#include "softbus_def.h"
 #include "softbus_error_code.h"
 
 #ifndef NULL
@@ -38,15 +39,15 @@ typedef enum {
 extern "C" {
 #endif
 
-bool SoftbusServerPluginLoadedFlagGet(void);
-int32_t SoftBusDlopen(SoftBusHandleType type, void **dllHandle);
-int32_t SoftBusDlsym(const void *DllHandle, const char *funcName, void **funcHandle);
-int32_t LnnCheckFuncPointer(void *func);
-int32_t ConnCheckFuncPointer(void *func);
-int32_t DiscCheckFuncPointer(void *func);
-int32_t TransCheckFuncPointer(void *func);
-int32_t AuthCheckFuncPointer(void *func);
-int32_t AdapterCheckFuncPointer(void *func);
+SOFTBUS_DEFAULT_USED_EXPORT bool SoftbusServerPluginLoadedFlagGet(void);
+SOFTBUS_DEFAULT_USED_EXPORT int32_t SoftBusDlopen(SoftBusHandleType type, void **dllHandle);
+SOFTBUS_DEFAULT_USED_EXPORT int32_t SoftBusDlsym(const void *DllHandle, const char *funcName, void **funcHandle);
+SOFTBUS_DEFAULT_USED_EXPORT int32_t LnnCheckFuncPointer(void *func);
+SOFTBUS_DEFAULT_USED_EXPORT int32_t ConnCheckFuncPointer(void *func);
+SOFTBUS_DEFAULT_USED_EXPORT int32_t DiscCheckFuncPointer(void *func);
+SOFTBUS_DEFAULT_USED_EXPORT int32_t TransCheckFuncPointer(void *func);
+SOFTBUS_DEFAULT_USED_EXPORT int32_t AuthCheckFuncPointer(void *func);
+SOFTBUS_DEFAULT_USED_EXPORT int32_t AdapterCheckFuncPointer(void *func);
 
 #ifdef __cplusplus
 }

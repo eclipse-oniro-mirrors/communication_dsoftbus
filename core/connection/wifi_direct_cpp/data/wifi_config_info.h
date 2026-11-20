@@ -17,6 +17,7 @@
 #define WIFI_CONFIG_INFO_H
 
 #include "interface_info.h"
+#include "softbus_def.h"
 
 namespace OHOS::SoftBus {
 enum class WifiConfigInfoKey {
@@ -44,7 +45,7 @@ enum class WifiConfigInfoKey {
     WC_KEY_MAX,
 };
 
-class WifiConfigInfo : public Serializable, public InfoContainer<WifiConfigInfoKey> {
+class SOFTBUS_DEFAULT_EXPORT WifiConfigInfo : public Serializable, public InfoContainer<WifiConfigInfoKey> {
 public:
     WifiConfigInfo() = default;
     explicit WifiConfigInfo(std::vector<uint8_t> &config);

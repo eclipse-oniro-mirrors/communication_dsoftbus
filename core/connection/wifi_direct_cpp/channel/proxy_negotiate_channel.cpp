@@ -61,7 +61,7 @@ static void OnDisconnected(int32_t channelId)
     CONN_LOGI(CONN_WIFI_DIRECT, "channelId=%{public}d", channelId);
 }
 
-int CoCProxyNegotiateChannel::Init()
+SOFTBUS_DEFAULT_USED_EXPORT int CoCProxyNegotiateChannel::Init()
 {
     ITransProxyPipelineListener listener = {
         .onDataReceived = OnDataReceived,
@@ -74,6 +74,7 @@ int CoCProxyNegotiateChannel::Init()
     return SOFTBUS_OK;
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 CoCProxyNegotiateChannel::CoCProxyNegotiateChannel(int32_t channelId) : channelId_(channelId)
 {
     char remoteUuid[UUID_BUF_LEN] {};

@@ -23,7 +23,7 @@
 #include "wifi_direct_manager.h"
 
 namespace OHOS::SoftBus {
-LinkManager& LinkManager::GetInstance()
+SOFTBUS_DEFAULT_USED_EXPORT LinkManager& LinkManager::GetInstance()
 {
     static LinkManager instance;
     return instance;
@@ -43,7 +43,7 @@ int LinkManager::AllocateLinkId()
     return newId;
 }
 
-std::shared_ptr<InnerLink> LinkManager::GetLinkById(int linkId)
+SOFTBUS_DEFAULT_USED_EXPORT std::shared_ptr<InnerLink> LinkManager::GetLinkById(int linkId)
 {
     CONN_LOGD(CONN_WIFI_DIRECT, "enter");
     std::lock_guard lock(lock_);
@@ -55,7 +55,7 @@ std::shared_ptr<InnerLink> LinkManager::GetLinkById(int linkId)
     return nullptr;
 }
 
-void LinkManager::ForEach(const Checker &checker)
+SOFTBUS_DEFAULT_USED_EXPORT void LinkManager::ForEach(const Checker &checker)
 {
     CONN_LOGD(CONN_WIFI_DIRECT, "enter");
     std::lock_guard lock(lock_);
@@ -66,6 +66,7 @@ void LinkManager::ForEach(const Checker &checker)
     }
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 bool LinkManager::ProcessIfPresent(InnerLink::LinkType type, const std::string &remoteDeviceId, const Handler &handler)
 {
     CONN_LOGD(CONN_WIFI_DIRECT, "enter");
@@ -81,6 +82,7 @@ bool LinkManager::ProcessIfPresent(InnerLink::LinkType type, const std::string &
     return true;
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 bool LinkManager::ProcessIfAbsent(InnerLink::LinkType type, const std::string &remoteDeviceId, const Handler &handler)
 {
     CONN_LOGD(CONN_WIFI_DIRECT, "enter");
@@ -101,6 +103,7 @@ bool LinkManager::ProcessIfAbsent(InnerLink::LinkType type, const std::string &r
     return true;
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 bool LinkManager::ProcessIfPresent(const std::string &remoteMac, const Handler &handler)
 {
     CONN_LOGD(CONN_WIFI_DIRECT, "enter");
@@ -118,6 +121,7 @@ bool LinkManager::ProcessIfPresent(const std::string &remoteMac, const Handler &
 }
 
 static constexpr const char* const ZERO_MAC = "00:00:00:00:00:00";
+SOFTBUS_DEFAULT_USED_EXPORT
 bool LinkManager::ProcessIfPresentByName(const std::string &groupName, const Handler &handler)
 {
     CONN_LOGD(CONN_WIFI_DIRECT, "enter");
@@ -141,6 +145,7 @@ bool LinkManager::ProcessIfPresentByName(const std::string &groupName, const Han
     return true;
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 bool LinkManager::ProcessIfAbsent(const std::string &remoteMac, const Handler &handler)
 {
     CONN_LOGD(CONN_WIFI_DIRECT, "enter");
@@ -164,6 +169,7 @@ bool LinkManager::ProcessIfAbsent(const std::string &remoteMac, const Handler &h
     return true;
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 bool LinkManager::ProcessIfPresent(int linkId, const Handler &handler)
 {
     CONN_LOGD(CONN_WIFI_DIRECT, "enter");
@@ -180,6 +186,7 @@ bool LinkManager::ProcessIfPresent(int linkId, const Handler &handler)
     return true;
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 void LinkManager::RemoveLink(InnerLink::LinkType type, const std::string &remoteDeviceId)
 {
     CONN_LOGD(CONN_WIFI_DIRECT, "enter");
@@ -203,7 +210,7 @@ void LinkManager::RemoveLink(InnerLink::LinkType type, const std::string &remote
     }
 }
 
-void LinkManager::RemoveLink(const std::string &remoteMac)
+SOFTBUS_DEFAULT_USED_EXPORT void LinkManager::RemoveLink(const std::string &remoteMac)
 {
     CONN_LOGD(CONN_WIFI_DIRECT, "enter");
     std::shared_ptr<InnerLink> link;
@@ -258,7 +265,7 @@ void LinkManager::RemoveLinks(InnerLink::LinkType type, bool onlyRemoveConnected
     }
 }
 
-void LinkManager::GetAllLinksBasicInfo(std::vector<InnerLinkBasicInfo> &infos)
+SOFTBUS_DEFAULT_USED_EXPORT void LinkManager::GetAllLinksBasicInfo(std::vector<InnerLinkBasicInfo> &infos)
 {
     std::lock_guard lock(lock_);
     for (const auto &[key, value] : links_) {
@@ -274,7 +281,7 @@ void LinkManager::GetAllLinksBasicInfo(std::vector<InnerLinkBasicInfo> &infos)
     }
 }
 
-std::shared_ptr<InnerLink> LinkManager::GetReuseLink(const std::string &remoteMac)
+SOFTBUS_DEFAULT_USED_EXPORT std::shared_ptr<InnerLink> LinkManager::GetReuseLink(const std::string &remoteMac)
 {
     CONN_LOGD(CONN_WIFI_DIRECT, "enter");
     std::lock_guard lock(lock_);
@@ -287,7 +294,7 @@ std::shared_ptr<InnerLink> LinkManager::GetReuseLink(const std::string &remoteMa
     return nullptr;
 }
 
-std::shared_ptr<InnerLink> LinkManager::GetReuseLink(
+SOFTBUS_DEFAULT_USED_EXPORT std::shared_ptr<InnerLink> LinkManager::GetReuseLink(
     WifiDirectConnectType connectType, const std::string &remoteDeviceId)
 {
     WifiDirectLinkType linkType = WIFI_DIRECT_LINK_TYPE_P2P;
@@ -302,7 +309,7 @@ std::shared_ptr<InnerLink> LinkManager::GetReuseLink(
     return GetReuseLink(linkType, remoteDeviceId);
 }
 
-std::shared_ptr<InnerLink> LinkManager::GetReuseLink(
+SOFTBUS_DEFAULT_USED_EXPORT std::shared_ptr<InnerLink> LinkManager::GetReuseLink(
     WifiDirectLinkType wifiDirectLinkType, const std::string &remoteDeviceId)
 {
     CONN_LOGD(CONN_WIFI_DIRECT, "enter");
@@ -338,6 +345,7 @@ std::string LinkManager::GetRemoteMacByRemoteDeviceId(const std::string &remoteD
     return it->second->GetRemoteBaseMac();
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 void LinkManager::RefreshRelationShip(const std::string &remoteDeviceId, const std::string &remoteMac)
 {
     CONN_LOGI(CONN_WIFI_DIRECT, "remoteDeviceId=%{public}s, remoteMac=%{public}s",
@@ -359,6 +367,7 @@ void LinkManager::RefreshRelationShip(const std::string &remoteDeviceId, const s
     }
 }
 
+SOFTBUS_DEFAULT_USED_EXPORT
 bool LinkManager::RefreshAuthHandle(std::string remoteDeviceId, const std::shared_ptr<NegotiateChannel> &channel)
 {
     CONN_LOGI(CONN_WIFI_DIRECT, "start refresh auth handle, remoteDeviceId=%{public}s",
@@ -375,7 +384,7 @@ bool LinkManager::RefreshAuthHandle(std::string remoteDeviceId, const std::share
     return true;
 }
 
-bool LinkManager::CheckOnlyVirtualLink(void)
+SOFTBUS_DEFAULT_USED_EXPORT bool LinkManager::CheckOnlyVirtualLink(void)
 {
     bool hasRealLink = false;
     bool hasVirtualLink = false;
@@ -393,7 +402,7 @@ bool LinkManager::CheckOnlyVirtualLink(void)
     return hasVirtualLink && !hasRealLink;
 }
 
-void LinkManager::Dump() const
+SOFTBUS_DEFAULT_USED_EXPORT void LinkManager::Dump() const
 {
     CONN_LOGD(CONN_WIFI_DIRECT, "enter");
     std::lock_guard lock(lock_);

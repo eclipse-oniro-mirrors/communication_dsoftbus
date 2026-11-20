@@ -22,7 +22,7 @@
 #include "command/negotiate_command.h"
 
 namespace OHOS::SoftBus {
-class NullProcessor : public WifiDirectProcessor {
+class SOFTBUS_DEFAULT_EXPORT NullProcessor : public WifiDirectProcessor {
 public:
     explicit NullProcessor(const std::string &remoteDeviceId, const int32_t reason);
 
