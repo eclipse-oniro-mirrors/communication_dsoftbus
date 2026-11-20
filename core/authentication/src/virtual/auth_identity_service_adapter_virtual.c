@@ -123,3 +123,8 @@ SOFTBUS_VISIBILITY char *IdServiceGetCredIdByCredType(int32_t localUserId, int32
     (void)udidHash;
     return NULL;
 }
+
+bool IsAppLevelSameAccountTrusted(void)
+{
+    return false;
+}

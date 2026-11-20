@@ -86,6 +86,19 @@ int32_t LnnDeleteSpecificTrustedDevInfo(const char *udid)
     return GetInterfaceMock()->LnnDeleteSpecificTrustedDevInfo(udid);
 }
 
+void RestartCoapDiscovery(void) { }
+
+int32_t GetLocalUdidShortHash(char *localUdidHash)
+{
+    (void)localUdidHash;
+    return 0;
+}
+
+void IdServiceDestroyCredentialList(char **returnData)
+{
+    (void)returnData;
+}
+
 void LnnHbOnTrustedRelationReduced(void)
 {
     return GetInterfaceMock()->LnnHbOnTrustedRelationReduced();

@@ -125,7 +125,8 @@ int32_t AuthDeviceProfileListener::OnTrustDeviceProfileDelete(const TrustDeviceP
         }
         return SOFTBUS_OK;
     }
-    if (ret == SOFTBUS_OK && nodeInfo.localUserId != 0 &&
+    if (ret == SOFTBUS_OK && profile.GetPeerUserId() != 0 &&
+        nodeInfo.localUserId != 0 &&
         nodeInfo.localUserId != profile.GetPeerUserId()) {
         AUTH_LOGE(AUTH_INIT, "no match peer user");
         return SOFTBUS_OK;

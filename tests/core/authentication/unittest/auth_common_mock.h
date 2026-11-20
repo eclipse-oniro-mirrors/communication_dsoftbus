@@ -80,6 +80,7 @@ public:
     virtual bool LnnIsNeedInterceptBroadcast(bool disableGlass) = 0;
     virtual int32_t LnnAsyncCallbackHelper(SoftBusLooper *looper, LnnAsyncCallbackFunc callback, void *para) = 0;
     virtual void RestartCoapDiscovery(void) = 0;
+    virtual bool IsAppLevelSameAccountTrusted(void) = 0;
     virtual void HbEnableDiscovery(void) = 0;
     virtual int32_t LnnGetNetworkIdByUdidHash(
         const uint8_t *udidHash, uint32_t udidHashLen, char *buf, uint32_t len, bool needOnline) = 0;
@@ -123,6 +124,7 @@ public:
     MOCK_METHOD1(LnnIsNeedInterceptBroadcast, bool(bool));
     MOCK_METHOD3(LnnAsyncCallbackHelper, int32_t(SoftBusLooper *, LnnAsyncCallbackFunc, void *));
     MOCK_METHOD0(RestartCoapDiscovery, void(void));
+    MOCK_METHOD0(IsAppLevelSameAccountTrusted, bool(void));
     MOCK_METHOD0(HbEnableDiscovery, void(void));
     MOCK_METHOD5(LnnGetNetworkIdByUdidHash, int32_t(const uint8_t *, uint32_t, char *, uint32_t, bool));
 };

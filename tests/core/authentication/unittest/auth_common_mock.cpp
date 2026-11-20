@@ -155,6 +155,11 @@ int32_t SoftBusGenerateStrHash(const unsigned char *str, uint32_t len, unsigned 
     return GetCommonInterface()->SoftBusGenerateStrHash(str, len, hash);
 }
 
+bool IsAppLevelSameAccountTrusted(void)
+{
+    return GetCommonInterface()->IsAppLevelSameAccountTrusted();
+}
+
 int32_t JudgeDeviceTypeAndGetOsAccountIds(void)
 {
     return GetCommonInterface()->JudgeDeviceTypeAndGetOsAccountIds();

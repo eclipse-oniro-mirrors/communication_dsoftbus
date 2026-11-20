@@ -571,7 +571,10 @@ static void UpdateDpAclSKId(AuthFsm *authFsm)
     AUTH_LOGI(AUTH_FSM, "judge insert user key aclState=%{public}d, authCapacity=%{public}d, userId=%{public}d",
         info->nodeInfo.aclState, info->nodeInfo.authCapacity, info->nodeInfo.localUserId);
     bool isNeedUpdateAclState = false;
-    if (info->authVersion <= AUTH_VERSION_V2) {
+
+    if (info->nodeInfo.aclState == ACL_CAN_WRITE_RELATED_APP) {
+        UpdateDpRelatedAppAcl(aclParams.deviceId, aclParams.peerUserId, info->credId);
+    } else if (info->authVersion <= AUTH_VERSION_V2) {
         UpdateDpSameAccount(&aclParams, sessionKey, isNeedUpdateDk,
             info->nodeInfo.aclState, &isNeedUpdateAclState);
     } else {
