@@ -122,7 +122,7 @@ static void InvokeScanResultWithValidData()
         0x7D, 0x02 };
     BtScanResultData mockScanResult = { 0 };
     mockScanResult.advLen = sizeof(scanDataExample);
-    mockScanResult.advData = (unsigned char *)scanDataExample;
+    mockScanResult.advData = const_cast<unsigned char *>(scanDataExample);
     MockBluetooth::bleScanCallback->scanResultCb(&mockScanResult);
 }
 
@@ -349,7 +349,7 @@ HWTEST_F(SoftbusBleGattCoverTest, BleGattCoverScanResultTooLong001, TestSize.Lev
         longScanData[offset++] = (uint8_t)i;
     }
     BtScanResultData mockScanResult = { 0 };
-    mockScanResult.advLen = (unsigned char)offset;
+    mockScanResult.advLen = static_cast<unsigned char>(offset);
     mockScanResult.advData = longScanData;
     MockBluetooth::bleScanCallback->scanResultCb(&mockScanResult);
 

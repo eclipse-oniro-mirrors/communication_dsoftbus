@@ -84,18 +84,24 @@ static BcScanFilter *GetServiceUuidScanFilter(void)
     return filter;
 }
 
-static void InvokeScanReport(uint8_t bcType, uint16_t bcDataId, uint8_t *bcPayload, uint16_t bcLen,
-    uint8_t rspType, uint16_t rspId, uint8_t *rspPayload, uint16_t rspLen)
+struct ScanReportData {
+    uint8_t type;
+    uint16_t id;
+    uint8_t *payload;
+    uint16_t payloadLen;
+};
+
+static void InvokeScanReport(const ScanReportData &bcData, const ScanReportData &rspData = {})
 {
     SoftBusBcScanResult report = {};
-    report.data.bcData.type = (SoftbusBcDataType)bcType;
-    report.data.bcData.id = bcDataId;
-    report.data.bcData.payload = bcPayload;
-    report.data.bcData.payloadLen = bcLen;
-    report.data.rspData.type = (SoftbusBcDataType)rspType;
-    report.data.rspData.id = rspId;
-    report.data.rspData.payload = rspPayload;
-    report.data.rspData.payloadLen = rspLen;
+    report.data.bcData.type = static_cast<SoftbusBcDataType>(bcData.type);
+    report.data.bcData.id = bcData.id;
+    report.data.bcData.payload = bcData.payload;
+    report.data.bcData.payloadLen = bcData.payloadLen;
+    report.data.rspData.type = static_cast<SoftbusBcDataType>(rspData.type);
+    report.data.rspData.id = rspData.id;
+    report.data.rspData.payload = rspData.payload;
+    report.data.rspData.payloadLen = rspData.payloadLen;
     g_stubScanCallback->OnReportScanDataCallback(BROADCAST_PROTOCOL_BLE, STUB_SCAN_ID, &report);
 }
 
@@ -697,15 +703,15 @@ HWTEST_F(SoftbusBroadcastMgrTest, MgrCoverReportServiceFilter001, TestSize.Level
     uint8_t shortData[] = { 0x04, 0x05 };
     uint8_t mismatchData[] = { 0xFF, 0xFF, 0xFF };
     // service data matches
-    InvokeScanReport(BC_DATA_TYPE_SERVICE, SERVICE_UUID, matchData, sizeof(matchData), 0, 0, nullptr, 0);
+    InvokeScanReport({BC_DATA_TYPE_SERVICE, SERVICE_UUID, matchData, sizeof(matchData)});
     // payload too short
-    InvokeScanReport(BC_DATA_TYPE_SERVICE, SERVICE_UUID, shortData, sizeof(shortData), 0, 0, nullptr, 0);
+    InvokeScanReport({BC_DATA_TYPE_SERVICE, SERVICE_UUID, shortData, sizeof(shortData)});
     // serviceId mismatch
-    InvokeScanReport(BC_DATA_TYPE_SERVICE, MANUFACTURE_COMPANY_ID, matchData, sizeof(matchData), 0, 0, nullptr, 0);
+    InvokeScanReport({BC_DATA_TYPE_SERVICE, MANUFACTURE_COMPANY_ID, matchData, sizeof(matchData)});
     // service data byte mismatch
-    InvokeScanReport(BC_DATA_TYPE_SERVICE, SERVICE_UUID, mismatchData, sizeof(mismatchData), 0, 0, nullptr, 0);
+    InvokeScanReport({BC_DATA_TYPE_SERVICE, SERVICE_UUID, mismatchData, sizeof(mismatchData)});
     // unsupported data type
-    InvokeScanReport(0x7F, SERVICE_UUID, matchData, sizeof(matchData), 0, 0, nullptr, 0);
+    InvokeScanReport({0x7F, SERVICE_UUID, matchData, sizeof(matchData)});
 
     EXPECT_EQ(SOFTBUS_OK, StopScan(listenerId));
     EXPECT_EQ(SOFTBUS_OK, UnRegisterScanListener(listenerId));
@@ -741,14 +747,11 @@ HWTEST_F(SoftbusBroadcastMgrTest, MgrCoverReportManufactureFilter001, TestSize.L
     uint8_t shortData[] = { 0x04 };
     uint8_t mismatchData[] = { 0xFF, 0xFF };
     // manufacture data matches
-    InvokeScanReport(BC_DATA_TYPE_MANUFACTURER, MANUFACTURE_COMPANY_ID, matchData, sizeof(matchData),
-        0, 0, nullptr, 0);
+    InvokeScanReport({BC_DATA_TYPE_MANUFACTURER, MANUFACTURE_COMPANY_ID, matchData, sizeof(matchData)});
     // payload too short
-    InvokeScanReport(BC_DATA_TYPE_MANUFACTURER, MANUFACTURE_COMPANY_ID, shortData, sizeof(shortData),
-        0, 0, nullptr, 0);
+    InvokeScanReport({BC_DATA_TYPE_MANUFACTURER, MANUFACTURE_COMPANY_ID, shortData, sizeof(shortData)});
     // manufacture data byte mismatch
-    InvokeScanReport(BC_DATA_TYPE_MANUFACTURER, MANUFACTURE_COMPANY_ID, mismatchData, sizeof(mismatchData),
-        0, 0, nullptr, 0);
+    InvokeScanReport({BC_DATA_TYPE_MANUFACTURER, MANUFACTURE_COMPANY_ID, mismatchData, sizeof(mismatchData)});
 
     EXPECT_EQ(SOFTBUS_OK, StopScan(listenerId));
     EXPECT_EQ(SOFTBUS_OK, UnRegisterScanListener(listenerId));
@@ -781,7 +784,7 @@ HWTEST_F(SoftbusBroadcastMgrTest, MgrCoverReportUuidFilter001, TestSize.Level1)
     ASSERT_TRUE(g_stubScanCallback != nullptr);
 
     uint8_t matchData[] = { 0xAA, 0xBB };
-    InvokeScanReport(BC_DATA_TYPE_SERVICE_UUID, SERVICE_UUID, matchData, sizeof(matchData), 0, 0, nullptr, 0);
+    InvokeScanReport({BC_DATA_TYPE_SERVICE_UUID, SERVICE_UUID, matchData, sizeof(matchData)});
 
     EXPECT_EQ(SOFTBUS_OK, StopScan(listenerId));
     EXPECT_EQ(SOFTBUS_OK, UnRegisterScanListener(listenerId));
@@ -816,8 +819,8 @@ HWTEST_F(SoftbusBroadcastMgrTest, MgrCoverReportApproach001, TestSize.Level1)
     uint8_t bcData[] = { 0x04, 0x05, 0x90 };
     uint8_t rspData[] = { 0x01, 0x02, 0x03 };
     // bcData type unsupported, rspData service type not matching the filter
-    InvokeScanReport(0x7F, SERVICE_UUID, bcData, sizeof(bcData),
-        BC_DATA_TYPE_SERVICE, MANUFACTURE_COMPANY_ID, rspData, sizeof(rspData));
+    InvokeScanReport({0x7F, SERVICE_UUID, bcData, sizeof(bcData)},
+        {BC_DATA_TYPE_SERVICE, MANUFACTURE_COMPANY_ID, rspData, sizeof(rspData)});
 
     EXPECT_EQ(SOFTBUS_OK, StopScan(listenerId));
     EXPECT_EQ(SOFTBUS_OK, UnRegisterScanListener(listenerId));
@@ -851,7 +854,7 @@ HWTEST_F(SoftbusBroadcastMgrTest, MgrCoverReportConstraint001, TestSize.Level1)
     ASSERT_TRUE(g_stubScanCallback != nullptr);
 
     uint8_t data[] = { 0x04, 0x05, 0x90 };
-    InvokeScanReport(BC_DATA_TYPE_SERVICE, SERVICE_UUID, data, sizeof(data), 0, 0, nullptr, 0);
+    InvokeScanReport({BC_DATA_TYPE_SERVICE, SERVICE_UUID, data, sizeof(data)});
 
     EXPECT_EQ(SOFTBUS_OK, StopScan(listenerId));
     EXPECT_EQ(SOFTBUS_OK, UnRegisterScanListener(listenerId));
@@ -886,7 +889,7 @@ HWTEST_F(SoftbusBroadcastMgrTest, MgrCoverReportLockFail001, TestSize.Level1)
     // DeInit destroys g_scanLock, invoking the report callback hits the lock failure branch
     EXPECT_EQ(SOFTBUS_OK, DeInitBroadcastMgr());
     uint8_t data[] = { 0x04, 0x05, 0x90 };
-    InvokeScanReport(BC_DATA_TYPE_SERVICE, SERVICE_UUID, data, sizeof(data), 0, 0, nullptr, 0);
+    InvokeScanReport({BC_DATA_TYPE_SERVICE, SERVICE_UUID, data, sizeof(data)});
 
     // re-init to clean up the still-registered listener
     EXPECT_EQ(SOFTBUS_OK, InitBroadcastMgr());
@@ -1629,11 +1632,10 @@ HWTEST_F(SoftbusBroadcastMgrTest, MgrCoverUuidMatchBranches001, TestSize.Level1)
     uint8_t matchData[] = { 0xAA, 0xBB };
     uint8_t shortData[] = { 0xAA };
     uint8_t mismatchData[] = { 0xFF, 0xFF };
-    InvokeScanReport(BC_DATA_TYPE_SERVICE_UUID, SERVICE_UUID, matchData, sizeof(matchData), 0, 0, nullptr, 0);
-    InvokeScanReport(BC_DATA_TYPE_SERVICE_UUID, SERVICE_UUID, shortData, sizeof(shortData), 0, 0, nullptr, 0);
-    InvokeScanReport(BC_DATA_TYPE_SERVICE_UUID, MANUFACTURE_COMPANY_ID, matchData, sizeof(matchData),
-        0, 0, nullptr, 0);
-    InvokeScanReport(BC_DATA_TYPE_SERVICE_UUID, SERVICE_UUID, mismatchData, sizeof(mismatchData), 0, 0, nullptr, 0);
+    InvokeScanReport({BC_DATA_TYPE_SERVICE_UUID, SERVICE_UUID, matchData, sizeof(matchData)});
+    InvokeScanReport({BC_DATA_TYPE_SERVICE_UUID, SERVICE_UUID, shortData, sizeof(shortData)});
+    InvokeScanReport({BC_DATA_TYPE_SERVICE_UUID, MANUFACTURE_COMPANY_ID, matchData, sizeof(matchData)});
+    InvokeScanReport({BC_DATA_TYPE_SERVICE_UUID, SERVICE_UUID, mismatchData, sizeof(mismatchData)});
 
     EXPECT_EQ(SOFTBUS_OK, StopScan(listenerId));
     EXPECT_EQ(SOFTBUS_OK, UnRegisterScanListener(listenerId));
