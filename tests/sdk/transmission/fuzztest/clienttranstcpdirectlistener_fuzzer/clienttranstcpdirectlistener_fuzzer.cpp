@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -184,7 +184,7 @@ namespace OHOS {
         DataGenerator::Write(data, size);
         int32_t channelId = 0;
         GenerateInt32(channelId);
-        TransTdcCloseChannel(channelId);
+        TransTdcCloseChannel(channelId, false);
         DataGenerator::Clear();
     }
 

@@ -195,13 +195,14 @@ static void TransTdcDeleteChannelInfo(int32_t channelId)
     (void)SoftBusMutexUnlock(&g_tcpDirectChannelInfoList->lock);
 }
 
-void TransTdcCloseChannel(int32_t channelId)
+void TransTdcCloseChannel(int32_t channelId, bool async)
 {
-    TRANS_LOGI(TRANS_SDK, "Close tdc Channel, channelId=%{public}d.", channelId);
-
+    TRANS_LOGI(TRANS_SDK, "Close tdc Channel, channelId=%{public}d, async=%{public}d", channelId, async);
     TransTdcDeleteChannelInfo(channelId);
-    if (ServerIpcCloseChannel(NULL, channelId, CHANNEL_TYPE_TCP_DIRECT) != SOFTBUS_OK) {
-        TRANS_LOGE(TRANS_SDK, "close server tdc channelId=%{public}d err.", channelId);
+    if (async) {
+        (void)ServerIpcCloseChannelAsync(NULL, channelId, CHANNEL_TYPE_TCP_DIRECT);
+    } else {
+        (void)ServerIpcCloseChannel(NULL, channelId, CHANNEL_TYPE_TCP_DIRECT);
     }
 }
 
@@ -512,12 +513,14 @@ int32_t ClientTransTdcOnChannelOpened(const char *sessionName, const ChannelInfo
     if (channel->fdProtocol == LNN_PROTOCOL_DETTP && !channel->isServer) {
         (void)TransStartTimeSync(channel);
     }
-    ret = ClientTransTdcOnSessionOpened(sessionName, channel, accessInfo);
-    if (ret != SOFTBUS_OK) {
-        TransDelDataBufNode(channel->channelId);
-        TransTdcDelChannelInfo(channel->channelId, ret);
-        TRANS_LOGE(TRANS_SDK, "notify on session opened err.");
-        return ret;
+    if (!channel->isMultiNeg) {
+        ret = ClientTransTdcOnSessionOpened(sessionName, channel, accessInfo);
+        if (ret != SOFTBUS_OK) {
+            TransDelDataBufNode(channel->channelId);
+            TransTdcDelChannelInfo(channel->channelId, ret);
+            TRANS_LOGE(TRANS_SDK, "notify on session opened err.");
+            return ret;
+        }
     }
 
     ret = ClientTransTdcHandleListener(sessionName, channel);

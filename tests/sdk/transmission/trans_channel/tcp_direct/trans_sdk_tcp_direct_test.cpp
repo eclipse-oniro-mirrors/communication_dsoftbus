@@ -309,7 +309,7 @@ HWTEST_F(TransSdkTcpDirectTest, TransTdcCloseChannelTest001, TestSize.Level1)
     (void)SoftBusMutexLock(&g_tcpDirectChannelInfoList->lock);
     ListAdd(&g_tcpDirectChannelInfoList->list, &info->node);
     (void)SoftBusMutexUnlock(&g_tcpDirectChannelInfoList->lock);
-    TransTdcCloseChannel(channelId);
+    TransTdcCloseChannel(channelId, false);
     DestroySoftBusList(g_tcpDirectChannelInfoList);
     g_tcpDirectChannelInfoList = nullptr;
 }

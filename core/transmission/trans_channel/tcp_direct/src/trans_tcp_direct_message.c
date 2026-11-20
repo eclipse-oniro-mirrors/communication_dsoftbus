@@ -38,11 +38,11 @@
 #include "softbus_adapter_thread.h"
 #include "softbus_adapter_timer.h"
 #include "softbus_app_info.h"
+#include "softbus_def.h"
 #include "softbus_error_code.h"
 #include "softbus_feature_config.h"
 #include "softbus_json_utils.h"
 #include "softbus_message_open_channel.h"
-#include "softbus_def.h"
 #include "softbus_socket.h"
 #include "softbus_tcp_socket.h"
 #include "softbus_utils.h"
@@ -52,6 +52,7 @@
 #include "trans_event.h"
 #include "trans_lane_manager.h"
 #include "trans_log.h"
+#include "trans_multipath_manager.h"
 #include "trans_session_manager.h"
 #include "trans_tcp_direct_callback.h"
 #include "trans_tcp_direct_listener.h"
@@ -500,6 +501,9 @@ static void GetChannelInfoFromConn(ChannelInfo *info, SessionConn *conn, int32_t
     info->isLowLatency = conn->appInfo.isLowLatency;
     info->fdProtocol = conn->appInfo.fdProtocol;
     info->pkgName = conn->appInfo.myData.pkgName;
+    info->enableMultipath = conn->appInfo.enableMultipath;
+    info->isMultiNeg = conn->appInfo.isMultiNeg;
+    info->linkedChannelId = conn->appInfo.linkedChannelId;
     if (conn->appInfo.myData.tokenType > ACCESS_TOKEN_TYPE_HAP && conn->serverSide) {
         info->peerUserId = conn->appInfo.peerData.userId;
         info->peerTokenId = conn->appInfo.peerData.tokenId;
@@ -578,6 +582,13 @@ static void ClearAppInfoSessionKey(AppInfo *appInfo)
     (void)memset_s(appInfo->sinkSessionKey, sizeof(appInfo->sinkSessionKey), 0, sizeof(appInfo->sinkSessionKey));
 }
 
+static void TryOpenMultipathSecondChannel(const ChannelInfo *info)
+{
+    if (!info->isServer && info->enableMultipath && TransMultipathNeedReallocSecondLane(info->channelId)) {
+        TransMultipathOpenSecondChannel(info->channelId, info->laneId, false);
+    }
+}
+
 static int32_t NotifyChannelOpened(int32_t channelId)
 {
     SessionConn conn;
@@ -625,6 +636,7 @@ static int32_t NotifyChannelOpened(int32_t channelId)
     TransGetLaneIdByChannelId(channelId, &info.laneId);
     info.isSupportTlv = GetCapabilityBit(conn.appInfo.channelCapability, TRANS_CAPABILITY_TLV_OFFSET);
     ret = TransTdcOnChannelOpened(pkgName, pid, conn.appInfo.myData.sessionName, &info);
+    TryOpenMultipathSecondChannel(&info);
     ClearAppInfoSessionKey(&conn.appInfo);
     conn.status = TCP_DIRECT_CHANNEL_STATUS_CONNECTED;
     SetSessionConnStatusById(channelId, conn.status);

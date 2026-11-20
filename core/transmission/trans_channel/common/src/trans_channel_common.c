@@ -394,6 +394,9 @@ SOFTBUS_VISIBILITY int32_t TransCommonGetAppInfo(const SessionParam *param, AppI
     appInfo->isLowLatency = param->isLowLatency;
     appInfo->enableMultipath = param->enableMultipath;
     SetUdpChannelCapability(param->enableMultipath, &appInfo->udpChannelCapability, UDP_CHANNEL_MULTIPATH_OFFSET);
+    if (!param->enableMultipath) {
+        DisableCapabilityBit(&appInfo->channelCapability, TRANS_CHANNEL_MULTIPATH_OFFSET);
+    }
     appInfo->isMultiNeg = param->isMultiNeg;
     SetUdpChannelCapability(param->isMultiNeg, &appInfo->udpChannelCapability, CHANNEL_ISMULTINEG_OFFSET);
     TRANS_LOGD(TRANS_CTRL, "ok");

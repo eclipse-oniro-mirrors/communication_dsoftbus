@@ -18,6 +18,7 @@
 #include "client_trans_channel_manager.h"
 #include "client_trans_file.h"
 #include "client_trans_file_listener.h"
+#include "client_trans_multipath_manager.h"
 #include "client_trans_session_manager.h"
 #include "client_trans_session_service.h"
 #include "client_trans_socket_manager.h"
@@ -29,7 +30,7 @@
 #include "softbus_feature_config.h"
 #include "trans_log.h"
 
-#define OH_OS_TYPE 10
+#define OH_OS_TYPE    10
 #define OTHER_OS_TYPE 12
 
 int32_t CheckSendLenForBooster(unsigned int len)
@@ -129,23 +130,40 @@ int SendBytes(int sessionId, const void *data, unsigned int len)
 
     int32_t channelId = INVALID_CHANNEL_ID;
     int32_t channelType = CHANNEL_TYPE_BUTT;
-    SessionEnableStatus enableStatus = ENABLE_STATUS_INIT;
-    ret = ClientGetChannelBySessionId(sessionId, &channelId, &channelType, &enableStatus);
+    ret = TransMultipathSelectCtrlChannel(sessionId, &channelId, &channelType);
     TRANS_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret,
-        TRANS_BYTES, "ClientGetChannelBySessionId fail, sessionId=%{public}d", sessionId);
+        TRANS_BYTES, "TransMultipathSelectCtrlChannel fail, sessionId=%{public}d, ret=%{public}d", sessionId, ret);
+    SessionEnableStatus enableStatus = ENABLE_STATUS_INIT;
+    (void)ClientGetChannelBySessionId(sessionId, NULL, NULL, &enableStatus);
 
     ret = CheckBusinessTypeAndOsTypeBySessionId(sessionId, channelId, channelType, len);
     TRANS_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret,
         TRANS_BYTES, "CheckBusinessTypeAndOsTypeBySessionId fail, sessionId=%{public}d", sessionId);
     if (enableStatus != ENABLE_STATUS_SUCCESS) {
-        TRANS_LOGE(TRANS_BYTES,
-            "Enable status fail, len=%{public}u, sessionId=%{public}d", len, sessionId);
+        TRANS_LOGE(TRANS_BYTES, "Enable status fail, len=%{public}u, sessionId=%{public}d", len, sessionId);
         return SOFTBUS_TRANS_SESSION_NO_ENABLE;
     }
     (void)ClientResetIdleTimeoutById(sessionId);
     UpdateChannelStatistics(sessionId, len);
     AbnormalDataLenAudit(sessionId, len);
-    return ClientTransChannelSendBytes(channelId, channelType, data, len);
+    ret = ClientTransChannelSendBytes(channelId, channelType, data, len);
+    if (ret != SOFTBUS_OK) {
+        (void)TransMultipathMarkDown(sessionId, channelId);
+        int32_t altId = INVALID_CHANNEL_ID, altType = CHANNEL_TYPE_BUTT;
+        if (TransMultipathGetOtherCtrlChannel(sessionId, channelId, &altId, &altType) == SOFTBUS_OK) {
+            int32_t fbRet = ClientTransChannelSendBytes(altId, altType, data, len);
+            if (fbRet == SOFTBUS_OK) {
+                (void)TransMultipathCloseDeadChannel(sessionId, channelId, channelType, true);
+                return SOFTBUS_OK;
+            }
+            (void)TransMultipathMarkDown(sessionId, altId);
+            (void)TransMultipathCloseDeadChannel(sessionId, channelId, channelType, false);
+            (void)TransMultipathCloseDeadChannel(sessionId, altId, altType, false);
+            return fbRet;
+        }
+        (void)TransMultipathCloseDeadChannel(sessionId, channelId, channelType, false);
+    }
+    return ret;
 }
 
 static int32_t CheckAsyncSendBytesFunc(int32_t channelId, int32_t channelType)
@@ -179,10 +197,11 @@ int32_t SendBytesAsync(int32_t socket, uint32_t dataSeq, const void *data, uint3
 
     int32_t channelId = INVALID_CHANNEL_ID;
     int32_t channelType = CHANNEL_TYPE_BUTT;
-    SessionEnableStatus enableStatus = ENABLE_STATUS_INIT;
-    ret = ClientGetChannelBySessionId(socket, &channelId, &channelType, &enableStatus);
+    ret = TransMultipathSelectCtrlChannel(socket, &channelId, &channelType);
     TRANS_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret,
-        TRANS_BYTES, "ClientGetChannelBySessionId fail, socket=%{public}d", socket);
+        TRANS_BYTES, "TransMultipathSelectCtrlChannel fail, socket=%{public}d, ret=%{public}d", socket, ret);
+    SessionEnableStatus enableStatus = ENABLE_STATUS_INIT;
+    (void)ClientGetChannelBySessionId(socket, NULL, NULL, &enableStatus);
     ret = CheckAsyncSendBytesFunc(channelId, channelType);
     TRANS_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret,
         TRANS_BYTES, "checkAsyncSendByts fail, socket=%{public}d", socket);
@@ -190,13 +209,29 @@ int32_t SendBytesAsync(int32_t socket, uint32_t dataSeq, const void *data, uint3
     TRANS_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret,
         TRANS_BYTES, "CheckBusinessTypeAndOsTypeBySessionId fail, socket=%{public}d", socket);
     if (enableStatus != ENABLE_STATUS_SUCCESS) {
-        TRANS_LOGE(TRANS_BYTES,
-            "session is not enable, len=%{public}u, socket=%{public}d", len, socket);
+        TRANS_LOGE(TRANS_BYTES, "session is not enable, len=%{public}u, socket=%{public}d", len, socket);
         return SOFTBUS_TRANS_SESSION_NO_ENABLE;
     }
     (void)ClientResetIdleTimeoutById(socket);
     UpdateChannelStatistics(socket, len);
-    return ClientTransChannelAsyncSendBytes(channelId, channelType, data, len, dataSeq);
+    ret = ClientTransChannelAsyncSendBytes(channelId, channelType, data, len, dataSeq);
+    if (ret != SOFTBUS_OK) {
+        (void)TransMultipathMarkDown(socket, channelId);
+        int32_t altId = INVALID_CHANNEL_ID, altType = CHANNEL_TYPE_BUTT;
+        if (TransMultipathGetOtherCtrlChannel(socket, channelId, &altId, &altType) == SOFTBUS_OK) {
+            int32_t fbRet = ClientTransChannelAsyncSendBytes(altId, altType, data, len, dataSeq);
+            if (fbRet == SOFTBUS_OK) {
+                (void)TransMultipathCloseDeadChannel(socket, channelId, channelType, true);
+                return SOFTBUS_OK;
+            }
+            (void)TransMultipathMarkDown(socket, altId);
+            (void)TransMultipathCloseDeadChannel(socket, channelId, channelType, false);
+            (void)TransMultipathCloseDeadChannel(socket, altId, altType, false);
+            return fbRet;
+        }
+        (void)TransMultipathCloseDeadChannel(socket, channelId, channelType, false);
+    }
+    return ret;
 }
 
 static int32_t CheckBusinessTypeBySessionId(int32_t sessionId, int32_t channelId, int32_t channelType, uint32_t len)

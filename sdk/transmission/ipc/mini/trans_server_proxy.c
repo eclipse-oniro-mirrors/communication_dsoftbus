@@ -91,6 +91,11 @@ int32_t ServerIpcCloseChannel(const char *sessionName, int32_t channelId, int32_
     return TransCloseChannel(sessionName, channelId, channelType);
 }
 
+int32_t ServerIpcCloseChannelAsync(const char *sessionName, int32_t channelId, int32_t channelType)
+{
+    return ServerIpcCloseChannel(sessionName, channelId, channelType);
+}
+
 int32_t ServerIpcCloseChannelWithStatistics(int32_t channelId, int32_t channelType, uint64_t laneId,
     const void *dataInfo, uint32_t len)
 {

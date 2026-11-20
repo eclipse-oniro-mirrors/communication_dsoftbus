@@ -145,7 +145,7 @@ static void TransGetUdpChannelOpenInfoFromJson(const cJSON *msg, AppInfo *appInf
     (void)GetJsonObjectStringItem(msg, "ACCOUNT_ID", appInfo->peerData.accountId, ACCOUNT_UID_LEN_MAX);
     (void)GetJsonObjectNumber64Item(msg, "SOURCE_ACL_TOKEN_ID", (int64_t *)&appInfo->peerData.tokenId);
     (void)GetJsonObjectStringItem(msg, "SOURCE_ACL_EXTRA_INFO", (appInfo->extraAccessInfo), EXTRA_ACCESS_INFO_LEN_MAX);
-    (void)GetJsonObjectNumberItem(msg, "LINKED_CHANNEL_ID", &appInfo->linkedChannelId);
+    (void)GetJsonObjectNumberItem(msg, LINKED_CHANNEL_ID, &appInfo->linkedChannelId);
 }
 
 static int32_t TransUnpackSessionKeyFromJson(const cJSON *msg, AppInfo *appInfo)
@@ -281,7 +281,7 @@ int32_t TransPackRequestUdpInfo(cJSON *msg, const AppInfo *appInfo)
     (void)AddNumberToJsonObject(msg, "TRANS_CAPABILITY", (int32_t)appInfo->channelCapability);
     (void)AddBoolToJsonObject(msg, "FORCE_GENERATE_UK", appInfo->forceGenerateUk);
     (void)AddNumberToJsonObject(msg, "UDP_CHANNEL_CAPABILITY", (int32_t)appInfo->udpChannelCapability);
-    (void)AddNumberToJsonObject(msg, "LINKED_CHANNEL_ID", (int32_t)appInfo->linkedChannelId);
+    (void)AddNumberToJsonObject(msg, LINKED_CHANNEL_ID, (int32_t)appInfo->linkedChannelId);
 
     return SOFTBUS_OK;
 }

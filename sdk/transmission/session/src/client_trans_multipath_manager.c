@@ -18,13 +18,15 @@
 #include "softbus_error_code.h"
 #include "trans_log.h"
 
+#include "client_trans_channel_manager.h"
 #include "client_trans_session_callback.h"
 #include "client_trans_session_manager.h"
 #include "client_trans_socket_manager.h"
-#include "client_trans_udp_manager.h"
 
 #define LOW_BW               (384 * 1024)
 #define TRANS_DEFAULT_MIN_BW 0
+
+static uint32_t g_ctrlAsyncCloseCnt = 0;
 
 int32_t TransMultipathGetEnabled(int32_t socket, bool *enabled)
 {
@@ -137,7 +139,7 @@ int32_t TransMultipathCheckAndEnable(int32_t socket, const QosTV *qos, uint32_t 
     if (enableMultipath) {
         TRANS_LOGI(TRANS_SDK, "set enableMultipath, socket=%{public}d", socket);
     }
-    if (enableMultipath && (minBW <= LOW_BW || dataType != TYPE_FILE)) {
+    if (enableMultipath && (minBW <= LOW_BW || (dataType != DATA_TYPE_FILE && dataType != DATA_TYPE_BYTES))) {
         TRANS_LOGE(TRANS_SDK, "not multipath ability, minBW=%{public}d, dataType=%{public}d", minBW, dataType);
         TransMultipathSetEnabled(socket, false);
     }
@@ -232,6 +234,7 @@ int32_t TransMultipathUpdateReserveChannel(int32_t sessionId, const ChannelInfo 
         sessionNode->channelIdReserve = channel->channelId;
         sessionNode->channelTypeReserve = (ChannelType)channel->channelType;
         sessionNode->routeTypeReserve = channel->routeType;
+        (void)TransMultipathMarkUpOnNode(sessionNode, channel->routeType);
     }
     TRANS_LOGI(TRANS_SDK,
         "mp socketId=%{public}d, channelId=%{public}d, channelIdReserve=%{public}d, routeType=%{public}d, "
@@ -361,7 +364,7 @@ int32_t TransMultipathGetChannelRole(int32_t sessionId, int32_t channelId, Chann
 
 bool TransMultipathNeedDelReserve(SessionInfo *sessionNode, int32_t routeType, bool *onlyReserveLinkDown)
 {
-    if (sessionNode == NULL || routeType == INVALID_ROUTE_TYPE || onlyReserveLinkDown == NULL) {
+    if (sessionNode == NULL || routeType == INVALID_ROUTE_TYPE) {
         TRANS_LOGW(TRANS_SDK, "Invalid param");
         return false;
     }
@@ -370,29 +373,51 @@ bool TransMultipathNeedDelReserve(SessionInfo *sessionNode, int32_t routeType, b
     }
     if ((sessionNode->routeType == routeType && sessionNode->routeTypeReserve != INVALID_ROUTE_TYPE) ||
         sessionNode->routeTypeReserve == routeType) {
-        TRANS_LOGI(TRANS_SDK, "sessionId=%{public}d, type1=%{public}d, type2=%{public}d, linkDownType=%{public}d",
+        TRANS_LOGI(TRANS_SDK, "sessionId=%{public}d, type1=%{public}d, type2=%{public}d, routeType=%{public}d",
             sessionNode->sessionId, sessionNode->routeType, sessionNode->routeTypeReserve, routeType);
-        *onlyReserveLinkDown = sessionNode->routeType == routeType ? false : true;
+        if (onlyReserveLinkDown != NULL) {
+            *onlyReserveLinkDown = sessionNode->routeType == routeType ? false : true;
+        }
         return true;
     }
     return false;
 }
 
-void TransMultipathDelReserveLinkDown(
-    SessionInfo *sessionNode, const ClientSessionServer *server, ListNode *destroyList, bool onlyReserveLinkDown)
+bool TransMultipathDelReserveLinkDown(
+    SessionInfo *sessionNode, const ClientSessionServer *server, ListNode *destroyList, int32_t routeType)
 {
     if (sessionNode == NULL || destroyList == NULL) {
         TRANS_LOGW(TRANS_SDK, "Invalid param");
-        return;
+        return false;
     }
-    LinkDownType linkDownType = onlyReserveLinkDown ? MULTIPATH_ONLY_SECOND_CHANNEL : MULTIPATH_BOTH_CHANNEL;
-    DestroySessionInfo *destroyNode = CreateDestroySessionNode(sessionNode, server, linkDownType);
-    sessionNode->channelIdReserve = INVALID_CHANNEL_ID;
-    sessionNode->channelTypeReserve = CHANNEL_TYPE_UNDEFINED;
-    sessionNode->routeTypeReserve = -1;
+    bool onlyReserveLinkDown = true;
+    if (!TransMultipathNeedDelReserve(sessionNode, routeType, &onlyReserveLinkDown)) {
+        return false;
+    }
+    int32_t deadChannelId = onlyReserveLinkDown ? sessionNode->channelIdReserve : sessionNode->channelId;
+    (void)TransMultipathMarkDownOnNode(sessionNode, deadChannelId);
+    bool otherUp =
+        (sessionNode->ctrlWirelessStatus == CTRL_CH_STATUS_UP) || (sessionNode->ctrlWiredStatus == CTRL_CH_STATUS_UP);
+    if (!otherUp) {
+        return false;
+    }
+    if (!onlyReserveLinkDown) {
+        int32_t tmpId = sessionNode->channelId;
+        sessionNode->channelId = sessionNode->channelIdReserve;
+        sessionNode->channelIdReserve = tmpId;
+        ChannelType tmpType = sessionNode->channelType;
+        sessionNode->channelType = sessionNode->channelTypeReserve;
+        sessionNode->channelTypeReserve = tmpType;
+        int32_t tmpRoute = sessionNode->routeType;
+        sessionNode->routeType = sessionNode->routeTypeReserve;
+        sessionNode->routeTypeReserve = tmpRoute;
+    }
+    DestroySessionInfo *destroyNode = CreateDestroySessionNode(sessionNode, server, true);
     if (destroyNode != NULL) {
+        (void)TransMultipathClearChannelSlotOnNode(sessionNode, deadChannelId);
         ListAdd(destroyList, &destroyNode->node);
     }
+    return true;
 }
 
 void TransMultipathUpdateClosingState(SessionInfo *sessionNode, bool isClosing)
@@ -405,7 +430,7 @@ void TransMultipathUpdateClosingState(SessionInfo *sessionNode, bool isClosing)
     }
 }
 
-void TransMultipathOnEvent(int32_t channelId, uint8_t changeType, int32_t linkType, int32_t reason)
+void TransMultipathOnEvent(int32_t channelId, int32_t channelType, uint8_t changeType, int32_t linkType, int32_t reason)
 {
     if (channelId == INVALID_CHANNEL_ID) {
         TRANS_LOGE(TRANS_SDK, "Invalid param");
@@ -417,20 +442,318 @@ void TransMultipathOnEvent(int32_t channelId, uint8_t changeType, int32_t linkTy
         .reason = reason
     };
     TRANS_LOGI(TRANS_SDK,
-        "handle on event, channelId=%{public}d, transitionType=%{public}d, linkMediumType=%{public}d, "
-        "reason=%{public}d",
-        channelId, eventData.transitionType, eventData.linkMediumType, eventData.reason);
-    int32_t channelType = CHANNEL_TYPE_UNDEFINED;
-    int32_t ret = GetChannelTypeByChannelId(channelId, &channelType);
-    if (ret != SOFTBUS_OK) {
-        TRANS_LOGE(TRANS_SDK, "get channel type error, channelId=%{public}d, ret=%{public}d", channelId, ret);
-        return;
-    }
-    ret = GetClientSessionCb()->OnEvent(
+        "handle on event, channelId=%{public}d, channelType=%{public}d, transitionType=%{public}d, "
+        "linkMediumType=%{public}d, reason=%{public}d",
+        channelId, channelType, eventData.transitionType, eventData.linkMediumType, eventData.reason);
+    int32_t ret = GetClientSessionCb()->OnEvent(
         channelId, channelType, EVENT_TYPE_MULTIPATH, (const void *)&eventData, sizeof(MultipathEvent));
     if (ret != SOFTBUS_OK) {
         TRANS_LOGE(TRANS_SDK, "handle on event error, ret=%{public}d", ret);
         return;
     }
     TRANS_LOGI(TRANS_SDK, "handle on event success");
+}
+
+bool TransMultipathIsWiredRoute(int32_t routeType)
+{
+    return routeType == WIFI_USB;
+}
+
+int32_t TransMultipathSelectCtrlChannelOnNode(const SessionInfo *node, int32_t *channelId, int32_t *channelType)
+{
+    if (node == NULL || channelId == NULL || channelType == NULL) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    if (!node->enableMultipath) {
+        *channelId = node->channelId;
+        *channelType = node->channelType;
+        return SOFTBUS_OK;
+    }
+    bool usbInPrimary = (node->routeType == WIFI_USB);
+    bool usbInReserve = (node->routeTypeReserve == WIFI_USB);
+    if (usbInPrimary && node->ctrlWiredStatus == CTRL_CH_STATUS_UP) {
+        *channelId = node->channelId;
+        *channelType = node->channelType;
+        return SOFTBUS_OK;
+    }
+    if (usbInReserve && node->ctrlWiredStatus == CTRL_CH_STATUS_UP) {
+        *channelId = node->channelIdReserve;
+        *channelType = node->channelTypeReserve;
+        return SOFTBUS_OK;
+    }
+    // no USB path or USB unavailable -> take wireless path (the non-USB slot)
+    if (node->ctrlWirelessStatus == CTRL_CH_STATUS_UP) {
+        if (usbInPrimary) {
+            *channelId = node->channelIdReserve;
+            *channelType = node->channelTypeReserve;
+        } else {
+            *channelId = node->channelId;
+            *channelType = node->channelType;
+        }
+        return SOFTBUS_OK;
+    }
+    return SOFTBUS_TRANS_INVALID_CHANNEL_TYPE;
+}
+
+static void TransMultipathMarkDownByRoute(SessionInfo *node, int32_t routeType)
+{
+    if (TransMultipathIsWiredRoute(routeType)) {
+        node->ctrlWiredStatus = CTRL_CH_STATUS_DOWN;
+    } else {
+        node->ctrlWirelessStatus = CTRL_CH_STATUS_DOWN;
+    }
+}
+
+int32_t TransMultipathMarkDownOnNode(SessionInfo *node, int32_t channelId)
+{
+    if (node == NULL) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    if (node->channelId == channelId) {
+        TransMultipathMarkDownByRoute(node, node->routeType);
+        return SOFTBUS_OK;
+    }
+    if (node->channelIdReserve == channelId) {
+        TransMultipathMarkDownByRoute(node, node->routeTypeReserve);
+        return SOFTBUS_OK;
+    }
+    return SOFTBUS_INVALID_PARAM;
+}
+
+int32_t TransMultipathClearChannelSlotOnNode(SessionInfo *node, int32_t channelId)
+{
+    if (node == NULL) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    if (node->channelId == channelId) {
+        node->channelId = INVALID_CHANNEL_ID;
+        node->channelType = CHANNEL_TYPE_UNDEFINED;
+        node->routeType = INVALID_ROUTE_TYPE;
+        return SOFTBUS_OK;
+    }
+    if (node->channelIdReserve == channelId) {
+        node->channelIdReserve = INVALID_CHANNEL_ID;
+        node->channelTypeReserve = CHANNEL_TYPE_UNDEFINED;
+        node->routeTypeReserve = INVALID_ROUTE_TYPE;
+        return SOFTBUS_OK;
+    }
+    return SOFTBUS_INVALID_PARAM;
+}
+
+int32_t TransMultipathGetOtherCtrlChannelOnNode(
+    const SessionInfo *node, int32_t failChannelId, int32_t *altChannelId, int32_t *altChannelType)
+{
+    if (node == NULL || altChannelId == NULL || altChannelType == NULL) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    bool failIsPrimary = (node->channelId == failChannelId);
+    bool failIsReserve = (node->channelIdReserve == failChannelId);
+    if (!failIsPrimary && !failIsReserve) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    int32_t otherId = failIsPrimary ? node->channelIdReserve : node->channelId;
+    int32_t otherType = failIsPrimary ? node->channelTypeReserve : node->channelType;
+    int32_t otherRoute = failIsPrimary ? node->routeTypeReserve : node->routeType;
+    CtrlChannelStatus otherStatus =
+        TransMultipathIsWiredRoute(otherRoute) ? node->ctrlWiredStatus : node->ctrlWirelessStatus;
+    if (otherStatus != CTRL_CH_STATUS_UP) {
+        return SOFTBUS_TRANS_INVALID_CHANNEL_TYPE;
+    }
+    *altChannelId = otherId;
+    *altChannelType = otherType;
+    return SOFTBUS_OK;
+}
+
+int32_t TransMultipathMarkUpOnNode(SessionInfo *node, int32_t routeType)
+{
+    if (node == NULL) {
+        return SOFTBUS_INVALID_PARAM;
+    }
+    if (TransMultipathIsWiredRoute(routeType)) {
+        node->ctrlWiredStatus = CTRL_CH_STATUS_UP;
+    } else {
+        node->ctrlWirelessStatus = CTRL_CH_STATUS_UP;
+    }
+    return SOFTBUS_OK;
+}
+
+int32_t TransMultipathSelectCtrlChannel(int32_t sessionId, int32_t *channelId, int32_t *channelType)
+{
+    if (channelId == NULL || channelType == NULL) {
+        TRANS_LOGE(TRANS_SDK, "Invalid param");
+        return SOFTBUS_INVALID_PARAM;
+    }
+
+    int32_t ret = LockClientSessionServerList();
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_SDK, "lock failed, ret=%{public}d", ret);
+        return ret;
+    }
+
+    ClientSessionServer *serverNode = NULL;
+    SessionInfo *sessionNode = NULL;
+    ret = GetSessionById(sessionId, &serverNode, &sessionNode);
+    if (ret != SOFTBUS_OK) {
+        UnlockClientSessionServerList();
+        TRANS_LOGE(TRANS_SDK, "socketFd=%{public}d not found, ret=%{public}d", sessionId, ret);
+        return ret;
+    }
+    ret = TransMultipathSelectCtrlChannelOnNode(sessionNode, channelId, channelType);
+    UnlockClientSessionServerList();
+    return ret;
+}
+
+int32_t TransMultipathGetOtherCtrlChannel(
+    int32_t sessionId, int32_t failChannelId, int32_t *altChannelId, int32_t *altChannelType)
+{
+    if (altChannelId == NULL || altChannelType == NULL) {
+        TRANS_LOGE(TRANS_SDK, "Invalid param");
+        return SOFTBUS_INVALID_PARAM;
+    }
+
+    int32_t ret = LockClientSessionServerList();
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_SDK, "lock failed, ret=%{public}d", ret);
+        return ret;
+    }
+
+    ClientSessionServer *serverNode = NULL;
+    SessionInfo *sessionNode = NULL;
+    ret = GetSessionById(sessionId, &serverNode, &sessionNode);
+    if (ret != SOFTBUS_OK) {
+        UnlockClientSessionServerList();
+        TRANS_LOGE(TRANS_SDK, "socketFd=%{public}d not found, ret=%{public}d", sessionId, ret);
+        return ret;
+    }
+    ret = TransMultipathGetOtherCtrlChannelOnNode(sessionNode, failChannelId, altChannelId, altChannelType);
+    UnlockClientSessionServerList();
+    return ret;
+}
+
+int32_t TransMultipathMarkDown(int32_t sessionId, int32_t channelId)
+{
+    int32_t ret = LockClientSessionServerList();
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_SDK, "lock failed, ret=%{public}d", ret);
+        return ret;
+    }
+
+    ClientSessionServer *serverNode = NULL;
+    SessionInfo *sessionNode = NULL;
+    ret = GetSessionById(sessionId, &serverNode, &sessionNode);
+    if (ret != SOFTBUS_OK) {
+        UnlockClientSessionServerList();
+        TRANS_LOGE(TRANS_SDK, "socketFd=%{public}d not found, ret=%{public}d", sessionId, ret);
+        return ret;
+    }
+    ret = TransMultipathMarkDownOnNode(sessionNode, channelId);
+    UnlockClientSessionServerList();
+    return ret;
+}
+
+bool TransMultipathIsOtherUp(int32_t sessionId, int32_t channelId)
+{
+    int32_t ret = LockClientSessionServerList();
+    if (ret != SOFTBUS_OK) {
+        return false;
+    }
+    ClientSessionServer *serverNode = NULL;
+    SessionInfo *sessionNode = NULL;
+    ret = GetSessionById(sessionId, &serverNode, &sessionNode);
+    if (ret != SOFTBUS_OK) {
+        UnlockClientSessionServerList();
+        return false;
+    }
+    if (!sessionNode->enableMultipath) {
+        UnlockClientSessionServerList();
+        return false;
+    }
+    bool isPrimary = (sessionNode->channelId == channelId);
+    bool isReserve = (sessionNode->channelIdReserve == channelId);
+    if (!isPrimary && !isReserve) {
+        UnlockClientSessionServerList();
+        return false;
+    }
+    int32_t otherRoute = isPrimary ? sessionNode->routeTypeReserve : sessionNode->routeType;
+    CtrlChannelStatus otherStatus =
+        TransMultipathIsWiredRoute(otherRoute) ? sessionNode->ctrlWiredStatus : sessionNode->ctrlWirelessStatus;
+    UnlockClientSessionServerList();
+    return otherStatus == CTRL_CH_STATUS_UP;
+}
+
+bool TransMultipathHandleChannelClose(int32_t sessionId, int32_t channelId, int32_t *surviveChannelId,
+    int32_t *surviveChannelType, int32_t *deadRouteType)
+{
+    if (surviveChannelId == NULL || surviveChannelType == NULL || deadRouteType == NULL) {
+        return false;
+    }
+    int32_t ret = LockClientSessionServerList();
+    if (ret != SOFTBUS_OK) {
+        return false;
+    }
+    ClientSessionServer *serverNode = NULL;
+    SessionInfo *sessionNode = NULL;
+    ret = GetSessionById(sessionId, &serverNode, &sessionNode);
+    if (ret != SOFTBUS_OK) {
+        UnlockClientSessionServerList();
+        return false;
+    }
+    if (!sessionNode->enableMultipath) {
+        UnlockClientSessionServerList();
+        return false;
+    }
+    bool isPrimary = (sessionNode->channelId == channelId);
+    bool isReserve = (sessionNode->channelIdReserve == channelId);
+    if (!isPrimary && !isReserve) {
+        UnlockClientSessionServerList();
+        return false;
+    }
+    *deadRouteType = isPrimary ? sessionNode->routeType : sessionNode->routeTypeReserve;
+    (void)TransMultipathMarkDownOnNode(sessionNode, channelId);
+    int32_t otherRoute = isPrimary ? sessionNode->routeTypeReserve : sessionNode->routeType;
+    CtrlChannelStatus otherStatus =
+        TransMultipathIsWiredRoute(otherRoute) ? sessionNode->ctrlWiredStatus : sessionNode->ctrlWirelessStatus;
+    if (otherStatus != CTRL_CH_STATUS_UP) {
+        UnlockClientSessionServerList();
+        return false;
+    }
+    *surviveChannelId = isPrimary ? sessionNode->channelIdReserve : sessionNode->channelId;
+    *surviveChannelType = isPrimary ? sessionNode->channelTypeReserve : sessionNode->channelType;
+    (void)TransMultipathClearChannelSlotOnNode(sessionNode, channelId);
+    UnlockClientSessionServerList();
+    TRANS_LOGI(TRANS_SDK, "multipath one channel closed, session preserved, sessionId=%{public}d, "
+        "deadChannelId=%{public}d, surviveChannelId=%{public}d",
+        sessionId, channelId, *surviveChannelId);
+    return true;
+}
+
+int32_t TransMultipathCloseDeadChannel(int32_t sessionId, int32_t channelId, int32_t channelType, bool async)
+{
+    int32_t ret = LockClientSessionServerList();
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_SDK, "lock failed, ret=%{public}d", ret);
+        return ret;
+    }
+    ClientSessionServer *serverNode = NULL;
+    SessionInfo *sessionNode = NULL;
+    ret = GetSessionById(sessionId, &serverNode, &sessionNode);
+    if (ret != SOFTBUS_OK) {
+        UnlockClientSessionServerList();
+        TRANS_LOGE(TRANS_SDK, "socketFd=%{public}d not found, ret=%{public}d", sessionId, ret);
+        return SOFTBUS_TRANS_SESSION_INFO_NOT_FOUND;
+    }
+    int32_t socketId = sessionNode->sessionId;
+    (void)TransMultipathClearChannelSlotOnNode(sessionNode, channelId);
+    if (async) {
+        g_ctrlAsyncCloseCnt++;
+    }
+    UnlockClientSessionServerList();
+    TRANS_LOGI(TRANS_SDK, "close dead channel, sessionId=%{public}d, channelId=%{public}d, async=%{public}d",
+        sessionId, channelId, async);
+    return ClientTransCloseChannel(channelId, channelType, socketId, async);
+}
+
+uint32_t TransMultipathGetAsyncCloseCount(void)
+{
+    return g_ctrlAsyncCloseCnt;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -51,12 +51,12 @@ int32_t TransGetUdpChannelByFileId(int32_t dfileId, UdpChannel *udpChannel)
     return GetClientTransFileInterface()->TransGetUdpChannelByFileId(dfileId, udpChannel);
 }
 
-int32_t TransGetReserveUdpChannelByFileId(int32_t dfileId, UdpChannel *udpChannel)
+void TransCloseUdpChannelByFileId(int32_t dfileId, ShutdownReason reason)
 {
     if (GetClientTransFileInterface() == nullptr) {
-        return SOFTBUS_ERR;
+        return;
     }
-    return GetClientTransFileInterface()->TransGetReserveUdpChannelByFileId(dfileId, udpChannel);
+    GetClientTransFileInterface()->TransCloseUdpChannelByFileId(dfileId, reason);
 }
 
 int32_t TransGetUdpChannel(int32_t channelId, UdpChannel *udpChannel)
@@ -220,7 +220,8 @@ int32_t NSTACKX_DFileSendFilesWithRemotePath(int32_t sessionId, const char *file
 }
 
 // Session wrappers
-void TransMultipathOnEvent(int32_t channelId, uint8_t changeType, int32_t linkType, int32_t reason)
+void TransMultipathOnEvent(int32_t channelId, int32_t channelType, uint8_t changeType, int32_t linkType,
+    int32_t reason)
 {
     if (GetClientTransFileInterface() != nullptr) {
         GetClientTransFileInterface()->HandleMultiPathOnEvent(

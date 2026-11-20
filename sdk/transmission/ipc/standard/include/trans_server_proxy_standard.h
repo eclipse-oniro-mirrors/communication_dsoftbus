@@ -37,6 +37,7 @@ public:
     int32_t NotifyAuthSuccess(int32_t channelId, int32_t channelType) override;
     int32_t ReleaseResources(int32_t channelId) override;
     int32_t CloseChannel(const char *sessionName, int32_t channelId, int32_t channelType) override;
+    int32_t CloseChannelAsync(const char *sessionName, int32_t channelId, int32_t channelType);
     int32_t CloseChannelWithStatistics(int32_t channelId, int32_t channelType, uint64_t laneId, const void *dataInfo,
         uint32_t len) override;
     int32_t SendMessage(int32_t channelId, int32_t channelType, const void *dataInfo,
