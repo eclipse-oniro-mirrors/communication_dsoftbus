@@ -154,7 +154,7 @@ extern "C" int32_t SoftBusMutexInit(SoftBusMutex *mutex, SoftBusMutexAttr *mutex
     if (mutex == NULL) {
         return SOFTBUS_INVALID_PARAM;
     }
-    if ((void *)mutex->mutex != NULL) {
+    if (reinterpret_cast<void *>(mutex->mutex) != nullptr) {
         return SOFTBUS_OK;
     }
     pthread_mutex_t *tempMutex = (pthread_mutex_t *)calloc(1, sizeof(pthread_mutex_t));

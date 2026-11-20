@@ -42,7 +42,7 @@ void VirlinkTestSetAuthIdValid(bool isValid)
     g_isAuthIdValid = isValid;
 }
 
-void AuthDeviceGetLatestIdByUuid(const char *uuid, AuthLinkType type, AuthHandle *authHandle)
+SOFTBUS_SYMBOL_EXPORT void AuthDeviceGetLatestIdByUuid(const char *uuid, AuthLinkType type, AuthHandle *authHandle)
 {
     (void)uuid;
     (void)type;
@@ -94,7 +94,7 @@ void VirlinkTestSetNetworkIdByUdidValid(bool isValid)
     g_isNetworkIdByUdidValid = isValid;
 }
 
-int32_t LnnGetNetworkIdByUdid(const char *udid, char *buf, uint32_t len)
+SOFTBUS_SYMBOL_EXPORT int32_t LnnGetNetworkIdByUdid(const char *udid, char *buf, uint32_t len)
 {
     (void)udid;
     if (!g_isNetworkIdByUdidValid) {
@@ -114,7 +114,7 @@ void VirlinkTestSetNetworkIdByUuidValid(bool isValid)
     g_isNetworkIdByUuidValid = isValid;
 }
 
-int32_t LnnGetNetworkIdByUuid(const char *uuid, char *buf, uint32_t len)
+SOFTBUS_SYMBOL_EXPORT int32_t LnnGetNetworkIdByUuid(const char *uuid, char *buf, uint32_t len)
 {
     (void)uuid;
     if (!g_isNetworkIdByUuidValid) {
