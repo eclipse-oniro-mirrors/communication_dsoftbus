@@ -221,9 +221,8 @@ static int32_t StartWork(napi_env env, AsyncOpenChannelData *asyncData)
     return SOFTBUS_OK;
 }
 
-napi_value NapiOpenProxyChannel(napi_env env, napi_callback_info info)
+static int32_t GetOpenChannelArg(napi_env env, napi_callback_info info, napi_value *arg)
 {
-    TRANS_LOGI(TRANS_SDK, "[br_proxy] enter.");
     size_t argc = ARGS_SIZE_1;
     napi_value args[ARGS_SIZE_1];
     napi_value thisArg;
@@ -231,12 +230,23 @@ napi_value NapiOpenProxyChannel(napi_env env, napi_callback_info info)
     napi_status status = napi_get_cb_info(env, info, &argc, args, &thisArg, &data);
     if (status != napi_ok || argc < ARGS_SIZE_1) {
         ThrowErrFromC2Js(env, SOFTBUS_TRANS_BR_PROXY_INVALID_PARAM);
-        return NULL;
+        return SOFTBUS_TRANS_BR_PROXY_INVALID_PARAM;
     }
     napi_valuetype valuetype;
     status = napi_typeof(env, args[0], &valuetype);
     if (status != napi_ok || valuetype != napi_object) {
         ThrowErrFromC2Js(env, SOFTBUS_TRANS_BR_PROXY_INVALID_PARAM);
+        return SOFTBUS_TRANS_BR_PROXY_INVALID_PARAM;
+    }
+    *arg = args[0];
+    return SOFTBUS_OK;
+}
+
+napi_value NapiOpenProxyChannel(napi_env env, napi_callback_info info)
+{
+    TRANS_LOGI(TRANS_SDK, "[br_proxy] enter.");
+    napi_value arg = NULL;
+    if (GetOpenChannelArg(env, info, &arg) != SOFTBUS_OK) {
         return NULL;
     }
     AsyncOpenChannelData* asyncData = (AsyncOpenChannelData*)SoftBusCalloc(sizeof(AsyncOpenChannelData));
@@ -246,22 +256,28 @@ napi_value NapiOpenProxyChannel(napi_env env, napi_callback_info info)
     }
     asyncData->env = env;
 
-    if (GetChannelInfoParam(env, args[0], asyncData) != SOFTBUS_OK || SessionInit() != SOFTBUS_OK) {
+    if (GetChannelInfoParam(env, arg, asyncData) != SOFTBUS_OK) {
+        goto EXIT;
+    }
+    if (SessionInit() != SOFTBUS_OK) {
+        ThrowErrFromC2Js(env, SOFTBUS_TRANS_BR_PROXY_INTERNAL_ERROR);
         goto EXIT;
     }
     int32_t sessionId = GetSessionId();
     if (sessionId <= 0) {
+        ThrowErrFromC2Js(env, SOFTBUS_TRANS_BR_PROXY_INTERNAL_ERROR);
         goto EXIT;
     }
     asyncData->sessionId = sessionId;
     napi_value promise;
-    status = napi_create_promise(env, &asyncData->deferred, &promise);
+    napi_status status = napi_create_promise(env, &asyncData->deferred, &promise);
     if (status != napi_ok) {
         ThrowErrFromC2Js(env, SOFTBUS_TRANS_BR_PROXY_INTERNAL_ERROR);
         goto EXIT;
     }
     int32_t ret = StartWork(env, asyncData);
     if (ret != SOFTBUS_OK) {
+        ThrowErrFromC2Js(env, SOFTBUS_TRANS_BR_PROXY_INTERNAL_ERROR);
         goto EXIT;
     }
     TRANS_LOGI(TRANS_SDK, "[br_proxy] open success, sessionId=%{public}d.", sessionId);
