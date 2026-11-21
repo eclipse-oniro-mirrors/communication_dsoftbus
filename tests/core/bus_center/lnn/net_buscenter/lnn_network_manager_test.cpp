@@ -806,6 +806,65 @@ HWTEST_F(LNNNetworkManagerMockTest, Net_Device_Risk_State_Event_Handler_001, Tes
 }
 
 /*
+ * @tc.name: Net_Risk_Device_Open_Auth_Port_Test_001
+ * @tc.desc: Verify NetRiskDeviceOpenAuthPort skips AuthStartListening when local ip is
+ *           loopback or invalid (wifi not connected); starts listening with valid ip
+ * @tc.type: FUNC
+ * @tc.require: NONE
+ * @tc.level: Level1
+ */
+HWTEST_F(LNNNetworkManagerMockTest, Net_Risk_Device_Open_Auth_Port_Test_001, TestSize.Level1)
+{
+    NiceMock<LnnNetworkManagerInterfaceMock> managerMock;
+    NiceMock<LnnNetLedgertInterfaceMock> ledgerMock;
+    EXPECT_CALL(managerMock, SoftbusGetConfig).WillRepeatedly(Return(SOFTBUS_OK));
+
+    auto setLedgerIp = [](const char *ip) {
+        return Invoke([ip](InfoKey key, char *info, uint32_t len, int32_t ifIdx) {
+            (void)ifIdx;
+            if (key != STRING_KEY_IP) {
+                return SOFTBUS_INVALID_PARAM;
+            }
+            return strcpy_s(info, len, ip) == EOK ? SOFTBUS_OK : SOFTBUS_STRCPY_ERR;
+        });
+    };
+
+    ON_CALL(ledgerMock, LnnGetLocalStrInfoByIfnameIdx).WillByDefault(setLedgerIp("127.0.0.1"));
+    EXPECT_CALL(managerMock, AuthStartListening).Times(0);
+    EXPECT_CALL(ledgerMock, LnnSetLocalNumInfoByIfnameIdx).Times(0);
+    int32_t ret = NetRiskDeviceOpenAuthPort();
+    EXPECT_TRUE(ret != SOFTBUS_OK);
+
+    ON_CALL(ledgerMock, LnnGetLocalStrInfoByIfnameIdx).WillByDefault(setLedgerIp("0.0.0.0"));
+    EXPECT_CALL(managerMock, AuthStartListening).Times(0);
+    ret = NetRiskDeviceOpenAuthPort();
+    EXPECT_TRUE(ret != SOFTBUS_OK);
+
+    ON_CALL(ledgerMock, LnnGetLocalStrInfoByIfnameIdx).WillByDefault(setLedgerIp(""));
+    EXPECT_CALL(managerMock, AuthStartListening).Times(0);
+    ret = NetRiskDeviceOpenAuthPort();
+    EXPECT_TRUE(ret != SOFTBUS_OK);
+
+    ON_CALL(ledgerMock, LnnGetLocalStrInfoByIfnameIdx).WillByDefault(setLedgerIp("192.168.1.100"));
+    ON_CALL(ledgerMock, LnnGetLocalNumInfoByIfnameIdx)
+        .WillByDefault(DoAll(SetArgPointee<1>(0), Return(SOFTBUS_OK)));
+    EXPECT_CALL(managerMock, AuthStartListening(AUTH_LINK_TYPE_WIFI, StrEq("192.168.1.100"), 0))
+        .WillOnce(Return(6888));
+    EXPECT_CALL(ledgerMock, LnnSetLocalNumInfoByIfnameIdx(NUM_KEY_AUTH_PORT, 6888, WLAN_IF))
+        .WillOnce(Return(SOFTBUS_OK));
+    ret = NetRiskDeviceOpenAuthPort();
+    EXPECT_EQ(ret, SOFTBUS_OK);
+
+    ON_CALL(ledgerMock, LnnGetLocalNumInfoByIfnameIdx)
+        .WillByDefault(DoAll(SetArgPointee<1>(6888), Return(SOFTBUS_OK)));
+    EXPECT_CALL(managerMock, AuthStartListening(AUTH_LINK_TYPE_WIFI, StrEq("192.168.1.100"), 6888))
+        .WillOnce(Return(6888));
+    EXPECT_CALL(ledgerMock, LnnSetLocalNumInfoByIfnameIdx).Times(0);
+    ret = NetRiskDeviceOpenAuthPort();
+    EXPECT_EQ(ret, SOFTBUS_OK);
+}
+
+/*
  * @tc.name: Net_Constraint_State_Event_Handler_001
  * @tc.desc: Verify NetConstraintStateEventHandler handles null event and invalid event type
  * @tc.type: FUNC

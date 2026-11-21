@@ -19,6 +19,7 @@
 #include <gmock/gmock.h>
 #include <mutex>
 
+#include "auth_interface.h"
 #include "bus_center_event.h"
 #include "disc_interface.h"
 #include "form/lnn_event_form.h"
@@ -40,6 +41,8 @@ public:
     virtual int32_t RegistIPProtocolManager(void) = 0;
     virtual int32_t LnnInitPhysicalSubnetManager(void) = 0;
     virtual void LnnOnOhosAccountChanged(void) = 0;
+    virtual void AuthStopListening(AuthLinkType type) = 0;
+    virtual int32_t AuthStartListening(AuthLinkType type, const char *ip, int32_t port) = 0;
     virtual void LnnStopDiscovery(void) = 0;
     virtual int32_t LnnStartDiscovery(void) = 0;
     virtual int32_t SoftbusGetConfig(ConfigType type, unsigned char *val, uint32_t len) = 0;
@@ -73,6 +76,8 @@ public:
     MOCK_METHOD0(RegistIPProtocolManager, int32_t(void));
     MOCK_METHOD0(LnnInitPhysicalSubnetManager, int32_t(void));
     MOCK_METHOD0(LnnOnOhosAccountChanged, void(void));
+    MOCK_METHOD1(AuthStopListening, void(AuthLinkType));
+    MOCK_METHOD3(AuthStartListening, int32_t(AuthLinkType, const char *, int32_t));
     MOCK_METHOD0(LnnStopDiscovery, void(void));
     MOCK_METHOD0(LnnStartDiscovery, int32_t(void));
     MOCK_METHOD3(SoftbusGetConfig, int32_t(ConfigType, unsigned char *, uint32_t));
