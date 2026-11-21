@@ -52,22 +52,28 @@ int32_t DoInJsMainThread(napi_env env, std::function<void(void)> func)
     return 0;
 }
 
-static std::atomic<int32_t> g_emulatorState = { 0 };
+enum EmulatorQueryState {
+    EMULATOR_STATE_UNQUERIED = 0,
+    EMULATOR_STATE_IS_EMULATOR = 1,
+    EMULATOR_STATE_NOT_EMULATOR = 2,
+};
+
+static std::atomic<int32_t> g_emulatorState = { EMULATOR_STATE_UNQUERIED };
 
 bool IsEmulatorEnv(void)
 {
     int32_t state = g_emulatorState.load();
-    if (state == 0) {
+    if (state == EMULATOR_STATE_UNQUERIED) {
         bool isEmulator = false;
         int32_t ret = GeneralIsEmulator(PKG_NAME.c_str(), &isEmulator);
         if (ret != SOFTBUS_OK) {
             COMM_LOGE(COMM_SDK, "query emulator fail, ret=%{public}d", ret);
             return false;
         }
-        state = isEmulator ? 1 : 2;
+        state = isEmulator ? EMULATOR_STATE_IS_EMULATOR : EMULATOR_STATE_NOT_EMULATOR;
         g_emulatorState.store(state);
     }
-    return state == 1;
+    return state == EMULATOR_STATE_IS_EMULATOR;
 }
 
 bool ParseString(napi_env env, string &param, napi_value args)
