@@ -92,6 +92,7 @@ typedef enum {
     ACL_WRITE_DEFAULT = 0,
     ACL_CAN_WRITE,
     ACL_NOT_WRITE,
+    ACL_CAN_WRITE_RELATED_APP,
 } AclWriteState;
 
 typedef struct {
