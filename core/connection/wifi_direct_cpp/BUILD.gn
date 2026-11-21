@@ -168,6 +168,13 @@ if (!softbus_config_enhance && defined(ohos_lite)) {
           "wifi:wifi_sdk",
         ]
 
+        if (dsoftbus_feature_qos_boost) {
+          wifi_direct_connection_external_deps += [
+            "ffrt:libffrt",
+            "qos_manager:concurrent_task_client",
+          ]
+        }
+
         remove_configs = [
           "//build/config/compiler:no_rtti",
           "//build/config/compiler:no_exceptions",
@@ -325,6 +332,13 @@ if (!softbus_config_enhance && defined(ohos_lite)) {
             "samgr:samgr_proxy",
             "wifi:wifi_sdk",
           ]
+
+          if (dsoftbus_feature_qos_boost) {
+            wifi_direct_connection_external_deps += [
+              "ffrt:libffrt",
+              "qos_manager:concurrent_task_client",
+            ]
+          }
 
           remove_configs = [
             "//build/config/compiler:no_rtti",
@@ -504,6 +518,13 @@ if (!softbus_config_enhance && defined(ohos_lite)) {
           "samgr:samgr_proxy",
           "wifi:wifi_sdk",
         ]
+
+        if (dsoftbus_feature_qos_boost) {
+          wifi_direct_connection_external_deps += [
+            "ffrt:libffrt",
+            "qos_manager:concurrent_task_client",
+          ]
+        }
 
         remove_configs = [
           "//build/config/compiler:no_rtti",

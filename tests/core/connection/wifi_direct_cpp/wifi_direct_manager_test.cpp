@@ -13,17 +13,25 @@
  * limitations under the License.
  */
 
+#include <atomic>
+#include <chrono>
 #include <functional>
 #include <gtest/gtest.h>
+#include <memory>
 #include <string>
+#include <thread>
+#include <unordered_map>
 
+#include "concurrent_task_client.h"
 #include "dummy_negotiate_channel.h"
 #include "net_conn_client.h"
 #include "softbus_conn_interface.h"
 #include "softbus_error_code.h"
+#include "wifi_direct_executor.h"
 #include "wifi_direct_manager.cpp"
 #include "wifi_direct_manager.h"
 #include "wifi_direct_mock.h"
+#include "wifi_direct_scheduler.h"
 
 using namespace testing::ext;
 using testing::_;
@@ -1138,5 +1146,108 @@ HWTEST_F(WifiDirectManagerCppTest, OperationHmlConnectingCountUnderflowTest, Tes
     GetWifiDirectManager()->operationHmlConnectingCount(false, WIFI_DIRECT_CONNECT_TYPE_SPARKLINK_TRIGGER_HML);
     EXPECT_EQ(g_hmlConnectingCount.load(), 0u);
     CONN_LOGI(CONN_WIFI_DIRECT, "OperationHmlConnectingCountUnderflowTest out");
+}
+} // namespace OHOS::SoftBus
+
+namespace {
+std::atomic<bool> g_processorRunCalled{false};
+
+void ResetQosMock()
+{
+    g_processorRunCalled.store(false);
+    OHOS::ConcurrentTask::ConcurrentTaskClient::requestAuthCount_.store(0);
+}
+}
+
+namespace OHOS::SoftBus {
+
+class StubProcessor : public WifiDirectProcessor {
+public:
+    explicit StubProcessor(const std::string &remoteUuid) : WifiDirectProcessor(remoteUuid) {}
+    void Run() override
+    {
+        g_processorRunCalled.store(true);
+        throw ProcessorTerminate();
+    }
+    bool CanAcceptNegotiateDataAtState(WifiDirectCommand &command) override { return false; }
+    void HandleCommandAfterTerminate(WifiDirectCommand &command) override {}
+    std::string GetProcessorName() const override { return "StubProcessor"; }
+    std::string GetState() const override { return "stub"; }
+};
+
+class StubScheduler : public WifiDirectScheduler {
+public:
+    bool ProcessNextCommand(WifiDirectExecutor *executor, std::shared_ptr<WifiDirectProcessor> &processor) override
+    {
+        return false;
+    }
+};
+
+/*
+ * @tc.name: ExecutorStartBoostQosTrueTest
+ * @tc.desc: check SubmitProcessorTask boostQos=true branch (ffrt::submit + RequestAuth)
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(WifiDirectManagerCppTest, ExecutorStartBoostQosTrueTest, TestSize.Level0)
+{
+    ResetQosMock();
+    WifiDirectInterfaceMock mock;
+    EXPECT_CALL(mock, LnnGetLocalStrInfo(_, _, _)).WillRepeatedly(Return(SOFTBUS_OK));
+    StubScheduler scheduler;
+    std::shared_ptr<WifiDirectProcessor> processor = std::make_shared<StubProcessor>("testDeviceId");
+    WifiDirectExecutor executor("testDeviceId", scheduler, processor, true);
+    executor.SetBoostQos(true);
+
+    executor.Start();
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    EXPECT_GE(OHOS::ConcurrentTask::ConcurrentTaskClient::requestAuthCount_.load(), 1);
+    EXPECT_TRUE(g_processorRunCalled.load());
+}
+
+/*
+ * @tc.name: ExecutorStartBoostQosFalseTest
+ * @tc.desc: check SubmitProcessorTask boostQos=false branch (std::thread+detach, no RequestAuth)
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(WifiDirectManagerCppTest, ExecutorStartBoostQosFalseTest, TestSize.Level0)
+{
+    ResetQosMock();
+    WifiDirectInterfaceMock mock;
+    EXPECT_CALL(mock, LnnGetLocalStrInfo(_, _, _)).WillRepeatedly(Return(SOFTBUS_OK));
+    StubScheduler scheduler;
+    std::shared_ptr<WifiDirectProcessor> processor = std::make_shared<StubProcessor>("testDeviceIdFail");
+    WifiDirectExecutor executor("testDeviceIdFail", scheduler, processor, true);
+    executor.SetBoostQos(false);
+
+    executor.Start();
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    EXPECT_EQ(OHOS::ConcurrentTask::ConcurrentTaskClient::requestAuthCount_.load(), 0);
+    EXPECT_TRUE(g_processorRunCalled.load());
+}
+
+/*
+ * @tc.name: ExecutorStartBoostQosDefaultTest
+ * @tc.desc: check SubmitProcessorTask default boostQos (false) branch (std::thread+detach, no RequestAuth)
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(WifiDirectManagerCppTest, ExecutorStartBoostQosDefaultTest, TestSize.Level0)
+{
+    ResetQosMock();
+    WifiDirectInterfaceMock mock;
+    EXPECT_CALL(mock, LnnGetLocalStrInfo(_, _, _)).WillRepeatedly(Return(SOFTBUS_OK));
+    StubScheduler scheduler;
+    std::shared_ptr<WifiDirectProcessor> processor = std::make_shared<StubProcessor>("testDeviceIdDefault");
+    WifiDirectExecutor executor("testDeviceIdDefault", scheduler, processor, true);
+
+    executor.Start();
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    EXPECT_EQ(OHOS::ConcurrentTask::ConcurrentTaskClient::requestAuthCount_.load(), 0);
+    EXPECT_TRUE(g_processorRunCalled.load());
 }
 } // namespace OHOS::SoftBus

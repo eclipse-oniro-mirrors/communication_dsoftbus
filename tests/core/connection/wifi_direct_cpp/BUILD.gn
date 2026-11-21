@@ -170,6 +170,8 @@ ohos_unittest("WifiDirectManagerCppTest") {
     debug = false
   }
 
+  defines += [ "DSOFTBUS_FEATURE_QOS_BOOST" ]
+
   include_dirs = [
     "$dsoftbus_dfx_path/interface/include",
     "$dsoftbus_dfx_path/interface/include/form",

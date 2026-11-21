@@ -41,6 +41,7 @@ public:
     void SetRemoteDeviceId(const std::string &remoteDeviceId);
     bool IsActive() const;
     void SetActive(bool active);
+    void SetBoostQos(bool boostQos);
     bool CanAcceptNegotiateData(WifiDirectCommand &command);
     bool HasAnyConnectCommand(WifiDirectLinkType linkType);
 
@@ -64,6 +65,7 @@ protected:
     WifiDirectEventSender GetSender() { return receiver_; }
 
     virtual void ProcessUnHandleCommand();
+    void SubmitProcessorTask();
 
     std::string remoteDeviceId_;
     WifiDirectEventReceiver receiver_;
@@ -73,6 +75,7 @@ protected:
     std::thread thread_;
 
     bool active_;
+    bool boostQos_;
 
     bool started_;
 };
