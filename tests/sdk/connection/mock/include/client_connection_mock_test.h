@@ -31,6 +31,7 @@ public:
     virtual int32_t ServerIpcDisconnect(uint32_t handle);
     virtual int32_t ServerIpcSend(uint32_t handle, const uint8_t *data, uint32_t len);
     virtual int32_t ServerIpcGetPeerDeviceId(uint32_t handle, char *deviceId, uint32_t len);
+    virtual int32_t ServerIpcIsEmulator(bool *isEmulator);
 };
 
 class ClientConnectionInterfaceMock : public ClientConnectionInterface {
@@ -44,6 +45,7 @@ public:
     MOCK_METHOD1(ServerIpcDisconnect, int32_t(uint32_t handle));
     MOCK_METHOD3(ServerIpcSend, int32_t(uint32_t handle, const uint8_t *data, uint32_t len));
     MOCK_METHOD3(ServerIpcGetPeerDeviceId, int32_t(uint32_t handle, char *deviceId, uint32_t len));
+    MOCK_METHOD1(ServerIpcIsEmulator, int32_t(bool *isEmulator));
 };
 } // namespace OHOS
 #endif // CLIENT_CONNECTION_MOCK_TEST_H
