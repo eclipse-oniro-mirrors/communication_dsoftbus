@@ -235,6 +235,7 @@ void SoftBusServerStub::InitMemberFuncMap()
     memberFuncMap_[SERVER_GENERAL_DISCONNECT] = &SoftBusServerStub::DisconnectInner;
     memberFuncMap_[SERVER_GENERAL_SEND] = &SoftBusServerStub::SendInner;
     memberFuncMap_[SERVER_GENERAL_GET_PEER_DEVICE_ID] = &SoftBusServerStub::GetPeerDeviceIdInner;
+    memberFuncMap_[SERVER_GENERAL_IS_EMULATOR] = &SoftBusServerStub::IsEmulatorInner;
     memberFuncMap_[SERVER_SET_NODE_KEY_INFO] = &SoftBusServerStub::SetNodeKeyInfoInner;
     memberFuncMap_[SERVER_START_ACCOUNT_AUTH] = &SoftBusServerStub::StartAccountAuthInner;
     memberFuncMap_[SERVER_PROCESS_ACCOUNT_AUTH] = &SoftBusServerStub::ProcessAccountAuthInner;
@@ -568,16 +569,6 @@ static bool CheckMDMControl()
     return isMDMControl;
 }
 #endif
-
-static bool CheckEmulatorNotSupport()
-{
-#ifdef DSOFTBUS_FEATURE_EMULATOR
-    COMM_LOGE(COMM_SVC, "emulator environment, general connection not support");
-    return true;
-#else
-    return false;
-#endif
-}
 
 static int32_t SoftBusCheckTimestamp(MessageParcel &data, const char *sessionName)
 {
@@ -2427,9 +2418,6 @@ static int32_t CheckPkgName(const char *pkgName)
 
 int32_t SoftBusServerStub::CreateServerInner(MessageParcel &data, MessageParcel &reply)
 {
-    if (CheckEmulatorNotSupport()) {
-        return SOFTBUS_CONN_GENERAL_NOT_SUPPORT;
-    }
 #ifdef SUPPORT_BUNDLENAME
     if (CheckMDMControl()) {
         COMM_LOGE(COMM_SVC, "MDM control, not allow");
@@ -2483,9 +2471,6 @@ int32_t SoftBusServerStub::RemoveServerInner(MessageParcel &data, MessageParcel 
 
 int32_t SoftBusServerStub::ConnectInner(MessageParcel &data, MessageParcel &reply)
 {
-    if (CheckEmulatorNotSupport()) {
-        return SOFTBUS_CONN_GENERAL_NOT_SUPPORT;
-    }
 #ifdef SUPPORT_BUNDLENAME
     if (CheckMDMControl()) {
         COMM_LOGE(COMM_SVC, "MDM control, not allow");
@@ -2600,6 +2585,20 @@ int32_t SoftBusServerStub::GetPeerDeviceIdInner(MessageParcel &data, MessageParc
     }
     if (!reply.WriteInt32(retReply)) {
         COMM_LOGE(COMM_SVC, "write ret failed!");
+        return SOFTBUS_IPC_ERR;
+    }
+    return SOFTBUS_OK;
+}
+
+int32_t SoftBusServerStub::IsEmulatorInner(MessageParcel &data, MessageParcel &reply)
+{
+    (void)data;
+    bool isEmulator = false;
+#ifdef DSOFTBUS_FEATURE_EMULATOR
+    isEmulator = true;
+#endif
+    if (!reply.WriteBool(isEmulator)) {
+        COMM_LOGE(COMM_SVC, "write reply failed");
         return SOFTBUS_IPC_ERR;
     }
     return SOFTBUS_OK;

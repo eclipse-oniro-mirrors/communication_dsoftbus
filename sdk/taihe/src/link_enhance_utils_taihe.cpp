@@ -14,6 +14,7 @@
  */
 
 #include "comm_log.h"
+#include "general_client_connection.h"
 #include "link_enhance_utils_taihe.h"
 #include "napi_link_enhance_error_code.h"
 #include "securec.h"
@@ -43,7 +44,7 @@ static std::map<int32_t, std::string> taiheErrMsgMap {
     {LINK_ENHANCE_CONNECTION_NOT_READY, "Connection is not ready."},
     {LINK_ENHANCE_PARAMETER_INVALID, "Invalid parameter."},
     {LINK_ENHANCE_INTERNAL_ERR, "Internal error."},
-    {LINK_ENHANCE_EMULATOR_NOT_SUPPORT, "Emulator not supported."},
+    {LINK_ENHANCE_EMULATOR_NOT_SUPPORT, "the capability is not supported on the emulator at this time"},
 };
 int32_t ConvertToJsErrcode(int32_t err)
 {
@@ -64,8 +65,6 @@ int32_t ConvertToJsErrcode(int32_t err)
             return LINK_ENHANCE_PARAMETER_INVALID;
         case SOFTBUS_CONN_GENERAL_CREATE_SERVER_MAX:
             return LINK_ENHANCE_SERVERS_EXCEEDS;
-        case SOFTBUS_CONN_GENERAL_NOT_SUPPORT:
-            return LINK_ENHANCE_EMULATOR_NOT_SUPPORT;
         default:
             return LINK_ENHANCE_INTERNAL_ERR;
     }
@@ -79,6 +78,32 @@ void ThrowException(int32_t err)
     if (it != taiheErrMsgMap.end()) {
         taihe::set_business_error(it->first, it->second);
     }
+}
+
+void ThrowEmulatorNotSupport(void)
+{
+    auto it = taiheErrMsgMap.find(LINK_ENHANCE_EMULATOR_NOT_SUPPORT);
+    if (it != taiheErrMsgMap.end()) {
+        taihe::set_business_error(it->first, it->second);
+    }
+}
+
+static std::atomic<int32_t> g_emulatorState = { 0 };
+
+bool IsEmulatorEnv(void)
+{
+    int32_t state = g_emulatorState.load();
+    if (state == 0) {
+        bool isEmulator = false;
+        int32_t ret = GeneralIsEmulator(PKG_NAME.c_str(), &isEmulator);
+        if (ret != SOFTBUS_OK) {
+            COMM_LOGE(COMM_SDK, "query emulator fail, ret=%{public}d", ret);
+            return false;
+        }
+        state = isEmulator ? 1 : 2;
+        g_emulatorState.store(state);
+    }
+    return state == 1;
 }
 
 bool CheckAccessToken(void)

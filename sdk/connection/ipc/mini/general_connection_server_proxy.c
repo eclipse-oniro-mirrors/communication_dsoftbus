@@ -69,3 +69,9 @@ int32_t ServerIpcGetPeerDeviceId(uint32_t handle, char *deviceId, uint32_t len)
     (void)len;
     return SOFTBUS_FUNC_NOT_SUPPORT;
 }
+
+int32_t ServerIpcIsEmulator(bool *isEmulator)
+{
+    (void)isEmulator;
+    return SOFTBUS_FUNC_NOT_SUPPORT;
+}

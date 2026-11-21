@@ -136,3 +136,11 @@ int32_t ServerIpcGetPeerDeviceId(uint32_t handle, char *deviceId, uint32_t len)
 
     return g_serverProxy->ConnGetPeerDeviceId(handle, deviceId, len);
 }
+
+int32_t ServerIpcIsEmulator(bool *isEmulator)
+{
+    CONN_CHECK_AND_RETURN_RET_LOGE(
+        g_serverProxy != nullptr, SOFTBUS_NO_INIT, CONN_COMMON, "softbus server g_serverProxy is null");
+
+    return g_serverProxy->IsEmulator(isEmulator);
+}

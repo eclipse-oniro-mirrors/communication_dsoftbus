@@ -66,6 +66,10 @@ napi_value NapiLinkEnhanceServer::Create(napi_env env, napi_callback_info info)
         HandleSyncErr(env, LINK_ENHANCE_PARAMETER_INVALID);
         return NapiGetUndefinedRet(env);
     }
+    if (IsEmulatorEnv()) {
+        HandleSyncErr(env, LINK_ENHANCE_EMULATOR_NOT_SUPPORT);
+        return NapiGetUndefinedRet(env);
+    }
     return result;
 }
 

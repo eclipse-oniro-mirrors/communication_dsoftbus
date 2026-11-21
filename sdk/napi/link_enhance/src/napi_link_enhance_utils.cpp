@@ -16,6 +16,7 @@
 #include "napi_link_enhance_utils.h"
 
 #include <regex>
+#include "general_client_connection.h"
 #include "napi_link_enhance_error_code.h"
 #include "securec.h"
 #include "softbus_access_token_adapter.h"
@@ -39,7 +40,7 @@ static std::map<int32_t, std::string> napiErrMsgMap {
     {LINK_ENHANCE_CONNECTION_NOT_READY, "Connection is not ready."},
     {LINK_ENHANCE_PARAMETER_INVALID, "Invalid parameter."},
     {LINK_ENHANCE_INTERNAL_ERR, "Internal error."},
-    {LINK_ENHANCE_EMULATOR_NOT_SUPPORT, "Emulator not supported."},
+    {LINK_ENHANCE_EMULATOR_NOT_SUPPORT, "the capability is not supported on the emulator at this time"},
 };
 
 int32_t DoInJsMainThread(napi_env env, std::function<void(void)> func)
@@ -49,6 +50,24 @@ int32_t DoInJsMainThread(napi_env env, std::function<void(void)> func)
         return -1;
     }
     return 0;
+}
+
+static std::atomic<int32_t> g_emulatorState = { 0 };
+
+bool IsEmulatorEnv(void)
+{
+    int32_t state = g_emulatorState.load();
+    if (state == 0) {
+        bool isEmulator = false;
+        int32_t ret = GeneralIsEmulator(PKG_NAME.c_str(), &isEmulator);
+        if (ret != SOFTBUS_OK) {
+            COMM_LOGE(COMM_SDK, "query emulator fail, ret=%{public}d", ret);
+            return false;
+        }
+        state = isEmulator ? 1 : 2;
+        g_emulatorState.store(state);
+    }
+    return state == 1;
 }
 
 bool ParseString(napi_env env, string &param, napi_value args)
@@ -209,8 +228,6 @@ int32_t ConvertToJsErrcode(int32_t err)
             return LINK_ENHANCE_PARAMETER_INVALID;
         case SOFTBUS_CONN_GENERAL_CREATE_SERVER_MAX:
             return LINK_ENHANCE_SERVERS_EXCEEDS;
-        case SOFTBUS_CONN_GENERAL_NOT_SUPPORT:
-            return LINK_ENHANCE_EMULATOR_NOT_SUPPORT;
         default:
             return LINK_ENHANCE_INTERNAL_ERR;
     }

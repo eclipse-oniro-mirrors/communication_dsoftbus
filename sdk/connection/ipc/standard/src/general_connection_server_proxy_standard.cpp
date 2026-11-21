@@ -554,4 +554,35 @@ int32_t ConnectionServerProxy::ConnGetPeerDeviceId(uint32_t handle, char *device
     }
     return serverRet;
 }
+int32_t ConnectionServerProxy::IsEmulator(bool *isEmulator)
+{
+    if (isEmulator == nullptr) {
+        CONN_LOGE(CONN_COMMON, "isEmulator is null");
+        return SOFTBUS_INVALID_PARAM;
+    }
+    sptr<IRemoteObject> remote = GetSystemAbility();
+    if (remote == nullptr) {
+        CONN_LOGE(CONN_COMMON, "remote is null");
+        return SOFTBUS_IPC_ERR;
+    }
+    MessageParcel data;
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        CONN_LOGE(CONN_COMMON, "write InterfaceToken fail");
+        return SOFTBUS_IPC_ERR;
+    }
+    MessageParcel reply;
+    MessageOption option;
+    int32_t ret = remote->SendRequest(SERVER_GENERAL_IS_EMULATOR, data, reply, option);
+    if (ret != SOFTBUS_OK) {
+        CONN_LOGE(CONN_COMMON, "send request fail, err=%{public}d", ret);
+        return ret;
+    }
+    bool isEmu = false;
+    if (!reply.ReadBool(isEmu)) {
+        CONN_LOGE(CONN_COMMON, "read isEmulator fail");
+        return SOFTBUS_IPC_ERR;
+    }
+    *isEmulator = isEmu;
+    return SOFTBUS_OK;
+}
 } // namespace OHOS

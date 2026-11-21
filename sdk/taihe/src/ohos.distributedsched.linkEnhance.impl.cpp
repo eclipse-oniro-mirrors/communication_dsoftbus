@@ -516,6 +516,10 @@ private:
         ThrowException(SOFTBUS_INVALID_PARAM);
         return server;
     }
+    if (IsEmulatorEnv()) {
+        ThrowEmulatorNotSupport();
+        return server;
+    }
     bool isExist = false;
     std::lock_guard<std::mutex> guard(serverLock_);
     for (auto it : serverList_) {
@@ -548,6 +552,10 @@ private:
     if (deviceIdStr.size() == 0 || nameStr.size() == 0 || nameStr.size() > SOFTBUS_NAME_MAX_LEN) {
         COMM_LOGE(COMM_SDK, "invalid parameter, name=%{public}s", name.c_str());
         ThrowException(SOFTBUS_INVALID_PARAM);
+        return connection;
+    }
+    if (IsEmulatorEnv()) {
+        ThrowEmulatorNotSupport();
         return connection;
     }
     std::lock_guard<std::mutex> guard(connectionLock_);

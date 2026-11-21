@@ -313,3 +313,22 @@ int32_t ServerStopped(const char *name)
     CONN_LOGI(CONN_COMMON, "connect server stopped succ");
     return SOFTBUS_OK;
 }
+
+int32_t GeneralIsEmulator(const char *pkgName, bool *isEmulator)
+{
+    if (pkgName == NULL || isEmulator == NULL) {
+        CONN_LOGE(CONN_COMMON, "invalid param");
+        return SOFTBUS_INVALID_PARAM;
+    }
+    int32_t ret = InitSoftBus(pkgName);
+    if (ret != SOFTBUS_OK) {
+        CONN_LOGE(CONN_COMMON, "register service fail");
+        return ret;
+    }
+    ret = ServerIpcIsEmulator(isEmulator);
+    if (ret != SOFTBUS_OK) {
+        CONN_LOGE(CONN_COMMON, "is emulator fail");
+        return ret;
+    }
+    return SOFTBUS_OK;
+}
