@@ -65,6 +65,8 @@ public:
         const char *serviceId) = 0;
     virtual int32_t LnnIpcProcessAccountAuth(const char *pkgName, int32_t pid, int64_t requestId,
         const uint8_t *data, uint32_t dataLen) = 0;
+    virtual int32_t TransSetEdcaParamForChannel(int32_t channelId, int32_t channelType, int32_t scene,
+        int32_t level) = 0;
 };
 class SoftbusServerStubTestInterfaceMock : public SoftbusServerStubTestInterface {
 public:
@@ -98,6 +100,8 @@ public:
     MOCK_METHOD0(LnnIsOsAccountConstraint, bool (void));
     MOCK_METHOD4(LnnIpcStartAccountAuth, int32_t (const char *, int32_t, int64_t, const char *));
     MOCK_METHOD5(LnnIpcProcessAccountAuth, int32_t (const char *, int32_t, int64_t, const uint8_t *, uint32_t));
+    MOCK_METHOD4(TransSetEdcaParamForChannel, int32_t (int32_t channelId, int32_t channelType, int32_t scene,
+        int32_t level));
 };
 }
 

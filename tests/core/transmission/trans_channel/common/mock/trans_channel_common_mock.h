@@ -20,6 +20,7 @@
 #include <gtest/gtest.h>
 
 #include "softbus_app_info.h"
+#include "softbus_conn_interface_struct.h"
 #include "trans_udp_channel_manager.h"
 
 namespace OHOS {
@@ -35,6 +36,9 @@ public:
     virtual int32_t TransTdcUpdateEdcaParam(int32_t channelId, const EdcaParam *edcaParam);
     virtual int32_t TransGetUdpChannelById(int32_t channelId, UdpChannelInfo *channel);
     virtual int32_t TransUdpUpdateEdcaParam(int32_t channelId, const EdcaParam *edcaParam);
+    virtual int32_t TransOpenUdpChannel(AppInfo *appInfo, const ConnectOption *connOpt, int32_t *channelId);
+    virtual int32_t TransProxyOpenProxyChannel(AppInfo *appInfo, const ConnectOption *connOpt, int32_t *channelId);
+    virtual int32_t TransOpenDirectChannel(AppInfo *appInfo, const ConnectOption *connOpt, int32_t *channelId);
 };
 
 class TransChannelCommonMock : public TransChannelCommonInterface {
@@ -49,6 +53,9 @@ public:
     MOCK_METHOD2(TransTdcUpdateEdcaParam, int32_t(int32_t channelId, const EdcaParam *edcaParam));
     MOCK_METHOD2(TransGetUdpChannelById, int32_t(int32_t channelId, UdpChannelInfo *channel));
     MOCK_METHOD2(TransUdpUpdateEdcaParam, int32_t(int32_t channelId, const EdcaParam *edcaParam));
+    MOCK_METHOD3(TransOpenUdpChannel, int32_t(AppInfo *appInfo, const ConnectOption *connOpt, int32_t *channelId));
+    MOCK_METHOD3(TransProxyOpenProxyChannel, int32_t(AppInfo *appInfo, const ConnectOption *connOpt, int32_t *channelId));
+    MOCK_METHOD3(TransOpenDirectChannel, int32_t(AppInfo *appInfo, const ConnectOption *connOpt, int32_t *channelId));
 };
 
 } // namespace OHOS

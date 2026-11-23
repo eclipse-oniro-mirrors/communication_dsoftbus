@@ -886,8 +886,23 @@ HWTEST_F(TransIpcStandardTest, TransServerProxySetWirelessLinkCtrl001, TestSize.
 {
     TransServerProxy transServerProxy(nullptr);
     int32_t ret = transServerProxy.SetWirelessLinkCtrl(1);
-    // GetSystemAbility() 是文件内 static 函数，测试环境可能返回 nullptr（REMOTE_NULL）
-    // 或非 null 但 SendRequest 失败（ACCESS_TOKEN_DENIED）。两者都说明走到了 IPC 调用。
+    EXPECT_TRUE(ret == SOFTBUS_TRANS_PROXY_REMOTE_NULL || ret == SOFTBUS_ACCESS_TOKEN_DENIED);
+}
+
+/*
+ * @tc.name: TransServerProxySetSocketOptEdca001
+ * @tc.desc: SetSocketOptEdca with nullptr remote returns SOFTBUS_TRANS_PROXY_REMOTE_NULL.
+ *           Covers the remote==nullptr true branch; the false branch and downstream
+ *           WriteInterfaceToken/WriteInt32/SendRequest/ReadInt32 branches require a
+ *           live IPC remote object which is not available in unit test environment.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransIpcStandardTest, TransServerProxySetSocketOptEdca001, TestSize.Level1)
+{
+    TransServerProxy transServerProxy(nullptr);
+    int32_t ret = transServerProxy.SetSocketOptEdca(1, CHANNEL_TYPE_TCP_DIRECT,
+        EDCA_SCENE_DATA_CLONE, EDCA_LEVEL_SEMI);
     EXPECT_TRUE(ret == SOFTBUS_TRANS_PROXY_REMOTE_NULL || ret == SOFTBUS_ACCESS_TOKEN_DENIED);
 }
 }

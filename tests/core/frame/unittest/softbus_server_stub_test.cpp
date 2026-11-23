@@ -2772,4 +2772,253 @@ HWTEST_F(SoftbusServerStubTest, SoftbusServerStubTestSetWirelessLinkCtrl003, Tes
     EXPECT_TRUE(reply.ReadInt32(replyVal));
     EXPECT_EQ(SOFTBUS_OK, replyVal);
 }
+
+static void WriteFullSessionInfoToParcel(MessageParcel &data, int32_t scene, int32_t level)
+{
+    data.WriteString("testSession");
+    data.WriteString("peerSession");
+    data.WriteString("peerDevice");
+    data.WriteString("groupId");
+    data.WriteBool(false);
+    data.WriteInt32(1);
+    data.WriteBool(false);
+    data.WriteUint32(0);
+    data.WriteBool(false);
+    data.WriteUint64(0);
+    data.WriteUint32(0);
+    data.WriteUint32(0);
+    data.WriteUint32(0);
+    data.WriteInt32(0);
+    data.WriteInt32(scene);
+    data.WriteInt32(level);
+}
+
+/*
+ * @tc.name: SetSocketOptEdcaInnerTest001
+ * @tc.desc: empty data → ReadInt32(channelId) fails.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusServerStubTest, SetSocketOptEdcaInnerTest001, TestSize.Level1)
+{
+    sptr<OHOS::SoftBusServerStub> softBusServer = new OHOS::SoftBusServer(SOFTBUS_SERVER_SA_ID, true);
+    ASSERT_NE(nullptr, softBusServer);
+    MessageParcel data;
+    MessageParcel reply;
+    int32_t ret = softBusServer->SetSocketOptEdcaInner(data, reply);
+    EXPECT_EQ(SOFTBUS_TRANS_PROXY_READINT_FAILED, ret);
+}
+
+/*
+ * @tc.name: SetSocketOptEdcaInnerTest002
+ * @tc.desc: only channelId → ReadInt32(channelType) fails.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusServerStubTest, SetSocketOptEdcaInnerTest002, TestSize.Level1)
+{
+    sptr<OHOS::SoftBusServerStub> softBusServer = new OHOS::SoftBusServer(SOFTBUS_SERVER_SA_ID, true);
+    ASSERT_NE(nullptr, softBusServer);
+    MessageParcel data;
+    MessageParcel reply;
+    EXPECT_TRUE(data.WriteInt32(1));
+    int32_t ret = softBusServer->SetSocketOptEdcaInner(data, reply);
+    EXPECT_EQ(SOFTBUS_TRANS_PROXY_READINT_FAILED, ret);
+}
+
+/*
+ * @tc.name: SetSocketOptEdcaInnerTest003
+ * @tc.desc: channelId + channelType, TransGetAndComparePid fails.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusServerStubTest, SetSocketOptEdcaInnerTest003, TestSize.Level1)
+{
+    NiceMock<SoftbusServerStubTestInterfaceMock> mock;
+    EXPECT_CALL(mock, TransGetAndComparePid).WillOnce(Return(SOFTBUS_INVALID_PARAM));
+    sptr<OHOS::SoftBusServerStub> softBusServer = new OHOS::SoftBusServer(SOFTBUS_SERVER_SA_ID, true);
+    ASSERT_NE(nullptr, softBusServer);
+    MessageParcel data;
+    MessageParcel reply;
+    EXPECT_TRUE(data.WriteInt32(1));
+    EXPECT_TRUE(data.WriteInt32(CHANNEL_TYPE_TCP_DIRECT));
+    int32_t ret = softBusServer->SetSocketOptEdcaInner(data, reply);
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
+}
+
+/*
+ * @tc.name: SetSocketOptEdcaInnerTest004
+ * @tc.desc: pid OK but no scene → ReadInt32(scene) fails.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusServerStubTest, SetSocketOptEdcaInnerTest004, TestSize.Level1)
+{
+    NiceMock<SoftbusServerStubTestInterfaceMock> mock;
+    EXPECT_CALL(mock, TransGetAndComparePid).WillOnce(Return(SOFTBUS_OK));
+    sptr<OHOS::SoftBusServerStub> softBusServer = new OHOS::SoftBusServer(SOFTBUS_SERVER_SA_ID, true);
+    ASSERT_NE(nullptr, softBusServer);
+    MessageParcel data;
+    MessageParcel reply;
+    EXPECT_TRUE(data.WriteInt32(1));
+    EXPECT_TRUE(data.WriteInt32(CHANNEL_TYPE_TCP_DIRECT));
+    int32_t ret = softBusServer->SetSocketOptEdcaInner(data, reply);
+    EXPECT_EQ(SOFTBUS_TRANS_PROXY_READINT_FAILED, ret);
+}
+
+/*
+ * @tc.name: SetSocketOptEdcaInnerTest005
+ * @tc.desc: pid OK, scene written but no level → ReadInt32(level) fails.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusServerStubTest, SetSocketOptEdcaInnerTest005, TestSize.Level1)
+{
+    NiceMock<SoftbusServerStubTestInterfaceMock> mock;
+    EXPECT_CALL(mock, TransGetAndComparePid).WillOnce(Return(SOFTBUS_OK));
+    sptr<OHOS::SoftBusServerStub> softBusServer = new OHOS::SoftBusServer(SOFTBUS_SERVER_SA_ID, true);
+    ASSERT_NE(nullptr, softBusServer);
+    MessageParcel data;
+    MessageParcel reply;
+    EXPECT_TRUE(data.WriteInt32(1));
+    EXPECT_TRUE(data.WriteInt32(CHANNEL_TYPE_TCP_DIRECT));
+    EXPECT_TRUE(data.WriteInt32(EDCA_SCENE_DATA_CLONE));
+    int32_t ret = softBusServer->SetSocketOptEdcaInner(data, reply);
+    EXPECT_EQ(SOFTBUS_TRANS_PROXY_READINT_FAILED, ret);
+}
+
+/*
+ * @tc.name: SetSocketOptEdcaInnerTest006
+ * @tc.desc: all params, TransSetEdcaParamForChannel returns error → reply contains error.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusServerStubTest, SetSocketOptEdcaInnerTest006, TestSize.Level1)
+{
+    NiceMock<SoftbusServerStubTestInterfaceMock> mock;
+    EXPECT_CALL(mock, TransGetAndComparePid).WillOnce(Return(SOFTBUS_OK));
+    EXPECT_CALL(mock, TransSetEdcaParamForChannel).WillOnce(Return(SOFTBUS_INVALID_PARAM));
+    sptr<OHOS::SoftBusServerStub> softBusServer = new OHOS::SoftBusServer(SOFTBUS_SERVER_SA_ID, true);
+    ASSERT_NE(nullptr, softBusServer);
+    MessageParcel data;
+    MessageParcel reply;
+    EXPECT_TRUE(data.WriteInt32(1));
+    EXPECT_TRUE(data.WriteInt32(CHANNEL_TYPE_TCP_DIRECT));
+    EXPECT_TRUE(data.WriteInt32(EDCA_SCENE_DATA_CLONE));
+    EXPECT_TRUE(data.WriteInt32(EDCA_LEVEL_SEMI));
+    int32_t ret = softBusServer->SetSocketOptEdcaInner(data, reply);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    int32_t replyVal = 0;
+    EXPECT_TRUE(reply.ReadInt32(replyVal));
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, replyVal);
+}
+
+/*
+ * @tc.name: SetSocketOptEdcaInnerTest007
+ * @tc.desc: all params, TransSetEdcaParamForChannel returns OK → reply contains OK.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusServerStubTest, SetSocketOptEdcaInnerTest007, TestSize.Level1)
+{
+    NiceMock<SoftbusServerStubTestInterfaceMock> mock;
+    EXPECT_CALL(mock, TransGetAndComparePid).WillOnce(Return(SOFTBUS_OK));
+    EXPECT_CALL(mock, TransSetEdcaParamForChannel).WillOnce(Return(SOFTBUS_OK));
+    sptr<OHOS::SoftBusServerStub> softBusServer = new OHOS::SoftBusServer(SOFTBUS_SERVER_SA_ID, true);
+    ASSERT_NE(nullptr, softBusServer);
+    MessageParcel data;
+    MessageParcel reply;
+    EXPECT_TRUE(data.WriteInt32(1));
+    EXPECT_TRUE(data.WriteInt32(CHANNEL_TYPE_TCP_DIRECT));
+    EXPECT_TRUE(data.WriteInt32(EDCA_SCENE_DATA_CLONE));
+    EXPECT_TRUE(data.WriteInt32(EDCA_LEVEL_SEMI));
+    int32_t ret = softBusServer->SetSocketOptEdcaInner(data, reply);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    int32_t replyVal = -1;
+    EXPECT_TRUE(reply.ReadInt32(replyVal));
+    EXPECT_EQ(SOFTBUS_OK, replyVal);
+}
+
+/*
+ * @tc.name: ReadSessionInfoEdcaTest001
+ * @tc.desc: valid scene and level are parsed correctly.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusServerStubTest, ReadSessionInfoEdcaTest001, TestSize.Level1)
+{
+    MessageParcel data;
+    WriteFullSessionInfoToParcel(data, EDCA_SCENE_DATA_CLONE, EDCA_LEVEL_FULL);
+    SessionParam param;
+    (void)memset_s(&param, sizeof(param), 0, sizeof(param));
+    ReadSessionInfo(data, param);
+    EXPECT_EQ(EDCA_SCENE_DATA_CLONE, param.edcaParam.scene);
+    EXPECT_EQ(EDCA_LEVEL_FULL, param.edcaParam.level);
+}
+
+/*
+ * @tc.name: ReadSessionInfoEdcaTest002
+ * @tc.desc: invalid scene (< DATA_CLONE) defaults to EDCA_SCENE_DATA_CLONE.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusServerStubTest, ReadSessionInfoEdcaTest002, TestSize.Level1)
+{
+    MessageParcel data;
+    WriteFullSessionInfoToParcel(data, -1, EDCA_LEVEL_SEMI);
+    SessionParam param;
+    (void)memset_s(&param, sizeof(param), 0, sizeof(param));
+    ReadSessionInfo(data, param);
+    EXPECT_EQ(EDCA_SCENE_DATA_CLONE, param.edcaParam.scene);
+    EXPECT_EQ(EDCA_LEVEL_SEMI, param.edcaParam.level);
+}
+
+/*
+ * @tc.name: ReadSessionInfoEdcaTest003
+ * @tc.desc: invalid scene (>= BUTT) defaults to EDCA_SCENE_DATA_CLONE.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusServerStubTest, ReadSessionInfoEdcaTest003, TestSize.Level1)
+{
+    MessageParcel data;
+    WriteFullSessionInfoToParcel(data, EDCA_SCENE_BUTT, EDCA_LEVEL_SEMI);
+    SessionParam param;
+    (void)memset_s(&param, sizeof(param), 0, sizeof(param));
+    ReadSessionInfo(data, param);
+    EXPECT_EQ(EDCA_SCENE_DATA_CLONE, param.edcaParam.scene);
+}
+
+/*
+ * @tc.name: ReadSessionInfoEdcaTest004
+ * @tc.desc: invalid level (< DISABLE) defaults to EDCA_LEVEL_DISABLE.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusServerStubTest, ReadSessionInfoEdcaTest004, TestSize.Level1)
+{
+    MessageParcel data;
+    WriteFullSessionInfoToParcel(data, EDCA_SCENE_DATA_CLONE, -1);
+    SessionParam param;
+    (void)memset_s(&param, sizeof(param), 0, sizeof(param));
+    ReadSessionInfo(data, param);
+    EXPECT_EQ(EDCA_SCENE_DATA_CLONE, param.edcaParam.scene);
+    EXPECT_EQ(EDCA_LEVEL_DISABLE, param.edcaParam.level);
+}
+
+/*
+ * @tc.name: ReadSessionInfoEdcaTest005
+ * @tc.desc: invalid level (>= BUTT) defaults to EDCA_LEVEL_DISABLE.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SoftbusServerStubTest, ReadSessionInfoEdcaTest005, TestSize.Level1)
+{
+    MessageParcel data;
+    WriteFullSessionInfoToParcel(data, EDCA_SCENE_DATA_CLONE, EDCA_LEVEL_BUTT);
+    SessionParam param;
+    (void)memset_s(&param, sizeof(param), 0, sizeof(param));
+    ReadSessionInfo(data, param);
+    EXPECT_EQ(EDCA_LEVEL_DISABLE, param.edcaParam.level);
+}
 }

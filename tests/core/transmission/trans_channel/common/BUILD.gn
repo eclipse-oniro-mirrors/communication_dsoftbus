@@ -300,6 +300,7 @@ ohos_unittest("TransChannelCommonTest") {
     "$dsoftbus_root_path/core/transmission/trans_channel/manager/include",
     "$dsoftbus_root_path/core/transmission/trans_channel/tcp_direct/include",
     "$dsoftbus_root_path/core/transmission/trans_channel/udp_negotiation/include",
+    "$dsoftbus_root_path/interfaces/kits/connect",
     "$dsoftbus_root_path/interfaces/kits/lnn",
     "$dsoftbus_root_path/interfaces/kits/transport",
     "$dsoftbus_root_path/tests/core/transmission/trans_channel/common/mock",
