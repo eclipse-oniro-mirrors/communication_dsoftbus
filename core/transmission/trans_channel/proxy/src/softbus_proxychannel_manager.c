@@ -2550,6 +2550,47 @@ static void TransNotifyProfileDeleted(const LnnEventBasicInfo *info)
     TransOnProfileDeleted(profileEvent->serviceIdList, profileEvent->serviceIdCount);
 }
 
+static int32_t TransProxyRegisterLnnEventHandlers(void)
+{
+    int32_t ret = LnnRegisterEventHandler(LNN_EVENT_SINGLE_NETWORK_OFFLINE, TransNotifySingleNetworkOffLine);
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_INIT, "register TransNotifySingleNetworkOffLine failed.");
+        goto ERR_ROLLBACK;
+    }
+    ret = LnnRegisterEventHandler(LNN_EVENT_NODE_NET_TYPE, TransNotifyNetworkOnline);
+    TRANS_LOGE(TRANS_INIT, "register TransNotifyNetworkOnline failed.");
+    ret = LnnRegisterEventHandler(LNN_EVENT_NODE_ONLINE_STATE_CHANGED, TransNotifyOffLine);
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_INIT, "register TransNotifyOffLine failed.");
+        goto ERR_ROLLBACK;
+    }
+    ret = LnnRegisterEventHandler(LNN_EVENT_USER_SWITCHED, TransNotifyUserSwitch);
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_INIT, "register user switch event failed.");
+        goto ERR_ROLLBACK;
+    }
+    ret = LnnRegisterEventHandler(LNN_EVENT_CONSTRAINT_ENABLE, TransNotifyBlockModeEnable);
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_INIT, "register user switch event failed.");
+        goto ERR_ROLLBACK;
+    }
+    ret = LnnRegisterEventHandler(LNN_EVENT_ACCOUNT_ACL_CHANGE, TransNotifyProfileDeleted);
+    if (ret != SOFTBUS_OK) {
+        TRANS_LOGE(TRANS_INIT, "register user profile deleted event failed.");
+        goto ERR_ROLLBACK;
+    }
+    return SOFTBUS_OK;
+
+ERR_ROLLBACK:
+    LnnUnregisterEventHandler(LNN_EVENT_SINGLE_NETWORK_OFFLINE, TransNotifySingleNetworkOffLine);
+    LnnUnregisterEventHandler(LNN_EVENT_NODE_NET_TYPE, TransNotifyNetworkOnline);
+    LnnUnregisterEventHandler(LNN_EVENT_NODE_ONLINE_STATE_CHANGED, TransNotifyOffLine);
+    LnnUnregisterEventHandler(LNN_EVENT_USER_SWITCHED, TransNotifyUserSwitch);
+    LnnUnregisterEventHandler(LNN_EVENT_CONSTRAINT_ENABLE, TransNotifyBlockModeEnable);
+    LnnUnregisterEventHandler(LNN_EVENT_ACCOUNT_ACL_CHANGE, TransNotifyProfileDeleted);
+    return ret;
+}
+
 int32_t TransProxyManagerInit(const IServerChannelCallBack *cb)
 {
     int32_t ret = TransProxyManagerInitInner(cb);
@@ -2566,27 +2607,19 @@ int32_t TransProxyManagerInit(const IServerChannelCallBack *cb)
         return ret;
     }
 
-    ret = LnnRegisterEventHandler(LNN_EVENT_SINGLE_NETWORK_OFFLINE, TransNotifySingleNetworkOffLine);
-    TRANS_CHECK_AND_RETURN_RET_LOGE(
-        ret == SOFTBUS_OK, ret, TRANS_INIT, "register TransNotifySingleNetworkOffLine failed.");
-
-    ret = LnnRegisterEventHandler(LNN_EVENT_NODE_NET_TYPE, TransNotifyNetworkOnline);
-    TRANS_LOGE(TRANS_INIT, "register TransNotifyNetworkOnline failed.");
-
-    ret = LnnRegisterEventHandler(LNN_EVENT_NODE_ONLINE_STATE_CHANGED, TransNotifyOffLine);
-    TRANS_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret, TRANS_INIT, "register TransNotifyOffLine failed.");
-
-    ret = LnnRegisterEventHandler(LNN_EVENT_USER_SWITCHED, TransNotifyUserSwitch);
-    TRANS_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret, TRANS_INIT, "register user switch event failed.");
-
-    ret = LnnRegisterEventHandler(LNN_EVENT_CONSTRAINT_ENABLE, TransNotifyBlockModeEnable);
-    TRANS_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret, TRANS_INIT, "register user switch event failed.");
-
-    ret = LnnRegisterEventHandler(LNN_EVENT_ACCOUNT_ACL_CHANGE, TransNotifyProfileDeleted);
-    TRANS_CHECK_AND_RETURN_RET_LOGE(ret == SOFTBUS_OK, ret, TRANS_INIT, "register user profile deleted event failed.");
+    ret = TransProxyRegisterLnnEventHandlers();
+    if (ret != SOFTBUS_OK) {
+        goto ERR_ROLLBACK;
+    }
 
     TRANS_LOGI(TRANS_INIT, "proxy channel init ok");
     return SOFTBUS_OK;
+
+ERR_ROLLBACK:
+    (void)UnRegisterTimeoutCallback(SOFTBUS_PROXYCHANNEL_TIMER_FUN);
+    DestroySoftBusList(g_proxyChannelList);
+    g_proxyChannelList = NULL;
+    return ret;
 }
 
 int32_t TransProxyGetNameByChanId(

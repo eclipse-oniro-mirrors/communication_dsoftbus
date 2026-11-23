@@ -1190,10 +1190,10 @@ HWTEST_F(TransChannelManagerTest, IsLaneModuleError001, TestSize.Level1)
 {
     int32_t errcode = SOFTBUS_LANE_DETECT_FAIL;
     bool ret = IsLaneModuleError(errcode);
-    EXPECT_EQ(true, ret);
+    EXPECT_TRUE(ret);
     errcode = SOFTBUS_CONN_FAIL;
     ret = IsLaneModuleError(errcode);
-    EXPECT_EQ(false, ret);
+    EXPECT_FALSE(ret);
 }
 
 /*
@@ -1263,6 +1263,7 @@ HWTEST_F(TransChannelManagerTest, GetAuthAppInfo001, TestSize.Level1)
     EXPECT_CALL(mock, TransCommonGetLocalConfig).WillOnce(Return(SOFTBUS_OK));
     AppInfo *appInfo = GetAuthAppInfo(g_sessionName);
     EXPECT_NE(nullptr, appInfo);
+    SoftBusFree(appInfo);
 }
 
 /*

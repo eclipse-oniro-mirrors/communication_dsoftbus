@@ -208,4 +208,28 @@ HWTEST_F(TransSessionServiceTest, TransSessionServiceTest06, TestSize.Level1)
     EXPECT_EQ(ret, SOFTBUS_CONN_INTERNAL_ERR);
     TransServerDeinit();
 }
+
+/*
+ * @tc.name: TransSessionServiceTest07
+ * @tc.desc: TransOpenSession with isQosLane true and qosCount exceeding QOS_TYPE_BUTT returns invalid param.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransSessionServiceTest, TransSessionServiceTest07, TestSize.Level1)
+{
+    SessionParam sessionPara;
+    memset_s(&sessionPara, sizeof(SessionParam), 0, sizeof(SessionParam));
+    TransInfo *transInfo = (TransInfo *)SoftBusCalloc(sizeof(TransInfo));
+    ASSERT_TRUE(transInfo != nullptr);
+    memset_s(transInfo, sizeof(TransInfo), 0, sizeof(TransInfo));
+    sessionPara.sessionName = g_sessionName;
+    sessionPara.peerSessionName = g_sessionName;
+    sessionPara.peerDeviceId = g_deviceId;
+    sessionPara.groupId = g_groupid;
+    sessionPara.isQosLane = true;
+    sessionPara.qosCount = QOS_TYPE_BUTT + 1;
+    int32_t ret = TransOpenSession(&sessionPara, transInfo);
+    EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
+    SoftBusFree(transInfo);
+}
 }
