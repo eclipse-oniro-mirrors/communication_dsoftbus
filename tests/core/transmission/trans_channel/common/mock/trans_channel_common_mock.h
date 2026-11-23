@@ -54,7 +54,8 @@ public:
     MOCK_METHOD2(TransGetUdpChannelById, int32_t(int32_t channelId, UdpChannelInfo *channel));
     MOCK_METHOD2(TransUdpUpdateEdcaParam, int32_t(int32_t channelId, const EdcaParam *edcaParam));
     MOCK_METHOD3(TransOpenUdpChannel, int32_t(AppInfo *appInfo, const ConnectOption *connOpt, int32_t *channelId));
-    MOCK_METHOD3(TransProxyOpenProxyChannel, int32_t(AppInfo *appInfo, const ConnectOption *connOpt, int32_t *channelId));
+    MOCK_METHOD3(TransProxyOpenProxyChannel,
+        int32_t(AppInfo *appInfo, const ConnectOption *connOpt, int32_t *channelId));
     MOCK_METHOD3(TransOpenDirectChannel, int32_t(AppInfo *appInfo, const ConnectOption *connOpt, int32_t *channelId));
 };
 

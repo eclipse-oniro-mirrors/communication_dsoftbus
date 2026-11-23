@@ -54,17 +54,33 @@ extern "C" struct WifiDirectManager *GetWifiDirectManager(void)
 
 class TransChannelCommonTest : public testing::Test {
 public:
-    TransChannelCommonTest() { }
-    ~TransChannelCommonTest() { }
+    TransChannelCommonTest()
+    {
+    }
+    ~TransChannelCommonTest()
+    {
+    }
     static void SetUpTestCase(void);
     static void TearDownTestCase(void);
-    void SetUp() override { g_setEdcaParamHook = nullptr; g_getMgrHook = nullptr; }
-    void TearDown() override { g_setEdcaParamHook = nullptr; g_getMgrHook = nullptr; }
+    void SetUp() override
+    {
+        g_setEdcaParamHook = nullptr;
+        g_getMgrHook = nullptr;
+    }
+    void TearDown() override
+    {
+        g_setEdcaParamHook = nullptr;
+        g_getMgrHook = nullptr;
+    }
 };
 
-void TransChannelCommonTest::SetUpTestCase(void) { }
+void TransChannelCommonTest::SetUpTestCase(void)
+{
+}
 
-void TransChannelCommonTest::TearDownTestCase(void) { }
+void TransChannelCommonTest::TearDownTestCase(void)
+{
+}
 
 /*
  * @tc.name: TransSetWakeUpInfoTest001
