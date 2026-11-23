@@ -46,11 +46,7 @@ uint32_t g_getSystemAbilityId = 2;
 uint32_t g_printRequestFailedCount = 0;
 constexpr int32_t RANDOM_RANGE_MAX = 501; // range of random numbers is (0, 500ms)
 constexpr uint32_t PRINT_INTERVAL = 200;
-#ifdef DSOFTBUS_CYCLE_NUMBER_MAX
-constexpr uint32_t CYCLE_NUMBER_MAX = DSOFTBUS_CYCLE_NUMBER_MAX;
-#else
-constexpr uint32_t CYCLE_NUMBER_MAX = 150;
-#endif
+constexpr int32_t CYCLE_NUMBER_MAX = 150;
 const std::u16string SAMANAGER_INTERFACE_TOKEN = u"ohos.samgr.accessToken";
 std::atomic<bool> g_taskScheduled{false};
 std::atomic<bool> g_needRecover{false};

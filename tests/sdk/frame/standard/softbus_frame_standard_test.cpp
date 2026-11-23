@@ -15,6 +15,10 @@
 #include <gtest/gtest.h>
 #include <securec.h>
 
+#include <atomic>
+#include <chrono>
+#include <thread>
+
 #include "softbus_client_death_recipient.cpp"
 #include "softbus_client_frame_manager.h"
 #define private   public
@@ -25,6 +29,21 @@
 #undef protected
 #include "softbus_server_proxy_frame.cpp"
 #include "softbus_server_proxy_standard.h"
+
+namespace {
+    constexpr unsigned int FAST_SLEEP_MS = 1; //150 retries take about 150ms
+    std::atomic<bool> g_fastSleep{false};
+}
+
+extern "C" int SoftBusSleepMs(unsigned int ms)
+{
+    if (g_fastSleep.load()) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(FAST_SLEEP_MS));
+        return 0
+    }
+    std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+    return 0;
+}
 
 using namespace std;
 using namespace testing::ext;
@@ -2052,14 +2071,14 @@ HWTEST_F(SoftBusServerProxyFrameTest, ClientDeathProcTaskCasSuccessTest, TestSiz
         g_oldServerProxy = nullptr;
         g_serverProxy = nullptr;
     }
+    g_fastSleep(true);
     ClientDeathProcTask();
     EXPECT_TRUE(g_taskScheduled.load());
-    for (int32_t i = 0; i < 200; i++) {
-        if (!g_taskScheduled.load()) {
-            break;
-        }
+    auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(5);
+    while (g_taskScheduled.load() && std::chrono::steady_clock::now() < deadline) {
         SoftBusSleepMs(WAIT_SERVER_INTERVAL);
     }
+    g_fastSleep(false);
     EXPECT_FALSE(g_taskScheduled.load());
 }
 
@@ -2252,7 +2271,9 @@ HWTEST_F(SoftBusServerProxyFrameTest, DoRecoveryServerProxyInitFailTest, TestSiz
         g_serverProxy = GetSystemAbility();
         g_oldServerProxy = nullptr;
     }
+    g_fastSleep.store(true);
     DoRecovery();
+    g_fastSleep.store(false);
     EXPECT_FALSE(g_taskScheduled.load());
     EXPECT_FALSE(g_needRecover.load());
     g_taskScheduled.store(false);

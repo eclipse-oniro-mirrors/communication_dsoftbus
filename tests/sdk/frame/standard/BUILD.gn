@@ -24,7 +24,6 @@ ohos_unittest("SoftBusFrameStandardTest") {
     cfi_cross_dso = true
     debug = false
   }
-  defines += [ "DSOFTBUS_CYCLE_NUMBER_MAX=2" ]
   sources = [ "softbus_frame_standard_test.cpp" ]
 
   include_dirs = [
