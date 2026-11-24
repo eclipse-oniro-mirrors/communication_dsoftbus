@@ -369,7 +369,7 @@ static void NetDeviceRiskStateEventHandler(const LnnEventBasicInfo *info)
             LnnClearAllNode();
             break;
         case SOFTBUS_DEVICE_NOT_RISK:
-            if (g_isDeviceRisk == true) {
+            if (g_isDeviceRisk) {
                 g_isDeviceRisk = false;
                 NetRiskDeviceOpenAuthPort();
                 LnnRestartNetwork();
