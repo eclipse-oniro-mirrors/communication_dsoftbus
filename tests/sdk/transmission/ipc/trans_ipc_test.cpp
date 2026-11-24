@@ -903,6 +903,6 @@ HWTEST_F(TransIpcStandardTest, TransServerProxySetSocketOptEdca001, TestSize.Lev
     TransServerProxy transServerProxy(nullptr);
     int32_t ret = transServerProxy.SetSocketOptEdca(1, CHANNEL_TYPE_TCP_DIRECT,
         EDCA_SCENE_DATA_CLONE, EDCA_LEVEL_SEMI);
-    EXPECT_TRUE(ret == SOFTBUS_TRANS_PROXY_REMOTE_NULL || ret == SOFTBUS_ACCESS_TOKEN_DENIED);
+    EXPECT_TRUE(ret == SOFTBUS_TRANS_PROXY_REMOTE_NULL || ret == SOFTBUS_TRANS_PROXY_SEND_REQUEST_FAILED);
 }
 }

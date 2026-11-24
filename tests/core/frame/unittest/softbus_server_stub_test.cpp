@@ -2775,10 +2775,10 @@ HWTEST_F(SoftbusServerStubTest, SoftbusServerStubTestSetWirelessLinkCtrl003, Tes
 
 static void WriteFullSessionInfoToParcel(MessageParcel &data, int32_t scene, int32_t level)
 {
-    data.WriteString("testSession");
-    data.WriteString("peerSession");
-    data.WriteString("peerDevice");
-    data.WriteString("groupId");
+    data.WriteCString("testSession");
+    data.WriteCString("peerSession");
+    data.WriteCString("peerDevice");
+    data.WriteCString("groupId");
     data.WriteBool(false);
     data.WriteInt32(1);
     data.WriteBool(false);
