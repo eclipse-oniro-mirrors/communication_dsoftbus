@@ -26,6 +26,7 @@
 #include "taihe/runtime.hpp"
 #include "link_enhance_utils_taihe.h"
 #include "softbus_connection.h"
+#include "general_client_connection.h"
 
 namespace Communication {
 namespace OHOS::Softbus {
@@ -516,7 +517,7 @@ private:
         ThrowException(SOFTBUS_INVALID_PARAM);
         return server;
     }
-    if (IsEmulatorEnv()) {
+    if (GeneralIsEmulatorEnv()) {
         ThrowEmulatorNotSupport();
         return server;
     }
@@ -554,7 +555,7 @@ private:
         ThrowException(SOFTBUS_INVALID_PARAM);
         return connection;
     }
-    if (IsEmulatorEnv()) {
+    if (GeneralIsEmulatorEnv()) {
         ThrowEmulatorNotSupport();
         return connection;
     }

@@ -14,7 +14,6 @@
  */
 
 #include "comm_log.h"
-#include "general_client_connection.h"
 #include "link_enhance_utils_taihe.h"
 #include "napi_link_enhance_error_code.h"
 #include "securec.h"
@@ -23,7 +22,6 @@
 #include "softbus_error_code.h"
 #include "taihe/runtime.hpp"
 #include "uv.h"
-#include <atomic>
 #include <condition_variable>
 #include <map>
 #include <mutex>
@@ -86,30 +84,6 @@ void ThrowEmulatorNotSupport(void)
     if (it != taiheErrMsgMap.end()) {
         taihe::set_business_error(it->first, it->second);
     }
-}
-
-enum EmulatorQueryState {
-    EMULATOR_STATE_UNQUERIED = 0,
-    EMULATOR_STATE_IS_EMULATOR = 1,
-    EMULATOR_STATE_NOT_EMULATOR = 2,
-};
-
-static std::atomic<int32_t> g_emulatorState = { EMULATOR_STATE_UNQUERIED };
-
-bool IsEmulatorEnv(void)
-{
-    int32_t state = g_emulatorState.load();
-    if (state == EMULATOR_STATE_UNQUERIED) {
-        bool isEmulator = false;
-        int32_t ret = GeneralIsEmulator(PKG_NAME.c_str(), &isEmulator);
-        if (ret != SOFTBUS_OK) {
-            COMM_LOGE(COMM_SDK, "query emulator fail, ret=%{public}d", ret);
-            return false;
-        }
-        state = isEmulator ? EMULATOR_STATE_IS_EMULATOR : EMULATOR_STATE_NOT_EMULATOR;
-        g_emulatorState.store(state);
-    }
-    return state == EMULATOR_STATE_IS_EMULATOR;
 }
 
 bool CheckAccessToken(void)

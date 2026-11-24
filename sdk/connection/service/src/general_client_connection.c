@@ -15,6 +15,7 @@
 
 #include "general_client_connection.h"
 
+#include <stdatomic.h>
 #include <string.h>
 #include "conn_log.h"
 #include "general_connection_server_proxy.h"
@@ -331,4 +332,28 @@ int32_t GeneralIsEmulator(const char *pkgName, bool *isEmulator)
         return ret;
     }
     return SOFTBUS_OK;
+}
+
+enum EmulatorQueryState {
+    EMULATOR_STATE_UNQUERIED = 0,
+    EMULATOR_STATE_IS_EMULATOR = 1,
+    EMULATOR_STATE_NOT_EMULATOR = 2,
+};
+
+static atomic_int g_emulatorState;
+
+bool GeneralIsEmulatorEnv(void)
+{
+    int32_t state = atomic_load_explicit(&g_emulatorState, memory_order_acquire);
+    if (state != EMULATOR_STATE_UNQUERIED) {
+        return state == EMULATOR_STATE_IS_EMULATOR;
+    }
+    bool isEmulator = false;
+    if (GeneralIsEmulator(g_limitPkgName, &isEmulator) != SOFTBUS_OK) {
+        CONN_LOGE(CONN_COMMON, "query emulator fail");
+        return false;
+    }
+    atomic_store_explicit(&g_emulatorState,
+        isEmulator ? EMULATOR_STATE_IS_EMULATOR : EMULATOR_STATE_NOT_EMULATOR, memory_order_release);
+    return isEmulator;
 }

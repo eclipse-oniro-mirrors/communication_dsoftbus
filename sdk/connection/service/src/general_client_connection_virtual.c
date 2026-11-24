@@ -112,3 +112,8 @@ int32_t GeneralIsEmulator(const char *pkgName, bool *isEmulator)
     *isEmulator = false;
     return SOFTBUS_OK;
 }
+
+bool GeneralIsEmulatorEnv(void)
+{
+    return false;
+}

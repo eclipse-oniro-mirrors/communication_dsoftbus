@@ -22,6 +22,7 @@
 #include "softbus_adapter_mem.h"
 #include "softbus_connection.h"
 #include "softbus_error_code.h"
+#include "general_client_connection.h"
 
 namespace Communication {
 namespace OHOS::Softbus {
@@ -84,7 +85,7 @@ napi_value NapiLinkEnhanceConnection::Create(napi_env env, napi_callback_info in
         HandleSyncErr(env, LINK_ENHANCE_PARAMETER_INVALID);
         return NapiGetUndefinedRet(env);
     }
-    if (IsEmulatorEnv()) {
+    if (GeneralIsEmulatorEnv()) {
         HandleSyncErr(env, LINK_ENHANCE_EMULATOR_NOT_SUPPORT);
         return NapiGetUndefinedRet(env);
     }

@@ -577,12 +577,12 @@ int32_t ConnectionServerProxy::IsEmulator(bool *isEmulator)
         CONN_LOGE(CONN_COMMON, "send request fail, err=%{public}d", ret);
         return ret;
     }
-    bool isEmu = false;
-    if (!reply.ReadBool(isEmu)) {
+    bool result = false;
+    if (!reply.ReadBool(result)) {
         CONN_LOGE(CONN_COMMON, "read isEmulator fail");
         return SOFTBUS_IPC_ERR;
     }
-    *isEmulator = isEmu;
+    *isEmulator = result;
     return SOFTBUS_OK;
 }
 } // namespace OHOS
