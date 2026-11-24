@@ -1027,4 +1027,36 @@ HWTEST_F(P2pAdapterTest, GetRecommendChannelWithCenterFreq1Test, TestSize.Level1
     int32_t ret = P2pAdapter::GetRecommendChannel();
     EXPECT_GT(ret, 0);
 }
+
+/*
+* @tc.name: SetEdcaParamTest001
+* @tc.desc: SetEdcaParam without registered hook returns SOFTBUS_NOT_IMPLEMENT.
+* @tc.type: FUNC
+* @tc.require:
+*/
+HWTEST_F(P2pAdapterTest, SetEdcaParamTest001, TestSize.Level1)
+{
+    P2pAdapter::RegisterSetEdcaParam(nullptr);
+    int32_t ret = P2pAdapter::SetEdcaParam(0, 0);
+    EXPECT_EQ(SOFTBUS_NOT_IMPLEMENT, ret);
+}
+
+/*
+* @tc.name: SetEdcaParamTest002
+* @tc.desc: SetEdcaParam with registered hook forwards call and returns hook result.
+* @tc.type: FUNC
+* @tc.require:
+*/
+HWTEST_F(P2pAdapterTest, SetEdcaParamTest002, TestSize.Level1)
+{
+    P2pAdapter::SetEdcaParamHook hook = [](int scene, int speedMode) {
+        EXPECT_EQ(1, scene);
+        EXPECT_EQ(2, speedMode);
+        return SOFTBUS_OK;
+    };
+    P2pAdapter::RegisterSetEdcaParam(hook);
+    int32_t ret = P2pAdapter::SetEdcaParam(1, 2);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    P2pAdapter::RegisterSetEdcaParam(nullptr);
+}
 }

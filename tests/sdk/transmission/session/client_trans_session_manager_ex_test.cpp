@@ -450,4 +450,153 @@ HWTEST_F(TransClientSessionManagerExTest, TransClientSessionManagerExTest11, Tes
     ListDelete(&g_server.node);
     ListDelete(&g_sessionNode.node);
 }
+
+static void SetupEdcaTestSession(int32_t sessionId, SessionRole role, int32_t channelId,
+    int32_t channelIdReserve)
+{
+    SoftBusMutexAttr mutexAttr;
+    mutexAttr.type = SOFTBUS_MUTEX_RECURSIVE;
+    EXPECT_EQ(SoftBusMutexInit(&g_clientSessionServerList.lock, &mutexAttr), SOFTBUS_OK);
+    ListInit(&g_clientSessionServerList.list);
+    ListInit(&g_server.node);
+    ListInit(&g_server.sessionList);
+    ListInit(&g_sessionNode.node);
+    ListAdd(&g_clientSessionServerList.list, &g_server.node);
+    ListAdd(&g_server.sessionList, &g_sessionNode.node);
+    g_sessionNode.sessionId = sessionId;
+    g_sessionNode.role = role;
+    g_sessionNode.channelId = channelId;
+    g_sessionNode.channelType = CHANNEL_TYPE_TCP_DIRECT;
+    g_sessionNode.channelIdReserve = channelIdReserve;
+    g_sessionNode.channelTypeReserve = CHANNEL_TYPE_UDP;
+}
+
+static void TeardownEdcaTestSession(void)
+{
+    ListDelete(&g_server.node);
+    ListDelete(&g_sessionNode.node);
+}
+
+/**
+ * @tc.name: ClientSetEdcaBySocketTest001
+ * @tc.desc: invalid params (socket<=0, NULL edcaParam, bad scene, bad level).
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransClientSessionManagerExTest, ClientSetEdcaBySocketTest001, TestSize.Level1)
+{
+    EdcaParam edca = { .scene = EDCA_SCENE_DATA_CLONE, .level = EDCA_LEVEL_SEMI };
+    int32_t ret = ClientSetEdcaBySocket(0, &edca);
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
+
+    ret = ClientSetEdcaBySocket(1, NULL);
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
+
+    EdcaParam badSceneLow = { .scene = static_cast<EdcaScene>(-1), .level = EDCA_LEVEL_SEMI };
+    ret = ClientSetEdcaBySocket(1, &badSceneLow);
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
+
+    EdcaParam badSceneHigh = { .scene = EDCA_SCENE_BUTT, .level = EDCA_LEVEL_SEMI };
+    ret = ClientSetEdcaBySocket(1, &badSceneHigh);
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
+
+    EdcaParam badLevelLow = { .scene = EDCA_SCENE_DATA_CLONE, .level = static_cast<EdcaLevel>(-1) };
+    ret = ClientSetEdcaBySocket(1, &badLevelLow);
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
+
+    EdcaParam badLevelHigh = { .scene = EDCA_SCENE_DATA_CLONE, .level = EDCA_LEVEL_BUTT };
+    ret = ClientSetEdcaBySocket(1, &badLevelHigh);
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
+}
+
+/**
+ * @tc.name: ClientSetEdcaBySocketTest002
+ * @tc.desc: session not found returns error.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransClientSessionManagerExTest, ClientSetEdcaBySocketTest002, TestSize.Level1)
+{
+    SetupEdcaTestSession(1, SESSION_ROLE_CLIENT, 0, 0);
+    EdcaParam edca = { .scene = EDCA_SCENE_DATA_CLONE, .level = EDCA_LEVEL_SEMI };
+    int32_t ret = ClientSetEdcaBySocket(999, &edca);
+    EXPECT_EQ(SOFTBUS_TRANS_SESSION_INFO_NOT_FOUND, ret);
+    TeardownEdcaTestSession();
+}
+
+/**
+ * @tc.name: ClientSetEdcaBySocketTest003
+ * @tc.desc: listen socket (SESSION_ROLE_SERVER) returns SOFTBUS_INVALID_PARAM.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransClientSessionManagerExTest, ClientSetEdcaBySocketTest003, TestSize.Level1)
+{
+    SetupEdcaTestSession(1, SESSION_ROLE_SERVER, 0, 0);
+    EdcaParam edca = { .scene = EDCA_SCENE_DATA_CLONE, .level = EDCA_LEVEL_SEMI };
+    int32_t ret = ClientSetEdcaBySocket(1, &edca);
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
+    TeardownEdcaTestSession();
+}
+
+/**
+ * @tc.name: ClientSetEdcaBySocketTest004
+ * @tc.desc: channelId<=0 && channelIdReserve<=0 → store only, returns SOFTBUS_OK.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransClientSessionManagerExTest, ClientSetEdcaBySocketTest004, TestSize.Level1)
+{
+    SetupEdcaTestSession(1, SESSION_ROLE_CLIENT, 0, 0);
+    EdcaParam edca = { .scene = EDCA_SCENE_DATA_CLONE, .level = EDCA_LEVEL_SEMI };
+    int32_t ret = ClientSetEdcaBySocket(1, &edca);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    EXPECT_EQ(EDCA_LEVEL_SEMI, g_sessionNode.edcaParam.level);
+    TeardownEdcaTestSession();
+}
+
+/**
+ * @tc.name: ClientSetEdcaBySocketTest005
+ * @tc.desc: channelId>0 && channelIdReserve<=0 → IPC fails (no proxy), returns error.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransClientSessionManagerExTest, ClientSetEdcaBySocketTest005, TestSize.Level1)
+{
+    SetupEdcaTestSession(1, SESSION_ROLE_CLIENT, 100, 0);
+    EdcaParam edca = { .scene = EDCA_SCENE_DATA_CLONE, .level = EDCA_LEVEL_SEMI };
+    int32_t ret = ClientSetEdcaBySocket(1, &edca);
+    EXPECT_NE(SOFTBUS_OK, ret);
+    TeardownEdcaTestSession();
+}
+
+/**
+ * @tc.name: ClientSetEdcaBySocketTest006
+ * @tc.desc: channelId<=0 && channelIdReserve>0 → IPC fails (no proxy), returns error.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransClientSessionManagerExTest, ClientSetEdcaBySocketTest006, TestSize.Level1)
+{
+    SetupEdcaTestSession(1, SESSION_ROLE_CLIENT, 0, 200);
+    EdcaParam edca = { .scene = EDCA_SCENE_DATA_CLONE, .level = EDCA_LEVEL_SEMI };
+    int32_t ret = ClientSetEdcaBySocket(1, &edca);
+    EXPECT_NE(SOFTBUS_OK, ret);
+    TeardownEdcaTestSession();
+}
+
+/**
+ * @tc.name: ClientSetEdcaBySocketTest007
+ * @tc.desc: channelId>0 && channelIdReserve>0 → both IPC fail (no proxy), returns error.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransClientSessionManagerExTest, ClientSetEdcaBySocketTest007, TestSize.Level1)
+{
+    SetupEdcaTestSession(1, SESSION_ROLE_CLIENT, 100, 200);
+    EdcaParam edca = { .scene = EDCA_SCENE_DATA_CLONE, .level = EDCA_LEVEL_SEMI };
+    int32_t ret = ClientSetEdcaBySocket(1, &edca);
+    EXPECT_NE(SOFTBUS_OK, ret);
+    TeardownEdcaTestSession();
+}
 }

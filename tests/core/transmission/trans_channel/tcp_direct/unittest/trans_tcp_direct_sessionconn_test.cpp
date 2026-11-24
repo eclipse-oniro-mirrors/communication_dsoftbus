@@ -171,6 +171,45 @@ AppInfo *TestSetAppInfo()
 }
 
 /*
+ * @tc.name: TransTdcUpdateEdcaParamTest002
+ * @tc.desc: g_tcpChannelInfoList not initialized returns SOFTBUS_NO_INIT.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransTcpDirectSessionConnTest, TransTdcUpdateEdcaParamTest002, TestSize.Level1)
+{
+    EdcaParam edca = { .scene = EDCA_SCENE_DATA_CLONE, .level = EDCA_LEVEL_SEMI };
+    int32_t ret = TransTdcUpdateEdcaParam(TEST_CHANNEL_ID, &edca);
+    EXPECT_EQ(SOFTBUS_NO_INIT, ret);
+}
+
+/*
+ * @tc.name: TransTdcGetChannelEdcaInfoTest002
+ * @tc.desc: g_tcpChannelInfoList not initialized returns SOFTBUS_NO_INIT.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransTcpDirectSessionConnTest, TransTdcGetChannelEdcaInfoTest002, TestSize.Level1)
+{
+    EdcaParam edca;
+    int32_t linkType = 0;
+    int32_t ret = TransTdcGetChannelEdcaInfo(TEST_CHANNEL_ID, &edca, &linkType);
+    EXPECT_EQ(SOFTBUS_NO_INIT, ret);
+}
+
+/*
+ * @tc.name: TransTdcClearEdcaParamTest001
+ * @tc.desc: g_sessionConnList not initialized returns SOFTBUS_LOCK_ERR (GetSessionConnLock fails).
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransTcpDirectSessionConnTest, TransTdcClearEdcaParamTest001, TestSize.Level1)
+{
+    int32_t ret = TransTdcClearEdcaParam(TEST_CHANNEL_ID);
+    EXPECT_EQ(SOFTBUS_LOCK_ERR, ret);
+}
+
+/*
  * @tc.name: GetTcpChannelInfoLock
  * @tc.desc: Verify whether the behavior of acquiring the TCP channel information lock meets expectations
  *           in both cases where the TCP channel information list is uninitialized and initialized
@@ -798,6 +837,109 @@ HWTEST_F(TransTcpDirectSessionConnTest, TransTcpGetPrivilegeCloseList002, TestSi
     ListInit(&privilegeCloseList);
     int32_t ret = TransTcpGetPrivilegeCloseList(&privilegeCloseList, tokenId, pid);
     EXPECT_EQ(SOFTBUS_OK, ret);
+}
+
+/*
+ * @tc.name: TransTdcUpdateEdcaParamTest001
+ * @tc.desc: NULL edcaParam returns SOFTBUS_INVALID_PARAM.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransTcpDirectSessionConnTest, TransTdcUpdateEdcaParamTest001, TestSize.Level1)
+{
+    int32_t ret = TransTdcUpdateEdcaParam(TEST_CHANNEL_ID, NULL);
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
+}
+
+/*
+ * @tc.name: TransTdcUpdateEdcaParamTest003
+ * @tc.desc: channel found updates edcaParam returns SOFTBUS_OK; channel not found returns error.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransTcpDirectSessionConnTest, TransTdcUpdateEdcaParamTest003, TestSize.Level1)
+{
+    int32_t ret = CreateTcpChannelInfoList();
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    TcpChannelInfo *info = (TcpChannelInfo *)SoftBusCalloc(sizeof(TcpChannelInfo));
+    ASSERT_TRUE(info != nullptr);
+    info->channelId = TEST_CHANNEL_ID;
+    ret = TransAddTcpChannelInfo(info);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    EdcaParam edca = { .scene = EDCA_SCENE_DATA_CLONE, .level = EDCA_LEVEL_FULL };
+    ret = TransTdcUpdateEdcaParam(TEST_CHANNEL_ID, &edca);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    ret = TransTdcUpdateEdcaParam(999, &edca);
+    EXPECT_EQ(SOFTBUS_TRANS_TDC_CHANNEL_NOT_FOUND, ret);
+    ret = TransDelTcpChannelInfoByChannelId(info->channelId);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+}
+
+/*
+ * @tc.name: TransTdcGetChannelEdcaInfoTest001
+ * @tc.desc: NULL edcaParam or linkType returns SOFTBUS_INVALID_PARAM.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransTcpDirectSessionConnTest, TransTdcGetChannelEdcaInfoTest001, TestSize.Level1)
+{
+    int32_t linkType = 0;
+    int32_t ret = TransTdcGetChannelEdcaInfo(TEST_CHANNEL_ID, NULL, &linkType);
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
+    EdcaParam edca;
+    ret = TransTdcGetChannelEdcaInfo(TEST_CHANNEL_ID, &edca, NULL);
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
+}
+
+/*
+ * @tc.name: TransTdcGetChannelEdcaInfoTest003
+ * @tc.desc: channel found returns SOFTBUS_OK with correct values; channel not found returns error.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransTcpDirectSessionConnTest, TransTdcGetChannelEdcaInfoTest003, TestSize.Level1)
+{
+    int32_t ret = CreateTcpChannelInfoList();
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    TcpChannelInfo *info = (TcpChannelInfo *)SoftBusCalloc(sizeof(TcpChannelInfo));
+    ASSERT_TRUE(info != nullptr);
+    info->channelId = TEST_CHANNEL_ID;
+    info->linkType = LANE_HML;
+    info->edcaParam.scene = EDCA_SCENE_DATA_CLONE;
+    info->edcaParam.level = EDCA_LEVEL_SEMI;
+    ret = TransAddTcpChannelInfo(info);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    EdcaParam edca;
+    int32_t linkType = 0;
+    ret = TransTdcGetChannelEdcaInfo(TEST_CHANNEL_ID, &edca, &linkType);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    EXPECT_EQ(LANE_HML, linkType);
+    EXPECT_EQ(EDCA_LEVEL_SEMI, edca.level);
+    ret = TransTdcGetChannelEdcaInfo(999, &edca, &linkType);
+    EXPECT_EQ(SOFTBUS_TRANS_TDC_CHANNEL_NOT_FOUND, ret);
+    ret = TransDelTcpChannelInfoByChannelId(info->channelId);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+}
+
+/*
+ * @tc.name: TransTdcClearEdcaParamTest002
+ * @tc.desc: channel found clears edcaParam returns SOFTBUS_OK; channel not found returns error.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransTcpDirectSessionConnTest, TransTdcClearEdcaParamTest002, TestSize.Level1)
+{
+    int32_t ret = CreatSessionConnList();
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    SessionConn *conn = TestSetSessionConn();
+    ret = TransTdcAddSessionConn(conn);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    conn->appInfo.edcaParam.level = EDCA_LEVEL_FULL;
+    ret = TransTdcClearEdcaParam(conn->channelId);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    ret = TransTdcClearEdcaParam(999);
+    EXPECT_EQ(SOFTBUS_TRANS_TDC_CHANNEL_NOT_FOUND, ret);
+    (void)TransDelSessionConnById(conn->channelId);
 }
 
 /*

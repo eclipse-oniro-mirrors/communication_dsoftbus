@@ -143,5 +143,10 @@ int32_t LnnIpcProcessAccountAuth(const char *pkgName, int32_t pid, int64_t reque
 {
     return GetSoftbusServerStubTestInterface()->LnnIpcProcessAccountAuth(pkgName, pid, requestId, data, dataLen);
 }
+
+int32_t TransSetEdcaParamForChannel(int32_t channelId, int32_t channelType, int32_t scene, int32_t level)
+{
+    return GetSoftbusServerStubTestInterface()->TransSetEdcaParamForChannel(channelId, channelType, scene, level);
+}
 }
 }

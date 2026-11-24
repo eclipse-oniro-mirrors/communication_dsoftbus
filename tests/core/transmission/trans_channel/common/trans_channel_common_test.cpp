@@ -27,6 +27,7 @@ using namespace testing::ext;
 namespace OHOS {
 namespace {
 std::function<int32_t(int, int)> g_setEdcaParamHook;
+std::function<struct WifiDirectManager *()> g_getMgrHook;
 
 int32_t MockSetEdcaParam(int scene, int level)
 {
@@ -39,26 +40,47 @@ int32_t MockSetEdcaParam(int scene, int level)
 struct WifiDirectManager g_wifiDirectManager = {
     .setEdcaParam = MockSetEdcaParam,
 };
+
+struct WifiDirectManager g_nullEdcaMgr = {};
 } // namespace
 
 extern "C" struct WifiDirectManager *GetWifiDirectManager(void)
 {
+    if (g_getMgrHook) {
+        return g_getMgrHook();
+    }
     return &g_wifiDirectManager;
 }
 
 class TransChannelCommonTest : public testing::Test {
 public:
-    TransChannelCommonTest() { }
-    ~TransChannelCommonTest() { }
+    TransChannelCommonTest()
+    {
+    }
+    ~TransChannelCommonTest()
+    {
+    }
     static void SetUpTestCase(void);
     static void TearDownTestCase(void);
-    void SetUp() override { g_setEdcaParamHook = nullptr; }
-    void TearDown() override { g_setEdcaParamHook = nullptr; }
+    void SetUp() override
+    {
+        g_setEdcaParamHook = nullptr;
+        g_getMgrHook = nullptr;
+    }
+    void TearDown() override
+    {
+        g_setEdcaParamHook = nullptr;
+        g_getMgrHook = nullptr;
+    }
 };
 
-void TransChannelCommonTest::SetUpTestCase(void) { }
+void TransChannelCommonTest::SetUpTestCase(void)
+{
+}
 
-void TransChannelCommonTest::TearDownTestCase(void) { }
+void TransChannelCommonTest::TearDownTestCase(void)
+{
+}
 
 /*
  * @tc.name: TransSetWakeUpInfoTest001
@@ -406,5 +428,521 @@ HWTEST_F(TransChannelCommonTest, TransSetEdcaParamForChannelTest011, TestSize.Le
     int32_t ret = TransSetEdcaParamForChannel(channelId, CHANNEL_TYPE_UDP,
         EDCA_SCENE_DATA_CLONE, EDCA_LEVEL_SEMI);
     EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
+}
+
+/*
+ * @tc.name: TransCancelEdcaParamTest002
+ * @tc.desc: level == EDCA_LEVEL_DISABLE returns immediately.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransChannelCommonTest, TransCancelEdcaParamTest002, TestSize.Level1)
+{
+    EdcaParam edca = { .scene = EDCA_SCENE_DATA_CLONE, .level = EDCA_LEVEL_DISABLE };
+    TransCancelEdcaParam(&edca, LANE_HML);
+    EXPECT_EQ(EDCA_LEVEL_DISABLE, edca.level);
+}
+
+/*
+ * @tc.name: TransCancelEdcaParamTest003
+ * @tc.desc: linkType != LANE_HML returns immediately.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransChannelCommonTest, TransCancelEdcaParamTest003, TestSize.Level1)
+{
+    EdcaParam edca = { .scene = EDCA_SCENE_DATA_CLONE, .level = EDCA_LEVEL_FULL };
+    TransCancelEdcaParam(&edca, LANE_WLAN_5G);
+    EXPECT_EQ(EDCA_LEVEL_FULL, edca.level);
+}
+
+/*
+ * @tc.name: TransCancelEdcaParamTest004
+ * @tc.desc: valid params with available manager calls setEdcaParam(DISABLE) and resets level.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransChannelCommonTest, TransCancelEdcaParamTest004, TestSize.Level1)
+{
+    EdcaParam edca = { .scene = EDCA_SCENE_DATA_CLONE, .level = EDCA_LEVEL_FULL };
+    g_setEdcaParamHook = [](int scene, int level) {
+        EXPECT_EQ(EDCA_LEVEL_DISABLE, level);
+        return SOFTBUS_OK;
+    };
+    TransCancelEdcaParam(&edca, LANE_HML);
+    EXPECT_EQ(EDCA_LEVEL_DISABLE, edca.level);
+}
+
+/*
+ * @tc.name: TransCancelEdcaParamTest005
+ * @tc.desc: valid params with mgr == NULL skips setEdcaParam, still resets level.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransChannelCommonTest, TransCancelEdcaParamTest005, TestSize.Level1)
+{
+    EdcaParam edca = { .scene = EDCA_SCENE_DATA_CLONE, .level = EDCA_LEVEL_SEMI };
+    g_getMgrHook = []() -> struct WifiDirectManager * { return nullptr; };
+    TransCancelEdcaParam(&edca, LANE_HML);
+    EXPECT_EQ(EDCA_LEVEL_DISABLE, edca.level);
+}
+
+/*
+ * @tc.name: TransCancelEdcaParamTest006
+ * @tc.desc: valid params with mgr->setEdcaParam == NULL skips driver call, still resets level.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransChannelCommonTest, TransCancelEdcaParamTest006, TestSize.Level1)
+{
+    EdcaParam edca = { .scene = EDCA_SCENE_DATA_CLONE, .level = EDCA_LEVEL_FULL };
+    g_getMgrHook = []() -> struct WifiDirectManager * { return &g_nullEdcaMgr; };
+    TransCancelEdcaParam(&edca, LANE_HML);
+    EXPECT_EQ(EDCA_LEVEL_DISABLE, edca.level);
+}
+
+/*
+ * @tc.name: TransOpenChannelProcEdcaTest001
+ * @tc.desc: UDP channel, linkType != HML skips EDCA, UDP opens OK.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransChannelCommonTest, TransOpenChannelProcEdcaTest001, TestSize.Level1)
+{
+    TransChannelCommonMock mock;
+    AppInfo appInfo;
+    ConnectOption connOpt;
+    int32_t channelId = 0;
+    (void)memset_s(&appInfo, sizeof(appInfo), 0, sizeof(appInfo));
+    (void)memset_s(&connOpt, sizeof(connOpt), 0, sizeof(connOpt));
+    appInfo.linkType = LANE_WLAN_5G;
+    appInfo.edcaParam.level = EDCA_LEVEL_SEMI;
+    EXPECT_CALL(mock, TransOpenUdpChannel(_, _, _)).WillOnce(Return(SOFTBUS_OK));
+    int32_t ret = TransOpenChannelProc(CHANNEL_TYPE_UDP, &appInfo, &connOpt, &channelId);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+}
+
+/*
+ * @tc.name: TransOpenChannelProcEdcaTest002
+ * @tc.desc: UDP channel, HML link with level==DISABLE skips EDCA, UDP opens OK.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransChannelCommonTest, TransOpenChannelProcEdcaTest002, TestSize.Level1)
+{
+    TransChannelCommonMock mock;
+    AppInfo appInfo;
+    ConnectOption connOpt;
+    int32_t channelId = 0;
+    (void)memset_s(&appInfo, sizeof(appInfo), 0, sizeof(appInfo));
+    (void)memset_s(&connOpt, sizeof(connOpt), 0, sizeof(connOpt));
+    appInfo.linkType = LANE_HML;
+    appInfo.edcaParam.level = EDCA_LEVEL_DISABLE;
+    EXPECT_CALL(mock, TransOpenUdpChannel(_, _, _)).WillOnce(Return(SOFTBUS_OK));
+    int32_t ret = TransOpenChannelProc(CHANNEL_TYPE_UDP, &appInfo, &connOpt, &channelId);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+}
+
+/*
+ * @tc.name: TransOpenChannelProcEdcaTest003
+ * @tc.desc: UDP HML link, driver OK, edcaSet=true, UDP opens OK.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransChannelCommonTest, TransOpenChannelProcEdcaTest003, TestSize.Level1)
+{
+    TransChannelCommonMock mock;
+    AppInfo appInfo;
+    ConnectOption connOpt;
+    int32_t channelId = 0;
+    (void)memset_s(&appInfo, sizeof(appInfo), 0, sizeof(appInfo));
+    (void)memset_s(&connOpt, sizeof(connOpt), 0, sizeof(connOpt));
+    appInfo.linkType = LANE_HML;
+    appInfo.edcaParam.scene = EDCA_SCENE_DATA_CLONE;
+    appInfo.edcaParam.level = EDCA_LEVEL_SEMI;
+    g_setEdcaParamHook = [](int scene, int level) { return SOFTBUS_OK; };
+    EXPECT_CALL(mock, TransOpenUdpChannel(_, _, _)).WillOnce(Return(SOFTBUS_OK));
+    int32_t ret = TransOpenChannelProc(CHANNEL_TYPE_UDP, &appInfo, &connOpt, &channelId);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+}
+
+/*
+ * @tc.name: TransOpenChannelProcEdcaTest004
+ * @tc.desc: UDP HML link, driver OK, edcaSet=true, UDP opens fails, cancel EDCA.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransChannelCommonTest, TransOpenChannelProcEdcaTest004, TestSize.Level1)
+{
+    TransChannelCommonMock mock;
+    AppInfo appInfo;
+    ConnectOption connOpt;
+    int32_t channelId = 0;
+    (void)memset_s(&appInfo, sizeof(appInfo), 0, sizeof(appInfo));
+    (void)memset_s(&connOpt, sizeof(connOpt), 0, sizeof(connOpt));
+    appInfo.linkType = LANE_HML;
+    appInfo.edcaParam.scene = EDCA_SCENE_DATA_CLONE;
+    appInfo.edcaParam.level = EDCA_LEVEL_SEMI;
+    bool cancelCalled = false;
+    g_setEdcaParamHook = [&cancelCalled](int scene, int level) {
+        if (level == EDCA_LEVEL_DISABLE) {
+            cancelCalled = true;
+        }
+        return SOFTBUS_OK;
+    };
+    EXPECT_CALL(mock, TransOpenUdpChannel(_, _, _)).WillOnce(Return(SOFTBUS_ERR));
+    int32_t ret = TransOpenChannelProc(CHANNEL_TYPE_UDP, &appInfo, &connOpt, &channelId);
+    EXPECT_EQ(SOFTBUS_ERR, ret);
+    EXPECT_TRUE(cancelCalled);
+}
+
+/*
+ * @tc.name: TransOpenChannelProcEdcaTest005
+ * @tc.desc: UDP HML link, driver fails (mgr==NULL), edcaSet=false, UDP fails, skip cancel.
+ *           Also covers TransApplyEdcaToDriver mgr==NULL branch.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransChannelCommonTest, TransOpenChannelProcEdcaTest005, TestSize.Level1)
+{
+    TransChannelCommonMock mock;
+    AppInfo appInfo;
+    ConnectOption connOpt;
+    int32_t channelId = 0;
+    (void)memset_s(&appInfo, sizeof(appInfo), 0, sizeof(appInfo));
+    (void)memset_s(&connOpt, sizeof(connOpt), 0, sizeof(connOpt));
+    appInfo.linkType = LANE_HML;
+    appInfo.edcaParam.scene = EDCA_SCENE_DATA_CLONE;
+    appInfo.edcaParam.level = EDCA_LEVEL_SEMI;
+    g_getMgrHook = []() -> struct WifiDirectManager * { return nullptr; };
+    EXPECT_CALL(mock, TransOpenUdpChannel(_, _, _)).WillOnce(Return(SOFTBUS_ERR));
+    int32_t ret = TransOpenChannelProc(CHANNEL_TYPE_UDP, &appInfo, &connOpt, &channelId);
+    EXPECT_EQ(SOFTBUS_ERR, ret);
+    EXPECT_EQ(EDCA_LEVEL_DISABLE, appInfo.edcaParam.level);
+}
+
+/*
+ * @tc.name: TransOpenChannelProcEdcaTest006
+ * @tc.desc: UDP HML link, driver fails (setEdcaParam==NULL), edcaSet=false, UDP fails, skip cancel.
+ *           Also covers TransApplyEdcaToDriver setEdcaParam==NULL branch.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransChannelCommonTest, TransOpenChannelProcEdcaTest006, TestSize.Level1)
+{
+    TransChannelCommonMock mock;
+    AppInfo appInfo;
+    ConnectOption connOpt;
+    int32_t channelId = 0;
+    (void)memset_s(&appInfo, sizeof(appInfo), 0, sizeof(appInfo));
+    (void)memset_s(&connOpt, sizeof(connOpt), 0, sizeof(connOpt));
+    appInfo.linkType = LANE_HML;
+    appInfo.edcaParam.scene = EDCA_SCENE_DATA_CLONE;
+    appInfo.edcaParam.level = EDCA_LEVEL_FULL;
+    g_getMgrHook = []() -> struct WifiDirectManager * { return &g_nullEdcaMgr; };
+    EXPECT_CALL(mock, TransOpenUdpChannel(_, _, _)).WillOnce(Return(SOFTBUS_ERR));
+    int32_t ret = TransOpenChannelProc(CHANNEL_TYPE_UDP, &appInfo, &connOpt, &channelId);
+    EXPECT_EQ(SOFTBUS_ERR, ret);
+    EXPECT_EQ(EDCA_LEVEL_DISABLE, appInfo.edcaParam.level);
+}
+
+/*
+ * @tc.name: TransOpenChannelProcEdcaTest007
+ * @tc.desc: TCP_DIRECT HML link, driver OK, edcaSet=true, TCP fails, cancel EDCA.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransChannelCommonTest, TransOpenChannelProcEdcaTest007, TestSize.Level1)
+{
+    TransChannelCommonMock mock;
+    AppInfo appInfo;
+    ConnectOption connOpt;
+    int32_t channelId = 0;
+    (void)memset_s(&appInfo, sizeof(appInfo), 0, sizeof(appInfo));
+    (void)memset_s(&connOpt, sizeof(connOpt), 0, sizeof(connOpt));
+    appInfo.linkType = LANE_HML;
+    appInfo.edcaParam.scene = EDCA_SCENE_DATA_CLONE;
+    appInfo.edcaParam.level = EDCA_LEVEL_SEMI;
+    bool cancelCalled = false;
+    g_setEdcaParamHook = [&cancelCalled](int scene, int level) {
+        if (level == EDCA_LEVEL_DISABLE) {
+            cancelCalled = true;
+        }
+        return SOFTBUS_OK;
+    };
+    EXPECT_CALL(mock, TransOpenDirectChannel(_, _, _)).WillOnce(Return(SOFTBUS_ERR));
+    int32_t ret = TransOpenChannelProc(CHANNEL_TYPE_TCP_DIRECT, &appInfo, &connOpt, &channelId);
+    EXPECT_EQ(SOFTBUS_ERR, ret);
+    EXPECT_TRUE(cancelCalled);
+}
+
+/*
+ * @tc.name: TransOpenChannelProcEdcaTest008
+ * @tc.desc: TCP_DIRECT HML link, driver fails, edcaSet=false, TCP fails, skip cancel.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransChannelCommonTest, TransOpenChannelProcEdcaTest008, TestSize.Level1)
+{
+    TransChannelCommonMock mock;
+    AppInfo appInfo;
+    ConnectOption connOpt;
+    int32_t channelId = 0;
+    (void)memset_s(&appInfo, sizeof(appInfo), 0, sizeof(appInfo));
+    (void)memset_s(&connOpt, sizeof(connOpt), 0, sizeof(connOpt));
+    appInfo.linkType = LANE_HML;
+    appInfo.edcaParam.scene = EDCA_SCENE_DATA_CLONE;
+    appInfo.edcaParam.level = EDCA_LEVEL_FULL;
+    g_setEdcaParamHook = [](int scene, int level) { return SOFTBUS_ERR; };
+    EXPECT_CALL(mock, TransOpenDirectChannel(_, _, _)).WillOnce(Return(SOFTBUS_ERR));
+    int32_t ret = TransOpenChannelProc(CHANNEL_TYPE_TCP_DIRECT, &appInfo, &connOpt, &channelId);
+    EXPECT_EQ(SOFTBUS_ERR, ret);
+    EXPECT_EQ(EDCA_LEVEL_DISABLE, appInfo.edcaParam.level);
+}
+
+/*
+ * @tc.name: TransOpenChannelProcEdcaTest009
+ * @tc.desc: PROXY HML link, driver OK, edcaSet=true, Proxy fails, returns directly (no EDCA cancel).
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransChannelCommonTest, TransOpenChannelProcEdcaTest009, TestSize.Level1)
+{
+    TransChannelCommonMock mock;
+    AppInfo appInfo;
+    ConnectOption connOpt;
+    int32_t channelId = 0;
+    (void)memset_s(&appInfo, sizeof(appInfo), 0, sizeof(appInfo));
+    (void)memset_s(&connOpt, sizeof(connOpt), 0, sizeof(connOpt));
+    appInfo.linkType = LANE_HML;
+    appInfo.edcaParam.scene = EDCA_SCENE_DATA_CLONE;
+    appInfo.edcaParam.level = EDCA_LEVEL_SEMI;
+    bool cancelCalled = false;
+    g_setEdcaParamHook = [&cancelCalled](int scene, int level) {
+        if (level == EDCA_LEVEL_DISABLE) {
+            cancelCalled = true;
+        }
+        return SOFTBUS_OK;
+    };
+    EXPECT_CALL(mock, TransProxyOpenProxyChannel(_, _, _)).WillOnce(Return(SOFTBUS_ERR));
+    int32_t ret = TransOpenChannelProc(CHANNEL_TYPE_PROXY, &appInfo, &connOpt, &channelId);
+    EXPECT_EQ(SOFTBUS_ERR, ret);
+    EXPECT_FALSE(cancelCalled);
+}
+
+/*
+ * @tc.name: TransOpenChannelProcEdcaTest010
+ * @tc.desc: PROXY HML link, driver OK, edcaSet=true, Proxy opens OK.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransChannelCommonTest, TransOpenChannelProcEdcaTest010, TestSize.Level1)
+{
+    TransChannelCommonMock mock;
+    AppInfo appInfo;
+    ConnectOption connOpt;
+    int32_t channelId = 0;
+    (void)memset_s(&appInfo, sizeof(appInfo), 0, sizeof(appInfo));
+    (void)memset_s(&connOpt, sizeof(connOpt), 0, sizeof(connOpt));
+    appInfo.linkType = LANE_HML;
+    appInfo.edcaParam.scene = EDCA_SCENE_DATA_CLONE;
+    appInfo.edcaParam.level = EDCA_LEVEL_SEMI;
+    g_setEdcaParamHook = [](int scene, int level) { return SOFTBUS_OK; };
+    EXPECT_CALL(mock, TransProxyOpenProxyChannel(_, _, _)).WillOnce(Return(SOFTBUS_OK));
+    int32_t ret = TransOpenChannelProc(CHANNEL_TYPE_PROXY, &appInfo, &connOpt, &channelId);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+}
+
+/*
+ * @tc.name: TransOpenChannelProcEdcaTest011
+ * @tc.desc: UDP non-HML link, edcaSet=false, UDP fails, goto EXIT, skip cancel.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransChannelCommonTest, TransOpenChannelProcEdcaTest011, TestSize.Level1)
+{
+    TransChannelCommonMock mock;
+    AppInfo appInfo;
+    ConnectOption connOpt;
+    int32_t channelId = 0;
+    (void)memset_s(&appInfo, sizeof(appInfo), 0, sizeof(appInfo));
+    (void)memset_s(&connOpt, sizeof(connOpt), 0, sizeof(connOpt));
+    appInfo.linkType = LANE_P2P;
+    appInfo.edcaParam.level = EDCA_LEVEL_SEMI;
+    EXPECT_CALL(mock, TransOpenUdpChannel(_, _, _)).WillOnce(Return(SOFTBUS_ERR));
+    int32_t ret = TransOpenChannelProc(CHANNEL_TYPE_UDP, &appInfo, &connOpt, &channelId);
+    EXPECT_EQ(SOFTBUS_ERR, ret);
+}
+
+/*
+ * @tc.name: TransOpenChannelProcEdcaTest012
+ * @tc.desc: TCP_DIRECT non-HML link, edcaSet=false, TCP fails, goto EXIT, skip cancel.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransChannelCommonTest, TransOpenChannelProcEdcaTest012, TestSize.Level1)
+{
+    TransChannelCommonMock mock;
+    AppInfo appInfo;
+    ConnectOption connOpt;
+    int32_t channelId = 0;
+    (void)memset_s(&appInfo, sizeof(appInfo), 0, sizeof(appInfo));
+    (void)memset_s(&connOpt, sizeof(connOpt), 0, sizeof(connOpt));
+    appInfo.linkType = LANE_WLAN_2P4G;
+    appInfo.edcaParam.level = EDCA_LEVEL_FULL;
+    EXPECT_CALL(mock, TransOpenDirectChannel(_, _, _)).WillOnce(Return(SOFTBUS_ERR));
+    int32_t ret = TransOpenChannelProc(CHANNEL_TYPE_TCP_DIRECT, &appInfo, &connOpt, &channelId);
+    EXPECT_EQ(SOFTBUS_ERR, ret);
+}
+
+/*
+ * @tc.name: TransOpenChannelProcEdcaTest013
+ * @tc.desc: UDP HML link, driver OK on first call, mgr==NULL on EXIT cancel call.
+ *           Covers EXIT_EDCA_CANCEL mgr==NULL branch with edcaSet=true.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransChannelCommonTest, TransOpenChannelProcEdcaTest013, TestSize.Level1)
+{
+    TransChannelCommonMock mock;
+    AppInfo appInfo;
+    ConnectOption connOpt;
+    int32_t channelId = 0;
+    (void)memset_s(&appInfo, sizeof(appInfo), 0, sizeof(appInfo));
+    (void)memset_s(&connOpt, sizeof(connOpt), 0, sizeof(connOpt));
+    appInfo.linkType = LANE_HML;
+    appInfo.edcaParam.scene = EDCA_SCENE_DATA_CLONE;
+    appInfo.edcaParam.level = EDCA_LEVEL_SEMI;
+    int mgrCallCount = 0;
+    g_getMgrHook = [&]() -> struct WifiDirectManager * {
+        mgrCallCount++;
+        if (mgrCallCount == 1) {
+            return &g_wifiDirectManager;
+        }
+        return nullptr;
+    };
+    EXPECT_CALL(mock, TransOpenUdpChannel(_, _, _)).WillOnce(Return(SOFTBUS_ERR));
+    int32_t ret = TransOpenChannelProc(CHANNEL_TYPE_UDP, &appInfo, &connOpt, &channelId);
+    EXPECT_EQ(SOFTBUS_ERR, ret);
+}
+
+/*
+ * @tc.name: TransOpenChannelProcEdcaTest014
+ * @tc.desc: UDP HML link, driver OK on first call, setEdcaParam==NULL on EXIT cancel call.
+ *           Covers EXIT_EDCA_CANCEL setEdcaParam==NULL branch with edcaSet=true.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransChannelCommonTest, TransOpenChannelProcEdcaTest014, TestSize.Level1)
+{
+    TransChannelCommonMock mock;
+    AppInfo appInfo;
+    ConnectOption connOpt;
+    int32_t channelId = 0;
+    (void)memset_s(&appInfo, sizeof(appInfo), 0, sizeof(appInfo));
+    (void)memset_s(&connOpt, sizeof(connOpt), 0, sizeof(connOpt));
+    appInfo.linkType = LANE_HML;
+    appInfo.edcaParam.scene = EDCA_SCENE_DATA_CLONE;
+    appInfo.edcaParam.level = EDCA_LEVEL_SEMI;
+    int mgrCallCount = 0;
+    g_getMgrHook = [&]() -> struct WifiDirectManager * {
+        mgrCallCount++;
+        if (mgrCallCount == 1) {
+            return &g_wifiDirectManager;
+        }
+        return &g_nullEdcaMgr;
+    };
+    EXPECT_CALL(mock, TransOpenUdpChannel(_, _, _)).WillOnce(Return(SOFTBUS_ERR));
+    int32_t ret = TransOpenChannelProc(CHANNEL_TYPE_UDP, &appInfo, &connOpt, &channelId);
+    EXPECT_EQ(SOFTBUS_ERR, ret);
+}
+
+/*
+ * @tc.name: TransOpenChannelProcEdcaTest015
+ * @tc.desc: NULL appInfo returns SOFTBUS_INVALID_PARAM.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransChannelCommonTest, TransOpenChannelProcEdcaTest015, TestSize.Level1)
+{
+    ConnectOption connOpt;
+    int32_t channelId = 0;
+    (void)memset_s(&connOpt, sizeof(connOpt), 0, sizeof(connOpt));
+    int32_t ret = TransOpenChannelProc(CHANNEL_TYPE_UDP, NULL, &connOpt, &channelId);
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
+}
+
+/*
+ * @tc.name: TransOpenChannelProcEdcaTest016
+ * @tc.desc: NULL connOpt returns SOFTBUS_INVALID_PARAM.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransChannelCommonTest, TransOpenChannelProcEdcaTest016, TestSize.Level1)
+{
+    AppInfo appInfo;
+    int32_t channelId = 0;
+    (void)memset_s(&appInfo, sizeof(appInfo), 0, sizeof(appInfo));
+    int32_t ret = TransOpenChannelProc(CHANNEL_TYPE_UDP, &appInfo, NULL, &channelId);
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
+}
+
+/*
+ * @tc.name: TransOpenChannelProcEdcaTest017
+ * @tc.desc: type==CHANNEL_TYPE_BUTT returns SOFTBUS_TRANS_INVALID_CHANNEL_TYPE.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransChannelCommonTest, TransOpenChannelProcEdcaTest017, TestSize.Level1)
+{
+    AppInfo appInfo;
+    ConnectOption connOpt;
+    int32_t channelId = 0;
+    (void)memset_s(&appInfo, sizeof(appInfo), 0, sizeof(appInfo));
+    (void)memset_s(&connOpt, sizeof(connOpt), 0, sizeof(connOpt));
+    int32_t ret = TransOpenChannelProc(CHANNEL_TYPE_BUTT, &appInfo, &connOpt, &channelId);
+    EXPECT_EQ(SOFTBUS_TRANS_INVALID_CHANNEL_TYPE, ret);
+}
+
+/*
+ * @tc.name: TransOpenChannelProcEdcaTest018
+ * @tc.desc: TCP_DIRECT non-HML link, TCP opens OK.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransChannelCommonTest, TransOpenChannelProcEdcaTest018, TestSize.Level1)
+{
+    TransChannelCommonMock mock;
+    AppInfo appInfo;
+    ConnectOption connOpt;
+    int32_t channelId = 0;
+    (void)memset_s(&appInfo, sizeof(appInfo), 0, sizeof(appInfo));
+    (void)memset_s(&connOpt, sizeof(connOpt), 0, sizeof(connOpt));
+    appInfo.linkType = LANE_WLAN_5G;
+    appInfo.edcaParam.level = EDCA_LEVEL_DISABLE;
+    EXPECT_CALL(mock, TransOpenDirectChannel(_, _, _)).WillOnce(Return(SOFTBUS_OK));
+    int32_t ret = TransOpenChannelProc(CHANNEL_TYPE_TCP_DIRECT, &appInfo, &connOpt, &channelId);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+}
+
+/*
+ * @tc.name: TransOpenChannelProcEdcaTest019
+ * @tc.desc: UDP non-HML link, UDP opens OK.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransChannelCommonTest, TransOpenChannelProcEdcaTest019, TestSize.Level1)
+{
+    TransChannelCommonMock mock;
+    AppInfo appInfo;
+    ConnectOption connOpt;
+    int32_t channelId = 0;
+    (void)memset_s(&appInfo, sizeof(appInfo), 0, sizeof(appInfo));
+    (void)memset_s(&connOpt, sizeof(connOpt), 0, sizeof(connOpt));
+    appInfo.linkType = LANE_WLAN_5G;
+    appInfo.edcaParam.level = EDCA_LEVEL_DISABLE;
+    EXPECT_CALL(mock, TransOpenUdpChannel(_, _, _)).WillOnce(Return(SOFTBUS_OK));
+    int32_t ret = TransOpenChannelProc(CHANNEL_TYPE_UDP, &appInfo, &connOpt, &channelId);
+    EXPECT_EQ(SOFTBUS_OK, ret);
 }
 } // namespace OHOS

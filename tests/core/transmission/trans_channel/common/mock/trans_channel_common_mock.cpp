@@ -75,5 +75,20 @@ int32_t TransUdpUpdateEdcaParam(int32_t channelId, const EdcaParam *edcaParam)
 {
     return GetTransChannelCommonInterface()->TransUdpUpdateEdcaParam(channelId, edcaParam);
 }
+
+int32_t TransOpenUdpChannel(AppInfo *appInfo, const ConnectOption *connOpt, int32_t *channelId)
+{
+    return GetTransChannelCommonInterface()->TransOpenUdpChannel(appInfo, connOpt, channelId);
+}
+
+int32_t TransProxyOpenProxyChannel(AppInfo *appInfo, const ConnectOption *connOpt, int32_t *channelId)
+{
+    return GetTransChannelCommonInterface()->TransProxyOpenProxyChannel(appInfo, connOpt, channelId);
+}
+
+int32_t TransOpenDirectChannel(AppInfo *appInfo, const ConnectOption *connOpt, int32_t *channelId)
+{
+    return GetTransChannelCommonInterface()->TransOpenDirectChannel(appInfo, connOpt, channelId);
+}
 }
 }

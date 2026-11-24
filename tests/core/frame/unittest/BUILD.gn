@@ -30,6 +30,7 @@ ohos_unittest("SoftbusServerStubTest") {
     "mock/softbus_server_stub_test_mock.cpp",
     "softbus_server_stub_test.cpp",
   ]
+  ldflags = [ "-Wl,--allow-multiple-definition" ]
 
   include_dirs = [
     "$dsoftbus_dfx_path/interface/include",

@@ -1476,4 +1476,38 @@ HWTEST_F(TransUdpManagerTest, TransGetUdpChannelByPeerIdTest001, TestSize.Level1
 
     TransUdpChannelMgrDeinit();
 }
+
+/*
+ * @tc.name: TransUdpUpdateEdcaParamTest001
+ * @tc.desc: test TransUdpUpdateEdcaParam with NULL edcaParam, uninitialized manager,
+ *           channel found, and channel not found.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(TransUdpManagerTest, TransUdpUpdateEdcaParamTest001, TestSize.Level1)
+{
+    int32_t channelId = TEST_CHANNEL_ID;
+    int32_t ret = TransUdpUpdateEdcaParam(channelId, NULL);
+    EXPECT_EQ(SOFTBUS_INVALID_PARAM, ret);
+
+    TransUdpChannelMgrDeinit();
+    EdcaParam edca = { .scene = EDCA_SCENE_DATA_CLONE, .level = EDCA_LEVEL_SEMI };
+    ret = TransUdpUpdateEdcaParam(channelId, &edca);
+    EXPECT_EQ(SOFTBUS_NO_INIT, ret);
+
+    ret = TransUdpChannelMgrInit();
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    UdpChannelInfo *channel = reinterpret_cast<UdpChannelInfo *>(SoftBusCalloc(sizeof(UdpChannelInfo)));
+    ASSERT_TRUE(channel != nullptr);
+    channel->info.myData.channelId = channelId;
+    ret = TransAddUdpChannel(channel);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+    ret = TransUdpUpdateEdcaParam(channelId, &edca);
+    EXPECT_EQ(SOFTBUS_OK, ret);
+
+    TransDelUdpChannel(channelId);
+    ret = TransUdpUpdateEdcaParam(channelId, &edca);
+    EXPECT_EQ(SOFTBUS_TRANS_NODE_NOT_FOUND, ret);
+    TransUdpChannelMgrDeinit();
+}
 }
