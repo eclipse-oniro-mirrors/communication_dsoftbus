@@ -806,6 +806,43 @@ HWTEST_F(LNNNetworkManagerMockTest, Net_Device_Risk_State_Event_Handler_001, Tes
 }
 
 /*
+ * @tc.name: Net_Device_Risk_State_Event_Handler_002
+ * @tc.desc: Verify NetDeviceRiskStateEventHandler clears g_isDeviceRisk before
+ *           recovery, so LnnIsAutoNetWorkingEnabled sees no risk during
+ *           LnnRestartNetwork and discovery restart is not blocked
+ * @tc.type: FUNC
+ * @tc.require: NONE
+ * @tc.level: Level1
+ */
+HWTEST_F(LNNNetworkManagerMockTest, Net_Device_Risk_State_Event_Handler_002, TestSize.Level1)
+{
+    LnnDeviceRiskStateChangeEvent *event =
+        reinterpret_cast<LnnDeviceRiskStateChangeEvent *>(SoftBusCalloc(sizeof(LnnDeviceRiskStateChangeEvent)));
+    ASSERT_TRUE(event != nullptr);
+    event->basic.event = LNN_EVENT_DEVICE_RISK_STATE_CHANGED;
+
+    NiceMock<LnnNetworkManagerInterfaceMock> managerMock;
+    NiceMock<LnnNetLedgertInterfaceMock> ledgerMock;
+    bool isDeviceRiskWhenRestart = true;
+    ON_CALL(ledgerMock, IsActiveOsAccountUnlocked).WillByDefault(
+        Invoke([&isDeviceRiskWhenRestart]() {
+            isDeviceRiskWhenRestart = g_isDeviceRisk;
+            return true;
+        }));
+
+    event->status = SOFTBUS_DEVICE_IS_RISK;
+    NetDeviceRiskStateEventHandler(&event->basic);
+    EXPECT_EQ(g_isDeviceRisk, true);
+
+    event->status = SOFTBUS_DEVICE_NOT_RISK;
+    NetDeviceRiskStateEventHandler(&event->basic);
+    EXPECT_EQ(g_isDeviceRisk, false);
+    EXPECT_FALSE(isDeviceRiskWhenRestart);
+
+    SoftBusFree(event);
+}
+
+/*
  * @tc.name: Net_Risk_Device_Open_Auth_Port_Test_001
  * @tc.desc: Verify NetRiskDeviceOpenAuthPort skips AuthStartListening when local ip is
  *           loopback or invalid (wifi not connected); starts listening with valid ip

@@ -114,4 +114,37 @@ HWTEST_F(LnnHeartBeatDeviceRiskTest, HbDeviceRiskStateEventHandlerTest001, TestS
 
     SoftBusFree(event);
 }
+/*
+ * @tc.name: HbDeviceRiskStateEventHandlerTest002
+ * @tc.desc: Test that HbDeviceRiskStateEventHandler clears deviceRiskState before
+ *           HbConditionChanged re-evaluates IsHeartbeatEnable on SOFTBUS_DEVICE_NOT_RISK,
+ *           so heartbeat/ble discovery is not blocked by stale risk state
+ * @tc.type: FUNC
+ * @tc.require:
+ * @tc.level: Level1
+ */
+HWTEST_F(LnnHeartBeatDeviceRiskTest, HbDeviceRiskStateEventHandlerTest002, TestSize.Level1)
+{
+    LnnDeviceRiskStateChangeEvent *event =
+        reinterpret_cast<LnnDeviceRiskStateChangeEvent*>(SoftBusCalloc(sizeof(LnnDeviceRiskStateChangeEvent)));
+    ASSERT_TRUE(event != nullptr);
+    event->basic.event = LNN_EVENT_DEVICE_RISK_STATE_CHANGED;
+    event->status = SOFTBUS_DEVICE_NOT_RISK;
+
+    NiceMock<LnnHeatbeatDeviceRiskInterfaceMock> lnnDeviceRiskMock;
+    SoftBusDeviceRiskState riskStateWhenConditionChanged = SOFTBUS_DEVICE_IS_RISK;
+    ON_CALL(lnnDeviceRiskMock, LnnIsOsAccountConstraint).WillByDefault(
+        Invoke([&riskStateWhenConditionChanged]() {
+            riskStateWhenConditionChanged = g_hbConditionState.deviceRiskState;
+            return false;
+        }));
+
+    g_hbConditionState.deviceRiskState = SOFTBUS_DEVICE_IS_RISK;
+    HbDeviceRiskStateEventHandler(&event->basic);
+
+    EXPECT_EQ(g_hbConditionState.deviceRiskState, SOFTBUS_DEVICE_NOT_RISK);
+    EXPECT_EQ(riskStateWhenConditionChanged, SOFTBUS_DEVICE_NOT_RISK);
+
+    SoftBusFree(event);
+}
 }  // namespace OHOS
