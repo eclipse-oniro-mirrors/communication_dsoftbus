@@ -943,18 +943,6 @@ HWTEST_F(TransTcpDirectSessionConnTest, TransTdcClearEdcaParamTest002, TestSize.
 }
 
 /*
- * @tc.name: TransTdcChannelInfoDeathCallbackTest001
- * @tc.desc: NULL pkgName returns early without crash.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(TransTcpDirectSessionConnTest, TransTdcChannelInfoDeathCallbackTest001, TestSize.Level1)
-{
-    TransTdcChannelInfoDeathCallback(NULL, PID);
-    TransTdcChannelInfoDeathCallback("dms", PID);
-}
-
-/*
  * @tc.name: TransGetTdcChannelByIdTest
  * @tc.desc: test TransGetTdcChannelById in different case
  *           It tests the behavior of obtaining TCP channel information

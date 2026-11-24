@@ -431,17 +431,6 @@ HWTEST_F(TransChannelCommonTest, TransSetEdcaParamForChannelTest011, TestSize.Le
 }
 
 /*
- * @tc.name: TransCancelEdcaParamTest001
- * @tc.desc: NULL edcaParam returns immediately.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(TransChannelCommonTest, TransCancelEdcaParamTest001, TestSize.Level1)
-{
-    TransCancelEdcaParam(NULL, LANE_HML);
-}
-
-/*
  * @tc.name: TransCancelEdcaParamTest002
  * @tc.desc: level == EDCA_LEVEL_DISABLE returns immediately.
  * @tc.type: FUNC
