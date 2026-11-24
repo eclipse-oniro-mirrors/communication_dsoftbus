@@ -39,7 +39,7 @@ extern "C" int SoftBusSleepMs(unsigned int ms)
 {
     if (g_fastSleep.load()) {
         std::this_thread::sleep_for(std::chrono::milliseconds(FAST_SLEEP_MS));
-        return 0
+        return 0;
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
     return 0;
@@ -2071,14 +2071,14 @@ HWTEST_F(SoftBusServerProxyFrameTest, ClientDeathProcTaskCasSuccessTest, TestSiz
         g_oldServerProxy = nullptr;
         g_serverProxy = nullptr;
     }
-    g_fastSleep(true);
+    g_fastSleep.store(true);
     ClientDeathProcTask();
     EXPECT_TRUE(g_taskScheduled.load());
     auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(5);
     while (g_taskScheduled.load() && std::chrono::steady_clock::now() < deadline) {
         SoftBusSleepMs(WAIT_SERVER_INTERVAL);
     }
-    g_fastSleep(false);
+    g_fastSleep.store(false);
     EXPECT_FALSE(g_taskScheduled.load());
 }
 
