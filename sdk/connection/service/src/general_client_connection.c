@@ -315,7 +315,7 @@ int32_t ServerStopped(const char *name)
     return SOFTBUS_OK;
 }
 
-int32_t GeneralIsEmulator(const char *pkgName, bool *isEmulator)
+static int32_t GeneralIsEmulator(const char *pkgName, bool *isEmulator)
 {
     if (pkgName == NULL || isEmulator == NULL) {
         CONN_LOGE(CONN_COMMON, "invalid param");
