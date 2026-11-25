@@ -22,6 +22,7 @@
 #include "softbus_error_code.h"
 #include "taihe/runtime.hpp"
 #include "uv.h"
+#include <atomic>
 #include <condition_variable>
 #include <map>
 #include <mutex>
