@@ -839,7 +839,6 @@ static void HbDeviceRiskStateEventHandler(const LnnEventBasicInfo *info)
             break;
         case SOFTBUS_DEVICE_NOT_RISK:
             if (g_hbConditionState.deviceRiskState == SOFTBUS_DEVICE_IS_RISK) {
-                g_hbConditionState.deviceRiskState = deviceRiskState;
                 HbConditionChanged(false);
             }
             if (g_hbConditionState.deviceRiskState != SOFTBUS_DEVICE_NOT_RISK) {
