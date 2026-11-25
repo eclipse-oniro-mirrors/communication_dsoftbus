@@ -16,12 +16,22 @@
 #ifndef CLIENT_CONNECTION_H
 #define CLIENT_CONNECTION_H
 
+#include <stdatomic.h>
+
 #include "softbus_def.h"
 #include "softbus_connection.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+enum EmulatorQueryState {
+    EMULATOR_STATE_UNQUERIED = 0,
+    EMULATOR_STATE_IS_EMULATOR = 1,
+    EMULATOR_STATE_NOT_EMULATOR = 2,
+};
+
+extern atomic_int g_emulatorState;
 
 int32_t ConnectionStateChange(uint32_t handle, int32_t state, int32_t reason);
 int32_t AcceptConnect(const char *name, uint32_t handle);

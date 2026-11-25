@@ -103,16 +103,6 @@ int32_t ServerStopped(const char *name)
     return SOFTBUS_OK;
 }
 
-static int32_t GeneralIsEmulator(const char *pkgName, bool *isEmulator)
-{
-    (void)pkgName;
-    if (isEmulator == NULL) {
-        return SOFTBUS_INVALID_PARAM;
-    }
-    *isEmulator = false;
-    return SOFTBUS_OK;
-}
-
 bool GeneralIsEmulatorEnv(void)
 {
     return false;

@@ -15,7 +15,6 @@
 
 #include "general_client_connection.h"
 
-#include <stdatomic.h>
 #include <string.h>
 #include "conn_log.h"
 #include "general_connection_server_proxy.h"
@@ -28,6 +27,7 @@
 static IGeneralListener *g_connectionListener = NULL;
 static SoftBusMutex g_connectionListenerLock;
 const char *g_limitPkgName = "ohos.distributedschedule.dms";
+atomic_int g_emulatorState;
 
 static bool IsValidListener(IGeneralListener *listener)
 {
@@ -333,14 +333,6 @@ static int32_t GeneralIsEmulator(const char *pkgName, bool *isEmulator)
     }
     return SOFTBUS_OK;
 }
-
-enum EmulatorQueryState {
-    EMULATOR_STATE_UNQUERIED = 0,
-    EMULATOR_STATE_IS_EMULATOR = 1,
-    EMULATOR_STATE_NOT_EMULATOR = 2,
-};
-
-static atomic_int g_emulatorState;
 
 bool GeneralIsEmulatorEnv(void)
 {
