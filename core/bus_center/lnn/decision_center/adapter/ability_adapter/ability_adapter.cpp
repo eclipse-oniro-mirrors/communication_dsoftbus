@@ -15,6 +15,8 @@
 
 #include "ability_adapter.h"
 
+#include <cstring>
+
 #include "anonymizer.h"
 #include "ability_manager_client.h"
 #include "appmgr/app_mgr_client.h"
@@ -23,11 +25,17 @@
 #include "iservice_registry.h"
 #include "lnn_log.h"
 #include "softbus_error_code.h"
+#include "parameter.h"
+#include "start_options.h"
 #include "system_ability_definition.h"
 #include "want.h"
 
 constexpr int32_t ERR_OK = 0;
 constexpr int32_t GET_EXTENSION_UPPER_LIMIT = 100;
+static constexpr const char *PRODUCT_MODEL_SPN = "SPN";
+static constexpr const char *PRODUCT_MODEL_SZY = "SZY";
+static constexpr int32_t PRODUCT_MODEL_PREFIX_LEN = 3;
+static constexpr int32_t MAIN_DISPLAY_ID = 0;
 
 static OHOS::sptr<OHOS::AppExecFwk::IBundleMgr> GetBundleMgrProxy()
 {
@@ -77,6 +85,16 @@ static bool IsSystemApp(const char *bundleName, int32_t userId)
     return true;
 }
 
+static bool IsMultiScreenDevice()
+{
+    const char *model = GetProductModel();
+    if (model == nullptr) {
+        return false;
+    }
+    return strncmp(model, PRODUCT_MODEL_SPN, PRODUCT_MODEL_PREFIX_LEN) == 0 ||
+           strncmp(model, PRODUCT_MODEL_SZY, PRODUCT_MODEL_PREFIX_LEN) == 0;
+}
+
 int32_t StartAbility(const char *bundleName, const char *abilityName, int32_t userId)
 {
     if (bundleName == nullptr || abilityName == nullptr || userId < 0) {
@@ -95,7 +113,14 @@ int32_t StartAbility(const char *bundleName, const char *abilityName, int32_t us
     OHOS::AAFwk::Want want;
     want.SetElementName(bundleName, abilityName);
     want.SetParam("launch_type", std::string("softbus_agent_communication"));
-    int32_t ret = client->StartAbility(want);
+    int32_t ret;
+    if (IsMultiScreenDevice()) {
+        OHOS::AAFwk::StartOptions startOptions;
+        startOptions.SetDisplayID(MAIN_DISPLAY_ID);
+        ret = client->StartUIAbilityWithDisplayIdPassthrough(want, startOptions, nullptr);
+    } else {
+        ret = client->StartAbility(want);
+    }
     if (ret == OHOS::AAFwk::RESOLVE_ABILITY_ERR) {
         LNN_LOGE(LNN_EVENT, "abilityname err");
         ret = SOFTBUS_RESOLVE_ABILITY_ERR;
