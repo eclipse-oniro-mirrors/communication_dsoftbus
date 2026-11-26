@@ -953,6 +953,7 @@ ohos_unittest("LNNNetworkInfoTest") {
     "$dsoftbus_root_path/sdk:softbus_client",
   ]
   deps += dsoftbus_log_label_deps
+  defines += [ "DSOFTBUS_FEATURE_CONN_PV1" ]
 
   if (is_standard_system) {
     external_deps = [
