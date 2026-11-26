@@ -41,6 +41,16 @@ int32_t RegistIPProtocolManager(void)
     return GetNetworkManagerInterface()->RegistIPProtocolManager();
 }
 
+void AuthStopListening(AuthLinkType type)
+{
+    return GetNetworkManagerInterface()->AuthStopListening(type);
+}
+
+int32_t AuthStartListening(AuthLinkType type, const char *ip, int32_t port)
+{
+    return GetNetworkManagerInterface()->AuthStartListening(type, ip, port);
+}
+
 int32_t LnnInitPhysicalSubnetManager(void)
 {
     return GetNetworkManagerInterface()->LnnInitPhysicalSubnetManager();

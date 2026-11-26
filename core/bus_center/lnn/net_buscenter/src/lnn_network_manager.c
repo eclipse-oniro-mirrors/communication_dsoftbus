@@ -49,6 +49,8 @@
 #define LNN_CHECK_OOBE_DELAY_LEN_MIN    (5 * 1000LL)
 #define LNN_RESTART_DISCOVERY_DELAY_LEN (5 * 1000LL)
 
+#define LNN_LOOPBACK_IP "127.0.0.1"
+
 static uint32_t RETRY_COUNT = 10;
 static SoftBusMutex g_dataShareLock;
 static bool g_isDataShareInit = false;
@@ -326,6 +328,10 @@ int32_t NetRiskDeviceOpenAuthPort(void)
         LNN_LOGE(LNN_BUILDER, "get local ip failed");
         return SOFTBUS_NETWORK_GET_NODE_INFO_ERR;
     }
+    if (strcmp(localIp, LNN_LOOPBACK_IP) == 0 || strcmp(localIp, "") == 0 || strcmp(localIp, "0.0.0.0") == 0) {
+        LNN_LOGI(LNN_BUILDER, "wifi not connected, local ip is invalid, dont open auth port");
+        return SOFTBUS_NETWORK_GET_IP_ADDR_FAILED;
+    }
     int32_t port = AuthStartListening(AUTH_LINK_TYPE_WIFI, localIp, authPort);
     if (port < 0) {
         LNN_LOGE(LNN_BUILDER, "AuthStartListening failed");
@@ -363,11 +369,11 @@ static void NetDeviceRiskStateEventHandler(const LnnEventBasicInfo *info)
             LnnClearAllNode();
             break;
         case SOFTBUS_DEVICE_NOT_RISK:
-            if (g_isDeviceRisk == true) {
+            if (g_isDeviceRisk) {
+                g_isDeviceRisk = false;
                 NetRiskDeviceOpenAuthPort();
                 LnnRestartNetwork();
             }
-            g_isDeviceRisk = false;
             break;
         default:
             break;
