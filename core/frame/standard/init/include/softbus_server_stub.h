@@ -94,6 +94,7 @@ private:
     int32_t DisconnectInner(MessageParcel &data, MessageParcel &reply);
     int32_t SendInner(MessageParcel &data, MessageParcel &reply);
     int32_t GetPeerDeviceIdInner(MessageParcel &data, MessageParcel &reply);
+    int32_t IsEmulatorInner(MessageParcel &data, MessageParcel &reply);
     int32_t OpenBrProxyInner(MessageParcel &data, MessageParcel &reply);
     int32_t CloseBrProxyInner(MessageParcel &data, MessageParcel &reply);
     int32_t SendBrProxyDataInner(MessageParcel &data, MessageParcel &reply);

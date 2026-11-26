@@ -207,6 +207,7 @@
         "GeneralRegisterListener";
         "GeneralUnregisterListener";
         "GeneralGetPeerDeviceId";
+        "GeneralIsEmulatorEnv";
         "ClientAddSession";
         "InitSoftBus";
         "CheckPackageName";

@@ -102,3 +102,8 @@ int32_t ServerStopped(const char *name)
     (void)name;
     return SOFTBUS_OK;
 }
+
+bool GeneralIsEmulatorEnv(void)
+{
+    return false;
+}

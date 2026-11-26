@@ -235,6 +235,7 @@ void SoftBusServerStub::InitMemberFuncMap()
     memberFuncMap_[SERVER_GENERAL_DISCONNECT] = &SoftBusServerStub::DisconnectInner;
     memberFuncMap_[SERVER_GENERAL_SEND] = &SoftBusServerStub::SendInner;
     memberFuncMap_[SERVER_GENERAL_GET_PEER_DEVICE_ID] = &SoftBusServerStub::GetPeerDeviceIdInner;
+    memberFuncMap_[SERVER_GENERAL_IS_EMULATOR] = &SoftBusServerStub::IsEmulatorInner;
     memberFuncMap_[SERVER_SET_NODE_KEY_INFO] = &SoftBusServerStub::SetNodeKeyInfoInner;
     memberFuncMap_[SERVER_START_ACCOUNT_AUTH] = &SoftBusServerStub::StartAccountAuthInner;
     memberFuncMap_[SERVER_PROCESS_ACCOUNT_AUTH] = &SoftBusServerStub::ProcessAccountAuthInner;
@@ -2629,6 +2630,20 @@ int32_t SoftBusServerStub::GetPeerDeviceIdInner(MessageParcel &data, MessageParc
     }
     if (!reply.WriteInt32(retReply)) {
         COMM_LOGE(COMM_SVC, "write ret failed!");
+        return SOFTBUS_IPC_ERR;
+    }
+    return SOFTBUS_OK;
+}
+
+int32_t SoftBusServerStub::IsEmulatorInner(MessageParcel &data, MessageParcel &reply)
+{
+    (void)data;
+    bool isEmulator = false;
+#ifdef DSOFTBUS_FEATURE_EMULATOR
+    isEmulator = true;
+#endif
+    if (!reply.WriteBool(isEmulator)) {
+        COMM_LOGE(COMM_SVC, "write reply failed");
         return SOFTBUS_IPC_ERR;
     }
     return SOFTBUS_OK;

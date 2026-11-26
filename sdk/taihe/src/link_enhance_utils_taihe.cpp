@@ -43,6 +43,7 @@ static std::map<int32_t, std::string> taiheErrMsgMap {
     {LINK_ENHANCE_CONNECTION_NOT_READY, "Connection is not ready."},
     {LINK_ENHANCE_PARAMETER_INVALID, "Invalid parameter."},
     {LINK_ENHANCE_INTERNAL_ERR, "Internal error."},
+    {LINK_ENHANCE_EMULATOR_NOT_SUPPORT, "the capability is not supported on the emulator at this time"},
 };
 int32_t ConvertToJsErrcode(int32_t err)
 {
@@ -73,6 +74,14 @@ void ThrowException(int32_t err)
     COMM_LOGI(COMM_SDK, "error code is=%{public}d", err);
     int32_t ret = ConvertToJsErrcode(err);
     auto it = taiheErrMsgMap.find(ret);
+    if (it != taiheErrMsgMap.end()) {
+        taihe::set_business_error(it->first, it->second);
+    }
+}
+
+void ThrowEmulatorNotSupport(void)
+{
+    auto it = taiheErrMsgMap.find(LINK_ENHANCE_EMULATOR_NOT_SUPPORT);
     if (it != taiheErrMsgMap.end()) {
         taihe::set_business_error(it->first, it->second);
     }

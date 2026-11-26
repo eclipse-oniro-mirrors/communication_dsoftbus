@@ -73,6 +73,11 @@ int32_t ServerIpcGetPeerDeviceId(uint32_t handle, char *deviceId, uint32_t len)
     return GetMock()->ServerIpcGetPeerDeviceId(handle, deviceId, len);
 }
 
+int32_t ServerIpcIsEmulator(bool *isEmulator)
+{
+    return GetMock()->ServerIpcIsEmulator(isEmulator);
+}
+
 #ifdef __cplusplus
 }
 #endif

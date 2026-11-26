@@ -27,6 +27,7 @@
 static IGeneralListener *g_connectionListener = NULL;
 static SoftBusMutex g_connectionListenerLock;
 const char *g_limitPkgName = "ohos.distributedschedule.dms";
+atomic_int g_emulatorState;
 
 static bool IsValidListener(IGeneralListener *listener)
 {
@@ -312,4 +313,39 @@ int32_t ServerStopped(const char *name)
     }
     CONN_LOGI(CONN_COMMON, "connect server stopped succ");
     return SOFTBUS_OK;
+}
+
+static int32_t GeneralIsEmulator(const char *pkgName, bool *isEmulator)
+{
+    if (pkgName == NULL || isEmulator == NULL) {
+        CONN_LOGE(CONN_COMMON, "invalid param");
+        return SOFTBUS_INVALID_PARAM;
+    }
+    int32_t ret = InitSoftBus(pkgName);
+    if (ret != SOFTBUS_OK) {
+        CONN_LOGE(CONN_COMMON, "register service fail");
+        return ret;
+    }
+    ret = ServerIpcIsEmulator(isEmulator);
+    if (ret != SOFTBUS_OK) {
+        CONN_LOGE(CONN_COMMON, "is emulator fail");
+        return ret;
+    }
+    return SOFTBUS_OK;
+}
+
+bool GeneralIsEmulatorEnv(void)
+{
+    int32_t state = atomic_load_explicit(&g_emulatorState, memory_order_acquire);
+    if (state != EMULATOR_STATE_UNQUERIED) {
+        return state == EMULATOR_STATE_IS_EMULATOR;
+    }
+    bool isEmulator = false;
+    if (GeneralIsEmulator(g_limitPkgName, &isEmulator) != SOFTBUS_OK) {
+        CONN_LOGE(CONN_COMMON, "query emulator fail");
+        return false;
+    }
+    atomic_store_explicit(&g_emulatorState,
+        isEmulator ? EMULATOR_STATE_IS_EMULATOR : EMULATOR_STATE_NOT_EMULATOR, memory_order_release);
+    return isEmulator;
 }

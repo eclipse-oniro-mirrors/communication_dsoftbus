@@ -71,6 +71,7 @@ public:
     int32_t Disconnect(uint32_t handle) override;
     int32_t Send(uint32_t handle, const uint8_t *data, uint32_t len) override;
     int32_t ConnGetPeerDeviceId(uint32_t handle, char *deviceId, uint32_t len) override;
+    int32_t IsEmulator(bool *isEmulator);
 
 private:
     static inline BrokerDelegator<ConnectionServerProxy> delegator_;

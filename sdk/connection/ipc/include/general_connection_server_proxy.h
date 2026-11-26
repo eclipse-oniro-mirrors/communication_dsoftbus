@@ -34,6 +34,7 @@ int32_t ServerIpcConnect(const char *pkgName, const char *name, const Address *a
 int32_t ServerIpcDisconnect(uint32_t handle);
 int32_t ServerIpcSend(uint32_t handle, const uint8_t *data, uint32_t len);
 int32_t ServerIpcGetPeerDeviceId(uint32_t handle, char *deviceId, uint32_t len);
+int32_t ServerIpcIsEmulator(bool *isEmulator);
 
 #ifdef __cplusplus
 #if __cplusplus

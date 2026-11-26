@@ -33,6 +33,7 @@ enum class ConnectionState {
 int32_t ConvertToJsErrcode(int32_t err);
 bool CheckAccessToken(void);
 void ThrowException(int32_t err);
+void ThrowEmulatorNotSupport(void);
 int32_t Init();
 } // namespace Softbus
 } // namespace Communication

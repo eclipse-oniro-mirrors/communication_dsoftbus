@@ -249,5 +249,27 @@ HWTEST_F(ClientConnectionTest, ConnGetPeerDeviceIdTest, TestSize.Level0)
     ret = GeneralGetPeerDeviceId(1, deviceId, 10);
     ASSERT_EQ(ret, SOFTBUS_OK);
 }
+
+/*
+ * @tc.name: GeneralIsEmulatorEnvTest
+ * @tc.desc: emulator env check fail-open, cache-once and cache-hit lifecycle test
+ * @tc.type: FUNC
+ * @tc.require: SR20261026448412
+ */
+HWTEST_F(ClientConnectionTest, GeneralIsEmulatorEnvTest, TestSize.Level0)
+{
+    testing::NiceMock<ClientConnectionInterfaceMock> mock;
+    EXPECT_CALL(mock, InitSoftBus).Times(2).WillRepeatedly(testing::Return(SOFTBUS_OK));
+    EXPECT_CALL(mock, ServerIpcIsEmulator).Times(2).WillRepeatedly(testing::Return(-1));
+    ASSERT_FALSE(GeneralIsEmulatorEnv());
+    ASSERT_FALSE(GeneralIsEmulatorEnv());
+
+    EXPECT_CALL(mock, InitSoftBus).WillOnce(testing::Return(SOFTBUS_OK));
+    EXPECT_CALL(mock, ServerIpcIsEmulator).WillOnce(
+        testing::DoAll(testing::SetArgPointee<0>(true), testing::Return(SOFTBUS_OK)));
+    ASSERT_TRUE(GeneralIsEmulatorEnv());
+
+    ASSERT_TRUE(GeneralIsEmulatorEnv());
+}
 }
 } // namespace OHOS

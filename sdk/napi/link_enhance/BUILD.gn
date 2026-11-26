@@ -31,6 +31,7 @@ ohos_shared_library("linkenhance") {
     include_dirs = [
       "$dsoftbus_root_path/interfaces/kits/connection",
       "$dsoftbus_sdk_path/napi/link_enhance/include",
+      "$dsoftbus_sdk_path/connection/service/include",
     ]
 
     sources += [

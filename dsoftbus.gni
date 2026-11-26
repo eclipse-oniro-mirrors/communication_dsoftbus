@@ -127,6 +127,10 @@ if (defined(ohos_lite)) {
 
 defines += [ "OPENSSL_NO_FILENAMES" ]
 
+if (defined(is_emulator) && is_emulator) {
+  defines += [ "DSOFTBUS_FEATURE_EMULATOR" ]
+}
+
 if (dsoftbus_feature_disc_coap && dsoftbus_feature_inner_disc_coap) {
   defines += [ "DSOFTBUS_FEATURE_DISC_COAP" ]
 }

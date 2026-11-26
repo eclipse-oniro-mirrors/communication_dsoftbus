@@ -39,6 +39,7 @@ static std::map<int32_t, std::string> napiErrMsgMap {
     {LINK_ENHANCE_CONNECTION_NOT_READY, "Connection is not ready."},
     {LINK_ENHANCE_PARAMETER_INVALID, "Invalid parameter."},
     {LINK_ENHANCE_INTERNAL_ERR, "Internal error."},
+    {LINK_ENHANCE_EMULATOR_NOT_SUPPORT, "the capability is not supported on the emulator at this time"},
 };
 
 int32_t DoInJsMainThread(napi_env env, std::function<void(void)> func)
