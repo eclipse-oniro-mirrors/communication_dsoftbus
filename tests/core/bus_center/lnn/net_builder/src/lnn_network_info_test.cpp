@@ -47,6 +47,8 @@ constexpr uint32_t TYPE_128 = 128;
 constexpr uint32_t DISCOVERY_TYPE = 13111;
 constexpr uint8_t USER_ID_MSG[] = "100";
 constexpr uint32_t LEN = 10;
+constexpr uint32_t P2P_CAP_BIT = (1UL << STATIC_CAP_BIT_P2P);
+constexpr uint32_t OTHER_CAP_BIT = (1UL << STATIC_CAP_BIT_BLE);
 
 class LNNNetworkInfoTest : public testing::Test {
 public:
@@ -1370,6 +1372,113 @@ HWTEST_F(LNNNetworkInfoTest, ClearHmlFeatureCap_Test_001, TestSize.Level1)
     NiceMock<LnnNetBuilderInterfaceMock> netBuilderMock;
     EXPECT_CALL(netBuilderMock, LnnSetLocalByteInfo).WillOnce(Return(SOFTBUS_OK));
     EXPECT_NO_FATAL_FAILURE(ClearHmlFeatureCap());
+}
+
+static int32_t SetStaticNetCapAction(uint32_t *capability, StaticNetCapability type)
+{
+    *capability = (*capability) | (1UL << static_cast<uint32_t>(type));
+    return SOFTBUS_OK;
+}
+
+/*
+ * @tc.name: UpdateP2pStaticCap_Test_001
+ * @tc.desc: test UpdateP2pStaticCap when get local static net cap failed
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(LNNNetworkInfoTest, UpdateP2pStaticCap_Test_001, TestSize.Level1)
+{
+    NiceMock<LnnNetLedgertInterfaceMock> netLedgerMock;
+    EXPECT_CALL(netLedgerMock, LnnGetLocalNumU32Info).WillOnce(Return(SOFTBUS_NETWORK_NOT_FOUND));
+    EXPECT_EQ(UpdateP2pStaticCap(), SOFTBUS_NETWORK_NOT_FOUND);
+}
+
+/*
+ * @tc.name: UpdateP2pStaticCap_Test_002
+ * @tc.desc: test UpdateP2pStaticCap when set static net cap failed
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(LNNNetworkInfoTest, UpdateP2pStaticCap_Test_002, TestSize.Level1)
+{
+    NiceMock<LnnNetLedgertInterfaceMock> netLedgerMock;
+    EXPECT_CALL(netLedgerMock, LnnGetLocalNumU32Info)
+        .WillOnce(DoAll(SetArgPointee<1>(OTHER_CAP_BIT), Return(SOFTBUS_OK)));
+    EXPECT_CALL(netLedgerMock, LnnSetStaticNetCap).WillOnce(Return(SOFTBUS_INVALID_PARAM));
+    EXPECT_EQ(UpdateP2pStaticCap(), SOFTBUS_INVALID_PARAM);
+}
+
+/*
+ * @tc.name: UpdateP2pStaticCap_Test_003
+ * @tc.desc: test UpdateP2pStaticCap when p2p static cap not changed
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(LNNNetworkInfoTest, UpdateP2pStaticCap_Test_003, TestSize.Level1)
+{
+    NiceMock<LnnNetLedgertInterfaceMock> netLedgerMock;
+    EXPECT_CALL(netLedgerMock, LnnGetLocalNumU32Info)
+        .WillOnce(DoAll(SetArgPointee<1>(P2P_CAP_BIT | OTHER_CAP_BIT), Return(SOFTBUS_OK)));
+    EXPECT_CALL(netLedgerMock, LnnSetStaticNetCap).WillOnce(Invoke(SetStaticNetCapAction));
+    EXPECT_CALL(netLedgerMock, LnnSetLocalNumU32Info).Times(0);
+    EXPECT_EQ(UpdateP2pStaticCap(), SOFTBUS_OK);
+}
+
+/*
+ * @tc.name: UpdateP2pStaticCap_Test_004
+ * @tc.desc: test UpdateP2pStaticCap when update local static net cap failed
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(LNNNetworkInfoTest, UpdateP2pStaticCap_Test_004, TestSize.Level1)
+{
+    NiceMock<LnnNetLedgertInterfaceMock> netLedgerMock;
+    EXPECT_CALL(netLedgerMock, LnnGetLocalNumU32Info)
+        .WillOnce(DoAll(SetArgPointee<1>(OTHER_CAP_BIT), Return(SOFTBUS_OK)));
+    EXPECT_CALL(netLedgerMock, LnnSetStaticNetCap).WillOnce(Invoke(SetStaticNetCapAction));
+    EXPECT_CALL(netLedgerMock, LnnSetLocalNumU32Info)
+        .WillOnce(Return(SOFTBUS_NETWORK_SET_LEDGER_INFO_ERR));
+    EXPECT_EQ(UpdateP2pStaticCap(), SOFTBUS_NETWORK_SET_LEDGER_INFO_ERR);
+}
+
+/*
+ * @tc.name: UpdateP2pStaticCap_Test_005
+ * @tc.desc: test UpdateP2pStaticCap success when p2p static cap changed
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(LNNNetworkInfoTest, UpdateP2pStaticCap_Test_005, TestSize.Level1)
+{
+    NiceMock<LnnNetLedgertInterfaceMock> netLedgerMock;
+    EXPECT_CALL(netLedgerMock, LnnGetLocalNumU32Info)
+        .WillOnce(DoAll(SetArgPointee<1>(OTHER_CAP_BIT), Return(SOFTBUS_OK)));
+    EXPECT_CALL(netLedgerMock, LnnSetStaticNetCap).WillOnce(Invoke(SetStaticNetCapAction));
+    EXPECT_CALL(netLedgerMock, LnnSetLocalNumU32Info(NUM_KEY_STATIC_NET_CAP, P2P_CAP_BIT | OTHER_CAP_BIT))
+        .WillOnce(Return(SOFTBUS_OK));
+    EXPECT_EQ(UpdateP2pStaticCap(), SOFTBUS_OK);
+}
+
+/*
+ * @tc.name: LNN_INIT_NETWORK_INFO_TEST_002
+ * @tc.desc: test LnnInitNetworkInfo when UpdateP2pStaticCap failed
+ * @tc.type: FUNC
+ * @tc.level: Level1
+ * @tc.require:
+ */
+HWTEST_F(LNNNetworkInfoTest, LNN_INIT_NETWORK_INFO_TEST_002, TestSize.Level1)
+{
+    NiceMock<LnnServicetInterfaceMock> serviceMock;
+    EXPECT_CALL(serviceMock, SoftBusHasWifiDirectCapability).WillRepeatedly(Return(true));
+    EXPECT_CALL(serviceMock, SoftBusGetWifiInterfaceCoexistCap).WillRepeatedly(Return(nullptr));
+    EXPECT_CALL(serviceMock, LnnRegisterEventHandler).WillRepeatedly(Return(SOFTBUS_INVALID_PARAM));
+    NiceMock<LnnNetLedgertInterfaceMock> netLedgerMock;
+    EXPECT_CALL(netLedgerMock, LnnGetLocalNumU32Info).WillRepeatedly(Return(SOFTBUS_NETWORK_NOT_FOUND));
+    EXPECT_EQ(LnnInitNetworkInfo(), SOFTBUS_INVALID_PARAM);
 }
 
 /*

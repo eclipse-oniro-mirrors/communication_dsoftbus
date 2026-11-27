@@ -649,6 +649,40 @@ static int32_t UpdateHmlStaticCap(void)
     return SOFTBUS_OK;
 }
 
+static int32_t UpdateP2pStaticCap(void)
+{
+    uint32_t staticNetCap = 0;
+    int32_t ret = LnnGetLocalNumU32Info(NUM_KEY_STATIC_NET_CAP, &staticNetCap);
+    if (ret != SOFTBUS_OK) {
+        LNN_LOGE(LNN_BUILDER, "get staticNetCap failed, ret=%{public}d.", ret);
+        return ret;
+    }
+    uint32_t oldCap = staticNetCap;
+#ifdef DSOFTBUS_FEATURE_CONN_PV1
+    ret = LnnSetStaticNetCap(&staticNetCap, STATIC_CAP_BIT_P2P);
+    if (ret != SOFTBUS_OK) {
+        LNN_LOGE(LNN_BUILDER, "set staticNetCap failed, ret=%{public}d.", ret);
+        return ret;
+    }
+#else
+    ret = LnnClearStaticNetCap(&staticNetCap, STATIC_CAP_BIT_P2P);
+    if (ret != SOFTBUS_OK) {
+        LNN_LOGE(LNN_BUILDER, "clear staticNetCap failed, ret=%{public}d.", ret);
+        return ret;
+    }
+#endif
+    if (oldCap == staticNetCap) {
+        return SOFTBUS_OK;
+    }
+    ret = LnnSetLocalNumU32Info(NUM_KEY_STATIC_NET_CAP, staticNetCap);
+    if (ret != SOFTBUS_OK) {
+        LNN_LOGE(LNN_BUILDER, "update staticNetCap failed, ret=%{public}d.", ret);
+        return ret;
+    }
+    LNN_LOGI(LNN_BUILDER, "p2p static netCap changed:%{public}u->%{public}u.", oldCap, staticNetCap);
+    return SOFTBUS_OK;
+}
+
 static void OnHmlServiceStart(void *state)
 {
     if (state == NULL) {
@@ -775,6 +809,10 @@ SOFTBUS_VISIBILITY int32_t LnnInitNetworkInfo(void)
     if (ret != SOFTBUS_OK) {
         LNN_LOGW(LNN_BUILDER, "update hml static cap failed, ret=%{public}d.", ret);
         /* some devices not supported, ignore it */
+    }
+    ret = UpdateP2pStaticCap();
+    if (ret != SOFTBUS_OK) {
+        LNN_LOGW(LNN_BUILDER, "update p2p static cap failed, ret=%{public}d.", ret);
     }
     ret = LnnRegisterEventHandler(LNN_EVENT_BT_STATE_CHANGED, BtStateChangeEventHandler);
     if (ret != SOFTBUS_OK) {
