@@ -848,20 +848,60 @@ HWTEST_F(LNNLaneExtMockTest, LNN_LANE_UPDATE_LANE_ID_001, TestSize.Level1)
     EXPECT_CALL(laneDepMock, LnnGetLocalStrInfo).WillRepeatedly(Return(SOFTBUS_OK));
     uint64_t laneId = LANE_ID_BASE;
     uint64_t laneIdNew = LANE_ID_BASE + 1;
-    int32_t ret = UpdateLaneResourceLaneId(INVALID_LANE_ID, laneIdNew, PEER_UDID);
+    int32_t ret = UpdateLaneResourceLaneId(INVALID_LANE_ID, laneIdNew, PEER_UDID, NODE_NETWORK_ID);
     EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
-    ret = UpdateLaneResourceLaneId(laneId, INVALID_LANE_ID, PEER_UDID);
+    ret = UpdateLaneResourceLaneId(laneId, INVALID_LANE_ID, PEER_UDID, NODE_NETWORK_ID);
     EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
-    ret = UpdateLaneResourceLaneId(laneId, laneIdNew, nullptr);
+    ret = UpdateLaneResourceLaneId(laneId, laneIdNew, nullptr, NODE_NETWORK_ID);
     EXPECT_EQ(ret, SOFTBUS_INVALID_PARAM);
-    ret = UpdateLaneResourceLaneId(laneId, laneIdNew, PEER_UDID);
+    ret = UpdateLaneResourceLaneId(laneId, laneIdNew, PEER_UDID, NODE_NETWORK_ID);
     EXPECT_EQ(ret, SOFTBUS_NOT_FIND);
     ret = AddLaneResourceToPool(&linkInfo, laneId, false);
     EXPECT_EQ(ret, SOFTBUS_OK);
-    ret = UpdateLaneResourceLaneId(laneId, laneIdNew, PEER_UDID);
+    ret = UpdateLaneResourceLaneId(laneId, laneIdNew, PEER_UDID, NODE_NETWORK_ID);
     EXPECT_EQ(ret, SOFTBUS_OK);
     ret = DelLaneResourceByLaneId(laneIdNew, false, nullptr);
     EXPECT_EQ(ret, SOFTBUS_OK);
+}
+
+/*
+ * @tc.name: LNN_LANE_UPDATE_LANE_ID_NETWORK_ID_001
+ * @tc.desc: test UpdateLaneResourceLaneId adds networkId to resource networkIdList
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(LNNLaneExtMockTest, LNN_LANE_UPDATE_LANE_ID_NETWORK_ID_001, TestSize.Level1)
+{
+    LaneLinkInfo linkInfo = {};
+    linkInfo.type = LANE_HML;
+    ASSERT_EQ(strcpy_s(linkInfo.linkInfo.p2p.connInfo.peerIp, IP_LEN, PEER_IP_HML), EOK);
+    ASSERT_EQ(strcpy_s(linkInfo.peerUdid, UDID_BUF_LEN, PEER_UDID), EOK);
+    ASSERT_EQ(strcpy_s(linkInfo.networkId, sizeof(linkInfo.networkId), NODE_NETWORK_ID), EOK);
+
+    NiceMock<LaneDepsInterfaceMock> laneDepMock;
+    EXPECT_CALL(laneDepMock, LnnGetLocalStrInfo).WillRepeatedly(Return(SOFTBUS_OK));
+
+    uint64_t laneId = LANE_ID_BASE;
+    uint64_t laneIdNew = LANE_ID_BASE + 1;
+    ASSERT_EQ(AddLaneResourceToPool(&linkInfo, laneId, false), SOFTBUS_OK);
+
+    const char *updateNetworkId = "UPDATE_LANE_NETWORK_ID";
+    EXPECT_EQ(UpdateLaneResourceLaneId(laneId, laneIdNew, PEER_UDID, updateNetworkId), SOFTBUS_OK);
+
+    LaneResource resource = {};
+    ASSERT_EQ(FindLaneResourceByLaneId(laneIdNew, &resource), SOFTBUS_OK);
+    ASSERT_NE(resource.networkIdList, nullptr);
+    NetworkIdInfo *nidItem = NULL;
+    bool networkIdAdded = false;
+    LIST_FOR_EACH_ENTRY(nidItem, resource.networkIdList, NetworkIdInfo, node) {
+        if (strcmp(nidItem->networkId, updateNetworkId) == 0) {
+            networkIdAdded = true;
+            break;
+        }
+    }
+    EXPECT_TRUE(networkIdAdded);
+
+    EXPECT_EQ(ClearLaneResourceByLaneId(laneIdNew), SOFTBUS_OK);
 }
 
 /*

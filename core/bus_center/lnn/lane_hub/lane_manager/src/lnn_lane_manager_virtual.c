@@ -36,11 +36,13 @@ SOFTBUS_VISIBILITY uint64_t GenerateLaneId(const char *localUdid, const char *re
     return SOFTBUS_NOT_IMPLEMENT;
 }
 
-SOFTBUS_VISIBILITY int32_t UpdateLaneResourceLaneId(uint64_t oldLaneId, uint64_t newLaneId, const char *peerUdid)
+SOFTBUS_VISIBILITY int32_t UpdateLaneResourceLaneId(uint64_t oldLaneId, uint64_t newLaneId, const char *peerUdid,
+    const char *networkId)
 {
     (void)oldLaneId;
     (void)newLaneId;
     (void)peerUdid;
+    (void)networkId;
     return SOFTBUS_NOT_IMPLEMENT;
 }
 

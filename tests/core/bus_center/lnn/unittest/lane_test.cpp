@@ -319,11 +319,12 @@ HWTEST_F(LaneTest, UPDATE_LANE_RESOURCE_LANE_ID_Test_001, TestSize.Level1)
     uint64_t newLaneId = LANE_ID + 1;
     const char *peerUdid = "123456ABCDEF";
     const char *peerUdid1 = "123456ABCDEFGHIGK";
-    EXPECT_EQ(UpdateLaneResourceLaneId(oldLaneId, newLaneId, peerUdid), SOFTBUS_NOT_FIND);
-    EXPECT_EQ(UpdateLaneResourceLaneId(oldLaneId, newLaneId, peerUdid1), SOFTBUS_NOT_FIND);
-    EXPECT_EQ(UpdateLaneResourceLaneId(INVALID_LANE_ID, newLaneId, peerUdid1), SOFTBUS_INVALID_PARAM);
-    EXPECT_EQ(UpdateLaneResourceLaneId(oldLaneId, INVALID_LANE_ID, peerUdid1), SOFTBUS_INVALID_PARAM);
-    EXPECT_EQ(UpdateLaneResourceLaneId(oldLaneId, INVALID_LANE_ID, nullptr), SOFTBUS_INVALID_PARAM);
+    const char *networkId = "1234567890ABCDEF";
+    EXPECT_EQ(UpdateLaneResourceLaneId(oldLaneId, newLaneId, peerUdid, networkId), SOFTBUS_NOT_FIND);
+    EXPECT_EQ(UpdateLaneResourceLaneId(oldLaneId, newLaneId, peerUdid1, networkId), SOFTBUS_NOT_FIND);
+    EXPECT_EQ(UpdateLaneResourceLaneId(INVALID_LANE_ID, newLaneId, peerUdid1, networkId), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(UpdateLaneResourceLaneId(oldLaneId, INVALID_LANE_ID, peerUdid1, networkId), SOFTBUS_INVALID_PARAM);
+    EXPECT_EQ(UpdateLaneResourceLaneId(oldLaneId, INVALID_LANE_ID, nullptr, nullptr), SOFTBUS_INVALID_PARAM);
 }
 
 /*

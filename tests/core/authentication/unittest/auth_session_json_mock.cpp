@@ -188,9 +188,9 @@ uint64_t GenerateLaneId(const char *localUdid, const char *remoteUdid, LaneLinkT
     return GetInterface()->GenerateLaneId(localUdid, remoteUdid, linkType);
 }
 
-int32_t UpdateLaneResourceLaneId(uint64_t oldLaneId, uint64_t newLaneId, const char *peerUdid)
+int32_t UpdateLaneResourceLaneId(uint64_t oldLaneId, uint64_t newLaneId, const char *peerUdid, const char *networkId)
 {
-    return GetInterface()->UpdateLaneResourceLaneId(oldLaneId, newLaneId, peerUdid);
+    return GetInterface()->UpdateLaneResourceLaneId(oldLaneId, newLaneId, peerUdid, networkId);
 }
 
 struct WifiDirectManager *GetWifiDirectManager(void)
